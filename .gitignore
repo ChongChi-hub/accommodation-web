@@ -1,0 +1,53 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+web/node_modules
+service/.gradle
+service/build
+
+# Production builds
+dist
+web/dist
+dist-ssr
+
+# Environment variables & Secrets
+.env
+.env.*
+web/.env
+web/.env.*
+!web/.env.example
+service/.env
+service/.env.*
+!service/.env.example
+*.local
+
+# Server uploads & runtime files
+server/uploads/*
+!server/uploads/.gitkeep
+uploads/
+
+# Editor & OS files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+desktop.ini
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary & lock files (Office, tmp)
+~$*
+*.tmp
+*.bak
