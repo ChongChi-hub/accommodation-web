@@ -17,6 +17,7 @@ export default function RoomsPage() {
     rooms,
     provinces,
     districts,
+    wards,
     params,
     isLoading,
     error,
@@ -44,6 +45,7 @@ export default function RoomsPage() {
         onReset={resetParams}
         provinces={provinces}
         districts={districts}
+        wards={wards}
       />
 
       <div className="flex items-center justify-between pt-2">

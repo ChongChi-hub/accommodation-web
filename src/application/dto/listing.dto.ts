@@ -26,7 +26,8 @@ export interface WardDto {
   code: string;
   name: string;
   fullName: string;
-  districtCode: string;
+  provinceCode?: string;
+  districtCode?: string;
 }
 
 export interface ReviewDto {
@@ -51,8 +52,9 @@ export interface RoomDto {
   description: string;
   address: string;
   provinceCode: string;
-  districtCode: string;
+  districtCode?: string;
   wardCode?: string;
+  wardId?: number;
   latitude?: number;
   longitude?: number;
   area: number;
@@ -77,6 +79,8 @@ export interface RoomDto {
 export interface RoomFilterParams {
   provinceCode?: string;
   districtCode?: string;
+  wardCode?: string;
+  wardId?: number;
   roomTypeCode?: string;
   minPrice?: number;
   maxPrice?: number;

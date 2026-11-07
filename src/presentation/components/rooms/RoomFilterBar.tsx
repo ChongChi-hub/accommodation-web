@@ -4,14 +4,15 @@ import React from 'react';
 import { Search, RotateCcw } from 'lucide-react';
 import { Select } from '@/presentation/components/ui/Select';
 import { Button } from '@/presentation/components/ui/Button';
-import { RoomFilterParams, ProvinceDto, DistrictDto } from '@/application/dto/listing.dto';
+import { RoomFilterParams, ProvinceDto, DistrictDto, WardDto } from '@/application/dto/listing.dto';
 
 export interface RoomFilterBarProps {
   params: RoomFilterParams;
   onChange: (newParams: Partial<RoomFilterParams>) => void;
   onReset: () => void;
   provinces: ProvinceDto[];
-  districts: DistrictDto[];
+  districts?: DistrictDto[];
+  wards?: WardDto[];
 }
 
 export function RoomFilterBar({
@@ -20,15 +21,16 @@ export function RoomFilterBar({
   onReset,
   provinces,
   districts,
+  wards = [],
 }: RoomFilterBarProps) {
   const provinceOptions = [
-    { value: '', label: 'Tất cả Tỉnh / Thành' },
+    { value: '', label: 'Tất cả Tỉnh / Thành phố' },
     ...provinces.map((p) => ({ value: p.code, label: p.name })),
   ];
 
-  const districtOptions = [
-    { value: '', label: 'Tất cả Quận / Huyện' },
-    ...districts.map((d) => ({ value: d.code, label: d.name })),
+  const wardOptions = [
+    { value: '', label: 'Tất cả Phường / Xã' },
+    ...wards.map((w) => ({ value: w.code, label: w.name })),
   ];
 
   const roomTypeOptions = [
@@ -68,12 +70,12 @@ export function RoomFilterBar({
         <Select
           options={provinceOptions}
           value={params.provinceCode || ''}
-          onChange={(e) => onChange({ provinceCode: e.target.value, districtCode: undefined })}
+          onChange={(e) => onChange({ provinceCode: e.target.value, wardCode: undefined, districtCode: undefined })}
         />
         <Select
-          options={districtOptions}
-          value={params.districtCode || ''}
-          onChange={(e) => onChange({ districtCode: e.target.value })}
+          options={wardOptions}
+          value={params.wardCode || ''}
+          onChange={(e) => onChange({ wardCode: e.target.value })}
           disabled={!params.provinceCode}
         />
         <Select

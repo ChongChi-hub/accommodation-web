@@ -15,6 +15,7 @@ export class HttpListingRepository implements IListingRepository {
     const query = new URLSearchParams();
     if (params.provinceCode) query.append('provinceCode', params.provinceCode);
     if (params.districtCode) query.append('districtCode', params.districtCode);
+    if (params.wardCode) query.append('wardCode', params.wardCode);
     if (params.roomTypeCode) query.append('roomTypeCode', params.roomTypeCode);
     if (params.minPrice) query.append('minPrice', params.minPrice.toString());
     if (params.maxPrice) query.append('maxPrice', params.maxPrice.toString());
@@ -46,8 +47,9 @@ export class HttpListingRepository implements IListingRepository {
     return ApiClient.get<DistrictDto[]>(`/locations/districts?provinceCode=${provinceCode}`);
   }
 
-  async getWards(districtCode: string): Promise<WardDto[]> {
-    return ApiClient.get<WardDto[]>(`/locations/wards?districtCode=${districtCode}`);
+  async getWards(code: string, isProvince = true): Promise<WardDto[]> {
+    const param = isProvince ? `provinceCode=${encodeURIComponent(code)}` : `districtCode=${encodeURIComponent(code)}`;
+    return ApiClient.get<WardDto[]>(`/locations/wards?${param}`);
   }
 
   async getAmenities(): Promise<AmenityDto[]> {

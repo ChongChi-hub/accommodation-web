@@ -1,5 +1,5 @@
 import { IListingRepository } from '@/application/repositories/listing.repository.interface';
-import { ProvinceDto, DistrictDto, AmenityDto } from '@/application/dto/listing.dto';
+import { ProvinceDto, DistrictDto, WardDto, AmenityDto } from '@/application/dto/listing.dto';
 
 export class GetLocationsUseCase {
   constructor(private readonly listingRepo: IListingRepository) {}
@@ -10,6 +10,10 @@ export class GetLocationsUseCase {
 
   async getDistricts(provinceCode: string): Promise<DistrictDto[]> {
     return this.listingRepo.getDistricts(provinceCode);
+  }
+
+  async getWards(provinceCode: string): Promise<WardDto[]> {
+    return this.listingRepo.getWards(provinceCode, true);
   }
 
   async getAmenities(): Promise<AmenityDto[]> {
