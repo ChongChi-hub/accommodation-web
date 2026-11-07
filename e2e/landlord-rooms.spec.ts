@@ -1,31 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Landlord Rooms Page (LANDLORD-04)', () => {
   test.beforeEach(async ({ context, page }) => {
-    await context.addCookies([
-      {
-        name: 'toam_role',
-        value: 'LANDLORD',
-        domain: 'localhost',
-        path: '/',
-      },
-    ]);
-    await page.addInitScript(() => {
-      localStorage.setItem('toam_access_token', 'mock_landlord_token');
-      localStorage.setItem(
-        'toam_user',
-        JSON.stringify({
-          id: 'u-landlord-01',
-          email: 'landlord@toam.vn',
-          fullName: 'Chủ Trọ Demo',
-          phone: '0901234567',
-          roles: ['LANDLORD'],
-          isKycVerified: true,
-          createdAt: '2026-01-01T00:00:00Z',
-          updatedAt: '2026-01-01T00:00:00Z',
-        })
-      );
-    });
+    await authenticateAs(context, page, 'landlord@toam.vn');
   });
 
   test('Desktop 1440px renders table and controls without overflow', async ({ page }) => {

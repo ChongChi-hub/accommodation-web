@@ -77,8 +77,18 @@ export default async function middleware(req: NextRequest) {
 
     const hasRole = (role: string) => roles.includes(role);
 
+    const MODERATOR_ALLOWED_ADMIN_ROUTES = [
+      '/dashboard/admin/rooms',
+      '/dashboard/admin/kyc',
+      '/dashboard/admin/reports',
+      '/dashboard/admin/reviews',
+      '/dashboard/admin/disputes',
+      '/dashboard/admin/support',
+    ];
+    const isModOnAllowedRoute = hasRole('MODERATOR') && MODERATOR_ALLOWED_ADMIN_ROUTES.some((r) => cleanPath.startsWith(r));
+
     // Cryptographically verified role-based access control
-    if (cleanPath.startsWith('/dashboard/admin') && !hasRole('ADMIN')) {
+    if (cleanPath.startsWith('/dashboard/admin') && !hasRole('ADMIN') && !isModOnAllowedRoute) {
       return NextResponse.redirect(new URL(`${localePrefix}/403`, req.url));
     }
 

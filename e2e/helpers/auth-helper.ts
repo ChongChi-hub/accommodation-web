@@ -78,6 +78,53 @@ export async function createRealSignedToken(user: DemoUser): Promise<String> {
     .sign(privateKey);
 }
 
+export async function authenticateAs(context: any, page: any, email: keyof typeof DEMO_USERS) {
+  const user = DEMO_USERS[email];
+  const token = await createRealSignedToken(user);
+  await context.addCookies([
+    {
+      name: 'toam_token',
+      value: token,
+      domain: 'localhost',
+      path: '/',
+    },
+    {
+      name: 'toam_role',
+      value: user.roles[0],
+      domain: 'localhost',
+      path: '/',
+    },
+  ]);
+  await page.addInitScript(
+    ({ t, u }: { t: string; u: any }) => {
+      localStorage.setItem('toam_access_token', t);
+      localStorage.setItem('toam_refresh_token', 'mock_refresh_token');
+      localStorage.setItem('toam_user', JSON.stringify(u));
+    },
+    { t: token, u: user }
+  );
+}
+
+export async function addAuthCookieForUser(context: any, email: keyof typeof DEMO_USERS = 'landlord@toam.vn') {
+  const user = DEMO_USERS[email];
+  const token = await createRealSignedToken(user);
+  await context.addCookies([
+    {
+      name: 'toam_token',
+      value: token,
+      domain: 'localhost',
+      path: '/',
+    },
+    {
+      name: 'toam_role',
+      value: user.roles[0],
+      domain: 'localhost',
+      path: '/',
+    },
+  ]);
+  return token;
+}
+
 export async function setupAuthMockRoutes(page: Page) {
   await page.route('**/api/v1/auth/login', async (route) => {
     const postData = route.request().postDataJSON();
@@ -111,3 +158,4 @@ export async function setupAuthMockRoutes(page: Page) {
     });
   });
 }
+

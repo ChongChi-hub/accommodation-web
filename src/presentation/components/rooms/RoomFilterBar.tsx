@@ -68,22 +68,26 @@ export function RoomFilterBar({
     <div className="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 p-4 rounded-2xl shadow-xs space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
         <Select
+          aria-label="Chọn Tỉnh hoặc Thành phố"
           options={provinceOptions}
           value={params.provinceCode || ''}
           onChange={(e) => onChange({ provinceCode: e.target.value, wardCode: undefined, districtCode: undefined })}
         />
         <Select
+          aria-label="Chọn Phường hoặc Xã"
           options={wardOptions}
           value={params.wardCode || ''}
           onChange={(e) => onChange({ wardCode: e.target.value })}
           disabled={!params.provinceCode}
         />
         <Select
+          aria-label="Chọn Loại phòng"
           options={roomTypeOptions}
           value={params.roomTypeCode || ''}
           onChange={(e) => onChange({ roomTypeCode: e.target.value })}
         />
         <Select
+          aria-label="Chọn Mức giá"
           options={priceOptions}
           value={currentPriceValue}
           onChange={handlePriceChange}

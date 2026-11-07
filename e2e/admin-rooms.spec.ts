@@ -1,20 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Admin Rooms Page (Visual & Layout)', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => {
-      localStorage.setItem('toam_access_token', 'mock_admin_token');
-      localStorage.setItem('toam_user', JSON.stringify({
-        id: 'usr_admin_1',
-        email: 'admin@toam.vn',
-        fullName: 'Quản Trị Viên',
-        phone: '0901234567',
-        roles: ['ADMIN'],
-        isKycVerified: true,
-        createdAt: '2026-01-01T00:00:00Z',
-        updatedAt: '2026-01-01T00:00:00Z',
-      }));
-    });
+  test.beforeEach(async ({ context, page }) => {
+    await authenticateAs(context, page, 'admin@toam.vn');
   });
 
   test('Desktop 1440px renders moderation table and detail drawer', async ({ page }) => {

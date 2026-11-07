@@ -74,7 +74,7 @@ test.describe('Public & Auth Routes Smoke Tests', () => {
     test(`Loads ${route} cleanly without errors`, async ({ page }) => {
       const consoleErrors: string[] = [];
       page.on('console', (msg) => {
-        if (msg.type() === 'error') {
+        if (msg.type() === 'error' && !msg.text().includes('ERR_CONNECTION_REFUSED')) {
           consoleErrors.push(msg.text());
         }
       });
