@@ -59,10 +59,10 @@
 | Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
 |---|---|---|---|---|---|---|---|
 | `/dashboard/landlord` | Tổng quan chủ trọ | P1 | `StaticLandlordRepository` | Chờ rà soát | - | - | Doanh thu, phòng trống, việc cần làm |
-| `/dashboard/landlord/rooms` | Danh sách phòng cho thuê | P1 | `StaticLandlordRepository` | Chờ rà soát | - | - | Bảng phòng, trạng thái, bộ lọc |
-| `/dashboard/landlord/rooms/new` | Đăng tin phòng mới | P1 | `StaticFormHandler` | Chờ rà soát | - | - | Stepper 4 bước đăng tin |
+| `/dashboard/landlord/rooms` | Danh sách phòng cho thuê | P1 | `HttpLandlordRoomRepository` | Hoàn thành | 07/11/2026 | `docs/screenshots/landlord-rooms/rooms-1440-light.png` | Bảng danh sách, phân trang, lọc theo 7 trạng thái, tìm kiếm, ẩn/hiện, xóa mềm bảo vệ RENTED |
+| `/dashboard/landlord/rooms/new` | Đăng tin phòng mới | P1 | `HttpLandlordRoomRepository` | Hoàn thành | 07/11/2026 | `docs/screenshots/landlord-rooms/upload-step4-1440.png` | Stepper 4 bước, ImageManager multipart upload, kiểm tra magic bytes, >= 3 ảnh gửi duyệt, lưu nháp |
 | `/dashboard/landlord/rooms/[id]` | Chi tiết phòng cho thuê | P1 | `StaticLandlordRepository` | Chờ rà soát | - | - | Tổng quan phòng, lịch sử thuê, ảnh, lượt xem |
-| `/dashboard/landlord/rooms/[id]/edit` | Chỉnh sửa tin phòng | P1 | `StaticFormHandler` | Chờ rà soát | - | - | Cập nhật thông tin phòng trọ |
+| `/dashboard/landlord/rooms/[id]/edit` | Chỉnh sửa tin phòng | P1 | `HttpLandlordRoomRepository` | Hoàn thành | 07/11/2026 | - | Cập nhật thông tin phòng, quản lý ảnh trực tiếp (đổi ảnh bìa duy nhất, xóa ảnh, sắp xếp thứ tự) |
 | `/dashboard/landlord/appointments` | Lịch hẹn xem phòng (Lịch/Bảng) | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | Chế độ lịch tuần/tháng và bảng danh sách |
 | `/dashboard/landlord/rental-requests` | Yêu cầu thuê phòng | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | Danh sách hồ sơ xin thuê |
 | `/dashboard/landlord/rental-requests/[id]` | Chi tiết hồ sơ ứng viên | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | So sánh hồ sơ, thông tin ứng viên |
