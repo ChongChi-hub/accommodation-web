@@ -73,3 +73,4 @@ export class StaticNotificationRepository implements NotificationRepository {
     return this.notifications.filter((n) => !n.isRead).length;
   }
 }
+

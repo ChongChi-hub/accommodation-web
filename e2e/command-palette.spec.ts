@@ -69,3 +69,4 @@ test.describe('Command Palette Role Access Enforcement', () => {
     await expect(dialog.locator('[data-command-id="adm-rooms"]')).toBeVisible();
   });
 });
+

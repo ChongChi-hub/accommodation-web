@@ -3,3 +3,4 @@ import { UserChangePasswordView } from '@/presentation/components/profile/UserCh
 export default function AdminSecurityPage() {
   return <UserChangePasswordView />;
 }
+

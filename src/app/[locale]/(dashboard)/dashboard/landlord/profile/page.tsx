@@ -3,3 +3,4 @@ import { UserProfileView } from '@/presentation/components/profile/UserProfileVi
 export default function LandlordProfilePage() {
   return <UserProfileView role="LANDLORD" />;
 }
+

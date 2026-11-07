@@ -15,3 +15,4 @@ export interface DashboardBadges {
 export interface BadgeRepository {
   getBadges(role?: string, userId?: string): Promise<DashboardBadges>;
 }
+
