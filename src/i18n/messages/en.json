@@ -70,7 +70,14 @@
     "search": "Search",
     "viewDetails": "View Details",
     "pricePerMonth": "/month",
-    "currency": "VND"
+    "currency": "VND",
+    "statusApproved": "Approved",
+    "statusPending": "Pending",
+    "statusRejected": "Rejected",
+    "details": "Details",
+    "status": "Status",
+    "actions": "Actions",
+    "close": "Close"
   },
   "admin": {
     "overview": {
@@ -432,7 +439,21 @@
         "submitting": "Submitting...",
         "success": "Ticket submitted successfully!",
         "redirecting": "Redirecting you back to tickets...",
-        "back": "Back to Tickets"
+        "back": "Back to Tickets",
+        "category": {
+          "TECHNICAL": "Technical / System Issue",
+          "BILLING": "Billing & Payments",
+          "CONTRACT": "Contracts & Deposits",
+          "DISPUTE": "Disputes & Complaints",
+          "ACCOUNT": "Account & KYC Verification",
+          "OTHER": "Other Issue"
+        },
+        "priority": {
+          "LOW": "Low (Non-urgent)",
+          "MEDIUM": "Medium",
+          "HIGH": "High (Affects usage)",
+          "URGENT": "Urgent (Needs immediate attention)"
+        }
       },
       "detail": {
         "back": "Back to Tickets",
