@@ -10,7 +10,7 @@
 | Route | Tên Trang | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
 |---|---|---|---|---|---|---|
 | `/dashboard/admin` | Tổng quan sàn | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/overview-*.png` (19 ảnh) | Đủ 4 trạng thái, i18n vi/en, a11y passed |
-| `/dashboard/admin/rooms` | Duyệt tin đăng | `StaticAdminRepository` | Chờ rà soát | - | - | Danh sách chờ duyệt & Modal lý do |
+| `/dashboard/admin/rooms` | Duyệt tin đăng | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/rooms-*.png` (19 ảnh) | Tabs trạng thái, bộ lọc tìm kiếm, modal lý do, 4 states, a11y passed |
 | `/dashboard/admin/kyc` | Duyệt eKYC CCCD | `StaticAdminRepository` | Chờ rà soát | - | - | So sánh ảnh CCCD 2 mặt |
 | `/dashboard/admin/users` | Quản lý người dùng | `StaticAdminRepository` | Chờ rà soát | - | - | Khóa/mở khóa & phân quyền |
 | `/dashboard/admin/reports` | Báo cáo vi phạm | `StaticAdminRepository` | Chờ rà soát | - | - | Xử lý khiếu nại & báo cáo |

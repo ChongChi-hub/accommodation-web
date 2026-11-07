@@ -85,6 +85,38 @@
       "emptyState": "Hiện tại không có số liệu thống kê hoặc hệ thống đang được khởi động.",
       "errorTitle": "Không thể tải dữ liệu điều hành",
       "errorSubtitle": "Đã xảy ra lỗi khi kết nối với máy chủ quản trị."
+    },
+    "rooms": {
+      "title": "Kiểm duyệt tin đăng phòng trọ",
+      "subtitle": "Thẩm định tính chân thực của hình ảnh, địa chỉ và biểu phí niêm yết trước khi xuất bản",
+      "searchPlaceholder": "Tìm theo tiêu đề, chủ nhà hoặc địa chỉ...",
+      "tabAll": "Tất cả tin",
+      "tabPending": "Chờ duyệt",
+      "tabApproved": "Đã duyệt",
+      "tabRejected": "Đã từ chối",
+      "colTitle": "Mã & Tiêu đề phòng",
+      "colLandlord": "Chủ nhà",
+      "colAddress": "Địa chỉ",
+      "colPrice": "Giá niêm yết",
+      "colSubmitted": "Thời gian gửi",
+      "colActions": "Thao tác",
+      "btnApprove": "Duyệt tin",
+      "btnReject": "Từ chối",
+      "btnPreview": "Xem chi tiết",
+      "statusPending": "Chờ duyệt",
+      "statusApproved": "Đã duyệt",
+      "statusRejected": "Từ chối",
+      "rejectModalTitle": "Từ chối duyệt tin đăng phòng",
+      "rejectModalDesc": "Nhập lý do chi tiết để chủ nhà sửa đổi thông tin chính xác.",
+      "rejectReasonPlaceholder": "Ví dụ: Hình ảnh chưa rõ ràng, giá điện cao hơn quy định tối đa...",
+      "rejectReasonRequired": "Vui lòng nhập lý do từ chối",
+      "btnConfirmReject": "Xác nhận từ chối",
+      "emptyTitle": "Không có tin đăng nào cần xử lý",
+      "emptyDesc": "Tất cả các tin đăng mới đã được kiểm duyệt hoàn tất.",
+      "errorTitle": "Lỗi tải danh sách tin chờ duyệt",
+      "errorDesc": "Không thể kết nối đến máy chủ quản trị.",
+      "toastApproved": "Đã duyệt xuất bản phòng #{id}! Tin đăng hiện đã hiển thị trên sàn.",
+      "toastRejected": "Đã từ chối tin đăng #{id}. Đã gửi thông báo lý do cho chủ nhà."
     }
   }
 }

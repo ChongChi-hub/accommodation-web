@@ -85,6 +85,38 @@
       "emptyState": "No administrative statistics currently available or system is initializing.",
       "errorTitle": "Unable to load operations data",
       "errorSubtitle": "An error occurred while connecting to the admin service."
+    },
+    "rooms": {
+      "title": "Room Listings Moderation",
+      "subtitle": "Verify authenticity of photos, addresses, and listed utility tariffs before publishing",
+      "searchPlaceholder": "Search by title, landlord, or address...",
+      "tabAll": "All Listings",
+      "tabPending": "Pending",
+      "tabApproved": "Approved",
+      "tabRejected": "Rejected",
+      "colTitle": "ID & Room Title",
+      "colLandlord": "Landlord",
+      "colAddress": "Address",
+      "colPrice": "Listed Rent",
+      "colSubmitted": "Submitted",
+      "colActions": "Actions",
+      "btnApprove": "Approve",
+      "btnReject": "Reject",
+      "btnPreview": "View Details",
+      "statusPending": "Pending",
+      "statusApproved": "Approved",
+      "statusRejected": "Rejected",
+      "rejectModalTitle": "Reject Room Listing",
+      "rejectModalDesc": "Provide a detailed reason so the landlord can correct the listing.",
+      "rejectReasonPlaceholder": "E.g., Images are blurry, electricity rate exceeds legal cap...",
+      "rejectReasonRequired": "Please enter a rejection reason",
+      "btnConfirmReject": "Confirm Rejection",
+      "emptyTitle": "No listings awaiting moderation",
+      "emptyDesc": "All newly submitted room listings have been processed.",
+      "errorTitle": "Error loading pending listings",
+      "errorDesc": "Could not connect to the moderation service.",
+      "toastApproved": "Approved listing #{id}! It is now visible on the platform.",
+      "toastRejected": "Rejected listing #{id}. Notification with reason sent to the landlord."
     }
   }
 }
