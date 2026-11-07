@@ -1,146 +1,164 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/presentation/stores/auth.store';
 import { container } from '@/infrastructure/di/container';
-import { Card } from '@/presentation/components/ui/Card';
-import { Input } from '@/presentation/components/ui/Input';
 import { Button } from '@/presentation/components/ui/Button';
-import { Avatar } from '@/presentation/components/ui/Avatar';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { toast } from '@/presentation/stores/toast.store';
-import { User as UserIcon, Mail, Phone, Save, ShieldCheck, Calendar } from 'lucide-react';
+import { AvatarManager } from './AvatarManager';
+import { UserProfileForm } from './UserProfileForm';
+import { UserChangePasswordView } from './UserChangePasswordView';
+import { UserProfile, UpdateUserProfileDto } from '@/domain/entities/UserProfile';
+import { ProvinceDto, WardDto } from '@/application/dto/listing.dto';
+import { RefreshCw, AlertCircle } from 'lucide-react';
 
 export interface UserProfileViewProps {
   role: 'TENANT' | 'LANDLORD' | 'ADMIN' | 'MODERATOR';
 }
 
 export function UserProfileView({ role }: UserProfileViewProps) {
-  const { user, initSession } = useAuthStore();
-  const [fullName, setFullName] = useState(user?.fullName || '');
-  const [phone, setPhone] = useState(user?.phone || '');
-  const [email, setEmail] = useState(user?.email || '');
+  const t = useTranslations('profile');
+  const { user, updateUser } = useAuthStore();
+  const [activeTab, setActiveTab] = useState<'info' | 'security'>('info');
+
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [provinces, setProvinces] = useState<ProvinceDto[]>([]);
+  const [wards, setWards] = useState<WardDto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasConflict, setHasConflict] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      setFullName(user.fullName || '');
-      setPhone(user.phone || '');
-      setEmail(user.email || '');
-    }
-  }, [user]);
-
-  const getRoleTitle = () => {
-    switch (role) {
-      case 'ADMIN':
-        return 'Quản trị viên cấp cao';
-      case 'MODERATOR':
-        return 'Kiểm duyệt viên nội dung & an toàn';
-      case 'LANDLORD':
-        return 'Chủ nhà trọ / Người cho thuê';
-      case 'TENANT':
-        return 'Khách thuê phòng được định danh';
+  const loadData = async () => {
+    setIsLoading(true);
+    setHasConflict(false);
+    try {
+      const [prof, provs] = await Promise.all([
+        container.profile.profileUseCases.getProfile(),
+        container.listing.getLocationsUseCase.getProvinces(),
+      ]);
+      setProfile(prof);
+      setProvinces(provs);
+      if (prof.addressProvinceCode) {
+        const w = await container.listing.getLocationsUseCase.getWards(prof.addressProvinceCode);
+        setWards(w);
+      }
+    } catch {
+      toast.error('Loi tai ho so ca nhan');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!fullName.trim() || !phone.trim()) {
-      toast.error('Họ tên và số điện thoại không được để trống');
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleProvinceChange = async (newCode: string) => {
+    if (!newCode) {
+      setWards([]);
       return;
     }
+    try {
+      const w = await container.listing.getLocationsUseCase.getWards(newCode);
+      setWards(w);
+    } catch {
+      setWards([]);
+    }
+  };
 
+  const handleSave = async (dto: UpdateUserProfileDto) => {
     setIsSaving(true);
     try {
-      const updatedUser = await container.auth.authRepository.updateProfile({
-        fullName: fullName.trim(),
-        phone: phone.trim(),
+      const updated = await container.profile.profileUseCases.updateProfile(dto);
+      setProfile(updated);
+      updateUser({
+        fullName: updated.fullName,
+        phone: updated.phone,
+        avatarUrl: updated.avatarUrl,
       });
-      useAuthStore.setState({ user: updatedUser });
-      toast.success('Cập nhật hồ sơ cá nhân thành công!');
-    } catch {
-      toast.error('Không thể cập nhật hồ sơ, vui lòng thử lại.');
+      toast.success(t('saveSuccess'));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : '';
+      if (msg.includes('409') || msg.includes('conflict') || msg.includes('phien ban')) {
+        setHasConflict(true);
+      } else {
+        toast.error(msg || 'Loi cap nhat ho so');
+      }
     } finally {
       setIsSaving(false);
     }
   };
 
+  const roleVariant = role === 'ADMIN' ? 'danger' : role === 'MODERATOR' ? 'warning' : 'primary';
+
   return (
-    <div className="space-y-6 max-w-3xl">
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-          Hồ sơ cá nhân
-        </h1>
-        <p className="text-xs text-foreground-muted mt-1">
-          Quản lý thông tin định danh, số điện thoại và email liên hệ trên Tổ Ấm.
-        </p>
+    <div className="space-y-6 max-w-4xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{t('title')}</h1>
+          <p className="text-xs text-foreground-muted mt-1">{t('subtitle')}</p>
+        </div>
+        <Badge variant={roleVariant}>{role}</Badge>
       </div>
 
-      <Card className="p-6 border border-border">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 pb-6 border-b border-border">
-            <Avatar name={fullName || 'Người dùng'} size="xl" />
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <p className="text-base font-bold text-foreground">{fullName || 'Chưa đặt tên'}</p>
-                <Badge variant={role === 'ADMIN' ? 'danger' : role === 'MODERATOR' ? 'warning' : 'primary'}>
-                  {getRoleTitle()}
-                </Badge>
-              </div>
-              <p className="text-xs text-foreground-muted flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                <span>Trạng thái định danh: Đã xác minh CCCD/CMND</span>
-              </p>
-            </div>
-          </div>
+      <div className="flex border-b border-border gap-6 text-sm font-medium">
+        <button
+          type="button"
+          onClick={() => setActiveTab('info')}
+          className={`pb-2.5 transition-colors border-b-2 -mb-px ${
+            activeTab === 'info' ? 'border-primary text-primary' : 'border-transparent text-foreground-muted'
+          }`}
+        >
+          {t('personalTab')}
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('security')}
+          className={`pb-2.5 transition-colors border-b-2 -mb-px ${
+            activeTab === 'security' ? 'border-primary text-primary' : 'border-transparent text-foreground-muted'
+          }`}
+        >
+          {t('securityTab')}
+        </button>
+      </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="Họ và tên"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Nguyễn Văn A"
-              required
-              leftIcon={<UserIcon className="w-4 h-4 text-foreground-muted" />}
-            />
-            <Input
-              label="Số điện thoại"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="0987654321"
-              required
-              leftIcon={<Phone className="w-4 h-4 text-foreground-muted" />}
-            />
-          </div>
-
-          <Input
-            label="Địa chỉ Email"
-            type="email"
-            value={email}
-            disabled
-            helperText="Email dùng để đăng nhập và nhận thông báo hợp đồng quan trọng"
-            leftIcon={<Mail className="w-4 h-4 text-foreground-muted" />}
+      {activeTab === 'security' ? (
+        <UserChangePasswordView />
+      ) : (
+        <div className="space-y-6">
+          <AvatarManager
+            currentAvatarUrl={profile?.avatarUrl || user?.avatarUrl || null}
+            name={profile?.fullName || user?.fullName || 'User'}
+            onAvatarChanged={(url) => setProfile((prev) => (prev ? { ...prev, avatarUrl: url } : null))}
           />
 
-          <div className="pt-4 border-t border-border flex items-center justify-between">
-            <div className="text-[11px] text-foreground-muted flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Tham gia: {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '2026'}</span>
+          {hasConflict && (
+            <div className="p-4 rounded-xl bg-danger/10 border border-danger/20 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-danger text-sm">
+                <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                <span>{t('saveConflict')}</span>
+              </div>
+              <Button size="sm" variant="outline" leftIcon={<RefreshCw className="w-3.5 h-3.5" />} onClick={loadData}>
+                {t('reload')}
+              </Button>
             </div>
+          )}
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="sm"
-              isLoading={isSaving}
-              leftIcon={<Save className="w-4 h-4" />}
-            >
-              Lưu thay đổi
-            </Button>
-          </div>
-        </form>
-      </Card>
+          {!isLoading && (
+            <UserProfileForm
+              profile={profile}
+              email={profile?.email || user?.email || ''}
+              provinces={provinces}
+              wards={wards}
+              onProvinceChange={handleProvinceChange}
+              onSave={handleSave}
+              isSaving={isSaving}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }
-

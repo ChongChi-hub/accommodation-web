@@ -18,6 +18,7 @@ interface AuthState {
   logout: () => Promise<void>;
   clearError: () => void;
   switchRole: (role: 'TENANT' | 'LANDLORD') => void;
+  updateUser: (partial: Partial<User>) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -153,5 +154,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       } catch {}
     }
     set({ user: updatedUser });
+  },
+
+  updateUser: (partial: Partial<User>) => {
+    const current = get().user;
+    if (!current) return;
+    const updated = { ...current, ...partial };
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('toam_user', JSON.stringify(updated));
+      } catch {}
+    }
+    set({ user: updated });
   },
 }));

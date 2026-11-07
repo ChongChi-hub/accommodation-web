@@ -1,5 +1,6 @@
 import { AuthRepository, AuthSession } from '@/domain/repositories/AuthRepository';
 import { User } from '@/domain/entities/User';
+import { UserProfile, UpdateUserProfileDto } from '@/domain/entities/UserProfile';
 import { ApiClient } from '../http/api-client';
 
 function setAuthCookies(token?: string, role?: string) {
@@ -99,8 +100,61 @@ export class HttpAuthRepository implements AuthRepository {
     }
   }
 
-  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
-    await ApiClient.post('/auth/change-password', { oldPassword, newPassword });
+  async getUserProfile(): Promise<UserProfile> {
+    return await ApiClient.get<UserProfile>('/users/me');
+  }
+
+  async updateUserProfile(data: UpdateUserProfileDto): Promise<UserProfile> {
+    const res = await ApiClient.put<UserProfile>('/users/me', data);
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('toam_user');
+      const currentUser = stored ? JSON.parse(stored) : {};
+      const updated = {
+        ...currentUser,
+        fullName: res.fullName,
+        phone: res.phone,
+        avatarUrl: res.avatarUrl,
+        gender: res.gender,
+        dateOfBirth: res.dateOfBirth,
+      };
+      localStorage.setItem('toam_user', JSON.stringify(updated));
+    }
+    return res;
+  }
+
+  async uploadAvatar(file: File): Promise<{ avatarUrl: string }> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    const res = await ApiClient.post<{ avatarUrl: string }>('/users/me/avatar', formData);
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('toam_user');
+      if (stored) {
+        const u = JSON.parse(stored);
+        u.avatarUrl = res.avatarUrl;
+        localStorage.setItem('toam_user', JSON.stringify(u));
+      }
+    }
+    return res;
+  }
+
+  async deleteAvatar(): Promise<void> {
+    await ApiClient.delete('/users/me/avatar');
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('toam_user');
+      if (stored) {
+        const u = JSON.parse(stored);
+        u.avatarUrl = null;
+        localStorage.setItem('toam_user', JSON.stringify(u));
+      }
+    }
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await ApiClient.post('/auth/change-password', {
+      currentPassword,
+      oldPassword: currentPassword,
+      newPassword,
+    });
   }
 
   async forgotPassword(email: string): Promise<void> {

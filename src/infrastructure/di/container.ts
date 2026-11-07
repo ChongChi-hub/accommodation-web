@@ -2,6 +2,10 @@ import { HttpAuthRepository } from '../repositories/http-auth.repository';
 import { HttpListingRepository } from '../repositories/http-listing.repository';
 import { HttpLandlordRoomRepository } from '../repositories/http-landlord-room.repository';
 import { HttpAppointmentRepository } from '../repositories/http-appointment.repository';
+import { HttpKycRepository } from '../repositories/http-kyc.repository';
+import { ProfileUseCases } from '@/application/use-cases/profile/profile.use-cases';
+import { LandlordKycUseCases } from '@/application/use-cases/kyc/landlord-kyc.use-cases';
+import { KycModerationUseCases } from '@/application/use-cases/kyc/kyc-moderation.use-cases';
 import { StaticAdminRepository } from '../static/StaticAdminRepository';
 import { StaticSupportRepository } from '../static/StaticSupportRepository';
 import { StaticMaintenanceRepository } from '../static/StaticMaintenanceRepository';
@@ -21,6 +25,7 @@ const authRepository = new HttpAuthRepository();
 const listingRepository = new HttpListingRepository();
 const landlordRoomRepository = new HttpLandlordRoomRepository();
 const appointmentRepository = new HttpAppointmentRepository();
+const kycRepository = new HttpKycRepository();
 const adminRepository = new StaticAdminRepository();
 const supportRepository = new StaticSupportRepository();
 const maintenanceRepository = new StaticMaintenanceRepository();
@@ -42,6 +47,9 @@ export const container = {
     getProfileUseCase: new GetProfileUseCase(authRepository),
     authRepository,
   },
+  profile: {
+    profileUseCases: new ProfileUseCases(authRepository),
+  },
   listing: {
     getRoomsUseCase: new GetRoomsUseCase(listingRepository),
     getRoomDetailUseCase: new GetRoomDetailUseCase(listingRepository),
@@ -51,6 +59,13 @@ export const container = {
   landlord: {
     landlordRoomRepository,
     appointmentRepository,
+    kycRepository,
+    landlordKycUseCases: new LandlordKycUseCases(kycRepository),
+  },
+  kyc: {
+    kycRepository,
+    landlordKycUseCases: new LandlordKycUseCases(kycRepository),
+    kycModerationUseCases: new KycModerationUseCases(kycRepository),
   },
   appointment: {
     appointmentRepository,

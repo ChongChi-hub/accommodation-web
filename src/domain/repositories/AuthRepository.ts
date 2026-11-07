@@ -1,4 +1,5 @@
 import { User } from '../entities/User';
+import { UserProfile, UpdateUserProfileDto } from '../entities/UserProfile';
 
 export interface AuthTokens {
   token: string;
@@ -16,9 +17,12 @@ export interface AuthRepository {
   refreshToken(refreshToken: string): Promise<AuthSession>;
   getProfile(): Promise<User>;
   updateProfile(data: { fullName: string; phone: string }): Promise<User>;
-  changePassword(oldPassword: string, newPassword: string): Promise<void>;
+  getUserProfile(): Promise<UserProfile>;
+  updateUserProfile(data: UpdateUserProfileDto): Promise<UserProfile>;
+  uploadAvatar(file: File): Promise<{ avatarUrl: string }>;
+  deleteAvatar(): Promise<void>;
+  changePassword(currentPassword: string, newPassword: string): Promise<void>;
   forgotPassword(email: string): Promise<void>;
   resetPassword(email: string, otp: string, newPassword: string): Promise<void>;
   logout(): Promise<void>;
 }
-

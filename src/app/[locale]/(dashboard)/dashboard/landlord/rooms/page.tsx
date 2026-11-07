@@ -16,6 +16,7 @@ import { Tabs } from '@/presentation/components/ui/Tabs';
 import { Pagination } from '@/presentation/components/ui/Pagination';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { ErrorState } from '@/presentation/components/ui/ErrorState';
+import { KycGateBanner } from '@/presentation/components/kyc/KycGateBanner';
 import { PlusCircle, Search, Building, RefreshCw, X } from 'lucide-react';
 
 export default function LandlordRoomsPage() {
@@ -100,6 +101,8 @@ export default function LandlordRoomsPage() {
           </Button>
         </Link>
       </div>
+
+      <KycGateBanner />
 
       {/* Tabs by Status */}
       <div className="overflow-x-auto pb-1">

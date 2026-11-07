@@ -30,27 +30,15 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
   } = useLandlordRoomDetail(id);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    address: '',
-    area: '',
-    price: '',
-    deposit: '',
-    allowPets: false,
-    allowCooking: true,
+    title: '', description: '', address: '', area: '', price: '', deposit: '', allowPets: false, allowCooking: true,
   });
 
   useEffect(() => {
     if (room) {
       setFormData({
-        title: room.title || '',
-        description: room.description || '',
-        address: room.address || '',
-        area: room.area ? String(room.area) : '',
-        price: room.price ? String(room.price) : '',
-        deposit: room.deposit ? String(room.deposit) : '',
-        allowPets: room.allowPets ?? false,
-        allowCooking: room.allowCooking ?? true,
+        title: room.title || '', description: room.description || '', address: room.address || '',
+        area: room.area ? String(room.area) : '', price: room.price ? String(room.price) : '',
+        deposit: room.deposit ? String(room.deposit) : '', allowPets: room.allowPets ?? false, allowCooking: room.allowCooking ?? true,
       });
     }
   }, [room]);

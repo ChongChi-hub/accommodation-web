@@ -195,5 +195,17 @@ export class ApiClient {
   static delete<T>(endpoint: string, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
+
+  static async getBlob(endpoint: string): Promise<Blob> {
+    const token = this.getToken();
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const url = endpoint.startsWith('http') ? endpoint : `${BASE_URL}${endpoint}`;
+    const response = await fetch(url, { headers, credentials: 'include' });
+    if (!response.ok) {
+      throw new ApiError('Loi tai tep tin', 'ERR_FETCH_BLOB', response.status);
+    }
+    return response.blob();
+  }
 }
 
