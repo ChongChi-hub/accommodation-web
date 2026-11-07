@@ -67,23 +67,29 @@ function AdminOverviewContent() {
   const isSeniorAdmin = user?.roles?.includes('ADMIN');
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/50">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 flex items-center gap-2">
-            <Activity className="w-6 h-6 text-primary-600" />
-            {t('title')}
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400">
+              <Activity className="w-5 h-5" />
+            </span>
+            <span>{t('title')}</span>
           </h1>
-          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-foreground-muted mt-1">
             {t('subtitle')}
           </p>
         </div>
-        <Badge variant="primary" size="md">
-          {isSeniorAdmin ? t('seniorAdmin') : t('moderator')}
-        </Badge>
+        <div>
+          <Badge variant="primary" size="md">
+            {isSeniorAdmin ? t('seniorAdmin') : t('moderator')}
+          </Badge>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <ChartCard
           title={t('totalUsersTitle')}
           value={new Intl.NumberFormat('vi-VN').format(stats.totalUsers)}
@@ -102,101 +108,114 @@ function AdminOverviewContent() {
           dataPoints={[320, 410, 490, 560, 610, 650, stats.activeRooms]}
         />
 
-        <Card className="p-5 space-y-2 flex flex-col justify-between">
+        <Card className="p-5 flex flex-col justify-between">
           <div>
-            <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('pendingRoomsTitle')}</span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+              {t('pendingRoomsTitle')}
+            </p>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <span className="text-2xl font-bold tracking-tight text-foreground">
                 {stats.pendingApprovals}
               </span>
               <Badge variant="warning" size="sm">
                 {t('handleReport')}
               </Badge>
             </div>
-            <p className="text-[11px] text-neutral-500 mt-0.5">{t('pendingRoomsDesc')}</p>
+            <p className="text-[11px] text-foreground-muted mt-1">{t('pendingRoomsDesc')}</p>
           </div>
-          <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800">
+          <div className="mt-4 pt-3 border-t border-border">
             <Link
               href="/dashboard/admin/rooms"
-              className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1"
+              className="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline inline-flex items-center gap-1.5"
             >
-              {t('pendingRoomsAction')} <ArrowRight className="w-3 h-3" />
+              <span>{t('pendingRoomsAction')}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </Card>
 
-        <Card className="p-5 space-y-2 flex flex-col justify-between">
+        <Card className="p-5 flex flex-col justify-between">
           <div>
-            <span className="text-xs text-neutral-500 dark:text-neutral-400">{t('pendingKycTitle')}</span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+              {t('pendingKycTitle')}
+            </p>
+            <div className="flex items-baseline gap-2 mt-1.5">
+              <span className="text-2xl font-bold tracking-tight text-foreground">
                 5
               </span>
               <Badge variant="warning" size="sm">
                 <ShieldCheck className="w-3 h-3 mr-1" />
-                {t('ekycBadge')}
+                <span>{t('ekycBadge')}</span>
               </Badge>
             </div>
-            <p className="text-[11px] text-neutral-500 mt-0.5">{t('pendingKycDesc')}</p>
+            <p className="text-[11px] text-foreground-muted mt-1">{t('pendingKycDesc')}</p>
           </div>
-          <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800">
+          <div className="mt-4 pt-3 border-t border-border">
             <Link
               href="/dashboard/admin/kyc"
-              className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline flex items-center gap-1"
+              className="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline inline-flex items-center gap-1.5"
             >
-              {t('pendingKycAction')} <ArrowRight className="w-3 h-3" />
+              <span>{t('pendingKycAction')}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </Card>
       </div>
 
+      {/* Detail Section: Reports & Health */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="p-6 space-y-4">
-          <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-amber-500" />
-            {t('recentReportsTitle')}
-          </h2>
-          <div className="space-y-3 text-xs">
-            <div className="p-3 bg-neutral-50 dark:bg-neutral-800/40 rounded-xl flex items-center justify-between border border-neutral-200 dark:border-neutral-800">
-              <div>
-                <p className="font-semibold text-neutral-900 dark:text-neutral-100">{t('recentReportsDesc')}</p>
-                <p className="text-neutral-500 text-[11px] mt-0.5">{t('recentReportsReporter')}</p>
-              </div>
-              <Link href="/dashboard/admin/reports">
-                <Button variant="outline" size="sm">
-                  {t('handleReport')}
-                </Button>
-              </Link>
+          <div className="flex items-center gap-2 pb-3 border-b border-border">
+            <span className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600">
+              <AlertTriangle className="w-4 h-4" />
+            </span>
+            <h2 className="text-sm font-bold text-foreground">
+              {t('recentReportsTitle')}
+            </h2>
+          </div>
+          <div className="p-4 bg-surface-muted rounded-xl flex items-center justify-between border border-border">
+            <div className="space-y-0.5">
+              <p className="text-xs font-semibold text-foreground">{t('recentReportsDesc')}</p>
+              <p className="text-[11px] text-foreground-muted">{t('recentReportsReporter')}</p>
             </div>
+            <Link href="/dashboard/admin/reports">
+              <Button variant="outline" size="sm">
+                {t('handleReport')}
+              </Button>
+            </Link>
           </div>
         </Card>
 
         <Card className="p-6 space-y-4">
-          <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            {t('systemHealthTitle')}
-          </h2>
-          <div className="space-y-2.5 text-xs">
-            <div className="flex justify-between items-center py-1.5 border-b border-neutral-100 dark:border-neutral-800">
-              <span className="text-neutral-600 dark:text-neutral-400">{t('svcGateway')}</span>
+          <div className="flex items-center gap-2 pb-3 border-b border-border">
+            <span className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600">
+              <CheckCircle2 className="w-4 h-4" />
+            </span>
+            <h2 className="text-sm font-bold text-foreground">
+              {t('systemHealthTitle')}
+            </h2>
+          </div>
+          <div className="space-y-3 text-xs">
+            <div className="flex justify-between items-center py-1.5 border-b border-border/60">
+              <span className="font-medium text-foreground">{t('svcGateway')}</span>
               <Badge variant={stats.servicesHealth.gateway ? 'success' : 'danger'} size="sm">
                 {stats.servicesHealth.gateway ? t('serviceNormal') : t('serviceDegraded')}
               </Badge>
             </div>
-            <div className="flex justify-between items-center py-1.5 border-b border-neutral-100 dark:border-neutral-800">
-              <span className="text-neutral-600 dark:text-neutral-400">{t('svcIdentity')}</span>
+            <div className="flex justify-between items-center py-1.5 border-b border-border/60">
+              <span className="font-medium text-foreground">{t('svcIdentity')}</span>
               <Badge variant={stats.servicesHealth.identity ? 'success' : 'danger'} size="sm">
                 {stats.servicesHealth.identity ? t('serviceNormal') : t('serviceDegraded')}
               </Badge>
             </div>
-            <div className="flex justify-between items-center py-1.5 border-b border-neutral-100 dark:border-neutral-800">
-              <span className="text-neutral-600 dark:text-neutral-400">{t('svcListing')}</span>
+            <div className="flex justify-between items-center py-1.5 border-b border-border/60">
+              <span className="font-medium text-foreground">{t('svcListing')}</span>
               <Badge variant={stats.servicesHealth.listing ? 'success' : 'danger'} size="sm">
                 {stats.servicesHealth.listing ? t('serviceNormal') : t('serviceDegraded')}
               </Badge>
             </div>
             <div className="flex justify-between items-center py-1.5">
-              <span className="text-neutral-600 dark:text-neutral-400">{t('svcBookingBilling')}</span>
+              <span className="font-medium text-foreground">{t('svcBookingBilling')}</span>
               <Badge variant={stats.servicesHealth.booking ? 'success' : 'danger'} size="sm">
                 {stats.servicesHealth.booking ? t('serviceNormal') : t('serviceDegraded')}
               </Badge>
