@@ -1,75 +1,112 @@
-# Tổ Ấm - Web Frontend Application (`accommodation-web`)
+# To Am - Web Frontend Application (`accommodation-web`)
 
-Ứng dụng web tìm kiếm và quản lý phòng trọ trực tuyến **Tổ Ấm**, xây dựng bằng **Next.js 16.2 App Router**, **React 19**, **Tailwind CSS v4** và tuân thủ nghiêm ngặt **Clean Architecture**.
+Ung dung web tim kiem va quan ly phong tro truc tuyen **To Am**, xay dung bang **Next.js 16.2 App Router**, **React 19**, **Tailwind CSS v4** va tuan thu nghiem ngat **Clean Architecture**.
 
 ---
 
-## 🚀 Công Nghệ Cốt Lõi
+## Cong Nghe Cot Loi
 * **Framework:** Next.js 16.2.12 (App Router) + React 19.3.1.
-* **Kiến trúc:** Clean Architecture (`domain/` -> `application/` -> `infrastructure/` -> `presentation/`), ép luật bằng `eslint-plugin-boundaries`.
-* **Design System:** Tailwind CSS v4.3.5 với design tokens (`@theme`) tông màu chủ đạo Teal `#0F766E` và Amber `#F59E0B`.
-* **Icon:** `lucide-react` (tuyệt đối không dùng emoji).
-* **Đa ngôn ngữ:** `next-intl` (mặc định tiếng Việt `vi`, hỗ trợ tiếng Anh `en`).
+* **Kien truc:** Clean Architecture (`domain/` -> `application/` -> `infrastructure/` -> `presentation/`), ep luat bang `eslint-plugin-boundaries`.
+* **Design System:** Tailwind CSS v4.3.5 voi design tokens (`@theme`) tong mau chu dao Teal `#0F766E` va Amber `#F59E0B`.
+* **Icon:** `lucide-react` (tuyet doi khong dung emoji).
+* **Da ngon ngu:** `next-intl` (mac dinh tieng Viet `vi`, ho tro tieng Anh `en`).
 * **State:** `@tanstack/react-query` (server state) + `zustand` (UI state).
 * **Form & Validation:** `react-hook-form` + `zod`.
 
 ---
 
-## ⚙️ Hướng Dẫn Cài Đặt & Khởi Chạy
+## Cac Trung Tam Chuc Nang & Man Hinh
 
-### 1. Yêu cầu hệ thống
+### 1. Trang Cong Cong (Public Pages)
+* Trang chu (`/`): Tim kiem da tieu chi, phong noi bat, khu vuc pho bien (Ha Noi, TP.HCM, Da Nang).
+* Danh sach phong (`/rooms`): Bo loc gia, dien tich, tien nghi, quan huyen, sap xep.
+* Chi tiet phong (`/rooms/[id]`): Bo suu tap anh, ban do, tien nghi, chu nha, danh gia, modal dat lich & thue phong.
+* Trang ho so chu nha (`/hosts/[id]`): Thong tin chu nha, danh gia va cac phong dang quan ly.
+* Cac trang thong tin: Gioi thieu (`/about`), Huong dan an toan (`/safety-guide`), Bang gia (`/pricing`), Cau hoi thuong gap (`/faq`), Lien he (`/contact`), Dieu khoan (`/terms`), Chinh sach bao mat (`/privacy`).
+
+### 2. Xac Thuc & Tai Khoan (Authentication)
+* Dang nhap (`/login`) & Dang ky (`/register`) voi form Zod validation va dang nhap Google.
+* Quen mat khau (`/forgot-password`), Dat lai mat khau (`/reset-password`), Xac thuc email (`/verify-email`).
+
+### 3. Bang Dieu Khien Nguoi Thue (Tenant Dashboard - `/dashboard/tenant`)
+* Tong quan: Hop dong hien tai, hoa don den han, lich hen xem phong sap toi.
+* Ho so ca nhan, eKYC xac minh CCCD 2 mat, phong da luu, tim kiem da luu.
+* Quan ly lich hen, yeu cau thue phong, danh sach hop dong va chi tiet hop dong (ky OTP, tai PDF).
+* Quan ly hoa don va chi tiet hoa don (ma VietQR), lich su thanh toan, hoi thoai tin nhan, thong bao, danh gia va cai dat.
+
+### 4. Bang Dieu Khien Chu Tro (Landlord Dashboard - `/dashboard/landlord`)
+* Tong quan: Doanh thu, ty le lap day, cong viec can xu ly ngay.
+* Quan ly phong: Danh sach, tao phong moi (quy trinh Stepper 4 buoc), sua phong.
+* Quan ly lich hen xem phong, duyet yeu cau thue, quan ly hop dong va lap hop dong moi.
+* Danh sach khach thue, ghi chi so dien nuoc (cong to), tao hoa don va nhac no SMS.
+* Phan tich bao cao doanh thu, danh gia nhan duoc, hoi thoai tin nhan, eKYC chu nha, cai dat VietQR va don gia tien ich.
+
+### 5. Trung Tam Kiem Duyet & Quan Tri (Admin & Moderator Dashboard - `/dashboard/admin`)
+* Tong quan: Chi so toan san, bieu do tang truong, trang thai cac microservices backend.
+* Duyet tin dang phong tro (kiem duyet tin moi, modal tu choi kem ly do).
+* Kiem duyet eKYC (xem anh CCCD 2 mat, thong tin chu nha/khach thue).
+* Quan ly nguoi dung (khoa/mo khoa tai khoan, phan quyen vai tro).
+* Xu ly bao cao vi pham, kiem duyet danh gia (an/hien danh gia vi pham).
+* Quan ly danh muc he thong (loai phong, tien nghi, dia gioi hanh chinh).
+* Phan tich chuyen sau san, nhat ky kiem toan he thong (Audit Logs).
+* Cau hinh he thong (che do bao tri, duyet tin tu dong, cong VietQR, bao mat phien).
+
+---
+
+## Huong Dan Cai Dat & Khoi Chay
+
+### 1. Yeu cau he thong
 * **Node.js:** v22+ LTS
 * **npm:** v10+
 
-### 2. Thiết lập biến môi trường
-Tạo file `.env.local` từ mẫu:
+### 2. Thiet lap bien moi truong
+Tao file `.env.local` tu mau:
 ```bash
 cp .env.example .env.local
 ```
-Nội dung mặc định kết nối tới Backend Gateway:
+Noi dung mac dinh ket noi toi Backend Gateway:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
 NEXT_PUBLIC_DEFAULT_LOCALE=vi
 ```
 
-### 3. Cài đặt phụ thuộc & Chạy môi trường Dev
+### 3. Cai dat phu thuoc & Chay moi truong Dev
 ```bash
-# Cài đặt thư viện
+# Cai dat thu vien
 npm install
 
-# Khởi chạy máy chủ phát triển (Cổng 3000)
+# Khoi chay may chu phat trien (Cong 3000)
 npm run dev
 ```
-Truy cập ứng dụng tại: `http://localhost:3000`.
+Truy cap ung dung tai: `http://localhost:3000`.
 
-### 4. Kiểm tra chất lượng mã nguồn
+### 4. Kiem tra chat luong ma nguon
 ```bash
-# Kiểm tra lỗi cú pháp & luật kiến trúc Clean Architecture
+# Kiem tra loi cu phap & luat kien truc Clean Architecture
 npm run lint
 
-# Kiểm tra kiểu TypeScript
+# Kiem tra kieu TypeScript
 npm run type-check
 
-# Chạy unit tests
+# Chay kiem thu tu dong (Unit tests + i18n parity + Route links verification)
 npm run test
 
-# Build ứng dụng sản phẩm
+# Build ung dung san pham
 npm run build
 ```
 
 ---
 
-## 🔑 Tài Khoản Thử Nghiệm (Kết nối Backend)
+## Tai Khoan Thu Nghiem (Ket noi Backend)
 
-| Vai trò | Email | Mật khẩu |
+| Vai tro | Email | Mat khau |
 |---|---|---|
-| **Người thuê (Tenant)** | `tenant@toam.vn` | `password123` |
-| **Chủ trọ (Landlord)** | `landlord@toam.vn` | `password123` |
-| **Kiểm duyệt viên (Moderator)** | `moderator@toam.vn` | `password123` |
-| **Quản trị viên (Admin)** | `admin@toam.vn` | `password123` |
+| **Nguoi thue (Tenant)** | `tenant@toam.vn` | `password123` |
+| **Chu tro (Landlord)** | `landlord@toam.vn` | `password123` |
+| **Kiem duyet vien (Moderator)** | `moderator@toam.vn` | `password123` |
+| **Quan tri vien (Admin)** | `admin@toam.vn` | `password123` |
 
 ---
 
-## 📑 Tài Liệu Kỹ Thuật
-* Quy chuẩn lập trình chi tiết: Xem tại [`AGENT.md`](./AGENT.md).
-
+## Tai Lieu Ky Thuat
+* Quy chuan lap trinh chi tiet: Xem tai [`AGENT.md`](./AGENT.md).

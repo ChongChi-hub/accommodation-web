@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "test": "vitest run"
+    "verify:links": "node scripts/verify-links.mjs",
+    "verify:i18n": "node scripts/verify-i18n.mjs",
+    "test": "vitest run && node scripts/verify-i18n.mjs && node scripts/verify-links.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "7.0.3",
