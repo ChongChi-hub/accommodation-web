@@ -117,6 +117,28 @@
       "errorDesc": "Could not connect to the moderation service.",
       "toastApproved": "Approved listing #{id}! It is now visible on the platform.",
       "toastRejected": "Rejected listing #{id}. Notification with reason sent to the landlord."
+    },
+    "kyc": {
+      "title": "National ID (eKYC) Verification",
+      "subtitle": "Verify authenticity between 2-sided ID card photos and user account registration",
+      "colName": "Full Name & Contact",
+      "colRole": "Role",
+      "colIdNumber": "National ID Number",
+      "colSubmitted": "Submitted",
+      "colAction": "Action",
+      "btnReview": "Inspect 2-Sided ID",
+      "btnApprove": "Approve Identity",
+      "btnReject": "Request Reshoot",
+      "modalTitle": "Verify ID: {name}",
+      "modalDesc": "ID Number: {idNumber} • Role: {role}",
+      "frontImage": "Front Side Photo",
+      "backImage": "Back Side Photo",
+      "toastApproved": "Approved eKYC! User account has been granted the Verified badge.",
+      "toastRejected": "Rejected and requested user to submit clearer ID photos.",
+      "emptyTitle": "No eKYC profiles awaiting review",
+      "emptyDesc": "All user identity verification requests have been processed.",
+      "errorTitle": "Error loading eKYC list",
+      "errorDesc": "Could not connect to the moderation service."
     }
   }
 }
