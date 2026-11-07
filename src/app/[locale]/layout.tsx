@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import { ToastContainer } from '@/presentation/components/ui/Toast';
 import '@/styles/globals.css';
 
 export function generateStaticParams() {
@@ -30,16 +31,16 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
       </head>
-      <body className="min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)] antialiased">
+      <body className="min-h-screen bg-[var(--color-background)] dark:bg-stone-950 text-[var(--color-foreground)] antialiased transition-colors">
         <NextIntlClientProvider messages={messages}>
           {children}
+          <ToastContainer />
         </NextIntlClientProvider>
       </body>
     </html>
   );
 }
-
