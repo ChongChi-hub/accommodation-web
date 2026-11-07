@@ -13,9 +13,10 @@ interface AuthState {
   register: (data: { email: string; phone: string; password: string; fullName: string; role: string }) => Promise<boolean>;
   logout: () => Promise<void>;
   clearError: () => void;
+  switchRole: (role: 'TENANT' | 'LANDLORD') => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isAuthenticated: false,
   isLoading: false,
@@ -70,5 +71,18 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   clearError: () => set({ error: null }),
+
+  switchRole: (newRole: 'TENANT' | 'LANDLORD') => {
+    const current = get().user;
+    if (!current) return;
+    const updatedRoles = [newRole];
+    const updatedUser = { ...current, roles: updatedRoles };
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('toam_user', JSON.stringify(updatedUser));
+      } catch {}
+    }
+    set({ user: updatedUser });
+  },
 }));
 

@@ -47,6 +47,28 @@
 * Phân hệ kiểm duyệt tin đăng và hồ sơ định danh KYC.
 * Xử lý báo cáo vi phạm và ghi nhật ký hoạt động hệ thống (Audit Logs).
 
+### 3.7. Dịch vụ Hỗ trợ & Xử lý Khiếu nại (Support & Helpdesk)
+* Hệ thống phiếu yêu cầu hỗ trợ (Support Tickets) đa cấp độ (LOW, MEDIUM, HIGH, URGENT).
+* Người dùng có thể tạo phiếu mới đính kèm ảnh minh chứng sự cố hoặc khiếu nại chất lượng dịch vụ.
+* Quản trị viên tiếp nhận, phân công nhân viên xử lý và gửi phản hồi theo dạng luồng hội thoại có lưu vết.
+
+### 3.8. Quản lý Yêu cầu Sửa chữa Cơ sở Vật chất (Maintenance Requests)
+* Người thuê gửi yêu cầu báo hỏng thiết bị (điện, nước, nội thất, internet) kèm hình ảnh thực tế và mức độ khẩn cấp.
+* Chủ trọ nhận thông báo, cập nhật tiến độ (PENDING -> IN_PROGRESS -> RESOLVED) và ghi chú chi phí khắc phục.
+
+### 3.9. Tranh chấp & Đối soát Tiền cọc (Disputes & Financial Settlement)
+* Trọng tài giải quyết mâu thuẫn giữa người thuê và chủ nhà về việc khấu trừ tiền cọc khi trả phòng hoặc vi phạm hợp đồng.
+* Quản lý dòng tiền đặt cọc giữ chỗ và cọc hợp đồng; lệnh hoàn tiền hoặc chuyển giao cọc được ghi nhận minh bạch vào sổ cái giao dịch (Transactions).
+
+### 3.10. Tiện ích Tìm kiếm Bản đồ, So sánh & Command Palette (Map, Comparison & Fast Search)
+* Tìm phòng trực quan trên bản đồ số (`/map`), tương tác ghim vị trí, hiển thị giá theo cụm và đồng bộ bộ lọc theo thời gian thực.
+* Công cụ so sánh phòng (`/compare`) cho phép đối chiếu song song từ 3 đến 4 phòng về diện tích, giá thuê, tiện nghi, nội quy và khoảng cách.
+* Tìm kiếm nhanh Command Palette (Ctrl+K) trên Dashboard hỗ trợ nhảy nhanh đến các chức năng và trang theo phân quyền vai trò.
+
+### 3.11. Quản lý Vòng đời Thuê trọ & Rời đi (Move-out & Deposit Settlement)
+* Quy trình đăng ký trả phòng (`/move-out`) trước ngày kết thúc hợp đồng.
+* Biên bản kiểm kê tài sản bàn giao, chốt chỉ số điện nước cuối cùng và quyết toán khoản cọc hoàn trả.
+
 ---
 
 ## 4. Yêu Cầu Phi Chức Năng (Non-Functional Requirements)

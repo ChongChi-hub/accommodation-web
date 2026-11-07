@@ -1,6 +1,10 @@
 import { HttpAuthRepository } from '../repositories/http-auth.repository';
 import { HttpListingRepository } from '../repositories/http-listing.repository';
 import { StaticAdminRepository } from '../static/StaticAdminRepository';
+import { StaticSupportRepository } from '../static/StaticSupportRepository';
+import { StaticMaintenanceRepository } from '../static/StaticMaintenanceRepository';
+import { StaticDisputeRepository } from '../static/StaticDisputeRepository';
+import { StaticTransactionRepository } from '../static/StaticTransactionRepository';
 import { LoginUseCase } from '@/application/use-cases/auth/login.use-case';
 import { RegisterUseCase } from '@/application/use-cases/auth/register.use-case';
 import { GetProfileUseCase } from '@/application/use-cases/auth/get-profile.use-case';
@@ -12,8 +16,12 @@ import { GetLocationsUseCase } from '@/application/use-cases/listing/get-locatio
 const authRepository = new HttpAuthRepository();
 const listingRepository = new HttpListingRepository();
 const adminRepository = new StaticAdminRepository();
+const supportRepository = new StaticSupportRepository();
+const maintenanceRepository = new StaticMaintenanceRepository();
+const disputeRepository = new StaticDisputeRepository();
+const transactionRepository = new StaticTransactionRepository();
 
-// Use Cases
+// Use Cases & Repositories Container
 export const container = {
   auth: {
     loginUseCase: new LoginUseCase(authRepository),
@@ -29,5 +37,17 @@ export const container = {
   },
   admin: {
     adminRepository,
+  },
+  support: {
+    supportRepository,
+  },
+  maintenance: {
+    maintenanceRepository,
+  },
+  dispute: {
+    disputeRepository,
+  },
+  transaction: {
+    transactionRepository,
   },
 };

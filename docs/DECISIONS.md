@@ -114,3 +114,33 @@ Qua việc mở trình duyệt kiểm tra thực tế trên Chromium ở cả 2 
    - Table: có lớp bọc `overflow-x-auto` với thanh cuộn mỏng, min-width chuẩn, phân cách dòng rõ nét.
    - Badge & Card: nhất quán border radius và độ tương phản màu chuẩn WCAG AA.
 
+---
+
+## 7. Quyết định Bổ sung Lược đồ Cơ sở Dữ liệu & Bounded Contexts Tương lai (Future Schemas & Entities)
+
+Nhằm phục vụ mở rộng đầy đủ các tính năng trong giai đoạn tiếp theo mà không làm xáo trộn kiến trúc DDD hiện tại, các thực thể và bảng cơ sở dữ liệu backend sau đây được quy hoạch chi tiết:
+
+1. **`maintenance_requests` (trong `booking-service` hoặc `maintenance-service`):**
+   * *Mục đích:* Quản lý vòng đời yêu cầu bảo trì sửa chữa phòng trọ giữa người thuê và chủ nhà.
+   * *Cấu trúc cột:* `id` (VARCHAR/UUID), `room_id` (VARCHAR), `tenant_id` (VARCHAR), `landlord_id` (VARCHAR), `title` (VARCHAR 255), `description` (TEXT), `category` (ELECTRICITY/WATER/APPLIANCE/INTERNET/STRUCTURE), `priority` (LOW/MEDIUM/HIGH/EMERGENCY), `status` (PENDING/IN_PROGRESS/RESOLVED/REJECTED), `cost` (DECIMAL 12,2), `images_json` (JSON), `created_at` (TIMESTAMP), `resolved_at` (TIMESTAMP).
+2. **`support_tickets` & `support_messages` (trong `communication-service`):**
+   * *Mục đích:* Quản lý khiếu nại, phản ánh và hỗ trợ kỹ thuật khách hàng toàn sàn.
+   * *Cấu trúc cột tickets:* `id`, `user_id`, `subject`, `category` (ACCOUNT/PAYMENT/CONTRACT/VIOLATION/OTHER), `priority`, `status` (OPEN/ASSIGNED/IN_PROGRESS/RESOLVED/CLOSED), `assigned_admin_id`, `created_at`, `closed_at`.
+   * *Cấu trúc cột messages:* `id`, `ticket_id`, `sender_id`, `sender_role`, `message`, `attachment_url`, `created_at`.
+3. **`disputes` (trong `booking-service` hoặc `admin-service`):**
+   * *Mục đích:* Xử lý tranh chấp tiền cọc, vi phạm hợp đồng hoặc hư hại tài sản có sự can thiệp của Quản trị sàn.
+   * *Cấu trúc cột:* `id`, `contract_id`, `complainant_id`, `defendant_id`, `dispute_type` (DEPOSIT_RETURN/DAMAGE_COMPENSATION/EARLY_TERMINATION), `amount` (DECIMAL), `reason` (TEXT), `evidence_json` (JSON), `status` (PENDING/MEDIATING/RESOLVED/DISMISSED), `verdict` (TEXT), `resolved_by`, `resolved_at`.
+4. **`transactions` (trong `billing-service`):**
+   * *Mục đích:* Sổ cái theo dõi mọi luồng tiền ra vào: đặt cọc giữ chỗ, thanh toán tiền phòng, phí sàn, hoàn cọc.
+   * *Cấu trúc cột:* `id`, `user_id`, `contract_id`, `invoice_id`, `amount`, `currency` (VND), `type` (DEPOSIT_HOLD/RENT_PAYMENT/COMMISSION_FEE/REFUND), `payment_method` (VIETQR/BANK_TRANSFER/WALLET), `status` (PENDING/SUCCESS/FAILED/REFUNDED), `reference_code` (VARCHAR), `created_at`.
+5. **`blog_posts` & `cms_content` (trong `listing-service` hoặc `cms-service`):**
+   * *Mục đích:* Quản lý cẩm nang sống, kinh nghiệm thuê trọ, SEO khu vực và bài viết tin tức.
+   * *Cấu trúc cột:* `id`, `slug` (VARCHAR unique), `title`, `summary`, `content_markdown` (LONGTEXT), `thumbnail_url`, `author_id`, `status` (DRAFT/PUBLISHED/ARCHIVED), `view_count`, `published_at`.
+6. **`listing_plans` & `promo_codes` (trong `billing-service`):**
+   * *Mục đích:* Bảng giá gói đẩy tin nổi bật, gắn nhãn phòng VIP và mã giảm giá thanh toán.
+7. **`contract_templates` (trong `booking-service`):**
+   * *Mục đích:* Cho phép chủ trọ cấu hình các điều khoản pháp lý và quy định nội bộ mẫu trước khi sinh hợp đồng.
+8. **`expenses` (trong `billing-service`):**
+   * *Mục đích:* Hỗ trợ chủ trọ theo dõi dòng chi phí bảo trì định kỳ, tiền rác, thuế để tính toán biên lợi nhuận ròng.
+
+

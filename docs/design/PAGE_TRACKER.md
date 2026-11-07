@@ -4,91 +4,165 @@
 
 ---
 
-## Danh Sách Trang & Tiến Độ Chi Tiết
-
-### Nhóm 1: Quản Trị Viên & Kiểm Duyệt Viên (Admin & Moderator)
-| Route | Tên Trang | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
-|---|---|---|---|---|---|---|
-| `/dashboard/admin` | Tổng quan sàn | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/overview-*.png` (8 ảnh) | Đã sửa CSS v4, font Plus Jakarta Sans, KPI cards, E2E visual pass |
-| `/dashboard/admin/rooms` | Duyệt tin đăng | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/rooms-*.png` (8 ảnh) | Đã bổ sung Drawer chi tiết phòng, Tabs chuẩn, E2E visual pass |
-| `/dashboard/admin/kyc` | Duyệt eKYC CCCD | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/kyc-*.png` (8 ảnh) | So sánh CCCD 2 mặt + đối chiếu OCR + lý do từ chối, E2E visual pass |
-| `/dashboard/admin/users` | Quản lý người dùng | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/users-*.png` (8 ảnh) | Đã bổ sung User Detail Drawer, Tabs vai trò, E2E visual pass |
-| `/dashboard/admin/reports` | Báo cáo vi phạm | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/reports-*.png` (8 ảnh) | Đã bổ sung Report Detail Drawer, xử lý khiếu nại, E2E visual pass |
-| `/dashboard/admin/reviews` | Kiểm duyệt đánh giá | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/reviews-*.png` (8 ảnh) | Đã bổ sung Review Detail Drawer, số sao, ẩn/hiện, E2E visual pass |
-| `/dashboard/admin/dictionaries` | Danh mục hệ thống | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/dictionaries-*.png` (8 ảnh) | Tabs danh mục chuẩn, modal thêm mới, E2E visual pass |
-| `/dashboard/admin/analytics` | Phân tích sâu | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/analytics-*.png` (8 ảnh) | ChartCards, thanh tiến độ khu vực semantic, E2E visual pass |
-| `/dashboard/admin/audit-logs` | Nhật ký hệ thống | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/audit-logs-*.png` (8 ảnh) | IP monospace badges, search, E2E visual pass |
-| `/dashboard/admin/settings` | Cấu hình toàn sàn | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/settings-*.png` (8 ảnh) | Toggle switches chuẩn, Ops/Payment/Security, E2E visual pass |
-
-### Nhóm 2: Chủ Trọ (Landlord)
-| Route | Tên Trang | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
-|---|---|---|---|---|---|---|
-| `/dashboard/landlord` | Tổng quan chủ trọ | `StaticLandlordRepository` | Chờ rà soát | - | - | Doanh thu, phòng trống, việc cần làm |
-| `/dashboard/landlord/rooms` | Danh sách phòng | `StaticLandlordRepository` | Chờ rà soát | - | - | Bảng phòng, trạng thái phòng |
-| `/dashboard/landlord/rooms/new` | Đăng tin phòng mới | `StaticFormHandler` | Chờ rà soát | - | - | Stepper 4 bước đăng tin |
-| `/dashboard/landlord/rooms/[id]/edit` | Chỉnh sửa phòng | `StaticFormHandler` | Chờ rà soát | - | - | Biểu mẫu cập nhật tin |
-| `/dashboard/landlord/appointments` | Lịch hẹn xem phòng | `StaticBookingRepository` | Chờ rà soát | - | - | Duyệt/từ chối lịch hẹn |
-| `/dashboard/landlord/rental-requests` | Yêu cầu thuê phòng | `StaticBookingRepository` | Chờ rà soát | - | - | Duyệt hồ sơ xin thuê |
-| `/dashboard/landlord/contracts` | Quản lý hợp đồng | `StaticContractRepository` | Chờ rà soát | - | - | Lập hợp đồng mới, kết thúc hợp đồng |
-| `/dashboard/landlord/tenants` | Danh sách khách thuê | `StaticLandlordRepository` | Chờ rà soát | - | - | Quản lý khách đang thuê |
-| `/dashboard/landlord/utilities` | Chỉ số điện nước | `StaticBillingRepository` | Chờ rà soát | - | - | Ghi công tơ, tính lượng tiêu thụ |
-| `/dashboard/landlord/invoices` | Quản lý hóa đơn | `StaticBillingRepository` | Chờ rà soát | - | - | Tạo hóa đơn, nhắc nợ SMS |
-| `/dashboard/landlord/analytics` | Báo cáo doanh thu | `StaticLandlordRepository` | Chờ rà soát | - | - | Biểu đồ doanh thu & chi phí |
-| `/dashboard/landlord/reviews` | Đánh giá nhận được | `StaticReviewRepository` | Chờ rà soát | - | - | Trả lời đánh giá của người thuê |
-| `/dashboard/landlord/messages` | Tin nhắn trao đổi | `StaticChatRepository` | Chờ rà soát | - | - | Trò chuyện với khách thuê |
-| `/dashboard/landlord/notifications` | Thông báo | `StaticNotificationRepository` | Chờ rà soát | - | - | Thông báo hệ thống |
-| `/dashboard/landlord/kyc` | Xác thực chủ trọ | `StaticKycRepository` | Chờ rà soát | - | - | Tải giấy tờ nhà đất & CCCD |
-| `/dashboard/landlord/settings` | Cài đặt thanh toán | `StaticBillingRepository` | Chờ rà soát | - | - | Tài khoản VietQR & đơn giá điện nước |
-
-### Nhóm 3: Người Thuê (Tenant)
-| Route | Tên Trang | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
-|---|---|---|---|---|---|---|
-| `/dashboard/tenant` | Tổng quan người thuê | `StaticTenantRepository` | Chờ rà soát | - | - | Hợp đồng hiện tại, hóa đơn đến hạn |
-| `/dashboard/tenant/profile` | Hồ sơ cá nhân | `HttpAuthRepository` (API) | Chờ rà soát | - | - | API Backend identity-service |
-| `/dashboard/tenant/kyc` | Định danh eKYC | `StaticKycRepository` | Chờ rà soát | - | - | Chụp CCCD 2 mặt |
-| `/dashboard/tenant/saved-rooms` | Phòng đã lưu | `StaticTenantRepository` | Chờ rà soát | - | - | Danh sách phòng yêu thích |
-| `/dashboard/tenant/saved-searches` | Tìm kiếm đã lưu | `StaticTenantRepository` | Chờ rà soát | - | - | Bộ lọc thông báo phòng mới |
-| `/dashboard/tenant/appointments` | Lịch hẹn xem phòng | `StaticBookingRepository` | Chờ rà soát | - | - | Lịch hẹn đã đặt, hủy hẹn |
-| `/dashboard/tenant/rental-requests` | Yêu cầu thuê phòng | `StaticBookingRepository` | Chờ rà soát | - | - | Trạng thái xét duyệt hồ sơ |
-| `/dashboard/tenant/contracts` | Danh sách hợp đồng | `StaticContractRepository` | Chờ rà soát | - | - | Hợp đồng thuê nhà |
-| `/dashboard/tenant/contracts/[id]` | Chi tiết hợp đồng | `StaticContractRepository` | Chờ rà soát | - | - | Tải PDF, ký OTP điện tử |
-| `/dashboard/tenant/invoices` | Danh sách hóa đơn | `StaticBillingRepository` | Chờ rà soát | - | - | Hóa đơn tiền nhà hàng tháng |
-| `/dashboard/tenant/invoices/[id]` | Chi tiết hóa đơn | `StaticBillingRepository` | Chờ rà soát | - | - | Quét mã VietQR thanh toán |
-| `/dashboard/tenant/payments` | Lịch sử thanh toán | `StaticBillingRepository` | Chờ rà soát | - | - | Giao dịch đã thanh toán |
-| `/dashboard/tenant/messages` | Hộp thư tin nhắn | `StaticChatRepository` | Chờ rà soát | - | - | Trao đổi với chủ nhà |
-| `/dashboard/tenant/notifications` | Thông báo | `StaticNotificationRepository` | Chờ rà soát | - | - | Thông báo thanh toán, lịch hẹn |
-| `/dashboard/tenant/reviews` | Đánh giá của tôi | `StaticReviewRepository` | Chờ rà soát | - | - | Đánh giá phòng trọ đã thuê |
-| `/dashboard/tenant/settings` | Cài đặt bảo mật | `StaticTenantRepository` | Chờ rà soát | - | - | Đổi mật khẩu, cài đặt thông báo |
-
-### Nhóm 4: Xác Thực (Auth)
-| Route | Tên Trang | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
-|---|---|---|---|---|---|---|
-| `/login` | Đăng nhập | `HttpAuthRepository` (API) | Chờ rà soát | - | - | API Backend identity-service |
-| `/register` | Đăng ký | `HttpAuthRepository` (API) | Chờ rà soát | - | - | API Backend identity-service |
-| `/forgot-password` | Quên mật khẩu | `HttpAuthRepository` | Chờ rà soát | - | - | Gửi OTP khôi phục |
-| `/reset-password` | Đặt lại mật khẩu | `HttpAuthRepository` | Chờ rà soát | - | - | Xác thực token & đổi pass |
-| `/verify-email` | Xác thực email | `HttpAuthRepository` | Chờ rà soát | - | - | Kích hoạt tài khoản |
-
-### Nhóm 5: Công Khai (Public)
-| Route | Tên Trang | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
-|---|---|---|---|---|---|---|
-| `/` | Trang chủ | `HttpListingRepository` (API) | Chờ rà soát | - | - | API Backend listing-service |
-| `/rooms` | Danh sách tìm kiếm | `HttpListingRepository` (API) | Chờ rà soát | - | - | API Backend listing-service |
-| `/rooms/[id]` | Chi tiết phòng | `HttpListingRepository` (API) | Chờ rà soát | - | - | API Backend listing-service |
-| `/hosts/[id]` | Hồ sơ chủ trọ | `HttpListingRepository` (API) | Chờ rà soát | - | - | API Backend listing-service |
-| `/about` | Về chúng tôi | Nội dung tĩnh i18n | Chờ rà soát | - | - | Giới thiệu Tổ Ấm |
-| `/safety-guide` | Cẩm nang an toàn | Nội dung tĩnh i18n | Chờ rà soát | - | - | Tránh bẫy lừa đảo thuê phòng |
-| `/pricing` | Bảng giá dịch vụ | Nội dung tĩnh i18n | Chờ rà soát | - | - | Biểu phí đăng tin & tiện ích |
-| `/faq` | Câu hỏi thường gặp | Nội dung tĩnh i18n | Chờ rà soát | - | - | FAQ người thuê và chủ trọ |
-| `/contact` | Liên hệ hỗ trợ | Nội dung tĩnh i18n | Chờ rà soát | - | - | Hotline, email, trụ sở |
-| `/terms` | Điều khoản sử dụng | Nội dung tĩnh i18n | Chờ rà soát | - | - | Điều khoản pháp lý sàn |
-| `/privacy` | Chính sách bảo mật | Nội dung tĩnh i18n | Chờ rà soát | - | - | Quy định bảo mật thông tin |
+## 1. Nhóm Dùng Chung (Common)
+| Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
+|---|---|---|---|---|---|---|---|
+| `/403` | Truy cập không được phép | P1 | Tĩnh i18n | Chờ rà soát | - | - | Màn hình 403 styled có nút quay về |
+| `/session-expired` | Phiên đăng nhập hết hạn | P1 | Tĩnh i18n | Chờ rà soát | - | - | Thông báo timeout, nút đăng nhập lại |
+| `/account-locked` | Tài khoản bị khóa tạm thời | P1 | Tĩnh i18n | Chờ rà soát | - | - | Lý do vi phạm, form liên hệ mở khóa |
+| `/maintenance` | Hệ thống đang bảo trì | P1 | Tĩnh i18n | Chờ rà soát | - | - | Dự kiến hoàn thành, hotline hỗ trợ |
+| `/support` | Trung tâm hỗ trợ & Phiếu yêu cầu | P1 | `StaticSupportRepository` | Chờ rà soát | - | - | Danh sách vé yêu cầu hỗ trợ |
+| `/support/new` | Tạo yêu cầu hỗ trợ mới | P1 | `StaticSupportRepository` | Chờ rà soát | - | - | Biểu mẫu đính kèm ảnh lỗi/khiếu nại |
+| `/support/[id]` | Chi tiết phiếu hỗ trợ & Trao đổi | P1 | `StaticSupportRepository` | Chờ rà soát | - | - | Luồng hội thoại hỗ trợ trực tiếp |
 
 ---
 
-## Thư Mục Lưu Trữ Ảnh Chụp Nghiệm Thu
-`docs/design/screenshots/<vai-tro>/<ten-trang>-<viewport>-<theme>.png`
-- Viewports: `1440` (Desktop), `1024` (Tablet ngang), `768` (Tablet dọc), `390` (Mobile)
-- Themes: `light`, `dark`
-- Locales: `vi`, `en`
+## 2. Nhóm Quản Trị Viên & Kiểm Duyệt Viên (Admin & Moderator)
+| Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
+|---|---|---|---|---|---|---|---|
+| `/dashboard/admin` | Tổng quan sàn (Admin) | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/overview-*.png` (8 ảnh) | Đã sửa CSS v4, font Plus Jakarta Sans, KPI cards, E2E visual pass |
+| `/dashboard/moderator` | Hàng đợi kiểm duyệt (Moderator) | P1 | `StaticAdminRepository` | Chờ rà soát | - | - | Hàng đợi tập trung phòng + KYC + Báo cáo |
+| `/dashboard/admin/rooms` | Duyệt tin đăng phòng | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/rooms-*.png` (8 ảnh) | Bổ sung Drawer chi tiết, Tabs chuẩn, E2E visual pass |
+| `/dashboard/admin/rooms/[id]` | Chi tiết phòng duyệt (Trang riêng) | P1 | `StaticAdminRepository` | Chờ rà soát | - | - | Link trực tiếp xem phòng kiểm duyệt |
+| `/dashboard/admin/kyc` | Duyệt hồ sơ eKYC CCCD | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/kyc-*.png` (8 ảnh) | So sánh CCCD 2 mặt + đối chiếu OCR + từ chối có lý do |
+| `/dashboard/admin/kyc/[id]` | Chi tiết hồ sơ KYC (Trang riêng) | P1 | `StaticAdminRepository` | Chờ rà soát | - | - | Link trực tiếp hồ sơ người dùng |
+| `/dashboard/admin/users` | Quản lý người dùng | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/users-*.png` (8 ảnh) | Bổ sung User Detail Drawer, Tabs vai trò, E2E pass |
+| `/dashboard/admin/users/[id]` | Chi tiết người dùng (Trang riêng) | P1 | `StaticAdminRepository` | Chờ rà soát | - | - | Lịch sử hoạt động, hợp đồng, vi phạm |
+| `/dashboard/admin/reports` | Báo cáo vi phạm | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/reports-*.png` (8 ảnh) | Bổ sung Report Detail Drawer, xử lý khiếu nại |
+| `/dashboard/admin/reports/[id]` | Chi tiết báo cáo vi phạm (Trang riêng) | P1 | `StaticAdminRepository` | Chờ rà soát | - | - | Link đối soát bằng chứng vi phạm |
+| `/dashboard/admin/reviews` | Kiểm duyệt đánh giá | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/reviews-*.png` (8 ảnh) | Bổ sung Review Detail Drawer, ẩn/hiện, E2E pass |
+| `/dashboard/admin/reviews/[id]` | Chi tiết đánh giá (Trang riêng) | P1 | `StaticAdminRepository` | Chờ rà soát | - | - | Chi tiết số sao, phản hồi từ chủ trọ |
+| `/dashboard/admin/contracts` | Quản lý hợp đồng toàn sàn | P1 | `StaticContractRepository` | Chờ rà soát | - | - | Danh sách hợp đồng đang hiệu lực, hết hạn |
+| `/dashboard/admin/contracts/[id]` | Chi tiết hợp đồng toàn sàn | P1 | `StaticContractRepository` | Chờ rà soát | - | - | Điều khoản, chữ ký điện tử, lịch sử |
+| `/dashboard/admin/transactions` | Giao dịch & Đối soát sàn | P1 | `StaticTransactionRepository` | Chờ rà soát | - | - | Dòng tiền cọc, phí hoa hồng, lệnh hoàn tiền |
+| `/dashboard/admin/disputes` | Quản lý tranh chấp hợp đồng | P1 | `StaticDisputeRepository` | Chờ rà soát | - | - | Tranh chấp cọc, hư hỏng đồ đạc |
+| `/dashboard/admin/disputes/[id]` | Chi tiết giải quyết tranh chấp | P1 | `StaticDisputeRepository` | Chờ rà soát | - | - | Phán quyết sàn, giải phóng tiền cọc |
+| `/dashboard/admin/support` | Quản lý vé hỗ trợ khách hàng | P1 | `StaticSupportRepository` | Chờ rà soát | - | - | Phân công nhân viên, xử lý yêu cầu |
+| `/dashboard/admin/support/[id]` | Chi tiết vé hỗ trợ quản trị | P1 | `StaticSupportRepository` | Chờ rà soát | - | - | Phản hồi khách hàng từ admin |
+| `/dashboard/admin/system-health` | Tình trạng hạ tầng Microservice | P1 | `StaticAdminRepository` | Chờ rà soát | - | - | Độ trễ, uptime, healthcheck từng service |
+| `/dashboard/admin/profile` | Hồ sơ quản trị viên | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | Thông tin cá nhân, vai trò quản trị |
+| `/dashboard/admin/security` | Bảo mật & Phiên đăng nhập | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | Đổi mật khẩu, danh sách thiết bị đăng nhập |
+| `/dashboard/admin/dictionaries` | Danh mục & Từ điển hệ thống | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/dictionaries-*.png` (8 ảnh) | Tabs danh mục chuẩn, modal tạo mới, E2E pass |
+| `/dashboard/admin/analytics` | Thống kê nền tảng | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/analytics-*.png` (8 ảnh) | ChartCards, thanh tiến độ khu vực semantic |
+| `/dashboard/admin/audit-logs` | Nhật ký kiểm toán | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/audit-logs-*.png` (8 ảnh) | IP monospace badges, search, E2E pass |
+| `/dashboard/admin/settings` | Cấu hình hệ thống | P1 | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/settings-*.png` (8 ảnh) | Toggle switches chuẩn, Ops/Payment/Security |
+| `/dashboard/admin/roles` | Ma trận vai trò & Phân quyền | P2 | `StaticAdminRepository` | Chờ rà soát | - | - | Phân quyền chi tiết Admin/Mod/Staff |
+| `/dashboard/admin/listing-plans` | Gói đăng tin & Mã khuyến mãi | P2 | `StaticAdminRepository` | Chờ rà soát | - | - | Quản lý bảng giá VIP, mã giảm giá |
+| `/dashboard/admin/content/blog` | Quản lý bài viết blog | P2 | `StaticAdminRepository` | Chờ rà soát | - | - | Đăng bài, biên tập cẩm nang SEO |
+| `/dashboard/admin/content/faq` | Quản lý câu hỏi thường gặp | P2 | `StaticAdminRepository` | Chờ rà soát | - | - | Phân loại câu hỏi cho người thuê/chủ trọ |
+| `/dashboard/admin/content/banners` | Quản lý banner quảng bá | P2 | `StaticAdminRepository` | Chờ rà soát | - | - | Banner trang chủ, chiến dịch |
+| `/dashboard/admin/broadcast-notifications` | Gửi thông báo hàng loạt | P2 | `StaticAdminRepository` | Chờ rà soát | - | - | Soạn thông báo đẩy, mẫu email sàn |
 
+---
+
+## 3. Nhóm Chủ Trọ (Landlord)
+| Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
+|---|---|---|---|---|---|---|---|
+| `/dashboard/landlord` | Tổng quan chủ trọ | P1 | `StaticLandlordRepository` | Chờ rà soát | - | - | Doanh thu, phòng trống, việc cần làm |
+| `/dashboard/landlord/rooms` | Danh sách phòng cho thuê | P1 | `StaticLandlordRepository` | Chờ rà soát | - | - | Bảng phòng, trạng thái, bộ lọc |
+| `/dashboard/landlord/rooms/new` | Đăng tin phòng mới | P1 | `StaticFormHandler` | Chờ rà soát | - | - | Stepper 4 bước đăng tin |
+| `/dashboard/landlord/rooms/[id]` | Chi tiết phòng cho thuê | P1 | `StaticLandlordRepository` | Chờ rà soát | - | - | Tổng quan phòng, lịch sử thuê, ảnh, lượt xem |
+| `/dashboard/landlord/rooms/[id]/edit` | Chỉnh sửa tin phòng | P1 | `StaticFormHandler` | Chờ rà soát | - | - | Cập nhật thông tin phòng trọ |
+| `/dashboard/landlord/appointments` | Lịch hẹn xem phòng (Lịch/Bảng) | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | Chế độ lịch tuần/tháng và bảng danh sách |
+| `/dashboard/landlord/rental-requests` | Yêu cầu thuê phòng | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | Danh sách hồ sơ xin thuê |
+| `/dashboard/landlord/rental-requests/[id]` | Chi tiết hồ sơ ứng viên | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | So sánh hồ sơ, thông tin ứng viên |
+| `/dashboard/landlord/contracts` | Quản lý hợp đồng | P1 | `StaticContractRepository` | Chờ rà soát | - | - | Danh sách hợp đồng thuê |
+| `/dashboard/landlord/contracts/new` | Lập hợp đồng mới | P1 | `StaticContractRepository` | Chờ rà soát | - | - | Tạo hợp đồng nhiều bước |
+| `/dashboard/landlord/contracts/[id]` | Chi tiết hợp đồng | P1 | `StaticContractRepository` | Chờ rà soát | - | - | Gia hạn, chấm dứt, quyết toán cọc |
+| `/dashboard/landlord/tenants` | Danh sách khách thuê | P1 | `StaticLandlordRepository` | Chờ rà soát | - | - | Khách đang ở, thông tin liên lạc |
+| `/dashboard/landlord/tenants/[id]` | Chi tiết khách thuê | P1 | `StaticLandlordRepository` | Chờ rà soát | - | - | Lịch sử thanh toán, hợp đồng gắn liền |
+| `/dashboard/landlord/utilities` | Ghi chỉ số điện nước | P1 | `StaticBillingRepository` | Chờ rà soát | - | - | Ghi công tơ, tính lượng tiêu thụ |
+| `/dashboard/landlord/utilities/[roomId]` | Lịch sử chỉ số theo phòng | P1 | `StaticBillingRepository` | Chờ rà soát | - | - | Nhập hàng loạt chỉ số công tơ |
+| `/dashboard/landlord/invoices` | Quản lý hóa đơn tiền phòng | P1 | `StaticBillingRepository` | Chờ rà soát | - | - | Hóa đơn định kỳ, trạng thái thu tiền |
+| `/dashboard/landlord/invoices/new` | Lập hóa đơn mới (Hàng loạt) | P1 | `StaticBillingRepository` | Chờ rà soát | - | - | Sinh hóa đơn tự động theo chỉ số |
+| `/dashboard/landlord/invoices/[id]` | Chi tiết hóa đơn | P1 | `StaticBillingRepository` | Chờ rà soát | - | - | Quét mã VietQR, xác nhận thanh toán |
+| `/dashboard/landlord/deposits` | Quản lý tiền cọc giữ phòng | P1 | `StaticTransactionRepository` | Chờ rà soát | - | - | Danh sách cọc, trạng thái cọc |
+| `/dashboard/landlord/maintenance` | Quản lý yêu cầu sửa chữa | P1 | `StaticMaintenanceRepository` | Chờ rà soát | - | - | Yêu cầu sự cố điện nước từ khách |
+| `/dashboard/landlord/maintenance/[id]` | Chi tiết xử lý sự cố sửa chữa | P1 | `StaticMaintenanceRepository` | Chờ rà soát | - | - | Cập nhật tiến độ, chi phí sửa chữa |
+| `/dashboard/landlord/analytics` | Báo cáo doanh thu | P1 | `StaticLandlordRepository` | Chờ rà soát | - | - | Biểu đồ doanh thu & tỷ lệ lấp đầy |
+| `/dashboard/landlord/reviews` | Đánh giá nhận được | P1 | `StaticReviewRepository` | Chờ rà soát | - | - | Trả lời nhận xét của người thuê |
+| `/dashboard/landlord/messages` | Tin nhắn trao đổi | P1 | `StaticChatRepository` | Chờ rà soát | - | - | Trò chuyện với khách thuê |
+| `/dashboard/landlord/notifications` | Thông báo hệ thống | P1 | `StaticNotificationRepository` | Chờ rà soát | - | - | Thông báo cọc, tiền phòng, lịch hẹn |
+| `/dashboard/landlord/kyc` | Xác thực chủ trọ (KYC) | P1 | `StaticKycRepository` | Chờ rà soát | - | - | Tải giấy tờ nhà đất & CCCD |
+| `/dashboard/landlord/profile` | Hồ sơ chủ trọ | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | Thông tin cá nhân, số hotline đón khách |
+| `/dashboard/landlord/settings` | Cài đặt thanh toán | P1 | `StaticBillingRepository` | Chờ rà soát | - | - | Cấu hình VietQR & đơn giá điện nước |
+| `/dashboard/landlord/expenses` | Quản lý chi phí & Lợi nhuận | P2 | `StaticLandlordRepository` | Chờ rà soát | - | - | Chi phí bảo trì, thuế, khấu hao |
+| `/dashboard/landlord/contract-templates` | Mẫu hợp đồng tùy biến | P2 | `StaticContractRepository` | Chờ rà soát | - | - | Mẫu điều khoản riêng của chủ trọ |
+| `/dashboard/landlord/subscription` | Gói đẩy tin & Dịch vụ VIP | P2 | `StaticLandlordRepository` | Chờ rà soát | - | - | Nâng cấp gói tin đăng nổi bật |
+| `/dashboard/landlord/buildings` | Quản lý dãy trọ / Tòa nhà | P2 | `StaticLandlordRepository` | Chờ rà soát | - | - | Quản lý mô hình nhiều tòa nhà |
+
+---
+
+## 4. Nhóm Người Thuê (Tenant)
+| Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
+|---|---|---|---|---|---|---|---|
+| `/dashboard/tenant` | Tổng quan người thuê | P1 | `StaticTenantRepository` | Chờ rà soát | - | - | Hợp đồng đang ở, hóa đơn đến hạn |
+| `/dashboard/tenant/my-room` | Phòng đang thuê hiện tại | P1 | `StaticTenantRepository` | Chờ rà soát | - | - | Chi tiết phòng, nội quy, hotline chủ trọ |
+| `/dashboard/tenant/maintenance` | Yêu cầu sửa chữa của tôi | P1 | `StaticMaintenanceRepository` | Chờ rà soát | - | - | Danh sách báo hỏng thiết bị |
+| `/dashboard/tenant/maintenance/new` | Gửi báo cáo hư hỏng mới | P1 | `StaticMaintenanceRepository` | Chờ rà soát | - | - | Chụp ảnh thiết bị hỏng, mô tả sự cố |
+| `/dashboard/tenant/maintenance/[id]` | Chi tiết tiến độ sửa chữa | P1 | `StaticMaintenanceRepository` | Chờ rà soát | - | - | Trạng thái tiếp nhận và xử lý |
+| `/dashboard/tenant/move-out` | Yêu cầu trả phòng & Quyết toán cọc | P1 | `StaticTenantRepository` | Chờ rà soát | - | - | Đăng ký ngày rời đi, hoàn cọc |
+| `/dashboard/tenant/deposits` | Tiền cọc phòng của tôi | P1 | `StaticTransactionRepository` | Chờ rà soát | - | - | Quản lý cọc giữ chỗ và cọc hợp đồng |
+| `/dashboard/tenant/saved-rooms` | Phòng đã lưu | P1 | `StaticTenantRepository` | Chờ rà soát | - | - | Danh sách phòng yêu thích |
+| `/dashboard/tenant/saved-searches` | Tìm kiếm đã lưu | P1 | `StaticTenantRepository` | Chờ rà soát | - | - | Bộ lọc nhận thông báo tự động |
+| `/dashboard/tenant/appointments` | Lịch hẹn xem phòng | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | Danh sách lịch hẹn |
+| `/dashboard/tenant/appointments/[id]` | Chi tiết lịch hẹn | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | Địa chỉ, số điện thoại chủ trọ, chỉ đường |
+| `/dashboard/tenant/rental-requests` | Yêu cầu thuê phòng | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | Trạng thái xét duyệt hồ sơ |
+| `/dashboard/tenant/rental-requests/[id]` | Chi tiết yêu cầu thuê | P1 | `StaticBookingRepository` | Chờ rà soát | - | - | Phản hồi của chủ trọ, bước ký hợp đồng |
+| `/dashboard/tenant/contracts` | Danh sách hợp đồng thuê | P1 | `StaticContractRepository` | Chờ rà soát | - | - | Danh sách hợp đồng |
+| `/dashboard/tenant/contracts/[id]` | Chi tiết hợp đồng | P1 | `StaticContractRepository` | Chờ rà soát | - | - | Đọc điều khoản, ký số OTP, tải PDF |
+| `/dashboard/tenant/invoices` | Danh sách hóa đơn | P1 | `StaticBillingRepository` | Chờ rà soát | - | - | Hóa đơn tiền nhà hàng tháng |
+| `/dashboard/tenant/invoices/[id]` | Chi tiết hóa đơn thanh toán | P1 | `StaticBillingRepository` | Chờ rà soát | - | - | Quét mã VietQR thanh toán tiền phòng |
+| `/dashboard/tenant/payments` | Lịch sử thanh toán | P1 | `StaticBillingRepository` | Chờ rà soát | - | - | Biên lai các khoản đã thanh toán |
+| `/dashboard/tenant/reports` | Lịch sử khiếu nại đã gửi | P1 | `StaticTenantRepository` | Chờ rà soát | - | - | Trạng thái giải quyết báo cáo vi phạm |
+| `/dashboard/tenant/messages` | Hộp thư tin nhắn | P1 | `StaticChatRepository` | Chờ rà soát | - | - | Trò chuyện trực tiếp với chủ trọ |
+| `/dashboard/tenant/notifications` | Thông báo | P1 | `StaticNotificationRepository` | Chờ rà soát | - | - | Nhắc nợ tiền nhà, duyệt lịch xem phòng |
+| `/dashboard/tenant/reviews` | Đánh giá của tôi | P1 | `StaticReviewRepository` | Chờ rà soát | - | - | Viết đánh giá phòng đã thuê |
+| `/dashboard/tenant/profile` | Hồ sơ cá nhân | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | Cập nhật tên, số điện thoại, email |
+| `/dashboard/tenant/kyc` | Định danh cá nhân eKYC | P1 | `StaticKycRepository` | Chờ rà soát | - | - | Chụp CCCD 2 mặt |
+| `/dashboard/tenant/settings` | Cài đặt bảo mật | P1 | `StaticTenantRepository` | Chờ rà soát | - | - | Đổi mật khẩu, tùy chọn thông báo |
+| `/dashboard/tenant/recently-viewed` | Phòng đã xem gần đây | P2 | `StaticTenantRepository` | Chờ rà soát | - | - | Lịch sử các phòng vừa duyệt qua |
+| `/dashboard/tenant/documents` | Kho lưu trữ giấy tờ số | P2 | `StaticTenantRepository` | Chờ rà soát | - | - | Hợp đồng, biên lai, giấy tạm trú |
+
+---
+
+## 5. Nhóm Xác Thực (Auth)
+| Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
+|---|---|---|---|---|---|---|---|
+| `/login` | Đăng nhập | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | API Backend identity-service |
+| `/register` | Đăng ký | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | API Backend identity-service |
+| `/onboarding` | Hoàn thiện hồ sơ & Chọn vai trò | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | Sau đăng ký Google/email, chọn Người thuê/Chủ trọ |
+| `/become-landlord` | Nâng cấp tài khoản Chủ trọ | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | Nâng cấp từ tài khoản người thuê trọ |
+| `/forgot-password` | Quên mật khẩu | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | Gửi OTP khôi phục |
+| `/reset-password` | Đặt lại mật khẩu | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | Nhập OTP & mật khẩu mới |
+| `/verify-email` | Xác thực email | P1 | `HttpAuthRepository` | Chờ rà soát | - | - | Kích hoạt tài khoản người dùng |
+| `/session-expired` | Thông báo phiên hết hạn | P1 | Tĩnh i18n | Chờ rà soát | - | - | Token hết hạn, chuyển hướng đăng nhập |
+| `/account-locked` | Tài khoản bị tạm khóa | P1 | Tĩnh i18n | Chờ rà soát | - | - | Cảnh báo vi phạm bảo mật |
+| `/settings/security` | Xác thực 2 lớp (2FA) | P2 | `HttpAuthRepository` | Chờ rà soát | - | - | Bật/tắt OTP TOTP Google Authenticator |
+
+---
+
+## 6. Nhóm Công Khai (Public)
+| Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
+|---|---|---|---|---|---|---|---|
+| `/` | Trang chủ | P1 | `HttpListingRepository` | Chờ rà soát | - | - | API Backend listing-service |
+| `/rooms` | Danh sách tìm kiếm phòng trọ | P1 | `HttpListingRepository` | Chờ rà soát | - | - | Bộ lọc giá, khu vực, tiện nghi |
+| `/rooms/[id]` | Chi tiết phòng trọ | P1 | `HttpListingRepository` | Chờ rà soát | - | - | Thư viện ảnh, tiện ích, biểu phí |
+| `/map` | Tìm phòng trên bản đồ | P1 | `HttpListingRepository` | Chờ rà soát | - | - | Bản đồ trực quan, ghim vị trí, lọc giá |
+| `/compare` | So sánh phòng trọ | P1 | `HttpListingRepository` | Chờ rà soát | - | - | So sánh tối đa 3-4 phòng song song |
+| `/for-landlords` | Dành cho chủ trọ | P1 | Tĩnh i18n | Chờ rà soát | - | - | Giới thiệu lợi ích và đăng tin cho chủ trọ |
+| `/how-it-works` | Quy trình hoạt động | P1 | Tĩnh i18n | Chờ rà soát | - | - | Hướng dẫn thuê phòng an tâm 4 bước |
+| `/help` | Trung tâm trợ giúp & FAQ | P1 | Tĩnh i18n | Chờ rà soát | - | - | Thanh tìm kiếm câu hỏi, hướng dẫn |
+| `/hosts/[id]` | Hồ sơ chủ trọ công khai | P1 | `HttpListingRepository` | Chờ rà soát | - | - | Danh sách phòng đang quản lý, uy tín |
+| `/about` | Về chúng tôi | P1 | Tĩnh i18n | Chờ rà soát | - | - | Sứ mệnh, đội ngũ phát triển |
+| `/safety-guide` | Cẩm nang phòng tránh lừa đảo | P1 | Tĩnh i18n | Chờ rà soát | - | - | Hướng dẫn kiểm tra pháp lý nhà trọ |
+| `/pricing` | Bảng giá dịch vụ | P1 | Tĩnh i18n | Chờ rà soát | - | - | Bảng giá gói đăng tin, hoa hồng sàn |
+| `/faq` | Câu hỏi thường gặp | P1 | Tĩnh i18n | Chờ rà soát | - | - | Tổng hợp thắc mắc người thuê & chủ nhà |
+| `/contact` | Liên hệ hỗ trợ | P1 | Tĩnh i18n | Chờ rà soát | - | - | Hotline, email, địa chỉ văn phòng |
+| `/terms` | Điều khoản sử dụng | P1 | Tĩnh i18n | Chờ rà soát | - | - | Quy định pháp lý sàn thương mại |
+| `/privacy` | Chính sách bảo mật | P1 | Tĩnh i18n | Chờ rà soát | - | - | Chính sách lưu trữ và bảo vệ dữ liệu |
+| `/cookies` | Chính sách Cookie | P1 | Tĩnh i18n | Chờ rà soát | - | - | Quản lý đồng ý theo dõi cookie |
+| `/blog` | Cẩm nang thuê trọ & Tin tức | P2 | `StaticSupportRepository` | Chờ rà soát | - | - | Danh sách bài viết tin tức, cẩm nang |
+| `/blog/[slug]` | Chi tiết bài viết cẩm nang | P2 | `StaticSupportRepository` | Chờ rà soát | - | - | Bài viết SEO cẩm nang sống, trang trí phòng |
+| `/areas/[tinh]` | Phòng trọ theo Tỉnh / Thành phố | P2 | `HttpListingRepository` | Chờ rà soát | - | - | SEO khu vực TP.HCM, Hà Nội, Đà Nẵng |
+| `/areas/[tinh]/[quan]` | Phòng trọ theo Quận / Huyện | P2 | `HttpListingRepository` | Chờ rà soát | - | - | SEO chi tiết Quận 1, Cầu Giấy, Hải Châu... |
