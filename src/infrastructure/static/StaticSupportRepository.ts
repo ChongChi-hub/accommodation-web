@@ -143,3 +143,4 @@ export class StaticSupportRepository implements SupportRepository {
     ticket.updatedAt = new Date().toISOString();
   }
 }
+

@@ -7,3 +7,4 @@ export interface SupportRepository {
   addMessage(ticketId: string, message: Omit<TicketMessage, 'id' | 'createdAt'>): Promise<TicketMessage>;
   updateStatus(ticketId: string, status: SupportTicket['status']): Promise<void>;
 }
+

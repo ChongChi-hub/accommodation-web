@@ -81,7 +81,7 @@ export default function SupportPage() {
         <div>
           <div className="flex items-center gap-2 text-teal-700 dark:text-teal-400 font-semibold text-xs uppercase tracking-wider">
             <LifeBuoy className="w-4 h-4" />
-            <span>Tổ Ấm Support</span>
+            <span>{t('badgeTag')}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight mt-1">
             {t('title')}
@@ -107,6 +107,8 @@ export default function SupportPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('searchPlaceholder')}
+            aria-label="Tìm kiếm phiếu hỗ trợ"
+            data-testid="support-search-input"
             className="pl-9"
           />
         </div>
@@ -115,6 +117,7 @@ export default function SupportPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
+            aria-label="Lọc theo trạng thái"
             className="w-full h-10 px-3 rounded-xl border border-border bg-surface text-foreground text-xs font-medium focus:ring-2 focus:ring-teal-600 focus:outline-none"
           >
             <option value="ALL">{t('allStatus')}</option>
@@ -129,6 +132,7 @@ export default function SupportPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
+            aria-label="Lọc theo phân loại vấn đề"
             className="w-full h-10 px-3 rounded-xl border border-border bg-surface text-foreground text-xs font-medium focus:ring-2 focus:ring-teal-600 focus:outline-none"
           >
             <option value="ALL">{t('allCategories')}</option>
@@ -197,7 +201,7 @@ export default function SupportPage() {
                         href={`/support/${ticket.id}`}
                         className="inline-flex items-center gap-1 text-teal-700 dark:text-teal-400 font-semibold hover:underline"
                       >
-                        <span>Chi tiết</span>
+                        <span>{t('table.detailAction')}</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </Link>
                     </td>

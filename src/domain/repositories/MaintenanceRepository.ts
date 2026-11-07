@@ -6,3 +6,4 @@ export interface MaintenanceRepository {
   createRequest(data: Omit<MaintenanceRequest, 'id' | 'createdAt' | 'status'>): Promise<MaintenanceRequest>;
   updateStatus(id: string, status: MaintenanceRequest['status'], notes?: string): Promise<void>;
 }
+

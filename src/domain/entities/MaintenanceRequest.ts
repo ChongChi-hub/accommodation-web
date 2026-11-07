@@ -25,3 +25,4 @@ export interface MaintenanceRequest {
   scheduledAt?: string;
   resolvedAt?: string;
 }
+

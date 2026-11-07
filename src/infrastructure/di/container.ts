@@ -5,6 +5,8 @@ import { StaticSupportRepository } from '../static/StaticSupportRepository';
 import { StaticMaintenanceRepository } from '../static/StaticMaintenanceRepository';
 import { StaticDisputeRepository } from '../static/StaticDisputeRepository';
 import { StaticTransactionRepository } from '../static/StaticTransactionRepository';
+import { StaticNotificationRepository } from '../static/StaticNotificationRepository';
+import { StaticBadgeRepository } from '../static/StaticBadgeRepository';
 import { LoginUseCase } from '@/application/use-cases/auth/login.use-case';
 import { RegisterUseCase } from '@/application/use-cases/auth/register.use-case';
 import { GetProfileUseCase } from '@/application/use-cases/auth/get-profile.use-case';
@@ -20,6 +22,13 @@ const supportRepository = new StaticSupportRepository();
 const maintenanceRepository = new StaticMaintenanceRepository();
 const disputeRepository = new StaticDisputeRepository();
 const transactionRepository = new StaticTransactionRepository();
+const notificationRepository = new StaticNotificationRepository();
+const badgeRepository = new StaticBadgeRepository(
+  adminRepository,
+  supportRepository,
+  maintenanceRepository,
+  disputeRepository
+);
 
 // Use Cases & Repositories Container
 export const container = {
@@ -49,5 +58,11 @@ export const container = {
   },
   transaction: {
     transactionRepository,
+  },
+  notification: {
+    notificationRepository,
+  },
+  badge: {
+    badgeRepository,
   },
 };

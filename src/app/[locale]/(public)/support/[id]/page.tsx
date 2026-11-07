@@ -74,7 +74,7 @@ export default function SupportTicketDetailPage({
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center text-foreground-muted">
-        Đang tải thông tin phiếu hỗ trợ...
+        {t('detail.loading')}
       </div>
     );
   }
@@ -82,9 +82,9 @@ export default function SupportTicketDetailPage({
   if (!ticket) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
-        <h2 className="text-xl font-bold text-foreground">Không tìm thấy phiếu hỗ trợ</h2>
+        <h2 className="text-xl font-bold text-foreground">{t('detail.notFound')}</h2>
         <Link href="/support">
-          <Button variant="outline">Quay lại danh sách</Button>
+          <Button variant="outline">{t('detail.back')}</Button>
         </Link>
       </div>
     );
@@ -120,24 +120,24 @@ export default function SupportTicketDetailPage({
         </h1>
 
         <div className="p-3.5 rounded-xl bg-surface-muted text-xs text-foreground leading-relaxed border border-border/60">
-          <p className="font-semibold text-foreground-muted mb-1">Mô tả ban đầu:</p>
+          <p className="font-semibold text-foreground-muted mb-1">{t('detail.initialDesc')}</p>
           <p>{ticket.description}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-4 text-[11px] text-foreground-muted pt-2 border-t border-border/60">
           <div className="flex items-center gap-1">
             <User className="w-3.5 h-3.5" />
-            <span>Người tạo: {ticket.userName} ({ticket.userPhone})</span>
+            <span>{t('detail.creator')} {ticket.userName} ({ticket.userPhone})</span>
           </div>
           {ticket.assignedAgentName && (
             <div className="flex items-center gap-1 text-teal-700 dark:text-teal-400 font-medium">
               <Headphones className="w-3.5 h-3.5" />
-              <span>Phụ trách: {ticket.assignedAgentName}</span>
+              <span>{t('detail.assignedTo')}: {ticket.assignedAgentName}</span>
             </div>
           )}
           <div className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
-            <span>Tạo: {new Date(ticket.createdAt).toLocaleDateString('vi-VN')}</span>
+            <span>{t('detail.created')}: {new Date(ticket.createdAt).toLocaleDateString('vi-VN')}</span>
           </div>
         </div>
       </Card>
@@ -165,7 +165,7 @@ export default function SupportTicketDetailPage({
                     <span>{msg.senderName}</span>
                     {isAdmin && (
                       <span className="px-1.5 py-0.2 text-[10px] rounded bg-teal-700 text-white font-semibold">
-                        CSKH Tổ Ấm
+                        {t('detail.cskhBadge')}
                       </span>
                     )}
                   </div>

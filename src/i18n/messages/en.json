@@ -335,6 +335,7 @@
       "backHome": "Back to Home"
     },
     "accountLocked": {
+      "badge": "Account Suspended",
       "title": "Account Temporarily Suspended",
       "subtitle": "Your account has been temporarily locked due to policy violations or unusual activity.",
       "reasonLabel": "Suspension Reason:",
@@ -353,6 +354,7 @@
       "emergencyContact": "Emergency Tech Hotline: 0987 654 321"
     },
     "support": {
+      "badgeTag": "Tổ Ấm Support",
       "title": "Help & Support Center",
       "subtitle": "Submit technical tickets, resolve lease contract disputes, or ask account questions.",
       "newTicket": "Submit New Ticket",
@@ -364,6 +366,7 @@
       "allCategories": "All Categories",
       "status": {
         "OPEN": "Open",
+        "ASSIGNED": "Assigned",
         "IN_PROGRESS": "In Progress",
         "WAITING_USER": "Waiting on Customer",
         "RESOLVED": "Resolved",
@@ -390,10 +393,12 @@
         "priority": "Priority",
         "status": "Status",
         "updatedAt": "Updated At",
-        "action": "Action"
+        "action": "Action",
+        "detailAction": "Details"
       },
       "empty": "No support tickets found matching your criteria.",
       "new": {
+        "badge": "Support Ticket",
         "title": "Create a New Support Ticket",
         "subtitle": "Our specialized support team will respond within 2 working hours.",
         "subjectLabel": "Subject Summary",
@@ -403,14 +408,22 @@
         "descLabel": "Detailed Description",
         "descPlaceholder": "Describe the sequence of steps, transaction codes, or room IDs involved...",
         "attachmentLabel": "Attach Evidence or Screenshots",
+        "fileUploadPlaceholder": "Click to upload screenshots or supporting documents (max 5MB)",
+        "fileHint": "Supports PNG, JPG, PDF",
         "submitBtn": "Submit Ticket",
         "submitting": "Submitting...",
         "success": "Ticket submitted successfully!",
+        "redirecting": "Redirecting you back to tickets...",
         "back": "Back to Tickets"
       },
       "detail": {
         "back": "Back to Tickets",
+        "loading": "Loading support ticket...",
+        "notFound": "Support ticket not found",
         "info": "Ticket Information",
+        "initialDesc": "Initial description:",
+        "creator": "Creator:",
+        "cskhBadge": "Support Specialist",
         "conversation": "Conversation & Resolution Timeline",
         "replyLabel": "Send Follow-up Message",
         "replyPlaceholder": "Type your message or clarification here...",

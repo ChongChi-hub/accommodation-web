@@ -87,13 +87,20 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     { id: 'tn-contracts', title: 'Hợp đồng thuê phòng của tôi', category: 'Người thuê', href: '/dashboard/tenant/contracts', icon: <FileText className="w-4 h-4" />, roles: ['TENANT'] },
   ];
 
-  // Filter commands by user roles
+  // Effective user roles with explicit guest fallback
+  const userRoles = user?.roles && user.roles.length > 0 ? user.roles : ['TENANT'];
+
+  // Strict role-based filtering:
+  // A command is accessible ONLY IF:
+  // 1. It has no role restriction (public common command)
+  // 2. OR user has at least one of the required roles
   const filteredCommands = allCommands.filter((cmd) => {
-    if (!cmd.roles) return true;
-    return cmd.roles.some((r) => user?.roles?.includes(r as any));
+    if (!cmd.roles || cmd.roles.length === 0) return true;
+    return cmd.roles.some((r) => userRoles.includes(r as any));
   }).filter((cmd) => {
-    if (!query) return true;
-    return cmd.title.toLowerCase().includes(query.toLowerCase()) || cmd.category.toLowerCase().includes(query.toLowerCase());
+    if (!query.trim()) return true;
+    const q = query.toLowerCase();
+    return cmd.title.toLowerCase().includes(q) || cmd.category.toLowerCase().includes(q);
   });
 
   const handleSelect = (href: string) => {
@@ -138,6 +145,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             filteredCommands.map((item) => (
               <button
                 key={item.id}
+                data-testid="command-item"
+                data-command-id={item.id}
                 onClick={() => handleSelect(item.href)}
                 className="w-full p-3 text-left flex items-center justify-between gap-3 hover:bg-surface-muted transition text-xs cursor-pointer group"
               >
@@ -158,3 +167,4 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     </Dialog>
   );
 }
+

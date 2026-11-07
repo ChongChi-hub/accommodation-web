@@ -5,15 +5,15 @@
 ---
 
 ## 1. Nhóm Dùng Chung (Common)
-| Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
+| Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp (1440/1024/768/390 x light/dark x vi/en) | Ghi Chú & Tự Phê Bình Nghiệm Thu |
 |---|---|---|---|---|---|---|---|
-| `/403` | Truy cập không được phép | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/403-*.png` (4 ảnh) | Shield alert card, responsive 390/1440, light/dark, Playwright pass |
-| `/session-expired` | Phiên đăng nhập hết hạn | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/session-expired-*.png` (4 ảnh) | Clock card, login CTA, light/dark, Playwright pass |
-| `/account-locked` | Tài khoản bị khóa tạm thời | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/account-locked-*.png` (4 ảnh) | Reason box, appeal action, 24/7 hotline, Playwright pass |
-| `/maintenance` | Hệ thống đang bảo trì | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/maintenance-*.png` (4 ảnh) | Animated badge, impact list, reload trigger, Playwright pass |
-| `/support` | Trung tâm hỗ trợ & Phiếu yêu cầu | P1 | `StaticSupportRepository` | Hoàn thành | 07/11/2026 | `screenshots/common/support-*.png` (4 ảnh) | Filter status/category, search, priority badges, Playwright pass |
-| `/support/new` | Tạo yêu cầu hỗ trợ mới | P1 | `StaticSupportRepository` | Hoàn thành | 07/11/2026 | `screenshots/common/support-new-*.png` (4 ảnh) | Form validation, mock file attachment upload, Playwright pass |
-| `/support/[id]` | Chi tiết phiếu hỗ trợ & Trao đổi | P1 | `StaticSupportRepository` | Hoàn thành | 07/11/2026 | `screenshots/common/support-detail-*.png` (4 ảnh) | Timeline tin nhắn 2 chiều, live reply, metadata card, Playwright pass |
+| `/403` | Truy cập không được phép | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/matrix/403-*.png` (16 ảnh) | Tự phê bình: (1) Ban đầu padding 390px lệch -> Sửa căn giữa min-h-screen đối xứng; (2) Nút action co cụm ở mobile -> Đổi flex-col w-full; (3) Border card darkmode chìm -> Thêm viền border/80. Axe 0 lỗi. |
+| `/session-expired` | Phiên đăng nhập hết hạn | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/matrix/session-expired-*.png` (16 ảnh) | Tự phê bình: (1) Icon đồng hồ 390px quá bé -> Nâng lên w-20 h-20 khung bo tròn; (2) Thiếu link khi quên mật khẩu -> Thêm liên kết /forgot-password; (3) Tiếng Anh bị rớt 1 chữ cuối dòng -> Thêm max-w-md leading-relaxed. Axe 0 lỗi. |
+| `/account-locked` | Tài khoản bị khóa tạm thời | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/matrix/account-locked-*.png` (16 ảnh) | Tự phê bình: (1) Viền đỏ quá gắt -> Dịu màu với rose-200/rose-900; (2) Hotline không bấm gọi trực tiếp -> Gắn tel:19008888 và icon PhoneCall; (3) Chữ TẠM KHÓA ghi cứng -> Đã chuyển 100% i18n badge. Axe 0 lỗi. |
+| `/maintenance` | Hệ thống đang bảo trì | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/matrix/maintenance-*.png` (16 ảnh) | Tự phê bình: (1) Animation quay tít gây mỏi mắt -> Thay bằng bounce nhẹ kèm radar ping; (2) Thiếu múi giờ bảo trì -> Ghi rõ GMT+7; (3) Nút reload kéo dài ở desktop -> Giới hạn w-auto px-6. Axe 0 lỗi. |
+| `/support` | Trung tâm hỗ trợ & Phiếu yêu cầu | P1 | `StaticSupportRepository` | Hoàn thành | 07/11/2026 | `screenshots/common/matrix/support-*.png` (16 ảnh) + `states/support-empty-state.png` | Tự phê bình: (1) Bảng 6 cột vỡ trên 390px -> Ẩn bớt cột phụ, đưa phân loại thành sub-line; (2) Thiếu aria-label thẻ select -> Đã bổ sung chuẩn WCAG; (3) Search không ra kết quả bị trống thô -> Bổ sung empty state có icon. Axe 0 lỗi. |
+| `/support/new` | Tạo yêu cầu hỗ trợ mới | P1 | `StaticSupportRepository` | Hoàn thành | 07/11/2026 | `screenshots/common/matrix/support-new-*.png` (16 ảnh) + `states/support-new-success-state.png` | Tự phê bình: (1) Upload file mặc định xấu -> Làm khung dashed dropzone có icon Cloud; (2) 10 options ghi cứng -> Đã chuyển toàn bộ qua i18n category/priority; (3) Chưa chặn double click -> Thêm disabled và loading state. Axe 0 lỗi. |
+| `/support/[id]` | Chi tiết phiếu hỗ trợ & Trao đổi | P1 | `StaticSupportRepository` | Hoàn thành | 07/11/2026 | `screenshots/common/matrix/support-detail-*.png` (16 ảnh) + `states/support-detail-error-state.png` | Tự phê bình: (1) Tin nhắn admin không có badge phân biệt -> Thêm badge CSKH Tổ Ấm nền teal nổi bật; (2) Timestamp hiển thị ISO thô -> Format giờ:phút ngày/tháng; (3) ID sai không có fallback -> Thêm error card not-found có nút quay về. Axe 0 lỗi. |
 
 ---
 

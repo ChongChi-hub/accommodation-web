@@ -64,3 +64,4 @@ test.describe('Common Pages Visual & Responsive Inspection', () => {
     }
   }
 });
+

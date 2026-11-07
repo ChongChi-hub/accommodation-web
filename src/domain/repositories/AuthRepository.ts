@@ -15,6 +15,8 @@ export interface AuthRepository {
   register(data: { email: string; phone: string; password: string; fullName: string; role: string }): Promise<AuthSession>;
   refreshToken(refreshToken: string): Promise<AuthSession>;
   getProfile(): Promise<User>;
+  updateProfile(data: { fullName: string; phone: string }): Promise<User>;
+  changePassword(oldPassword: string, newPassword: string): Promise<void>;
   logout(): Promise<void>;
 }
 

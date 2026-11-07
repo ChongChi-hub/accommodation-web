@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from '@/i18n/routing';
 import { Link } from '@/i18n/routing';
 import { useAuthStore } from '@/presentation/stores/auth.store';
+import { container } from '@/infrastructure/di/container';
+import { DashboardBadges } from '@/domain/repositories/BadgeRepository';
 import {
   LayoutDashboard,
   User,
@@ -61,12 +63,17 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout, switchRole } = useAuthStore();
+  const [badges, setBadges] = useState<DashboardBadges | null>(null);
 
   const isAdmin = user?.roles?.includes('ADMIN');
   const isModerator = user?.roles?.includes('MODERATOR');
   const isLandlord = user?.roles?.includes('LANDLORD');
 
   const role = (isAdmin || isModerator) ? (isModerator && !isAdmin ? 'moderator' : 'admin') : isLandlord ? 'landlord' : 'tenant';
+
+  useEffect(() => {
+    container.badge.badgeRepository.getBadges(role, user?.id).then(setBadges);
+  }, [role, user?.id]);
 
   // ADMIN SECTIONS
   const adminSections: NavSection[] = [
@@ -81,12 +88,12 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
     {
       title: 'KIỂM DUYỆT & GIẢI QUYẾT',
       items: [
-        { label: 'Duyệt phòng đăng', href: '/dashboard/admin/rooms', icon: <CheckSquare className="w-4 h-4" />, badge: 3, badgeVariant: 'warning' },
-        { label: 'Duyệt hồ sơ KYC', href: '/dashboard/admin/kyc', icon: <ShieldCheck className="w-4 h-4" />, badge: 5, badgeVariant: 'brand' },
-        { label: 'Báo cáo vi phạm', href: '/dashboard/admin/reports', icon: <AlertTriangle className="w-4 h-4" />, badge: 2, badgeVariant: 'danger' },
+        { label: 'Duyệt phòng đăng', href: '/dashboard/admin/rooms', icon: <CheckSquare className="w-4 h-4" />, badge: badges?.adminPendingRooms, badgeVariant: 'warning' },
+        { label: 'Duyệt hồ sơ KYC', href: '/dashboard/admin/kyc', icon: <ShieldCheck className="w-4 h-4" />, badge: badges?.adminPendingKyc, badgeVariant: 'brand' },
+        { label: 'Báo cáo vi phạm', href: '/dashboard/admin/reports', icon: <AlertTriangle className="w-4 h-4" />, badge: badges?.adminPendingReports, badgeVariant: 'danger' },
         { label: 'Quản lý đánh giá', href: '/dashboard/admin/reviews', icon: <Star className="w-4 h-4" /> },
-        { label: 'Giải quyết tranh chấp', href: '/dashboard/admin/disputes', icon: <Scale className="w-4 h-4" />, badge: 1, badgeVariant: 'warning' },
-        { label: 'Phiếu hỗ trợ kỹ thuật', href: '/dashboard/admin/support', icon: <LifeBuoy className="w-4 h-4" />, badge: 4, badgeVariant: 'brand' },
+        { label: 'Giải quyết tranh chấp', href: '/dashboard/admin/disputes', icon: <Scale className="w-4 h-4" />, badge: badges?.adminPendingDisputes, badgeVariant: 'warning' },
+        { label: 'Phiếu hỗ trợ kỹ thuật', href: '/dashboard/admin/support', icon: <LifeBuoy className="w-4 h-4" />, badge: badges?.adminPendingSupport, badgeVariant: 'brand' },
       ],
     },
     {
@@ -113,12 +120,12 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
       title: 'HÀNG ĐỢI KIỂM DUYỆT',
       items: [
         { label: 'Tổng quan kiểm duyệt', href: '/dashboard/moderator', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { label: 'Duyệt bài đăng phòng', href: '/dashboard/admin/rooms', icon: <CheckSquare className="w-4 h-4" />, badge: 3, badgeVariant: 'warning' },
-        { label: 'Duyệt hồ sơ định danh KYC', href: '/dashboard/admin/kyc', icon: <ShieldCheck className="w-4 h-4" />, badge: 5, badgeVariant: 'brand' },
-        { label: 'Báo cáo vi phạm phòng', href: '/dashboard/admin/reports', icon: <AlertTriangle className="w-4 h-4" />, badge: 2, badgeVariant: 'danger' },
+        { label: 'Duyệt bài đăng phòng', href: '/dashboard/admin/rooms', icon: <CheckSquare className="w-4 h-4" />, badge: badges?.adminPendingRooms, badgeVariant: 'warning' },
+        { label: 'Duyệt hồ sơ định danh KYC', href: '/dashboard/admin/kyc', icon: <ShieldCheck className="w-4 h-4" />, badge: badges?.adminPendingKyc, badgeVariant: 'brand' },
+        { label: 'Báo cáo vi phạm phòng', href: '/dashboard/admin/reports', icon: <AlertTriangle className="w-4 h-4" />, badge: badges?.adminPendingReports, badgeVariant: 'danger' },
         { label: 'Kiểm duyệt đánh giá', href: '/dashboard/admin/reviews', icon: <Star className="w-4 h-4" /> },
-        { label: 'Khiếu nại & Tranh chấp', href: '/dashboard/admin/disputes', icon: <Scale className="w-4 h-4" />, badge: 1, badgeVariant: 'warning' },
-        { label: 'Xử lý yêu cầu hỗ trợ', href: '/dashboard/admin/support', icon: <LifeBuoy className="w-4 h-4" />, badge: 4, badgeVariant: 'brand' },
+        { label: 'Khiếu nại & Tranh chấp', href: '/dashboard/admin/disputes', icon: <Scale className="w-4 h-4" />, badge: badges?.adminPendingDisputes, badgeVariant: 'warning' },
+        { label: 'Xử lý yêu cầu hỗ trợ', href: '/dashboard/admin/support', icon: <LifeBuoy className="w-4 h-4" />, badge: badges?.adminPendingSupport, badgeVariant: 'brand' },
       ],
     },
   ];
@@ -132,7 +139,7 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
         { label: 'Quản lý phòng trọ', href: '/dashboard/landlord/rooms', icon: <Building className="w-4 h-4" /> },
         { label: 'Đăng phòng mới', href: '/dashboard/landlord/rooms/new', icon: <PlusCircle className="w-4 h-4" /> },
         { label: 'Lịch hẹn xem phòng', href: '/dashboard/landlord/appointments', icon: <Calendar className="w-4 h-4" /> },
-        { label: 'Yêu cầu thuê phòng', href: '/dashboard/landlord/rental-requests', icon: <FileText className="w-4 h-4" />, badge: 2, badgeVariant: 'brand' },
+        { label: 'Yêu cầu thuê phòng', href: '/dashboard/landlord/rental-requests', icon: <FileText className="w-4 h-4" />, badge: badges?.landlordRentalRequests, badgeVariant: 'brand' },
       ],
     },
     {
@@ -141,7 +148,7 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
         { label: 'Hợp đồng cho thuê', href: '/dashboard/landlord/contracts', icon: <FileText className="w-4 h-4" /> },
         { label: 'Khách thuê hiện tại', href: '/dashboard/landlord/tenants', icon: <Users className="w-4 h-4" /> },
         { label: 'Ghi chỉ số điện nước', href: '/dashboard/landlord/utilities', icon: <Gauge className="w-4 h-4" /> },
-        { label: 'Hóa đơn & Thu tiền', href: '/dashboard/landlord/invoices', icon: <CreditCard className="w-4 h-4" />, badge: 3, badgeVariant: 'warning' },
+        { label: 'Hóa đơn & Thu tiền', href: '/dashboard/landlord/invoices', icon: <CreditCard className="w-4 h-4" />, badge: badges?.landlordUnpaidInvoices, badgeVariant: 'warning' },
         { label: 'Tiền cọc & Giữ chỗ', href: '/dashboard/landlord/deposits', icon: <PiggyBank className="w-4 h-4" /> },
         { label: 'Doanh thu & Báo cáo', href: '/dashboard/landlord/analytics', icon: <BarChart3 className="w-4 h-4" /> },
       ],
@@ -149,8 +156,8 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
     {
       title: 'DỊCH VỤ & GIAO TIẾP',
       items: [
-        { label: 'Bảo trì & Sửa chữa', href: '/dashboard/landlord/maintenance', icon: <Wrench className="w-4 h-4" />, badge: 2, badgeVariant: 'danger' },
-        { label: 'Tin nhắn khách thuê', href: '/dashboard/landlord/messages', icon: <MessageSquare className="w-4 h-4" />, badge: 4, badgeVariant: 'brand' },
+        { label: 'Bảo trì & Sửa chữa', href: '/dashboard/landlord/maintenance', icon: <Wrench className="w-4 h-4" />, badge: badges?.landlordMaintenanceRequests, badgeVariant: 'danger' },
+        { label: 'Tin nhắn khách thuê', href: '/dashboard/landlord/messages', icon: <MessageSquare className="w-4 h-4" />, badge: badges?.landlordUnreadMessages, badgeVariant: 'brand' },
         { label: 'Đánh giá nhận được', href: '/dashboard/landlord/reviews', icon: <Star className="w-4 h-4" /> },
         { label: 'Thông báo hệ thống', href: '/dashboard/landlord/notifications', icon: <Bell className="w-4 h-4" /> },
       ],
@@ -181,7 +188,7 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
     {
       title: 'TÀI CHÍNH & TIỀN PHÒNG',
       items: [
-        { label: 'Hóa đơn tiền phòng', href: '/dashboard/tenant/invoices', icon: <CreditCard className="w-4 h-4" />, badge: 1, badgeVariant: 'warning' },
+        { label: 'Hóa đơn tiền phòng', href: '/dashboard/tenant/invoices', icon: <CreditCard className="w-4 h-4" />, badge: badges?.tenantUnpaidInvoices, badgeVariant: 'warning' },
         { label: 'Tiền cọc thuê phòng', href: '/dashboard/tenant/deposits', icon: <PiggyBank className="w-4 h-4" /> },
         { label: 'Lịch sử thanh toán', href: '/dashboard/tenant/payments', icon: <History className="w-4 h-4" /> },
       ],
@@ -192,7 +199,7 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
         { label: 'Báo hỏng & Sửa chữa', href: '/dashboard/tenant/maintenance', icon: <Wrench className="w-4 h-4" /> },
         { label: 'Trả phòng & Quyết toán', href: '/dashboard/tenant/move-out', icon: <MoveOutIcon className="w-4 h-4" /> },
         { label: 'Báo cáo vi phạm', href: '/dashboard/tenant/reports', icon: <AlertTriangle className="w-4 h-4" /> },
-        { label: 'Tin nhắn trao đổi', href: '/dashboard/tenant/messages', icon: <MessageSquare className="w-4 h-4" />, badge: 2, badgeVariant: 'brand' },
+        { label: 'Tin nhắn trao đổi', href: '/dashboard/tenant/messages', icon: <MessageSquare className="w-4 h-4" />, badge: badges?.tenantUnreadMessages, badgeVariant: 'brand' },
         { label: 'Đánh giá của tôi', href: '/dashboard/tenant/reviews', icon: <Star className="w-4 h-4" /> },
       ],
     },

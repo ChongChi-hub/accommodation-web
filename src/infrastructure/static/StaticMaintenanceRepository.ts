@@ -94,3 +94,4 @@ export class StaticMaintenanceRepository implements MaintenanceRepository {
     if (status === 'RESOLVED') req.resolvedAt = new Date().toISOString();
   }
 }
+

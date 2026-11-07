@@ -69,3 +69,4 @@ export class StaticDisputeRepository implements DisputeRepository {
     d.resolvedAt = new Date().toISOString();
   }
 }
+

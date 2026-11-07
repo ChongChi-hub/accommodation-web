@@ -6,3 +6,4 @@ export interface TransactionRepository {
   createTransaction(data: Omit<Transaction, 'id' | 'createdAt'>): Promise<Transaction>;
   refundTransaction(id: string, reason: string): Promise<void>;
 }
+

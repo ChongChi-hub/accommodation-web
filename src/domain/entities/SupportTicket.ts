@@ -30,3 +30,4 @@ export interface SupportTicket {
   updatedAt: string;
   resolvedAt?: string;
 }
+

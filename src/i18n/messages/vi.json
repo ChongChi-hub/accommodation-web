@@ -335,6 +335,7 @@
       "backHome": "Về trang chủ"
     },
     "accountLocked": {
+      "badge": "Tạm khóa hoạt động",
       "title": "Tài khoản tạm thời bị khóa",
       "subtitle": "Tài khoản của bạn đã bị tạm ngưng hoạt động do vi phạm quy chế hoặc hoạt động bất thường.",
       "reasonLabel": "Lý do khóa:",
@@ -353,6 +354,7 @@
       "emergencyContact": "Hotline hỗ trợ kỹ thuật khẩn cấp: 0987 654 321"
     },
     "support": {
+      "badgeTag": "Tổ Ấm Support",
       "title": "Trung tâm Hỗ trợ & Trợ giúp",
       "subtitle": "Gửi yêu cầu hỗ trợ kỹ thuật, giải quyết tranh chấp hợp đồng hoặc thắc mắc về tài khoản.",
       "newTicket": "Gửi yêu cầu mới",
@@ -364,6 +366,7 @@
       "allCategories": "Tất cả danh mục",
       "status": {
         "OPEN": "Mới tiếp nhận",
+        "ASSIGNED": "Đã phân công",
         "IN_PROGRESS": "Đang xử lý",
         "WAITING_USER": "Chờ phản hồi",
         "RESOLVED": "Đã giải quyết",
@@ -390,10 +393,12 @@
         "priority": "Mức độ",
         "status": "Trạng thái",
         "updatedAt": "Cập nhật lúc",
-        "action": "Thao tác"
+        "action": "Thao tác",
+        "detailAction": "Chi tiết"
       },
       "empty": "Không có yêu cầu hỗ trợ nào phù hợp.",
       "new": {
+        "badge": "Phiếu hỗ trợ",
         "title": "Tạo phiếu hỗ trợ mới",
         "subtitle": "Đội ngũ chuyên viên Tổ Ấm sẽ phản hồi trong vòng tối đa 2 giờ làm việc.",
         "subjectLabel": "Tiêu đề tóm tắt",
@@ -403,14 +408,22 @@
         "descLabel": "Mô tả chi tiết sự việc",
         "descPlaceholder": "Mô tả cụ thể các bước dẫn tới lỗi, mã giao dịch, số phòng trọ liên quan...",
         "attachmentLabel": "Đính kèm hình ảnh hoặc tài liệu chứng minh",
+        "fileUploadPlaceholder": "Bấm để tải ảnh chụp màn hình hoặc tài liệu (tối đa 5MB)",
+        "fileHint": "Hỗ trợ PNG, JPG, PDF",
         "submitBtn": "Gửi phiếu hỗ trợ",
         "submitting": "Đang gửi yêu cầu...",
         "success": "Đã gửi phiếu hỗ trợ thành công!",
+        "redirecting": "Hệ thống đang chuyển bạn về danh sách phiếu...",
         "back": "Quay lại danh sách"
       },
       "detail": {
         "back": "Quay lại danh sách phiếu",
+        "loading": "Đang tải thông tin phiếu hỗ trợ...",
+        "notFound": "Không tìm thấy phiếu hỗ trợ",
         "info": "Thông tin phiếu hỗ trợ",
+        "initialDesc": "Mô tả ban đầu:",
+        "creator": "Người tạo:",
+        "cskhBadge": "CSKH Tổ Ấm",
         "conversation": "Tiến trình trao đổi & giải quyết",
         "replyLabel": "Gửi phản hồi bổ sung",
         "replyPlaceholder": "Nhập tin nhắn phản hồi của bạn...",

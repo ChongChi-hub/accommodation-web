@@ -70,7 +70,7 @@ export default function NewSupportTicketPage() {
       <div className="space-y-1">
         <div className="flex items-center gap-2 text-teal-700 dark:text-teal-400 font-semibold text-xs uppercase tracking-wider">
           <LifeBuoy className="w-4 h-4" />
-          <span>Phiếu hỗ trợ</span>
+          <span>{t('badge')}</span>
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
           {t('title')}
@@ -84,7 +84,7 @@ export default function NewSupportTicketPage() {
         <Card className="p-8 text-center space-y-3 bg-teal-50/50 dark:bg-teal-950/20 border-teal-200 dark:border-teal-800">
           <CheckCircle2 className="w-12 h-12 text-teal-600 dark:text-teal-400 mx-auto" />
           <h3 className="text-lg font-bold text-foreground">{t('success')}</h3>
-          <p className="text-xs text-foreground-muted">Hệ thống đang chuyển bạn về danh sách phiếu...</p>
+          <p className="text-xs text-foreground-muted">{t('redirecting')}</p>
         </Card>
       ) : (
         <Card className="p-6 sm:p-8 border border-border">
@@ -97,6 +97,7 @@ export default function NewSupportTicketPage() {
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder={t('subjectPlaceholder')}
+                data-testid="support-new-subject"
                 required
               />
             </div>
@@ -109,14 +110,15 @@ export default function NewSupportTicketPage() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as any)}
+                  aria-label={t('categoryLabel')}
                   className="w-full h-10 px-3 rounded-xl border border-border bg-surface text-foreground text-xs font-medium focus:ring-2 focus:ring-teal-600 focus:outline-none"
                 >
-                  <option value="TECHNICAL">Lỗi kỹ thuật / Ứng dụng</option>
-                  <option value="BILLING">Thanh toán & Hóa đơn</option>
-                  <option value="CONTRACT">Hợp đồng & Đặt cọc</option>
-                  <option value="DISPUTE">Khiếu nại & Tranh chấp</option>
-                  <option value="ACCOUNT">Tài khoản & Xác thực KYC</option>
-                  <option value="OTHER">Vấn đề khác</option>
+                  <option value="TECHNICAL">{t('category.TECHNICAL')}</option>
+                  <option value="PAYMENT">{t('category.BILLING')}</option>
+                  <option value="CONTRACT">{t('category.CONTRACT')}</option>
+                  <option value="VIOLATION">{t('category.DISPUTE')}</option>
+                  <option value="ACCOUNT">{t('category.ACCOUNT')}</option>
+                  <option value="OTHER">{t('category.OTHER')}</option>
                 </select>
               </div>
 
@@ -127,12 +129,13 @@ export default function NewSupportTicketPage() {
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value as any)}
+                  aria-label={t('priorityLabel')}
                   className="w-full h-10 px-3 rounded-xl border border-border bg-surface text-foreground text-xs font-medium focus:ring-2 focus:ring-teal-600 focus:outline-none"
                 >
-                  <option value="LOW">Thấp (Tư vấn, hỏi thông tin)</option>
-                  <option value="MEDIUM">Trung bình (Bình thường)</option>
-                  <option value="HIGH">Cao (Ảnh hưởng sinh hoạt/tiền bạc)</option>
-                  <option value="URGENT">Khẩn cấp (Tranh chấp, mất an toàn)</option>
+                  <option value="LOW">{t('priority.LOW')}</option>
+                  <option value="MEDIUM">{t('priority.MEDIUM')}</option>
+                  <option value="HIGH">{t('priority.HIGH')}</option>
+                  <option value="URGENT">{t('priority.URGENT')}</option>
                 </select>
               </div>
             </div>
@@ -145,6 +148,7 @@ export default function NewSupportTicketPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder={t('descPlaceholder')}
+                data-testid="support-new-desc"
                 rows={5}
                 required
                 className="w-full p-3 rounded-xl border border-border bg-surface text-foreground text-xs font-medium focus:ring-2 focus:ring-teal-600 focus:outline-none resize-y"
@@ -159,9 +163,9 @@ export default function NewSupportTicketPage() {
               <label className="border-2 border-dashed border-border hover:border-teal-600 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer bg-surface-muted/30 transition">
                 <UploadCloud className="w-6 h-6 text-foreground-muted mb-1" />
                 <span className="text-xs font-semibold text-foreground">
-                  {fileName ? fileName : 'Bấm để tải ảnh chụp màn hình hoặc tài liệu (tối đa 5MB)'}
+                  {fileName ? fileName : t('fileUploadPlaceholder')}
                 </span>
-                <span className="text-[10px] text-foreground-muted mt-0.5">Hỗ trợ PNG, JPG, PDF</span>
+                <span className="text-[10px] text-foreground-muted mt-0.5">{t('fileHint')}</span>
                 <input
                   type="file"
                   className="hidden"

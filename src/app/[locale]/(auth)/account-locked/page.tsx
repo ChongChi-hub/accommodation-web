@@ -15,9 +15,9 @@ export default function AccountLockedPage() {
         </div>
 
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-950/80 rounded-full">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold uppercase text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-950/80 rounded-full">
             <ShieldAlert className="w-3.5 h-3.5" />
-            <span>TẠM KHÓA HOẠT ĐỘNG</span>
+            <span>{t('badge')}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
             {t('title')}
@@ -57,3 +57,4 @@ export default function AccountLockedPage() {
     </main>
   );
 }
+

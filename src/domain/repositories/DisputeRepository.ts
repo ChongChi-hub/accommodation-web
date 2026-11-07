@@ -6,3 +6,4 @@ export interface DisputeRepository {
   createDispute(data: Omit<Dispute, 'id' | 'createdAt' | 'status'>): Promise<Dispute>;
   resolveDispute(id: string, verdict: string, status: Dispute['status']): Promise<void>;
 }
+

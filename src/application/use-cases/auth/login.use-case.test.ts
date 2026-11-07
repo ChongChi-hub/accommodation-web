@@ -9,6 +9,8 @@ describe('LoginUseCase', () => {
       register: vi.fn(),
       refreshToken: vi.fn(),
       getProfile: vi.fn(),
+      updateProfile: vi.fn(),
+      changePassword: vi.fn(),
       logout: vi.fn(),
     };
     const useCase = new LoginUseCase(mockRepo);
@@ -27,6 +29,8 @@ describe('LoginUseCase', () => {
       register: vi.fn(),
       refreshToken: vi.fn(),
       getProfile: vi.fn(),
+      updateProfile: vi.fn(),
+      changePassword: vi.fn(),
       logout: vi.fn(),
     };
     const useCase = new LoginUseCase(mockRepo);

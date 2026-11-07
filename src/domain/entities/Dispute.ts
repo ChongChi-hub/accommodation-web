@@ -21,3 +21,4 @@ export interface Dispute {
   createdAt: string;
   resolvedAt?: string;
 }
+
