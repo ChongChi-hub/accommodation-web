@@ -39,3 +39,4 @@ test.describe('Admin Settings Page (Visual & Layout)', () => {
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
   });
 });
+

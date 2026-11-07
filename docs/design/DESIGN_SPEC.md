@@ -143,3 +143,4 @@
 * Phần đầu (Header): Tiêu đề thực thể + Mã ID + Badge trạng thái + Nút đóng (X).
 * Phần thân (Body): Phân khu trực quan (Thông tin cơ bản, Ảnh/Tài liệu đính kèm, Lịch sử kiểm duyệt).
 * Phần chân (Footer): Cố định ở đáy Drawer gồm nút Huỷ, nút Từ chối (Danger) và nút Phê duyệt (Primary).
+

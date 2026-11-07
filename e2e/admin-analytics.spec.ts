@@ -39,3 +39,4 @@ test.describe('Admin Analytics Page (Visual & Layout)', () => {
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
   });
 });
+

@@ -41,3 +41,4 @@ test.describe('Admin KYC Page (Visual & Layout)', () => {
     await expect(page.locator('table')).toBeVisible();
   });
 });
+

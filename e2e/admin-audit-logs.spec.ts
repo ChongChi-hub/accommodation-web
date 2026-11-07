@@ -41,3 +41,4 @@ test.describe('Admin Audit Logs Page (Visual & Layout)', () => {
     await expect(page.locator('table')).toBeVisible();
   });
 });
+

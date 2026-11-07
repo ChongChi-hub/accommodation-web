@@ -165,3 +165,4 @@ export function DashboardHeader({ onToggleMobileSidebar }: DashboardHeaderProps)
     </header>
   );
 }
+
