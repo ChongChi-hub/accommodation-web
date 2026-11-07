@@ -38,7 +38,7 @@ export class HttpAuthRepository implements AuthRepository {
     const res = await ApiClient.post<any>('/auth/register', data);
     ApiClient.setToken(res.token);
     const primaryRole = res.user?.roles?.[0] || data.role || 'TENANT';
-    setRoleCookie(primaryRole);
+    setAuthCookies(res.token, primaryRole);
 
     if (typeof window !== 'undefined') {
       localStorage.setItem('toam_refresh_token', res.refreshToken);

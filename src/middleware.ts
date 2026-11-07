@@ -14,11 +14,11 @@ const DEFAULT_PUBLIC_JWK = {
   e: 'AQAB',
 };
 
-let cachedPublicKey: jose.KeyLike | Uint8Array | null = null;
+let cachedPublicKey: CryptoKey | Uint8Array | null = null;
 
 async function getPublicKey() {
   if (!cachedPublicKey) {
-    cachedPublicKey = (await jose.importJWK(DEFAULT_PUBLIC_JWK, 'RS256')) as jose.KeyLike;
+    cachedPublicKey = (await jose.importJWK(DEFAULT_PUBLIC_JWK, 'RS256')) as CryptoKey | Uint8Array;
   }
   return cachedPublicKey;
 }
