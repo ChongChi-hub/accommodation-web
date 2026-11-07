@@ -9,9 +9,9 @@ export function Table({
   ...props
 }: React.TableHTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-stone-200 dark:border-stone-800">
+    <div className="w-full overflow-x-auto rounded-2xl border border-border bg-surface shadow-xs">
       <table
-        className={cn('w-full text-left text-sm text-stone-600 dark:text-stone-300', className)}
+        className={cn('min-w-[640px] w-full text-left text-sm text-foreground', className)}
         {...props}
       >
         {children}
@@ -28,7 +28,7 @@ export function TableHeader({
   return (
     <thead
       className={cn(
-        'bg-stone-50 dark:bg-stone-800/60 text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider border-b border-stone-200 dark:border-stone-800',
+        'bg-surface-muted text-xs font-semibold text-foreground-muted uppercase tracking-wider border-b border-border',
         className
       )}
       {...props}
@@ -45,7 +45,7 @@ export function TableBody({
 }: React.HTMLAttributes<HTMLTableSectionElement>) {
   return (
     <tbody
-      className={cn('divide-y divide-stone-100 dark:divide-stone-800/60', className)}
+      className={cn('divide-y divide-border/60', className)}
       {...props}
     >
       {children}
@@ -61,7 +61,7 @@ export function TableRow({
   return (
     <tr
       className={cn(
-        'hover:bg-stone-50/70 dark:hover:bg-stone-800/40 transition-colors',
+        'hover:bg-surface-hover/60 transition-colors',
         className
       )}
       {...props}
@@ -77,7 +77,7 @@ export function TableHead({
   ...props
 }: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <th className={cn('px-4 py-3 text-left font-semibold', className)} {...props}>
+    <th className={cn('px-4 py-3.5 text-left font-semibold text-foreground-muted', className)} {...props}>
       {children}
     </th>
   );
@@ -89,9 +89,8 @@ export function TableCell({
   ...props
 }: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <td className={cn('px-4 py-3 align-middle', className)} {...props}>
+    <td className={cn('px-4 py-3.5 align-middle text-foreground', className)} {...props}>
       {children}
     </td>
   );
 }
-

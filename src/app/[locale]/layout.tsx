@@ -1,9 +1,16 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { ToastContainer } from '@/presentation/components/ui/Toast';
 import '@/styles/globals.css';
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin', 'vietnamese'],
+  display: 'swap',
+  variable: '--font-sans',
+});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -31,11 +38,11 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} className={plusJakartaSans.variable} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
       </head>
-      <body className="min-h-screen bg-[var(--color-background)] dark:bg-stone-950 text-[var(--color-foreground)] antialiased transition-colors">
+      <body className="min-h-screen bg-background text-foreground antialiased transition-colors">
         <NextIntlClientProvider messages={messages}>
           {children}
           <ToastContainer />

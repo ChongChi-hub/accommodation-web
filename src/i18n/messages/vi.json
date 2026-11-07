@@ -296,6 +296,26 @@
       "errorTitle": "Lỗi tải cấu hình hệ thống",
       "errorDesc": "Không thể kết nối đến máy chủ quản trị."
     }
+  },
+  "uiKit": {
+    "title": "Tổ Ấm - Thư viện Thành phần Giao diện (UI Kit)",
+    "subtitle": "Quy chuẩn thiết kế đồng bộ cho toàn bộ hệ thống ở cả Light Mode và Dark Mode",
+    "buttons": "Nút bấm (Buttons)",
+    "inputs": "Trường nhập liệu (Inputs & Form Controls)",
+    "cards": "Thẻ thông tin (Cards)",
+    "badges": "Huy hiệu trạng thái (Badges)",
+    "tabs": "Thanh điều hướng phân mục (Tabs)",
+    "tables": "Bảng dữ liệu chuẩn (Tables)",
+    "dialogs": "Hộp thoại & Khung trượt (Modals & Drawers)",
+    "primary": "Chính (Primary)",
+    "secondary": "Phụ (Secondary)",
+    "outline": "Viền ngoài (Outline)",
+    "ghost": "Tàng hình (Ghost)",
+    "danger": "Nguy hiểm (Danger)",
+    "openDialog": "Mở Modal Hộp thoại",
+    "openDrawer": "Mở Drawer Trượt phải",
+    "sampleInput": "Nhập tiêu đề hoặc từ khóa...",
+    "inputLabel": "Tên phòng trọ",
+    "inputHelper": "Tối thiểu 10 ký tự, nêu rõ vị trí và loại phòng"
   }
 }
-

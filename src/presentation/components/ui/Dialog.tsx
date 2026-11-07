@@ -49,7 +49,7 @@ export function Dialog({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity duration-150"
     >
       <div
         className="fixed inset-0"
@@ -58,7 +58,7 @@ export function Dialog({
       />
       <div
         className={cn(
-          'relative w-full rounded-2xl bg-white dark:bg-stone-900 p-6 shadow-2xl border border-stone-200 dark:border-stone-800 z-10 animate-in zoom-in-95 duration-150',
+          'relative w-full rounded-2xl bg-surface p-6 shadow-2xl border border-border z-10 duration-150 text-foreground',
           sizeClasses[size],
           className
         )}
@@ -66,19 +66,19 @@ export function Dialog({
         <div className="flex items-start justify-between pb-3">
           <div>
             {title && (
-              <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">
+              <h2 className="text-lg font-bold text-foreground">
                 {title}
               </h2>
             )}
             {description && (
-              <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+              <p className="text-xs text-foreground-muted mt-0.5">
                 {description}
               </p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors cursor-pointer"
+            className="rounded-lg p-1.5 text-foreground-muted hover:text-foreground hover:bg-surface-muted transition-colors cursor-pointer"
             aria-label="Đóng"
           >
             <X className="w-5 h-5" />
@@ -89,4 +89,3 @@ export function Dialog({
     </div>
   );
 }
-

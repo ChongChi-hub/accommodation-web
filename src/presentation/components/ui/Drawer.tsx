@@ -40,7 +40,7 @@ export function Drawer({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 overflow-hidden bg-stone-900/50 backdrop-blur-xs animate-in fade-in"
+      className="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-xs transition-opacity duration-200"
     >
       <div
         className="absolute inset-0"
@@ -55,20 +55,20 @@ export function Drawer({
       >
         <div
           className={cn(
-            'w-screen max-w-md bg-white dark:bg-stone-900 shadow-2xl border-stone-200 dark:border-stone-800 flex flex-col',
+            'w-screen max-w-md md:max-w-xl bg-surface shadow-2xl border-border flex flex-col transition-transform duration-200',
             position === 'right' ? 'border-l' : 'border-r',
             className
           )}
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100 dark:border-stone-800">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border">
             {title && (
-              <h2 className="text-base font-semibold text-stone-900 dark:text-stone-100">
+              <h2 className="text-base font-bold text-foreground">
                 {title}
               </h2>
             )}
             <button
               onClick={onClose}
-              className="rounded-lg p-1 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors cursor-pointer"
+              className="rounded-lg p-1.5 text-foreground-muted hover:text-foreground hover:bg-surface-hover transition-colors cursor-pointer"
               aria-label="Đóng"
             >
               <X className="w-5 h-5" />
@@ -80,4 +80,3 @@ export function Drawer({
     </div>
   );
 }
-

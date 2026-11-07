@@ -28,25 +28,25 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] cursor-pointer';
+      'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-700/30 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] cursor-pointer';
 
     const variants = {
       primary:
-        'bg-teal-700 text-white hover:bg-teal-800 focus:ring-teal-700 shadow-xs hover:shadow-sm',
+        'bg-teal-700 text-white hover:bg-teal-800 shadow-xs hover:shadow-sm focus-visible:ring-teal-700',
       secondary:
-        'bg-amber-500 text-white hover:bg-amber-600 focus:ring-amber-500 shadow-xs hover:shadow-sm',
+        'bg-amber-500 text-white hover:bg-amber-600 shadow-xs hover:shadow-sm focus-visible:ring-amber-500',
       outline:
-        'border border-stone-300 dark:border-stone-700 bg-transparent text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 focus:ring-stone-400',
+        'border border-border bg-surface text-foreground hover:bg-surface-hover shadow-xs focus-visible:ring-teal-700',
       ghost:
-        'bg-transparent text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 focus:ring-stone-400',
+        'bg-transparent text-foreground hover:bg-surface-hover focus-visible:ring-teal-700',
       danger:
-        'bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500 shadow-xs hover:shadow-sm',
+        'bg-rose-600 text-white hover:bg-rose-700 shadow-xs hover:shadow-sm focus-visible:ring-rose-500',
     };
 
     const sizes = {
-      sm: 'text-xs px-3 py-1.5 gap-1.5',
-      md: 'text-sm px-4 py-2 gap-2',
-      lg: 'text-base px-5 py-2.5 gap-2.5',
+      sm: 'h-8 text-xs px-3 gap-1.5',
+      md: 'h-10 text-sm px-4 gap-2',
+      lg: 'h-12 text-base px-5 gap-2.5',
     };
 
     return (
@@ -66,4 +66,3 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = 'Button';
-

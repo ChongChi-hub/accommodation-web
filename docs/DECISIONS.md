@@ -76,3 +76,41 @@ Xây dựng nền tảng thuê phòng trọ "Tổ Ấm" thay thế hệ thống 
   * Đồng thời bổ sung service `web` với Docker Compose profile `full` trỏ tới `../accommodation-web`.
   * Khi phát triển độc lập: Backend chạy `./gradlew bootRun` hoặc `docker compose up` (cổng 8080/8081); Frontend chạy `npm run dev` (cổng 3000) gọi API qua `NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1`.
   * Khi cần khởi chạy trọn gói cả hệ thống bằng một lệnh: `docker compose --profile full up --build`.
+
+---
+
+## 6. Quyết định Cải tổ Hệ thống Giao diện Toàn cục (Global Design System & CSS)
+
+### 6.1. Chẩn đoán nguyên nhân gốc rễ (Root Cause Analysis)
+Qua việc mở trình duyệt kiểm tra thực tế trên Chromium ở cả 2 độ phân giải 1440px và 390px (Light/Dark mode):
+1. **Lỗi Dark Mode tê liệt do thiếu `@custom-variant dark`:**
+   - Trong Tailwind CSS v4, tính năng `dark:` mặc định lắng nghe media query `@media (prefers-color-scheme: dark)`. Ứng dụng bật/tắt dark mode bằng cách thêm class `.dark` vào thẻ `<html>`, nhưng thiếu chỉ thị `@custom-variant dark (&:where(.dark, .dark *));`.
+   - Kết quả: Khi kích hoạt theme tối, background vẫn giữ nguyên màu trắng `#FAF7F2` và chữ màu tối `#1C1917`, toàn bộ class `dark:*` bị bỏ qua.
+2. **Lỗi layout mobile (390px) do Sidebar cố định:**
+   - Component `DashboardSidebar` sử dụng kích thước cứng `w-64` (256px) nằm trong container flex ngang cạnh `<main>`.
+   - Trên màn hình di động 390px, thanh Sidebar chiếm 256px, ép nội dung chính `<main>` chỉ còn vỏn vẹn **134px**, dẫn đến vỡ nát toàn bộ giao diện bảng, biểu đồ, thẻ tóm tắt.
+3. **Thiếu định nghĩa Semantic Tokens hai chiều:**
+   - File `globals.css` chỉ khai báo màu tĩnh, không có bộ biến CSS semantic (`--background`, `--surface`, `--border`, `--foreground`, `--muted`) tự động đảo giá trị theo chế độ sáng/tối.
+4. **Header chưa phân tách ngữ cảnh:**
+   - `DashboardLayout` dùng chung Header công khai của khách vãng lai, thiếu nút điều khiển Drawer trên di động, chuông thông báo có badge, và menu quản trị viên.
+5. **Thiếu chuẩn hóa Typography tiếng Việt:**
+   - Sử dụng system font mặc định khiến hiển thị dấu tiếng Việt trên Windows bị lệch độ cao và co giãn chữ không đồng đều.
+
+### 6.2. Phương án khắc phục triệt để ở tầng Design System
+1. **Cấu hình lại Tailwind v4 & Biến CSS trong `globals.css`:**
+   - Bổ sung `@custom-variant dark (&:where(.dark, .dark *));`.
+   - Thiết lập bảng màu semantic:
+     - Light: Background `#FAF8F5`, Surface `#FFFFFF`, Surface Muted `#F5F1EA`, Border `#E7E5E4`, Foreground `#1C1917`, Muted `#78716C`.
+     - Dark: Background `#0C0A09`, Surface `#1C1917`, Surface Muted `#292524`, Border `#2E2A27`, Foreground `#F5F5F4`, Muted `#A8A29E`.
+   - Tích hợp màu thương hiệu: Primary Teal (`#0F766E`), Accent Amber (`#F59E0B`), Danger Rose (`#E11D48`), Success Emerald (`#10B981`).
+2. **Tích hợp Google Font `Plus Jakarta Sans` với subset Vietnamese:**
+   - Nạp thông qua `next/font/google` trong layout gốc và ánh xạ vào biến `--font-sans`.
+3. **Tái thiết kế `DashboardLayout` và `DashboardSidebar` đáp ứng Mobile:**
+   - Trên màn hình `< 1024px`, Sidebar chuyển thành Offcanvas Drawer có nút toggle trên Header.
+   - Nội dung `<main>` luôn chiếm toàn bộ chiều rộng (100% viewport width) trên di động.
+4. **Chuẩn hóa bộ UI component:**
+   - Button: cố định chiều cao (sm: 34px, md: 40px, lg: 46px), rounded-xl, bo viền và đổ bóng tinh tế.
+   - Input/Select: cố định chiều cao 40px (md), bo góc rounded-xl, padding đều, focus ring thương hiệu rõ ràng.
+   - Table: có lớp bọc `overflow-x-auto` với thanh cuộn mỏng, min-width chuẩn, phân cách dòng rõ nét.
+   - Badge & Card: nhất quán border radius và độ tương phản màu chuẩn WCAG AA.
+

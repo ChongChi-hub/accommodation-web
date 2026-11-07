@@ -17,22 +17,22 @@ export function Card({
 }: CardProps) {
   const variants = {
     default:
-      'bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-xs',
+      'bg-surface border border-border shadow-xs',
     muted:
-      'bg-stone-50 dark:bg-stone-900/50 border border-stone-200/60 dark:border-stone-800/80',
+      'bg-surface-muted border border-border',
     outline:
-      'bg-transparent border border-stone-300 dark:border-stone-700',
+      'bg-transparent border border-border',
     elevated:
-      'bg-white dark:bg-stone-900 border border-stone-200/50 dark:border-stone-800 shadow-md',
+      'bg-surface border border-border shadow-md',
   };
 
   return (
     <div
       className={cn(
-        'rounded-2xl p-5 transition-all duration-200',
+        'rounded-2xl p-5 md:p-6 transition-all duration-200 text-foreground',
         variants[variant],
         interactive &&
-          'hover:-translate-y-0.5 hover:shadow-md hover:border-teal-600/40 cursor-pointer',
+          'hover:-translate-y-0.5 hover:shadow-sm hover:border-teal-700/40 cursor-pointer',
         className
       )}
       {...props}
@@ -62,7 +62,7 @@ export function CardTitle({
   return (
     <h3
       className={cn(
-        'text-base font-semibold text-stone-900 dark:text-stone-100 tracking-tight',
+        'text-base font-semibold text-foreground tracking-tight',
         className
       )}
       {...props}
@@ -78,9 +78,8 @@ export function CardContent({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('text-sm text-stone-600 dark:text-stone-300', className)} {...props}>
+    <div className={cn('text-sm text-foreground', className)} {...props}>
       {children}
     </div>
   );
 }
-

@@ -296,6 +296,26 @@
       "errorTitle": "Error loading system configuration",
       "errorDesc": "Could not connect to the administration service."
     }
+  },
+  "uiKit": {
+    "title": "Tổ Ấm - Component UI Kit Showcase",
+    "subtitle": "Synchronized design standards across the platform in both Light and Dark modes",
+    "buttons": "Buttons",
+    "inputs": "Inputs & Form Controls",
+    "cards": "Cards",
+    "badges": "Status Badges",
+    "tabs": "Tabs Navigation",
+    "tables": "Standard Data Tables",
+    "dialogs": "Modals & Drawers",
+    "primary": "Primary",
+    "secondary": "Secondary",
+    "outline": "Outline",
+    "ghost": "Ghost",
+    "danger": "Danger",
+    "openDialog": "Open Modal Dialog",
+    "openDrawer": "Open Slide-over Drawer",
+    "sampleInput": "Enter title or keyword...",
+    "inputLabel": "Room Title",
+    "inputHelper": "Minimum 10 characters, clearly stating location and type"
   }
 }
-

@@ -20,14 +20,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider"
+            className="block text-xs font-semibold text-foreground uppercase tracking-wider"
           >
             {label}
           </label>
         )}
         <div className="relative flex items-center">
           {leftIcon && (
-            <div className="absolute left-3 text-stone-400 dark:text-stone-500 pointer-events-none flex items-center">
+            <div className="absolute left-3.5 text-foreground-muted pointer-events-none flex items-center">
               {leftIcon}
             </div>
           )}
@@ -35,10 +35,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             ref={ref}
             className={cn(
-              'w-full rounded-xl border bg-white dark:bg-stone-900 px-3.5 py-2.5 text-sm text-stone-900 dark:text-stone-100 placeholder:text-stone-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1',
+              'h-10 w-full rounded-xl border bg-surface px-3.5 text-sm text-foreground placeholder:text-foreground-muted transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1',
               error
-                ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-400'
-                : 'border-stone-200 dark:border-stone-800 focus:border-teal-600 focus:ring-teal-600',
+                ? 'border-rose-500 focus:border-rose-600 focus:ring-rose-500/20'
+                : 'border-border focus:border-teal-700 focus:ring-teal-700/20',
               leftIcon && 'pl-10',
               rightIcon && 'pr-10',
               className
@@ -46,15 +46,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-3 text-stone-400 dark:text-stone-500 flex items-center">
+            <div className="absolute right-3.5 text-foreground-muted flex items-center">
               {rightIcon}
             </div>
           )}
         </div>
         {error ? (
-          <p className="text-xs text-rose-600 dark:text-rose-400">{error}</p>
+          <p className="text-xs font-medium text-rose-600 dark:text-rose-400">{error}</p>
         ) : helperText ? (
-          <p className="text-xs text-stone-500 dark:text-stone-400">{helperText}</p>
+          <p className="text-xs text-foreground-muted">{helperText}</p>
         ) : null}
       </div>
     );
@@ -62,4 +62,3 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 
 Input.displayName = 'Input';
-

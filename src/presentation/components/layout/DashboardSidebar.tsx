@@ -27,6 +27,7 @@ import {
   History,
   Sliders,
   LogOut,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
@@ -36,15 +37,20 @@ export interface NavItem {
   icon: React.ReactNode;
 }
 
-export function DashboardSidebar() {
+export interface DashboardSidebarProps {
+  isMobile?: boolean;
+  onClose?: () => void;
+}
+
+export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
 
-  const role = user?.roles.includes('ADMIN') || user?.roles.includes('MODERATOR')
-    ? 'admin'
-    : user?.roles.includes('LANDLORD')
-    ? 'landlord'
-    : 'tenant';
+  const isAdmin = user?.roles.includes('ADMIN');
+  const isModerator = user?.roles.includes('MODERATOR');
+  const isLandlord = user?.roles.includes('LANDLORD');
+
+  const role = (isAdmin || isModerator) ? 'admin' : isLandlord ? 'landlord' : 'tenant';
 
   const tenantItems: NavItem[] = [
     { label: 'Tổng quan', href: '/dashboard/tenant', icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -80,7 +86,7 @@ export function DashboardSidebar() {
     { label: 'Cài đặt tài khoản', href: '/dashboard/landlord/settings', icon: <Settings className="w-4 h-4" /> },
   ];
 
-  const adminItems: NavItem[] = [
+  const allAdminItems: NavItem[] = [
     { label: 'Tổng quan hệ thống', href: '/dashboard/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
     { label: 'Duyệt phòng đăng', href: '/dashboard/admin/rooms', icon: <CheckSquare className="w-4 h-4" /> },
     { label: 'Duyệt hồ sơ KYC', href: '/dashboard/admin/kyc', icon: <ShieldCheck className="w-4 h-4" /> },
@@ -93,45 +99,75 @@ export function DashboardSidebar() {
     { label: 'Cấu hình hệ thống', href: '/dashboard/admin/settings', icon: <Sliders className="w-4 h-4" /> },
   ];
 
+  // Moderator only sees Moderation, KYC, Reports, Reviews, Overview
+  const moderatorAllowed = [
+    '/dashboard/admin',
+    '/dashboard/admin/rooms',
+    '/dashboard/admin/kyc',
+    '/dashboard/admin/reports',
+    '/dashboard/admin/reviews',
+  ];
+
+  const adminItems = isModerator && !isAdmin
+    ? allAdminItems.filter((i) => moderatorAllowed.includes(i.href))
+    : allAdminItems;
+
   const items = role === 'admin' ? adminItems : role === 'landlord' ? landlordItems : tenantItems;
 
-  return (
-    <aside className="w-64 shrink-0 border-r border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 flex flex-col justify-between h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
+  const content = (
+    <div className="flex flex-col h-full justify-between">
       <div className="p-4 space-y-1">
-        <div className="px-3 py-2 mb-2">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-            {role === 'admin'
-              ? 'Khu vực quản trị viên'
-              : role === 'landlord'
-              ? 'Khu vực chủ trọ'
-              : 'Khu vực người thuê'}
+        {isMobile && (
+          <div className="flex items-center justify-between pb-3 mb-2 border-b border-border">
+            <span className="text-sm font-bold text-teal-800 dark:text-teal-400">Tổ Ấm Dashboard</span>
+            <button
+              onClick={onClose}
+              className="p-1 rounded-lg text-foreground-muted hover:text-foreground hover:bg-surface-muted"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+
+        <div className="px-3 py-2 mb-2 bg-surface-muted rounded-xl">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-foreground-muted">
+            {isAdmin
+              ? 'Quản trị viên cấp cao'
+              : isModerator
+              ? 'Kiểm duyệt viên (Moderator)'
+              : isLandlord
+              ? 'Chủ trọ / Cho thuê'
+              : 'Người tìm phòng / Thuê trọ'}
           </p>
-          <p className="text-xs font-semibold text-teal-800 dark:text-teal-400 truncate">
+          <p className="text-xs font-semibold text-teal-800 dark:text-teal-400 truncate mt-0.5">
             {user?.fullName || 'Người dùng'}
           </p>
         </div>
 
-        {items.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-150',
-                isActive
-                  ? 'bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 font-semibold shadow-xs'
-                  : 'text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800/60 hover:text-stone-900 dark:hover:text-stone-100'
-              )}
-            >
-              {item.icon}
-              <span className="truncate">{item.label}</span>
-            </Link>
-          );
-        })}
+        <nav className="space-y-1">
+          {items.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={isMobile ? onClose : undefined}
+                className={cn(
+                  'flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150',
+                  isActive
+                    ? 'bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 font-semibold shadow-xs'
+                    : 'text-foreground-muted hover:bg-surface-hover hover:text-foreground'
+                )}
+              >
+                {item.icon}
+                <span className="truncate">{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
 
-      <div className="p-4 border-t border-stone-100 dark:border-stone-800">
+      <div className="p-4 border-t border-border">
         <button
           onClick={() => logout()}
           className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
@@ -140,7 +176,16 @@ export function DashboardSidebar() {
           <span>Đăng xuất</span>
         </button>
       </div>
+    </div>
+  );
+
+  if (isMobile) {
+    return content;
+  }
+
+  return (
+    <aside className="hidden lg:flex w-64 shrink-0 border-r border-border bg-surface flex-col justify-between h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
+      {content}
     </aside>
   );
 }
-
