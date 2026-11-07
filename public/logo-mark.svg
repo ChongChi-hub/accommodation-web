@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <!-- Minimalist Roof with Negative Space Location Pin & Nest/Leaf Accent -->
+  <path d="M6 22L24 6L42 22H36V40C36 41.1 35.1 42 34 42H14C12.9 42 12 41.1 12 40V22H6Z" fill="#0F766E"/>
+  <!-- Negative Space Pin Hole -->
+  <circle cx="24" cy="20" r="4.5" fill="#FAF7F2"/>
+  <path d="M24 23.5C21 23.5 19 28 24 35C29 28 27 23.5 24 23.5Z" fill="#FAF7F2"/>
+  <!-- Warm Amber Leaf / Bird Wing Motif -->
+  <path d="M28 10C32 10 36 12 37 16C33 16 29 14 28 10Z" fill="#F59E0B"/>
+</svg>
+

@@ -1,0 +1,58 @@
+{
+  "brand": {
+    "name": "Tổ Ấm",
+    "tagline": "Nền tảng thuê trọ minh bạch & an tâm"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "rooms": "Tìm phòng",
+    "postRoom": "Đăng tin cho thuê",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất",
+    "profile": "Hồ sơ cá nhân",
+    "tenantDashboard": "Khu vực người thuê",
+    "landlordDashboard": "Khu vực chủ trọ",
+    "adminDashboard": "Quản trị hệ thống",
+    "messages": "Tin nhắn",
+    "notifications": "Thông báo",
+    "savedRooms": "Phòng đã lưu"
+  },
+  "auth": {
+    "loginTitle": "Đăng nhập Tổ Ấm",
+    "loginSubtitle": "Chào mừng bạn trở về với không gian sống tin cậy",
+    "registerTitle": "Tạo tài khoản mới",
+    "registerSubtitle": "Bắt đầu hành trình tìm kiếm và quản lý tổ ấm của bạn",
+    "email": "Địa chỉ Email",
+    "phone": "Số điện thoại",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "fullName": "Họ và tên",
+    "role": "Bạn là",
+    "roleTenant": "Người tìm phòng / Người thuê",
+    "roleLandlord": "Chủ nhà trọ / Cho thuê",
+    "loginBtn": "Đăng nhập",
+    "registerBtn": "Tạo tài khoản",
+    "forgotPassword": "Quên mật khẩu?",
+    "noAccount": "Chưa có tài khoản?",
+    "haveAccount": "Đã có tài khoản?",
+    "or": "Hoặc tiếp tục với",
+    "googleLogin": "Đăng nhập với Google"
+  },
+  "common": {
+    "loading": "Đang tải dữ liệu...",
+    "empty": "Chưa có dữ liệu nào ở đây",
+    "error": "Đã xảy ra lỗi, vui lòng thử lại",
+    "retry": "Thử lại",
+    "comingSoon": "Tính năng sẽ sớm ra mắt trong giai đoạn tiếp theo!",
+    "save": "Lưu thay đổi",
+    "cancel": "Hủy bỏ",
+    "confirm": "Xác nhận",
+    "filter": "Bộ lọc",
+    "search": "Tìm kiếm",
+    "viewDetails": "Xem chi tiết",
+    "pricePerMonth": "/tháng",
+    "currency": "đ"
+  }
+}
+

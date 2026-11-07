@@ -1,0 +1,58 @@
+{
+  "brand": {
+    "name": "To Am",
+    "tagline": "Transparent & trusted room rental platform"
+  },
+  "nav": {
+    "home": "Home",
+    "rooms": "Find Rooms",
+    "postRoom": "Post a Room",
+    "login": "Sign In",
+    "register": "Sign Up",
+    "logout": "Sign Out",
+    "profile": "Profile",
+    "tenantDashboard": "Tenant Space",
+    "landlordDashboard": "Landlord Space",
+    "adminDashboard": "Admin Control",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "savedRooms": "Saved Rooms"
+  },
+  "auth": {
+    "loginTitle": "Sign In to To Am",
+    "loginSubtitle": "Welcome back to your trusted living space",
+    "registerTitle": "Create New Account",
+    "registerSubtitle": "Start your journey to find and manage your home",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Full Name",
+    "role": "I am a",
+    "roleTenant": "Room Seeker / Tenant",
+    "roleLandlord": "Landlord / Property Owner",
+    "loginBtn": "Sign In",
+    "registerBtn": "Create Account",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "or": "Or continue with",
+    "googleLogin": "Sign in with Google"
+  },
+  "common": {
+    "loading": "Loading data...",
+    "empty": "No data available here",
+    "error": "An error occurred, please try again",
+    "retry": "Retry",
+    "comingSoon": "This feature will be released in the next phase!",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "filter": "Filter",
+    "search": "Search",
+    "viewDetails": "View Details",
+    "pricePerMonth": "/month",
+    "currency": "VND"
+  }
+}
+

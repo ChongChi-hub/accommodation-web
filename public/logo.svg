@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="200" height="48" fill="none">
+  <!-- Mark -->
+  <g transform="translate(0, 0)">
+    <path d="M6 22L24 6L42 22H36V40C36 41.1 35.1 42 34 42H14C12.9 42 12 41.1 12 40V22H6Z" fill="#0F766E"/>
+    <circle cx="24" cy="20" r="4.5" fill="#FAF7F2"/>
+    <path d="M24 23.5C21 23.5 19 28 24 35C29 28 27 23.5 24 23.5Z" fill="#FAF7F2"/>
+    <path d="M28 10C32 10 36 12 37 16C33 16 29 14 28 10Z" fill="#F59E0B"/>
+  </g>
+  <!-- Text Brand Name -->
+  <text x="56" y="27" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="800" fill="#0F766E">TỔ ẤM</text>
+  <!-- Tagline -->
+  <text x="56" y="40" font-family="system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="500" fill="#78716C">Nền tảng thuê trọ minh bạch</text>
+</svg>
+
