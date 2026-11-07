@@ -317,5 +317,108 @@
     "sampleInput": "Enter title or keyword...",
     "inputLabel": "Room Title",
     "inputHelper": "Minimum 10 characters, clearly stating location and type"
+  },
+  "pages": {
+    "forbidden": {
+      "code": "403",
+      "title": "Access Denied",
+      "subtitle": "You do not have permission to access this resource or administrative area.",
+      "description": "This section requires elevated permissions (Administrator or Moderator). If you believe this is an error, please contact support.",
+      "backHome": "Back to Home",
+      "contactSupport": "Submit Support Ticket"
+    },
+    "sessionExpired": {
+      "title": "Session Expired",
+      "subtitle": "For your security, your session has expired due to inactivity.",
+      "description": "Please sign in again to continue accessing platform services and safeguard your personal account.",
+      "loginAgain": "Sign In Again",
+      "backHome": "Back to Home"
+    },
+    "accountLocked": {
+      "title": "Account Temporarily Suspended",
+      "subtitle": "Your account has been temporarily locked due to policy violations or unusual activity.",
+      "reasonLabel": "Suspension Reason:",
+      "reasonDefault": "Suspicious login activity detected or community guideline report currently under review.",
+      "supportNotice": "If you believe this is a mistake, please file an appeal with our support team for review.",
+      "appealBtn": "File an Appeal",
+      "hotline": "24/7 Support Hotline: 1900 8888"
+    },
+    "maintenance": {
+      "badge": "System Under Maintenance",
+      "title": "Service Infrastructure Upgrade",
+      "subtitle": "Tổ Ấm is undergoing scheduled maintenance to deliver faster, safer, and more reliable services.",
+      "estimateTime": "Estimated completion: 18:00 today",
+      "featuresAffected": "Temporarily unavailable: New room listings, electronic contracts, and wallet top-ups.",
+      "checkStatus": "Check Service Status",
+      "emergencyContact": "Emergency Tech Hotline: 0987 654 321"
+    },
+    "support": {
+      "title": "Help & Support Center",
+      "subtitle": "Submit technical tickets, resolve lease contract disputes, or ask account questions.",
+      "newTicket": "Submit New Ticket",
+      "myTickets": "My Tickets",
+      "searchPlaceholder": "Search by ticket code or title...",
+      "filterStatus": "Status",
+      "filterCategory": "Category",
+      "allStatus": "All Statuses",
+      "allCategories": "All Categories",
+      "status": {
+        "OPEN": "Open",
+        "IN_PROGRESS": "In Progress",
+        "WAITING_USER": "Waiting on Customer",
+        "RESOLVED": "Resolved",
+        "CLOSED": "Closed"
+      },
+      "category": {
+        "TECHNICAL": "Technical Bug / Application",
+        "BILLING": "Payments & Billing",
+        "CONTRACT": "Contracts & Deposits",
+        "DISPUTE": "Disputes & Complaints",
+        "ACCOUNT": "Account & KYC Identity",
+        "OTHER": "Other Issues"
+      },
+      "priority": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High",
+        "URGENT": "Urgent"
+      },
+      "table": {
+        "ticketId": "Ticket ID",
+        "subject": "Subject",
+        "category": "Category",
+        "priority": "Priority",
+        "status": "Status",
+        "updatedAt": "Updated At",
+        "action": "Action"
+      },
+      "empty": "No support tickets found matching your criteria.",
+      "new": {
+        "title": "Create a New Support Ticket",
+        "subtitle": "Our specialized support team will respond within 2 working hours.",
+        "subjectLabel": "Subject Summary",
+        "subjectPlaceholder": "e.g., Electric bill for November not appearing",
+        "categoryLabel": "Issue Category",
+        "priorityLabel": "Priority Level",
+        "descLabel": "Detailed Description",
+        "descPlaceholder": "Describe the sequence of steps, transaction codes, or room IDs involved...",
+        "attachmentLabel": "Attach Evidence or Screenshots",
+        "submitBtn": "Submit Ticket",
+        "submitting": "Submitting...",
+        "success": "Ticket submitted successfully!",
+        "back": "Back to Tickets"
+      },
+      "detail": {
+        "back": "Back to Tickets",
+        "info": "Ticket Information",
+        "conversation": "Conversation & Resolution Timeline",
+        "replyLabel": "Send Follow-up Message",
+        "replyPlaceholder": "Type your message or clarification here...",
+        "sendReply": "Send Message",
+        "sendingReply": "Sending...",
+        "assignedTo": "Assigned Specialist",
+        "created": "Created At"
+      }
+    }
   }
 }

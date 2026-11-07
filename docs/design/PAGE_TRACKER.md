@@ -7,13 +7,13 @@
 ## 1. Nhóm Dùng Chung (Common)
 | Route | Tên Trang | Ưu Tiên | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
 |---|---|---|---|---|---|---|---|
-| `/403` | Truy cập không được phép | P1 | Tĩnh i18n | Chờ rà soát | - | - | Màn hình 403 styled có nút quay về |
-| `/session-expired` | Phiên đăng nhập hết hạn | P1 | Tĩnh i18n | Chờ rà soát | - | - | Thông báo timeout, nút đăng nhập lại |
-| `/account-locked` | Tài khoản bị khóa tạm thời | P1 | Tĩnh i18n | Chờ rà soát | - | - | Lý do vi phạm, form liên hệ mở khóa |
-| `/maintenance` | Hệ thống đang bảo trì | P1 | Tĩnh i18n | Chờ rà soát | - | - | Dự kiến hoàn thành, hotline hỗ trợ |
-| `/support` | Trung tâm hỗ trợ & Phiếu yêu cầu | P1 | `StaticSupportRepository` | Chờ rà soát | - | - | Danh sách vé yêu cầu hỗ trợ |
-| `/support/new` | Tạo yêu cầu hỗ trợ mới | P1 | `StaticSupportRepository` | Chờ rà soát | - | - | Biểu mẫu đính kèm ảnh lỗi/khiếu nại |
-| `/support/[id]` | Chi tiết phiếu hỗ trợ & Trao đổi | P1 | `StaticSupportRepository` | Chờ rà soát | - | - | Luồng hội thoại hỗ trợ trực tiếp |
+| `/403` | Truy cập không được phép | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/403-*.png` (4 ảnh) | Shield alert card, responsive 390/1440, light/dark, Playwright pass |
+| `/session-expired` | Phiên đăng nhập hết hạn | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/session-expired-*.png` (4 ảnh) | Clock card, login CTA, light/dark, Playwright pass |
+| `/account-locked` | Tài khoản bị khóa tạm thời | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/account-locked-*.png` (4 ảnh) | Reason box, appeal action, 24/7 hotline, Playwright pass |
+| `/maintenance` | Hệ thống đang bảo trì | P1 | Tĩnh i18n | Hoàn thành | 07/11/2026 | `screenshots/common/maintenance-*.png` (4 ảnh) | Animated badge, impact list, reload trigger, Playwright pass |
+| `/support` | Trung tâm hỗ trợ & Phiếu yêu cầu | P1 | `StaticSupportRepository` | Hoàn thành | 07/11/2026 | `screenshots/common/support-*.png` (4 ảnh) | Filter status/category, search, priority badges, Playwright pass |
+| `/support/new` | Tạo yêu cầu hỗ trợ mới | P1 | `StaticSupportRepository` | Hoàn thành | 07/11/2026 | `screenshots/common/support-new-*.png` (4 ảnh) | Form validation, mock file attachment upload, Playwright pass |
+| `/support/[id]` | Chi tiết phiếu hỗ trợ & Trao đổi | P1 | `StaticSupportRepository` | Hoàn thành | 07/11/2026 | `screenshots/common/support-detail-*.png` (4 ảnh) | Timeline tin nhắn 2 chiều, live reply, metadata card, Playwright pass |
 
 ---
 

@@ -317,5 +317,108 @@
     "sampleInput": "Nhập tiêu đề hoặc từ khóa...",
     "inputLabel": "Tên phòng trọ",
     "inputHelper": "Tối thiểu 10 ký tự, nêu rõ vị trí và loại phòng"
+  },
+  "pages": {
+    "forbidden": {
+      "code": "403",
+      "title": "Truy cập bị từ chối",
+      "subtitle": "Bạn không có quyền truy cập vào tài nguyên hoặc khu vực quản trị này.",
+      "description": "Khu vực này yêu cầu đặc quyền tài khoản cao hơn (Quản trị viên hoặc Kiểm duyệt viên). Nếu bạn cho rằng đây là một sự nhầm lẫn, vui lòng liên hệ ban quản trị để được hỗ trợ.",
+      "backHome": "Về trang chủ",
+      "contactSupport": "Gửi yêu cầu hỗ trợ"
+    },
+    "sessionExpired": {
+      "title": "Phiên làm việc đã hết hạn",
+      "subtitle": "Vì lý do bảo mật, phiên đăng nhập của bạn đã hết thời hạn hoạt động.",
+      "description": "Vui lòng đăng nhập lại để tiếp tục sử dụng các dịch vụ và bảo vệ dữ liệu cá nhân của bạn.",
+      "loginAgain": "Đăng nhập lại ngay",
+      "backHome": "Về trang chủ"
+    },
+    "accountLocked": {
+      "title": "Tài khoản tạm thời bị khóa",
+      "subtitle": "Tài khoản của bạn đã bị tạm ngưng hoạt động do vi phạm quy chế hoặc hoạt động bất thường.",
+      "reasonLabel": "Lý do khóa:",
+      "reasonDefault": "Phát hiện đăng nhập bất thường hoặc báo cáo vi phạm tiêu chuẩn cộng đồng đang được thụ lý.",
+      "supportNotice": "Nếu bạn cho rằng đây là sự nhầm lẫn, hãy gửi khiếu nại đến ban hỗ trợ để chúng tôi xác minh mở khóa.",
+      "appealBtn": "Gửi khiếu nại mở khóa",
+      "hotline": "Tổng đài hỗ trợ 24/7: 1900 8888"
+    },
+    "maintenance": {
+      "badge": "Hệ thống đang bảo trì",
+      "title": "Nâng cấp hạ tầng dịch vụ",
+      "subtitle": "Tổ Ấm đang tiến hành bảo trì và nâng cấp định kỳ để mang lại trải nghiệm nhanh và an toàn hơn.",
+      "estimateTime": "Dự kiến hoàn tất vào lúc: 18:00 hôm nay",
+      "featuresAffected": "Các tính năng tạm thời gián đoạn: Đăng phòng mới, Ký hợp đồng điện tử và Nạp ví thanh toán.",
+      "checkStatus": "Kiểm tra trạng thái",
+      "emergencyContact": "Hotline hỗ trợ kỹ thuật khẩn cấp: 0987 654 321"
+    },
+    "support": {
+      "title": "Trung tâm Hỗ trợ & Trợ giúp",
+      "subtitle": "Gửi yêu cầu hỗ trợ kỹ thuật, giải quyết tranh chấp hợp đồng hoặc thắc mắc về tài khoản.",
+      "newTicket": "Gửi yêu cầu mới",
+      "myTickets": "Yêu cầu của tôi",
+      "searchPlaceholder": "Tìm kiếm theo mã phiếu hoặc tiêu đề...",
+      "filterStatus": "Trạng thái",
+      "filterCategory": "Danh mục",
+      "allStatus": "Tất cả trạng thái",
+      "allCategories": "Tất cả danh mục",
+      "status": {
+        "OPEN": "Mới tiếp nhận",
+        "IN_PROGRESS": "Đang xử lý",
+        "WAITING_USER": "Chờ phản hồi",
+        "RESOLVED": "Đã giải quyết",
+        "CLOSED": "Đã đóng"
+      },
+      "category": {
+        "TECHNICAL": "Lỗi kỹ thuật / Ứng dụng",
+        "BILLING": "Thanh toán & Hóa đơn",
+        "CONTRACT": "Hợp đồng & Đặt cọc",
+        "DISPUTE": "Khiếu nại & Tranh chấp",
+        "ACCOUNT": "Tài khoản & Xác thực KYC",
+        "OTHER": "Vấn đề khác"
+      },
+      "priority": {
+        "LOW": "Thấp",
+        "MEDIUM": "Trung bình",
+        "HIGH": "Cao",
+        "URGENT": "Khẩn cấp"
+      },
+      "table": {
+        "ticketId": "Mã phiếu",
+        "subject": "Tiêu đề yêu cầu",
+        "category": "Phân loại",
+        "priority": "Mức độ",
+        "status": "Trạng thái",
+        "updatedAt": "Cập nhật lúc",
+        "action": "Thao tác"
+      },
+      "empty": "Không có yêu cầu hỗ trợ nào phù hợp.",
+      "new": {
+        "title": "Tạo phiếu hỗ trợ mới",
+        "subtitle": "Đội ngũ chuyên viên Tổ Ấm sẽ phản hồi trong vòng tối đa 2 giờ làm việc.",
+        "subjectLabel": "Tiêu đề tóm tắt",
+        "subjectPlaceholder": "Ví dụ: Lỗi không hiển thị hóa đơn tiền điện tháng 11",
+        "categoryLabel": "Loại vấn đề gặp phải",
+        "priorityLabel": "Mức độ ưu tiên",
+        "descLabel": "Mô tả chi tiết sự việc",
+        "descPlaceholder": "Mô tả cụ thể các bước dẫn tới lỗi, mã giao dịch, số phòng trọ liên quan...",
+        "attachmentLabel": "Đính kèm hình ảnh hoặc tài liệu chứng minh",
+        "submitBtn": "Gửi phiếu hỗ trợ",
+        "submitting": "Đang gửi yêu cầu...",
+        "success": "Đã gửi phiếu hỗ trợ thành công!",
+        "back": "Quay lại danh sách"
+      },
+      "detail": {
+        "back": "Quay lại danh sách phiếu",
+        "info": "Thông tin phiếu hỗ trợ",
+        "conversation": "Tiến trình trao đổi & giải quyết",
+        "replyLabel": "Gửi phản hồi bổ sung",
+        "replyPlaceholder": "Nhập tin nhắn phản hồi của bạn...",
+        "sendReply": "Gửi tin nhắn",
+        "sendingReply": "Đang gửi...",
+        "assignedTo": "Chuyên viên phụ trách",
+        "created": "Thời gian tạo"
+      }
+    }
   }
 }
