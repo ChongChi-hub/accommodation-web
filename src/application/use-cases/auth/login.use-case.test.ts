@@ -36,3 +36,4 @@ describe('LoginUseCase', () => {
     expect(mockRepo.login).toHaveBeenCalledWith('tenant@toam.vn', 'password123');
   });
 });
+
