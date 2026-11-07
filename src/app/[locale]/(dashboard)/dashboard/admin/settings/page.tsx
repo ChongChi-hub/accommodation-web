@@ -59,90 +59,90 @@ function AdminSettingsContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/50">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 flex items-center gap-2">
-            <Settings className="w-6 h-6 text-primary-600" />
-            {t('title')}
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400">
+              <Settings className="w-5 h-5" />
+            </span>
+            <span>{t('title')}</span>
           </h1>
-          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+          <p className="text-xs sm:text-sm text-foreground-muted mt-1">
             {t('subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleClearCache}>
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
             {t('btnClearCache')}
           </Button>
           <Button size="sm" onClick={handleSave} disabled={isSaving}>
-            <Save className="w-4 h-4 mr-2" />
+            <Save className="w-3.5 h-3.5 mr-1.5" />
             {isSaving ? t('btnSaving') : t('btnSave')}
           </Button>
         </div>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400">
+        {/* Operations & System Status */}
+        <Card className="p-6 space-y-5">
+          <div className="flex items-center gap-3 pb-3 border-b border-border">
+            <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/60 flex items-center justify-center text-teal-700 dark:text-teal-400">
               <Server className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
+              <h2 className="text-sm font-bold text-foreground">
                 {t('sectionOps')}
               </h2>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              <p className="text-xs text-foreground-muted">
                 {t('sectionOpsDesc')}
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 flex items-center justify-between">
+            <div className="border border-border bg-surface-muted/50 rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">
+                <p className="font-semibold text-xs text-foreground">
                   {t('maintenance')}
                 </p>
-                <p className="text-xs text-neutral-500 mt-0.5">{t('maintenanceDesc')}</p>
+                <p className="text-[11px] text-foreground-muted mt-0.5">{t('maintenanceDesc')}</p>
               </div>
               <input
                 type="checkbox"
                 checked={maintenanceMode}
                 onChange={(e) => setMaintenanceMode(e.target.checked)}
-                className="w-5 h-5 accent-primary-600 cursor-pointer"
+                className="w-4 h-4 accent-teal-700 cursor-pointer"
               />
             </div>
 
-            <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 flex items-center justify-between">
+            <div className="border border-border bg-surface-muted/50 rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">
+                <p className="font-semibold text-xs text-foreground">
                   {t('autoApprove')}
                 </p>
-                <p className="text-xs text-neutral-500 mt-0.5">{t('autoApproveDesc')}</p>
+                <p className="text-[11px] text-foreground-muted mt-0.5">{t('autoApproveDesc')}</p>
               </div>
               <input
                 type="checkbox"
                 checked={autoApproveRooms}
                 onChange={(e) => setAutoApproveRooms(e.target.checked)}
-                className="w-5 h-5 accent-primary-600 cursor-pointer"
+                className="w-4 h-4 accent-teal-700 cursor-pointer"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                {t('supportHotline')}
-              </label>
               <Input
+                label={t('supportHotline')}
                 value={supportHotline}
                 onChange={(e) => setSupportHotline(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                {t('commissionRate')}
-              </label>
               <Input
+                label={t('commissionRate')}
                 value={commissionRate}
                 onChange={(e) => setCommissionRate(e.target.value)}
               />
@@ -150,49 +150,51 @@ function AdminSettingsContent() {
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+        {/* Payment Configuration */}
+        <Card className="p-6 space-y-5">
+          <div className="flex items-center gap-3 pb-3 border-b border-border">
+            <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
               <CreditCard className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
+              <h2 className="text-sm font-bold text-foreground">
                 {t('sectionPayment')}
               </h2>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              <p className="text-xs text-foreground-muted">
                 {t('sectionPaymentDesc')}
               </p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 flex items-center justify-between">
+            <div className="border border-border bg-surface-muted/50 rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">
+                <p className="font-semibold text-xs text-foreground">
                   {t('vietQr')}
                 </p>
-                <p className="text-xs text-neutral-500 mt-0.5">{t('vietQrDesc')}</p>
+                <p className="text-[11px] text-foreground-muted mt-0.5">{t('vietQrDesc')}</p>
               </div>
               <input
                 type="checkbox"
                 checked={vietQrActive}
                 onChange={(e) => setVietQrActive(e.target.checked)}
-                className="w-5 h-5 accent-primary-600 cursor-pointer"
+                className="w-4 h-4 accent-teal-700 cursor-pointer"
               />
             </div>
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-950 flex items-center justify-center text-purple-600 dark:text-purple-400">
+        {/* Security Configuration */}
+        <Card className="p-6 space-y-5">
+          <div className="flex items-center gap-3 pb-3 border-b border-border">
+            <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/60 flex items-center justify-center text-purple-600 dark:text-purple-400">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
+              <h2 className="text-sm font-bold text-foreground">
                 {t('sectionSecurity')}
               </h2>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              <p className="text-xs text-foreground-muted">
                 {t('sectionSecurityDesc')}
               </p>
             </div>
@@ -200,10 +202,8 @@ function AdminSettingsContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                {t('sessionTimeout')}
-              </label>
               <Input
+                label={t('sessionTimeout')}
                 type="number"
                 value={sessionTimeoutMinutes}
                 onChange={(e) => setSessionTimeoutMinutes(e.target.value)}
@@ -211,28 +211,26 @@ function AdminSettingsContent() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                {t('maxLoginAttempts')}
-              </label>
               <Input
+                label={t('maxLoginAttempts')}
                 type="number"
                 value={maxLoginAttempts}
                 onChange={(e) => setMaxLoginAttempts(e.target.value)}
               />
             </div>
 
-            <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 flex items-center justify-between">
+            <div className="border border-border bg-surface-muted/50 rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">
+                <p className="font-semibold text-xs text-foreground">
                   {t('require2FA')}
                 </p>
-                <p className="text-xs text-neutral-500 mt-0.5">{t('require2FADesc')}</p>
+                <p className="text-[11px] text-foreground-muted mt-0.5">{t('require2FADesc')}</p>
               </div>
               <input
                 type="checkbox"
                 checked={require2FAStaff}
                 onChange={(e) => setRequire2FAStaff(e.target.checked)}
-                className="w-5 h-5 accent-primary-600 cursor-pointer"
+                className="w-4 h-4 accent-teal-700 cursor-pointer"
               />
             </div>
           </div>
