@@ -472,5 +472,91 @@
         "created": "Created At"
       }
     }
+  },
+  "landlord": {
+    "rooms": {
+      "title": "Room Management",
+      "subtitle": "Your room listings and visibility statuses",
+      "createNew": "Post New Room",
+      "searchPlaceholder": "Search by title, address...",
+      "tabs": {
+        "all": "All",
+        "published": "Published",
+        "hidden": "Hidden",
+        "pending": "Pending",
+        "draft": "Draft",
+        "rejected": "Rejected",
+        "rented": "Rented"
+      },
+      "sort": {
+        "newest": "Newest",
+        "priceAsc": "Price: Low to High",
+        "priceDesc": "Price: High to Low",
+        "mostViewed": "Most Viewed"
+      },
+      "table": {
+        "roomInfo": "Room & Address",
+        "price": "Rent & Deposit",
+        "status": "Status",
+        "stats": "Views & Date",
+        "actions": "Actions"
+      },
+      "statusLabels": {
+        "published": "Published",
+        "hiddenOwner": "Hidden by Owner",
+        "hiddenMod": "Hidden by Admin",
+        "pending": "Pending Review",
+        "draft": "Draft",
+        "rejected": "Rejected",
+        "rented": "Rented"
+      },
+      "actions": {
+        "edit": "Edit",
+        "hide": "Hide Listing",
+        "show": "Show Listing",
+        "delete": "Delete Room",
+        "preview": "Preview"
+      },
+      "deleteModal": {
+        "title": "Confirm Room Deletion",
+        "desc": "Are you sure you want to delete this room? This listing will be permanently removed from public view.",
+        "rentedWarning": "Warning: Room currently has an active lease or tenant. You cannot delete this room.",
+        "confirmBtn": "Delete Room",
+        "cancelBtn": "Cancel"
+      },
+      "modHiddenTooltip": "Listing was hidden by administrator. Please contact support to request restoration.",
+      "empty": {
+        "title": "No rooms found",
+        "desc": "No rooms matching your current filter criteria.",
+        "cta": "Post a Room Now",
+        "resetFilter": "Reset Filter"
+      },
+      "error": {
+        "title": "Unable to load data",
+        "desc": "An error occurred while connecting to the server. Please try again.",
+        "retry": "Retry"
+      }
+    },
+    "images": {
+      "title": "Room Photos",
+      "dropTitle": "Drag and drop or select room photos",
+      "dropSubtitle": "Accepts JPG, PNG, WebP (Max 5MB/photo, up to 10 photos)",
+      "selectBtn": "Choose photos from device",
+      "minImagesNotice": "At least 3 real photos required to submit for review",
+      "maxImagesNotice": "Maximum 10 photos per room",
+      "coverBadge": "Cover",
+      "setCoverBtn": "Set as Cover",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down",
+      "deleteBtn": "Delete Photo",
+      "confirmDelete": "Are you sure you want to delete this photo?",
+      "uploading": "Uploading & WebP converting...",
+      "reorderSuccess": "Photo order updated",
+      "validation": {
+        "tooLarge": "Photo exceeds 5MB limit",
+        "invalidType": "Unsupported format (JPG, PNG, WebP only)",
+        "maxLimit": "Exceeded maximum of 10 photos"
+      }
+    }
   }
 }

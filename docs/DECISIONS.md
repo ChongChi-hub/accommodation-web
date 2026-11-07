@@ -79,68 +79,30 @@ Xây dựng nền tảng thuê phòng trọ "Tổ Ấm" thay thế hệ thống 
 
 ---
 
-## 6. Quyết định Cải tổ Hệ thống Giao diện Toàn cục (Global Design System & CSS)
+## 6. Quyết Định Thiết Kế LANDLORD-04 & LANDLORD-02
 
-### 6.1. Chẩn đoán nguyên nhân gốc rễ (Root Cause Analysis)
-Qua việc mở trình duyệt kiểm tra thực tế trên Chromium ở cả 2 độ phân giải 1440px và 390px (Light/Dark mode):
-1. **Lỗi Dark Mode tê liệt do thiếu `@custom-variant dark`:**
-   - Trong Tailwind CSS v4, tính năng `dark:` mặc định lắng nghe media query `@media (prefers-color-scheme: dark)`. Ứng dụng bật/tắt dark mode bằng cách thêm class `.dark` vào thẻ `<html>`, nhưng thiếu chỉ thị `@custom-variant dark (&:where(.dark, .dark *));`.
-   - Kết quả: Khi kích hoạt theme tối, background vẫn giữ nguyên màu trắng `#FAF7F2` và chữ màu tối `#1C1917`, toàn bộ class `dark:*` bị bỏ qua.
-2. **Lỗi layout mobile (390px) do Sidebar cố định:**
-   - Component `DashboardSidebar` sử dụng kích thước cứng `w-64` (256px) nằm trong container flex ngang cạnh `<main>`.
-   - Trên màn hình di động 390px, thanh Sidebar chiếm 256px, ép nội dung chính `<main>` chỉ còn vỏn vẹn **134px**, dẫn đến vỡ nát toàn bộ giao diện bảng, biểu đồ, thẻ tóm tắt.
-3. **Thiếu định nghĩa Semantic Tokens hai chiều:**
-   - File `globals.css` chỉ khai báo màu tĩnh, không có bộ biến CSS semantic (`--background`, `--surface`, `--border`, `--foreground`, `--muted`) tự động đảo giá trị theo chế độ sáng/tối.
-4. **Header chưa phân tách ngữ cảnh:**
-   - `DashboardLayout` dùng chung Header công khai của khách vãng lai, thiếu nút điều khiển Drawer trên di động, chuông thông báo có badge, và menu quản trị viên.
-5. **Thiếu chuẩn hóa Typography tiếng Việt:**
-   - Sử dụng system font mặc định khiến hiển thị dấu tiếng Việt trên Windows bị lệch độ cao và co giãn chữ không đồng đều.
+### 6.1. Xử lý ảnh WebP và Bảo mật File Upload (Java 23/25)
+* **Thư viện**: Tích hợp `com.twelvemonkeys.imageio:imageio-webp:3.12.0` và `net.coobird:thumbnailator:0.4.20` vào `listing-service/build.gradle`.
+* **Quy trình xử lý an toàn**:
+  1. Kiểm tra kích thước file (< 5MB) và tổng số lượng ảnh của phòng (<= 10 ảnh).
+  2. Kiểm tra định dạng bằng Magic Bytes và `ImageIO.read()` (chỉ chấp nhận JPEG, PNG, WebP).
+  3. Giới hạn độ phân giải pixel tối đa 8000x8000px để chống tấn công Decompression Bomb.
+  4. Đọc lại pixel và vẽ sang canvas mới để triệt tiêu hoàn toàn mã độc Polyglot và siêu dữ liệu EXIF/GPS.
+  5. Xuất bản 3 kích cỡ WebP chuẩn hóa: Thumb (320px), Medium (960px), Large (1600px).
+* **Lưu trữ**: Port `ImageStoragePort`, adapter `FileSystemImageStorageAdapter` lưu file vào thư mục ngoài web (`./storage/media/{key}`), phục vụ qua endpoint `/api/v1/media/{key}` kèm header `Cache-Control: public, max-age=31536000, immutable` và `X-Content-Type-Options: nosniff`.
 
-### 6.2. Phương án khắc phục triệt để ở tầng Design System
-1. **Cấu hình lại Tailwind v4 & Biến CSS trong `globals.css`:**
-   - Bổ sung `@custom-variant dark (&:where(.dark, .dark *));`.
-   - Thiết lập bảng màu semantic:
-     - Light: Background `#FAF8F5`, Surface `#FFFFFF`, Surface Muted `#F5F1EA`, Border `#E7E5E4`, Foreground `#1C1917`, Muted `#78716C`.
-     - Dark: Background `#0C0A09`, Surface `#1C1917`, Surface Muted `#292524`, Border `#2E2A27`, Foreground `#F5F5F4`, Muted `#A8A29E`.
-   - Tích hợp màu thương hiệu: Primary Teal (`#0F766E`), Accent Amber (`#F59E0B`), Danger Rose (`#E11D48`), Success Emerald (`#10B981`).
-2. **Tích hợp Google Font `Plus Jakarta Sans` với subset Vietnamese:**
-   - Nạp thông qua `next/font/google` trong layout gốc và ánh xạ vào biến `--font-sans`.
-3. **Tái thiết kế `DashboardLayout` và `DashboardSidebar` đáp ứng Mobile:**
-   - Trên màn hình `< 1024px`, Sidebar chuyển thành Offcanvas Drawer có nút toggle trên Header.
-   - Nội dung `<main>` luôn chiếm toàn bộ chiều rộng (100% viewport width) trên di động.
-4. **Chuẩn hóa bộ UI component:**
-   - Button: cố định chiều cao (sm: 34px, md: 40px, lg: 46px), rounded-xl, bo viền và đổ bóng tinh tế.
-   - Input/Select: cố định chiều cao 40px (md), bo góc rounded-xl, padding đều, focus ring thương hiệu rõ ràng.
-   - Table: có lớp bọc `overflow-x-auto` với thanh cuộn mỏng, min-width chuẩn, phân cách dòng rõ nét.
-   - Badge & Card: nhất quán border radius và độ tương phản màu chuẩn WCAG AA.
+### 6.2. Ràng buộc duy nhất 1 ảnh bìa ở Database
+* MySQL không hỗ trợ partial index `WHERE is_cover = TRUE`. Do đó, sử dụng giải pháp Generated Stored Column:
+  `cover_room_id BIGINT GENERATED ALWAYS AS (CASE WHEN is_cover = 1 THEN room_id ELSE NULL END) STORED`
+  kèm `UNIQUE KEY uq_room_images_cover_per_room (cover_room_id)`.
+* Khi `is_cover = 0`, giá trị là `NULL` (MySQL cho phép nhiều NULL trong UNIQUE index). Khi `is_cover = 1`, giá trị là `room_id`, do đó chỉ duy nhất 1 ảnh của mỗi phòng được phép có `is_cover = 1`.
 
----
+### 6.3. Bảo vệ phòng RENTED & Toàn vẹn dữ liệu
+* Xóa phòng là Xóa mềm (`deleted_at = NOW()`).
+* Tạo interface `RoomUsagePort`. Adapter tạm thời kiểm tra trạng thái phòng (`status == 'RENTED'`), nếu đang cho thuê thì chặn xóa với lỗi nghiệp vụ `ROOM_CURRENTLY_RENTED` (HTTP 400).
+* Ẩn/Hiện phòng: Tin bị kiểm duyệt/Admin ẩn (`hidden_by IN ('MODERATOR', 'ADMIN')`) thì chủ trọ không có quyền tự hiện lại, phải liên hệ hỗ trợ hoặc sửa theo yêu cầu.
 
-## 7. Quyết định Bổ sung Lược đồ Cơ sở Dữ liệu & Bounded Contexts Tương lai (Future Schemas & Entities)
-
-Nhằm phục vụ mở rộng đầy đủ các tính năng trong giai đoạn tiếp theo mà không làm xáo trộn kiến trúc DDD hiện tại, các thực thể và bảng cơ sở dữ liệu backend sau đây được quy hoạch chi tiết:
-
-1. **`maintenance_requests` (trong `booking-service` hoặc `maintenance-service`):**
-   * *Mục đích:* Quản lý vòng đời yêu cầu bảo trì sửa chữa phòng trọ giữa người thuê và chủ nhà.
-   * *Cấu trúc cột:* `id` (VARCHAR/UUID), `room_id` (VARCHAR), `tenant_id` (VARCHAR), `landlord_id` (VARCHAR), `title` (VARCHAR 255), `description` (TEXT), `category` (ELECTRICITY/WATER/APPLIANCE/INTERNET/STRUCTURE), `priority` (LOW/MEDIUM/HIGH/EMERGENCY), `status` (PENDING/IN_PROGRESS/RESOLVED/REJECTED), `cost` (DECIMAL 12,2), `images_json` (JSON), `created_at` (TIMESTAMP), `resolved_at` (TIMESTAMP).
-2. **`support_tickets` & `support_messages` (trong `communication-service`):**
-   * *Mục đích:* Quản lý khiếu nại, phản ánh và hỗ trợ kỹ thuật khách hàng toàn sàn.
-   * *Cấu trúc cột tickets:* `id`, `user_id`, `subject`, `category` (ACCOUNT/PAYMENT/CONTRACT/VIOLATION/OTHER), `priority`, `status` (OPEN/ASSIGNED/IN_PROGRESS/RESOLVED/CLOSED), `assigned_admin_id`, `created_at`, `closed_at`.
-   * *Cấu trúc cột messages:* `id`, `ticket_id`, `sender_id`, `sender_role`, `message`, `attachment_url`, `created_at`.
-3. **`disputes` (trong `booking-service` hoặc `admin-service`):**
-   * *Mục đích:* Xử lý tranh chấp tiền cọc, vi phạm hợp đồng hoặc hư hại tài sản có sự can thiệp của Quản trị sàn.
-   * *Cấu trúc cột:* `id`, `contract_id`, `complainant_id`, `defendant_id`, `dispute_type` (DEPOSIT_RETURN/DAMAGE_COMPENSATION/EARLY_TERMINATION), `amount` (DECIMAL), `reason` (TEXT), `evidence_json` (JSON), `status` (PENDING/MEDIATING/RESOLVED/DISMISSED), `verdict` (TEXT), `resolved_by`, `resolved_at`.
-4. **`transactions` (trong `billing-service`):**
-   * *Mục đích:* Sổ cái theo dõi mọi luồng tiền ra vào: đặt cọc giữ chỗ, thanh toán tiền phòng, phí sàn, hoàn cọc.
-   * *Cấu trúc cột:* `id`, `user_id`, `contract_id`, `invoice_id`, `amount`, `currency` (VND), `type` (DEPOSIT_HOLD/RENT_PAYMENT/COMMISSION_FEE/REFUND), `payment_method` (VIETQR/BANK_TRANSFER/WALLET), `status` (PENDING/SUCCESS/FAILED/REFUNDED), `reference_code` (VARCHAR), `created_at`.
-5. **`blog_posts` & `cms_content` (trong `listing-service` hoặc `cms-service`):**
-   * *Mục đích:* Quản lý cẩm nang sống, kinh nghiệm thuê trọ, SEO khu vực và bài viết tin tức.
-   * *Cấu trúc cột:* `id`, `slug` (VARCHAR unique), `title`, `summary`, `content_markdown` (LONGTEXT), `thumbnail_url`, `author_id`, `status` (DRAFT/PUBLISHED/ARCHIVED), `view_count`, `published_at`.
-6. **`listing_plans` & `promo_codes` (trong `billing-service`):**
-   * *Mục đích:* Bảng giá gói đẩy tin nổi bật, gắn nhãn phòng VIP và mã giảm giá thanh toán.
-7. **`contract_templates` (trong `booking-service`):**
-   * *Mục đích:* Cho phép chủ trọ cấu hình các điều khoản pháp lý và quy định nội bộ mẫu trước khi sinh hợp đồng.
-8. **`expenses` (trong `billing-service`):**
-   * *Mục đích:* Hỗ trợ chủ trọ theo dõi dòng chi phí bảo trì định kỳ, tiền rác, thuế để tính toán biên lợi nhuận ròng.
-
+### 6.4. Chiến lược quản lý ảnh ở Frontend
+* **Màn hình Đăng mới**: Quản lý ảnh cục bộ qua Object URLs (nhớ revoke khi unmount). Khi nhấn "Đăng tin", hệ thống tạo phòng -> upload file multipart -> cập nhật ảnh bìa và thứ tự -> gửi duyệt.
+* **Màn hình Chỉnh sửa**: Tương tác API trực tiếp cho các hành động đặt bìa (`PATCH .../cover`), xóa (`DELETE .../images/{id}`), và đổi thứ tự (`PUT .../images/order`) để đảm bảo tính nguyên tử và phản hồi tức thì.
 

@@ -1,5 +1,6 @@
 import { HttpAuthRepository } from '../repositories/http-auth.repository';
 import { HttpListingRepository } from '../repositories/http-listing.repository';
+import { HttpLandlordRoomRepository } from '../repositories/http-landlord-room.repository';
 import { StaticAdminRepository } from '../static/StaticAdminRepository';
 import { StaticSupportRepository } from '../static/StaticSupportRepository';
 import { StaticMaintenanceRepository } from '../static/StaticMaintenanceRepository';
@@ -17,6 +18,7 @@ import { GetLocationsUseCase } from '@/application/use-cases/listing/get-locatio
 // Singleton Repository Instances
 const authRepository = new HttpAuthRepository();
 const listingRepository = new HttpListingRepository();
+const landlordRoomRepository = new HttpLandlordRoomRepository();
 const adminRepository = new StaticAdminRepository();
 const supportRepository = new StaticSupportRepository();
 const maintenanceRepository = new StaticMaintenanceRepository();
@@ -43,6 +45,9 @@ export const container = {
     getRoomDetailUseCase: new GetRoomDetailUseCase(listingRepository),
     getLocationsUseCase: new GetLocationsUseCase(listingRepository),
     listingRepository,
+  },
+  landlord: {
+    landlordRoomRepository,
   },
   admin: {
     adminRepository,

@@ -472,5 +472,91 @@
         "created": "Thời gian tạo"
       }
     }
+  },
+  "landlord": {
+    "rooms": {
+      "title": "Quản lý phòng trọ",
+      "subtitle": "Danh sách phòng và trạng thái hiển thị của bạn",
+      "createNew": "Đăng phòng mới",
+      "searchPlaceholder": "Tìm theo tên phòng, địa chỉ...",
+      "tabs": {
+        "all": "Tất cả",
+        "published": "Đang hiển thị",
+        "hidden": "Tạm ẩn",
+        "pending": "Chờ duyệt",
+        "draft": "Bản nháp",
+        "rejected": "Bị từ chối",
+        "rented": "Đã cho thuê"
+      },
+      "sort": {
+        "newest": "Mới nhất",
+        "priceAsc": "Giá tăng dần",
+        "priceDesc": "Giá giảm dần",
+        "mostViewed": "Xem nhiều nhất"
+      },
+      "table": {
+        "roomInfo": "Phòng & Địa chỉ",
+        "price": "Giá thuê / Cọc",
+        "status": "Trạng thái",
+        "stats": "Lượt xem / Ngày đăng",
+        "actions": "Thao tác"
+      },
+      "statusLabels": {
+        "published": "Đang hiển thị",
+        "hiddenOwner": "Chủ trọ ẩn",
+        "hiddenMod": "Bị quản trị ẩn",
+        "pending": "Chờ kiểm duyệt",
+        "draft": "Bản nháp",
+        "rejected": "Từ chối duyệt",
+        "rented": "Đang có khách thuê"
+      },
+      "actions": {
+        "edit": "Chỉnh sửa",
+        "hide": "Tạm ẩn bài đăng",
+        "show": "Mở lại bài đăng",
+        "delete": "Xóa phòng",
+        "preview": "Xem thử"
+      },
+      "deleteModal": {
+        "title": "Xác nhận xóa phòng",
+        "desc": "Bạn có chắc chắn muốn xóa phòng này? Thao tác này sẽ ẩn bài đăng vĩnh viễn khỏi danh sách công khai.",
+        "rentedWarning": "Cảnh báo: Phòng đang có khách thuê hoặc hợp đồng có hiệu lực. Bạn không thể xóa phòng này.",
+        "confirmBtn": "Xóa phòng",
+        "cancelBtn": "Hủy bỏ"
+      },
+      "modHiddenTooltip": "Bài đăng bị ẩn bởi kiểm duyệt viên/quản trị viên. Bạn cần liên hệ ban quản trị để được hỗ trợ mở lại.",
+      "empty": {
+        "title": "Chưa có phòng trọ nào",
+        "desc": "Không tìm thấy phòng phù hợp với bộ lọc hiện tại của bạn.",
+        "cta": "Đăng phòng ngay",
+        "resetFilter": "Xóa bộ lọc"
+      },
+      "error": {
+        "title": "Không thể tải dữ liệu",
+        "desc": "Đã có lỗi xảy ra trong quá trình kết nối máy chủ. Vui lòng thử lại.",
+        "retry": "Thử lại"
+      }
+    },
+    "images": {
+      "title": "Hình ảnh phòng trọ",
+      "dropTitle": "Kéo thả hoặc chọn ảnh phòng",
+      "dropSubtitle": "Chấp nhận JPG, PNG, WebP (Tối đa 5MB/ảnh, tối đa 10 ảnh)",
+      "selectBtn": "Chọn ảnh từ máy tính",
+      "minImagesNotice": "Cần tối thiểu 3 ảnh thực tế để gửi duyệt bài đăng",
+      "maxImagesNotice": "Tối đa 10 ảnh cho mỗi phòng",
+      "coverBadge": "Ảnh bìa",
+      "setCoverBtn": "Đặt làm ảnh bìa",
+      "moveUp": "Lên trước",
+      "moveDown": "Ra sau",
+      "deleteBtn": "Xóa ảnh",
+      "confirmDelete": "Bạn có chắc muốn xóa ảnh này?",
+      "uploading": "Đang tải lên & nén WebP...",
+      "reorderSuccess": "Đã cập nhật thứ tự ảnh",
+      "validation": {
+        "tooLarge": "Ảnh vượt quá dung lượng 5MB",
+        "invalidType": "Định dạng không được hỗ trợ (chỉ nhận JPG, PNG, WebP)",
+        "maxLimit": "Đã vượt quá số lượng 10 ảnh tối đa"
+      }
+    }
   }
 }

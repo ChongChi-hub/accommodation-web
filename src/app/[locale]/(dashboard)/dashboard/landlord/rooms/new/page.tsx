@@ -6,16 +6,19 @@ import { Stepper } from '@/presentation/components/ui/Stepper';
 import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { Select } from '@/presentation/components/ui/Select';
-import { FileUpload } from '@/presentation/components/ui/FileUpload';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
+import { ImageManager } from '@/presentation/components/rooms/ImageManager';
+import { ManagedImage } from '@/presentation/components/rooms/ImageCard';
+import { container } from '@/infrastructure/di/container';
 import { toast } from '@/presentation/stores/toast.store';
 import { useRouter } from '@/i18n/routing';
-import { ArrowLeft, ArrowRight, CheckCircle2, Upload } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, Save } from 'lucide-react';
 
 export default function NewRoomPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [images, setImages] = useState<ManagedImage[]>([]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -38,16 +41,58 @@ export default function NewRoomPage() {
     { id: 4, title: 'Hình ảnh & Xác nhận' },
   ];
 
+  const handleCreateRoom = async (submitForReview: boolean) => {
+    if (!formData.title.trim() || !formData.address.trim() || !formData.area || !formData.price) {
+      toast.error('Vui lòng điền đầy đủ các thông tin bắt buộc (tiêu đề, địa chỉ, diện tích, giá thuê).');
+      return;
+    }
+
+    const validImages = images.filter((img) => !img.error && img.file);
+    if (submitForReview && validImages.length < 3) {
+      toast.error('Cần tối thiểu 3 ảnh thực tế hợp lệ để gửi duyệt bài đăng.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const newRoom = await container.landlord.landlordRoomRepository.createRoom({
+        title: formData.title.trim(),
+        address: formData.address.trim(),
+        provinceCode: formData.province,
+        districtCode: formData.district,
+        roomTypeCode: formData.roomType,
+        area: parseFloat(formData.area),
+        maxOccupants: parseInt(formData.maxOccupants, 10) || 2,
+        price: parseFloat(formData.price),
+        deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
+        allowPets: formData.allowPets,
+        allowCooking: formData.allowCooking,
+        submitForReview,
+      });
+
+      if (validImages.length > 0) {
+        const filesToUpload = validImages.map((img) => img.file as File);
+        await container.landlord.landlordRoomRepository.uploadImages(newRoom.id, filesToUpload);
+      }
+
+      toast.success(
+        submitForReview
+          ? 'Đăng tin phòng trọ thành công! Tin sẽ được duyệt trong vòng 2 giờ.'
+          : 'Đã lưu bản nháp bài đăng thành công.'
+      );
+      router.push('/dashboard/landlord/rooms');
+    } catch (err: any) {
+      toast.error(err?.message || 'Lỗi khi lưu phòng trọ');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNext = () => {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else {
-      setIsSubmitting(true);
-      setTimeout(() => {
-        setIsSubmitting(false);
-        toast.success('Đăng tin phòng trọ thành công! Tin sẽ được duyệt trong vòng 2 giờ.');
-        router.push('/dashboard/landlord/rooms');
-      }, 700);
+      handleCreateRoom(true);
     }
   };
 
@@ -56,7 +101,7 @@ export default function NewRoomPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-3xl pb-10">
       <Breadcrumb
         items={[
           { label: 'Quản lý phòng', href: '/dashboard/landlord/rooms' },
@@ -150,7 +195,6 @@ export default function NewRoomPage() {
               />
               <Input
                 label="Tiền đặt cọc (VNĐ)"
-                required
                 type="number"
                 placeholder="VD: 4800000"
                 value={formData.deposit}
@@ -197,42 +241,52 @@ export default function NewRoomPage() {
         {currentStep === 3 && (
           <div className="space-y-4">
             <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">Bước 4: Hình ảnh thực tế phòng trọ</h2>
-            <FileUpload
-              label="Tải lên ít nhất 3 ảnh thực tế của căn phòng"
-              multiple
-              accept="image/*"
-              onFilesSelected={() => toast.info('Đã nhận diện các ảnh tải lên')}
+            <ImageManager
+              initialImages={images}
+              onChange={setImages}
+              disabled={isSubmitting}
             />
-            <div className="p-3 bg-teal-50 dark:bg-teal-950/40 rounded-xl text-xs text-teal-800 dark:text-teal-300">
-              Ảnh chụp rõ ràng ban công, giường ngủ, khu vực bếp và nhà vệ sinh sẽ giúp phòng được duyệt và có khách liên hệ nhanh hơn 3 lần.
-            </div>
           </div>
         )}
 
-        <div className="pt-6 border-t border-stone-100 dark:border-stone-800 flex justify-between">
+        <div className="pt-6 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between gap-3">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={handlePrev}
-            disabled={currentStep === 0}
+            disabled={currentStep === 0 || isSubmitting}
             leftIcon={<ArrowLeft className="w-3.5 h-3.5" />}
           >
             Quay lại
           </Button>
-          <Button
-            type="button"
-            variant="primary"
-            size="sm"
-            onClick={handleNext}
-            isLoading={isSubmitting}
-            rightIcon={currentStep === 3 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
-          >
-            {currentStep === 3 ? 'Gửi duyệt tin đăng' : 'Tiếp tục'}
-          </Button>
+
+          <div className="flex items-center gap-2">
+            {currentStep === 3 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleCreateRoom(false)}
+                disabled={isSubmitting}
+                leftIcon={<Save className="w-3.5 h-3.5" />}
+              >
+                Lưu nháp
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              onClick={handleNext}
+              isLoading={isSubmitting}
+              rightIcon={currentStep === 3 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
+            >
+              {currentStep === 3 ? 'Gửi duyệt tin đăng' : 'Tiếp tục'}
+            </Button>
+          </div>
         </div>
       </Card>
     </div>
   );
 }
-
