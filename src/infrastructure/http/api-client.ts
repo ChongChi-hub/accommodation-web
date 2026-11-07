@@ -31,7 +31,7 @@ export class ApiError extends Error {
 
 export class ApiClient {
   private static token: string | null = null;
-  private static isRefreshing = false;
+  private static refreshPromise: Promise<boolean> | null = null;
 
   static setToken(token: string | null) {
     this.token = token;
@@ -39,6 +39,64 @@ export class ApiClient {
 
   static getToken(): string | null {
     return this.token;
+  }
+
+  private static clearSession() {
+    this.setToken(null);
+    if (typeof document !== 'undefined') {
+      const isProduction = process.env.NODE_ENV === 'production';
+      const secureFlag = isProduction ? '; Secure' : '';
+      document.cookie = `toam_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
+      document.cookie = `toam_role=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
+      localStorage.removeItem('toam_refresh_token');
+      localStorage.removeItem('toam_user');
+    }
+  }
+
+  private static async tryAutoRefresh(): Promise<boolean> {
+    if (typeof window === 'undefined') return false;
+    const refreshToken = localStorage.getItem('toam_refresh_token');
+    if (!refreshToken) return false;
+
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.refreshPromise = (async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/auth/refresh-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken }),
+        });
+        if (!res.ok) {
+          this.clearSession();
+          return false;
+        }
+        const json = await res.json();
+        const data = json.data;
+        if (data?.token) {
+          this.setToken(data.token);
+          const isProduction = process.env.NODE_ENV === 'production';
+          const secureFlag = isProduction ? '; Secure' : '';
+          document.cookie = `toam_token=${encodeURIComponent(data.token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
+          if (data.refreshToken) {
+            localStorage.setItem('toam_refresh_token', data.refreshToken);
+          }
+          if (data.user) {
+            localStorage.setItem('toam_user', JSON.stringify(data.user));
+          }
+          return true;
+        }
+        return false;
+      } catch {
+        return false;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
   }
 
   static async requestEnvelope<T>(endpoint: string, options: RequestInit = {}): Promise<ApiEnvelope<T>> {
@@ -61,6 +119,13 @@ export class ApiClient {
         credentials: 'include',
         headers,
       });
+
+      if (response.status === 401 && !endpoint.includes('/auth/refresh') && !endpoint.includes('/auth/login')) {
+        const refreshed = await this.tryAutoRefresh();
+        if (refreshed) {
+          return this.requestEnvelope<T>(endpoint, options);
+        }
+      }
 
       const json: ApiEnvelope<T> = await response.json().catch(() => ({
         message: 'Lỗi phản hồi từ máy chủ',

@@ -4,15 +4,17 @@ import { ApiClient } from '../http/api-client';
 
 function setAuthCookies(token?: string, role?: string) {
   if (typeof document !== 'undefined') {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const secureFlag = isProduction ? '; Secure' : '';
     if (token) {
-      document.cookie = `toam_token=${encodeURIComponent(token)}; path=/; max-age=86400; SameSite=Lax`;
+      document.cookie = `toam_token=${encodeURIComponent(token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
     } else {
-      document.cookie = 'toam_token=; path=/; max-age=0; SameSite=Lax';
+      document.cookie = `toam_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
     }
     if (role) {
-      document.cookie = `toam_role=${encodeURIComponent(role)}; path=/; max-age=2592000; SameSite=Lax`;
+      document.cookie = `toam_role=${encodeURIComponent(role)}; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
     } else {
-      document.cookie = 'toam_role=; path=/; max-age=0; SameSite=Lax';
+      document.cookie = `toam_role=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
     }
   }
 }
