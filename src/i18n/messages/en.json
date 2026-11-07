@@ -231,6 +231,26 @@
       "errorTitle": "Error loading master data",
       "errorDesc": "Could not connect to the administration service.",
       "toastAdd": "Adding new master data entries will be available in the upcoming release!"
+    },
+    "analytics": {
+      "title": "Platform Analytics & Metrics",
+      "subtitle": "Growth velocity reports, match conversion rates, and geographical demand distribution",
+      "metricSuccessRate": "Post-viewing Rental Conversion Rate",
+      "metricSuccessRateDesc": "Tenants signing contract after viewing",
+      "metricAvgTimeToFill": "Average Time to Fill a Room",
+      "metricAvgTimeToFillDesc": "Decreasing vacancy downtime",
+      "metricDays": "{days} days",
+      "metricSearches": "Total Monthly Room Searches",
+      "metricSearchesDesc": "Traffic from Hanoi, HCMC & Da Nang",
+      "topAreasTitle": "Top In-Demand Rental Locations",
+      "areaCauGiay": "Cau Giay, Hanoi",
+      "areaDongDa": "Dong Da, Hanoi",
+      "areaBinhThanh": "Binh Thanh, HCMC",
+      "areaPercent": "{percent}% of total searches",
+      "emptyTitle": "No analytics data available yet",
+      "emptyDesc": "Analytical metrics will be aggregated automatically every 24 hours.",
+      "errorTitle": "Error loading analytics report",
+      "errorDesc": "Could not connect to the analytics service."
     }
   }
 }

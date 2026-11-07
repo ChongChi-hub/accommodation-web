@@ -231,6 +231,26 @@
       "errorTitle": "Lỗi tải từ điển hệ thống",
       "errorDesc": "Không thể kết nối đến máy chủ quản trị.",
       "toastAdd": "Tính năng thêm danh mục mới sẽ ra mắt trong bản cập nhật kế tiếp!"
+    },
+    "analytics": {
+      "title": "Thống kê & Đo lường nền tảng",
+      "subtitle": "Báo cáo tốc độ tăng trưởng, tỷ lệ khớp phòng thành công và phân bổ nhu cầu theo khu vực",
+      "metricSuccessRate": "Tỷ lệ thuê thành công sau xem phòng",
+      "metricSuccessRateDesc": "Khách ký hợp đồng sau khi xem phòng",
+      "metricAvgTimeToFill": "Thời gian lấp đầy phòng trung bình",
+      "metricAvgTimeToFillDesc": "Rút ngắn thời gian phòng trống",
+      "metricDays": "{days} ngày",
+      "metricSearches": "Tổng lượt tìm kiếm phòng / tháng",
+      "metricSearchesDesc": "Lưu lượng từ Hà Nội, TP.HCM & Đà Nẵng",
+      "topAreasTitle": "Top khu vực có nhu cầu tìm phòng cao nhất",
+      "areaCauGiay": "Cầu Giấy, Hà Nội",
+      "areaDongDa": "Đống Đa, Hà Nội",
+      "areaBinhThanh": "Bình Thạnh, TP.HCM",
+      "areaPercent": "{percent}% tổng lượt tìm kiếm",
+      "emptyTitle": "Chưa có dữ liệu thống kê đo lường",
+      "emptyDesc": "Dữ liệu phân tích sẽ được tổng hợp tự động sau chu kỳ 24 giờ.",
+      "errorTitle": "Lỗi tải báo cáo thống kê",
+      "errorDesc": "Không thể kết nối đến máy chủ đo lường."
     }
   }
 }
