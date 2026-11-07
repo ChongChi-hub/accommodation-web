@@ -16,7 +16,6 @@ export default function RoomsPage() {
   const {
     rooms,
     provinces,
-    districts,
     wards,
     params,
     isLoading,
@@ -44,7 +43,6 @@ export default function RoomsPage() {
         onChange={updateParams}
         onReset={resetParams}
         provinces={provinces}
-        districts={districts}
         wards={wards}
       />
 

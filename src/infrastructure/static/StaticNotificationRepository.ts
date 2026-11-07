@@ -6,7 +6,7 @@ export class StaticNotificationRepository implements NotificationRepository {
     {
       id: 'notif-1',
       title: 'Có 3 phòng mới chờ duyệt',
-      message: 'Chủ trọ Nguyễn Văn An vừa gửi tin đăng phòng trọ Quận Cầu Giấy cần kiểm duyệt.',
+      message: 'Chủ trọ Nguyễn Văn An vừa gửi tin đăng phòng trọ Phường Dịch Vọng Hậu cần kiểm duyệt.',
       type: 'WARNING',
       link: '/dashboard/admin/rooms',
       isRead: false,
@@ -33,7 +33,7 @@ export class StaticNotificationRepository implements NotificationRepository {
     {
       id: 'notif-4',
       title: 'Báo cáo vi phạm #RP-104 đã xử lý',
-      message: 'Báo cáo phòng ảo tại Quận 10 đã được ban kiểm duyệt giải quyết và gỡ bỏ bài đăng.',
+      message: 'Báo cáo phòng ảo tại Phường 14 đã được ban kiểm duyệt giải quyết và gỡ bỏ bài đăng.',
       type: 'ALERT',
       link: '/dashboard/admin/reports',
       isRead: true,

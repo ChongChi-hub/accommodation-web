@@ -4,14 +4,13 @@ import React from 'react';
 import { Search, RotateCcw } from 'lucide-react';
 import { Select } from '@/presentation/components/ui/Select';
 import { Button } from '@/presentation/components/ui/Button';
-import { RoomFilterParams, ProvinceDto, DistrictDto, WardDto } from '@/application/dto/listing.dto';
+import { RoomFilterParams, ProvinceDto, WardDto } from '@/application/dto/listing.dto';
 
 export interface RoomFilterBarProps {
   params: RoomFilterParams;
   onChange: (newParams: Partial<RoomFilterParams>) => void;
   onReset: () => void;
   provinces: ProvinceDto[];
-  districts?: DistrictDto[];
   wards?: WardDto[];
 }
 
@@ -20,7 +19,6 @@ export function RoomFilterBar({
   onChange,
   onReset,
   provinces,
-  districts,
   wards = [],
 }: RoomFilterBarProps) {
   const provinceOptions = [

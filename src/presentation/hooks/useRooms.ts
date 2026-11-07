@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { RoomDto, RoomFilterParams, ProvinceDto, DistrictDto, WardDto } from '@/application/dto/listing.dto';
+import { RoomDto, RoomFilterParams, ProvinceDto, WardDto } from '@/application/dto/listing.dto';
 import { container } from '@/infrastructure/di/container';
 
 export function useRooms(initialParams: RoomFilterParams = {}) {
   const [params, setParams] = useState<RoomFilterParams>(initialParams);
   const [rooms, setRooms] = useState<RoomDto[]>([]);
   const [provinces, setProvinces] = useState<ProvinceDto[]>([]);
-  const [districts, setDistricts] = useState<DistrictDto[]>([]);
   const [wards, setWards] = useState<WardDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +70,6 @@ export function useRooms(initialParams: RoomFilterParams = {}) {
   return {
     rooms,
     provinces,
-    districts,
     wards,
     params,
     isLoading,

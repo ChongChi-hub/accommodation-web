@@ -6,7 +6,7 @@ export class StaticDisputeRepository implements DisputeRepository {
     {
       id: 'DISP-501',
       contractId: 'HD-2026-088',
-      roomTitle: 'Phòng Studio Ban Công Đẹp Quận 1',
+      roomTitle: 'Phòng Studio Ban Công Đẹp Phường Đa Kao',
       complainantId: 'usr_tenant_1',
       complainantName: 'Nguyễn Văn Thuê',
       complainantRole: 'TENANT',
@@ -23,7 +23,7 @@ export class StaticDisputeRepository implements DisputeRepository {
     {
       id: 'DISP-502',
       contractId: 'HD-2026-052',
-      roomTitle: 'Căn Hộ Dịch Vụ 1PN Bình Thạnh',
+      roomTitle: 'Căn Hộ Dịch Vụ 1PN Phường 15',
       complainantId: 'usr_landlord_1',
       complainantName: 'Trần Thị Chủ Trọ',
       complainantRole: 'LANDLORD',
