@@ -99,44 +99,64 @@ async function runCrawler() {
     console.log(`  [${pass ? 'PASS' : 'FAIL'}] ${route} -> Status: ${res.statusCode}`);
   }
 
-  console.log('\n--- 2. Testing Protected Routes (Unauthenticated Guest -> Redirect to Login) ---');
+  console.log('\n--- 2. Testing Protected Routes (Unauthenticated Guest -> Redirect to /login with returnUrl) ---');
   const dashboardRoutes = [
     '/dashboard/tenant',
+    '/dashboard/tenant/profile',
+    '/dashboard/tenant/saved-rooms',
     '/dashboard/landlord',
+    '/dashboard/landlord/rooms',
+    '/dashboard/landlord/rooms/new',
     '/dashboard/moderator',
     '/dashboard/admin',
+    '/dashboard/admin/users',
+    '/dashboard/admin/settings',
+    '/dashboard/admin/audit-logs',
   ];
 
   let guestRedirectsPassed = 0;
   for (const route of dashboardRoutes) {
     const res = await requestRoute(route);
-    const isRedirect = (res.statusCode === 307 || res.statusCode === 308) && res.location?.includes('/login');
+    const hasLoginTarget = res.location && (res.location.includes('/login') || res.location.includes('/vi/login') || res.location.includes('/en/login'));
+    const isRedirect = (res.statusCode === 307 || res.statusCode === 308) && hasLoginTarget;
     if (isRedirect) guestRedirectsPassed++;
-    console.log(`  [${isRedirect ? 'PASS' : 'FAIL'}] ${route} -> Status: ${res.statusCode}, Redirect: ${res.location}`);
+    console.log(`  [${isRedirect ? 'PASS' : 'FAIL'}] Guest -> ${route} -> Status: ${res.statusCode}, Target: ${res.location}`);
   }
 
-  console.log('\n--- 3. Testing RBAC Role Matrix with RS256 Tokens ---');
+  console.log('\n--- 3. Testing RBAC Role Matrix with Cryptographic Redirect Target Verification ---');
   const tenantToken = await generateSignedToken('u-tenant-01', 'tenant@toam.vn', ['TENANT']);
   const landlordToken = await generateSignedToken('u-landlord-01', 'landlord@toam.vn', ['LANDLORD']);
   const modToken = await generateSignedToken('u-mod-01', 'moderator@toam.vn', ['MODERATOR']);
   const adminToken = await generateSignedToken('u-admin-01', 'admin@toam.vn', ['ADMIN']);
 
   const rbacTests = [
-    { role: 'TENANT', path: '/dashboard/tenant', token: tenantToken, expected: [200] },
-    { role: 'TENANT', path: '/dashboard/admin', token: tenantToken, expected: [403, 307, 308] },
-    { role: 'LANDLORD', path: '/dashboard/landlord', token: landlordToken, expected: [200] },
-    { role: 'LANDLORD', path: '/dashboard/admin', token: landlordToken, expected: [403, 307, 308] },
-    { role: 'MODERATOR', path: '/dashboard/moderator', token: modToken, expected: [200] },
-    { role: 'MODERATOR', path: '/dashboard/admin', token: modToken, expected: [403, 307, 308] },
-    { role: 'ADMIN', path: '/dashboard/admin', token: adminToken, expected: [200] },
+    { role: 'TENANT', path: '/dashboard/tenant', token: tenantToken, expectTarget: 'ALLOW' },
+    { role: 'TENANT', path: '/dashboard/admin', token: tenantToken, expectTarget: '/403' },
+    { role: 'TENANT', path: '/dashboard/landlord/rooms', token: tenantToken, expectTarget: '/403' },
+    { role: 'LANDLORD', path: '/dashboard/landlord', token: landlordToken, expectTarget: 'ALLOW' },
+    { role: 'LANDLORD', path: '/dashboard/landlord/rooms', token: landlordToken, expectTarget: 'ALLOW' },
+    { role: 'LANDLORD', path: '/dashboard/admin', token: landlordToken, expectTarget: '/403' },
+    { role: 'MODERATOR', path: '/dashboard/moderator', token: modToken, expectTarget: 'ALLOW' },
+    { role: 'MODERATOR', path: '/dashboard/admin/rooms', token: modToken, expectTarget: 'ALLOW' },
+    { role: 'MODERATOR', path: '/dashboard/admin/kyc', token: modToken, expectTarget: 'ALLOW' },
+    { role: 'MODERATOR', path: '/dashboard/admin', token: modToken, expectTarget: '/403' },
+    { role: 'MODERATOR', path: '/dashboard/admin/settings', token: modToken, expectTarget: '/403' },
+    { role: 'ADMIN', path: '/dashboard/admin', token: adminToken, expectTarget: 'ALLOW' },
+    { role: 'ADMIN', path: '/dashboard/admin/users', token: adminToken, expectTarget: 'ALLOW' },
+    { role: 'ADMIN', path: '/dashboard/admin/settings', token: adminToken, expectTarget: 'ALLOW' },
   ];
 
   let rbacPassed = 0;
   for (const test of rbacTests) {
     const res = await requestRoute(test.path, `toam_token=${test.token}`);
-    const pass = test.expected.includes(res.statusCode);
+    let pass = false;
+    if (test.expectTarget === 'ALLOW') {
+      pass = res.statusCode === 200;
+    } else if (test.expectTarget === '/403') {
+      pass = res.statusCode === 403 || ((res.statusCode === 307 || res.statusCode === 308) && res.location?.includes('/403'));
+    }
     if (pass) rbacPassed++;
-    console.log(`  [${pass ? 'PASS' : 'FAIL'}] ${test.role} accessing ${test.path} -> Status: ${res.statusCode} (Expected: ${test.expected.join('/')})`);
+    console.log(`  [${pass ? 'PASS' : 'FAIL'}] ${test.role} accessing ${test.path} -> Status: ${res.statusCode}, Target: ${res.location || 'NONE'} (Expected: ${test.expectTarget})`);
   }
 
   console.log('\n--- 4. Role Spoofing Security Test ---');
