@@ -2,6 +2,9 @@ import boundaries from 'eslint-plugin-boundaries';
 
 export default [
   {
+    ignores: ['.next/**', 'node_modules/**'],
+  },
+  {
     plugins: {
       boundaries,
     },
