@@ -139,6 +139,32 @@
       "emptyDesc": "Tất cả hồ sơ định danh CCCD của người dùng đã được thẩm định.",
       "errorTitle": "Lỗi tải danh sách eKYC",
       "errorDesc": "Không thể kết nối đến máy chủ quản trị."
+    },
+    "users": {
+      "title": "Quản lý người dùng hệ thống",
+      "subtitle": "Theo dõi tài khoản, phân quyền và khóa các tài khoản có hành vi gian lận",
+      "searchPlaceholder": "Tìm kiếm theo tên, email hoặc số điện thoại...",
+      "tabAll": "Tất cả",
+      "tabTenant": "Người thuê",
+      "tabLandlord": "Chủ trọ",
+      "tabModerator": "Kiểm duyệt viên",
+      "tabAdmin": "Quản trị viên",
+      "colName": "Họ và tên",
+      "colContact": "Email & SĐT",
+      "colRole": "Vai trò",
+      "colJoined": "Ngày tham gia",
+      "colStatus": "Trạng thái",
+      "colActions": "Thao tác",
+      "statusActive": "Hoạt động",
+      "statusLocked": "Đã khóa",
+      "btnLock": "Khóa",
+      "btnUnlock": "Mở khóa",
+      "toastLocked": "Tài khoản {email} đã được khóa do vi phạm chính sách.",
+      "toastUnlocked": "Tài khoản {email} đã được mở khóa hoạt động bình thường.",
+      "emptyTitle": "Không tìm thấy người dùng phù hợp",
+      "emptyDesc": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc vai trò.",
+      "errorTitle": "Lỗi tải danh sách người dùng",
+      "errorDesc": "Không thể kết nối đến máy chủ quản trị."
     }
   }
 }

@@ -139,6 +139,32 @@
       "emptyDesc": "All user identity verification requests have been processed.",
       "errorTitle": "Error loading eKYC list",
       "errorDesc": "Could not connect to the moderation service."
+    },
+    "users": {
+      "title": "User Accounts Management",
+      "subtitle": "Monitor user accounts, roles permissions, and lock fraudulent accounts",
+      "searchPlaceholder": "Search by name, email, or phone...",
+      "tabAll": "All",
+      "tabTenant": "Tenants",
+      "tabLandlord": "Landlords",
+      "tabModerator": "Moderators",
+      "tabAdmin": "Administrators",
+      "colName": "Full Name",
+      "colContact": "Email & Phone",
+      "colRole": "Role",
+      "colJoined": "Joined Date",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "statusActive": "Active",
+      "statusLocked": "Locked",
+      "btnLock": "Lock",
+      "btnUnlock": "Unlock",
+      "toastLocked": "Account {email} has been locked.",
+      "toastUnlocked": "Account {email} has been unlocked.",
+      "emptyTitle": "No matching users found",
+      "emptyDesc": "Try adjusting your search keyword or role filter.",
+      "errorTitle": "Error loading users list",
+      "errorDesc": "Could not connect to the administration service."
     }
   }
 }
