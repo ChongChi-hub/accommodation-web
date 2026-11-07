@@ -64,7 +64,7 @@ export const DEMO_USERS: Record<string, DemoUser> = {
   },
 };
 
-export async function createRealSignedToken(user: DemoUser): Promise<String> {
+export async function createRealSignedToken(user: DemoUser): Promise<string> {
   const privateKey = await jose.importPKCS8(PRIVATE_KEY_PEM, 'RS256');
   return new jose.SignJWT({
     email: user.email,

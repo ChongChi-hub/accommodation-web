@@ -29,13 +29,12 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       updateProfile: vi.fn(),
       changePassword: vi.fn(),
       forgotPassword: vi.fn(),
-      resetPassword: vi.fn().mockResolvedValue('Mật khẩu đã được đặt lại thành công.'),
+      resetPassword: vi.fn().mockResolvedValue(undefined),
       logout: vi.fn(),
     };
 
-    const result = await mockRepo.resetPassword('valid-otp-123456', 'NewPassword123!');
-    expect(result).toContain('thành công');
-    expect(mockRepo.resetPassword).toHaveBeenCalledWith('valid-otp-123456', 'NewPassword123!');
+    await mockRepo.resetPassword('tenant@toam.vn', 'valid-otp-123456', 'NewPassword123!');
+    expect(mockRepo.resetPassword).toHaveBeenCalledWith('tenant@toam.vn', 'valid-otp-123456', 'NewPassword123!');
   });
 
   it('calls authRepository.refreshToken with refresh token and returns new session', async () => {
