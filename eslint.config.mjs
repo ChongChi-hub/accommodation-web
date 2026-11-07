@@ -1,12 +1,24 @@
 import boundaries from 'eslint-plugin-boundaries';
+import i18next from 'eslint-plugin-i18next';
+import tsParser from '@typescript-eslint/parser';
 
 export default [
   {
-    ignores: ['.next/**', 'node_modules/**'],
+    ignores: ['.next/**', 'node_modules/**', 'public/**', 'scripts/**'],
   },
   {
+    files: ['src/**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
     plugins: {
       boundaries,
+      i18next,
     },
     settings: {
       'boundaries/include': ['src/**/*'],
@@ -61,7 +73,7 @@ export default [
             },
             {
               from: 'app',
-              allow: ['domain', 'application', 'presentation', 'infrastructure', 'app', 'shared'],
+              allow: ['domain', 'application', 'infrastructure', 'presentation', 'shared', 'app'],
             },
             {
               from: 'shared',
@@ -70,7 +82,13 @@ export default [
           ],
         },
       ],
+      'i18next/no-literal-string': [
+        'warn',
+        {
+          mode: 'jsx-text-only',
+          'should-validate-template': true,
+        },
+      ],
     },
   },
 ];
-

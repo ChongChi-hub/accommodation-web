@@ -1,5 +1,6 @@
 import { HttpAuthRepository } from '../repositories/http-auth.repository';
 import { HttpListingRepository } from '../repositories/http-listing.repository';
+import { StaticAdminRepository } from '../static/StaticAdminRepository';
 import { LoginUseCase } from '@/application/use-cases/auth/login.use-case';
 import { RegisterUseCase } from '@/application/use-cases/auth/register.use-case';
 import { GetProfileUseCase } from '@/application/use-cases/auth/get-profile.use-case';
@@ -10,6 +11,7 @@ import { GetLocationsUseCase } from '@/application/use-cases/listing/get-locatio
 // Singleton Repository Instances
 const authRepository = new HttpAuthRepository();
 const listingRepository = new HttpListingRepository();
+const adminRepository = new StaticAdminRepository();
 
 // Use Cases
 export const container = {
@@ -24,5 +26,8 @@ export const container = {
     getRoomDetailUseCase: new GetRoomDetailUseCase(listingRepository),
     getLocationsUseCase: new GetLocationsUseCase(listingRepository),
     listingRepository,
+  },
+  admin: {
+    adminRepository,
   },
 };
