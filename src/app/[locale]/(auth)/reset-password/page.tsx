@@ -2,37 +2,58 @@
 
 import React, { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
 import { KeyRound, Lock, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { toast } from '@/presentation/stores/toast.store';
+import { useAuthStore } from '@/presentation/stores/auth.store';
 import Image from 'next/image';
 
+function calculatePasswordStrength(pass: string): { score: number; labelKey: 'passwordWeak' | 'passwordMedium' | 'passwordStrong'; color: string } {
+  if (!pass) return { score: 0, labelKey: 'passwordWeak', color: 'bg-stone-200' };
+  let score = 0;
+  if (pass.length >= 6) score++;
+  if (pass.length >= 10) score++;
+  if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score++;
+  if (/[0-9]/.test(pass)) score++;
+  if (/[^A-Za-z0-9]/.test(pass)) score++;
+
+  if (score <= 2) return { score: 1, labelKey: 'passwordWeak', color: 'bg-red-500' };
+  if (score <= 4) return { score: 2, labelKey: 'passwordMedium', color: 'bg-amber-500' };
+  return { score: 3, labelKey: 'passwordStrong', color: 'bg-teal-600' };
+}
+
 function ResetPasswordForm() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailParam = searchParams.get('email') || '';
+  const { resetPassword, isLoading, error } = useAuthStore();
 
   const [otp, setOtp] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [localError, setLocalError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const strength = calculatePasswordStrength(password);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp');
+      setLocalError(t('passwordMismatch'));
       return;
     }
-    setError('');
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success('Mật khẩu đã được đặt lại thành công! Vui lòng đăng nhập.');
+    setLocalError('');
+
+    const success = await resetPassword(emailParam, otp, password);
+    if (success) {
+      toast.success(t('passwordResetSuccess'));
       router.push('/login');
-    }, 600);
+    } else {
+      toast.error(error || t('passwordMismatch'));
+    }
   };
 
   return (
@@ -41,18 +62,17 @@ function ResetPasswordForm() {
         <Link href="/" className="inline-block mb-2">
           <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} />
         </Link>
-        <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">Đặt lại mật khẩu</h1>
+        <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+          {t('resetPasswordTitle')}
+        </h1>
         <p className="text-xs text-stone-500">
-          Mã OTP 6 số đã được gửi đến{' '}
-          <span className="font-semibold text-stone-800 dark:text-stone-200">
-            {emailParam || 'email của bạn'}
-          </span>
+          {t('resetPasswordSubtitle', { email: emailParam || 'email' })}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
-          label="Mã OTP xác thực (6 số)"
+          label={t('otpLabel')}
           required
           maxLength={6}
           value={otp}
@@ -61,24 +81,39 @@ function ResetPasswordForm() {
           leftIcon={<KeyRound className="w-4 h-4" />}
         />
 
-        <Input
-          label="Mật khẩu mới"
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Tối thiểu 6 ký tự"
-          leftIcon={<Lock className="w-4 h-4" />}
-        />
+        <div>
+          <Input
+            label={t('newPassword')}
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="******"
+            leftIcon={<Lock className="w-4 h-4" />}
+          />
+          {password.length > 0 && (
+            <div className="mt-1.5 flex items-center gap-2">
+              <div className="flex-1 h-1.5 bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-300 ${strength.color}`}
+                  style={{ width: `${(strength.score / 3) * 100}%` }}
+                />
+              </div>
+              <span className="text-[11px] font-medium text-stone-500">
+                {t(strength.labelKey)}
+              </span>
+            </div>
+          )}
+        </div>
 
         <Input
-          label="Xác nhận mật khẩu mới"
+          label={t('confirmNewPassword')}
           type="password"
           required
-          error={error}
+          error={localError}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Nhập lại mật khẩu"
+          placeholder="******"
           leftIcon={<Lock className="w-4 h-4" />}
         />
 
@@ -90,13 +125,16 @@ function ResetPasswordForm() {
           isLoading={isLoading}
           leftIcon={<CheckCircle2 className="w-4 h-4" />}
         >
-          Lưu mật khẩu mới
+          {t('saveNewPasswordBtn')}
         </Button>
       </form>
 
       <div className="text-center pt-2 border-t border-stone-100 dark:border-stone-800">
-        <Link href="/login" className="text-xs text-teal-700 dark:text-teal-400 font-semibold hover:underline">
-          Quay lại Đăng nhập
+        <Link
+          href="/login"
+          className="text-xs text-teal-700 dark:text-teal-400 font-semibold hover:underline"
+        >
+          {t('backToLogin')}
         </Link>
       </div>
     </div>
@@ -106,7 +144,7 @@ function ResetPasswordForm() {
 export default function ResetPasswordPage() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-      <Suspense fallback={<div className="text-xs text-stone-400">Đang tải...</div>}>
+      <Suspense fallback={<div className="text-sm text-stone-500">...</div>}>
         <ResetPasswordForm />
       </Suspense>
     </div>

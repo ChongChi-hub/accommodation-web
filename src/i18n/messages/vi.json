@@ -37,7 +37,25 @@
     "noAccount": "Chưa có tài khoản?",
     "haveAccount": "Đã có tài khoản?",
     "or": "Hoặc tiếp tục với",
-    "googleLogin": "Đăng nhập với Google"
+    "googleLogin": "Đăng nhập với Google",
+    "forgotPasswordTitle": "Quên mật khẩu?",
+    "forgotPasswordSubtitle": "Nhập địa chỉ email đăng ký để nhận mã OTP thiết lập mật khẩu mới.",
+    "sendOtpBtn": "Gửi mã xác thực OTP",
+    "backToLogin": "Quay lại Đăng nhập",
+    "resendOtpCooldown": "Gửi lại sau {seconds}s",
+    "otpSentSuccess": "Mã xác thực OTP đã được gửi đến email của bạn!",
+    "resetPasswordTitle": "Đặt lại mật khẩu",
+    "resetPasswordSubtitle": "Mã OTP 6 số đã được gửi đến {email}",
+    "otpLabel": "Mã OTP xác thực (6 số)",
+    "newPassword": "Mật khẩu mới",
+    "confirmNewPassword": "Xác nhận mật khẩu mới",
+    "saveNewPasswordBtn": "Lưu mật khẩu mới",
+    "passwordMismatch": "Mật khẩu xác nhận không khớp",
+    "passwordResetSuccess": "Mật khẩu đã được đặt lại thành công! Vui lòng đăng nhập.",
+    "passwordStrength": "Độ mạnh mật khẩu",
+    "passwordWeak": "Yếu",
+    "passwordMedium": "Trung bình",
+    "passwordStrong": "Mạnh"
   },
   "common": {
     "loading": "Đang tải dữ liệu...",
@@ -52,7 +70,14 @@
     "search": "Tìm kiếm",
     "viewDetails": "Xem chi tiết",
     "pricePerMonth": "/tháng",
-    "currency": "đ"
+    "currency": "đ",
+    "statusApproved": "Đã duyệt",
+    "statusPending": "Chờ duyệt",
+    "statusRejected": "Từ chối",
+    "details": "Chi tiết",
+    "status": "Trạng thái",
+    "actions": "Hành động",
+    "close": "Đóng"
   },
   "admin": {
     "overview": {
@@ -414,7 +439,21 @@
         "submitting": "Đang gửi yêu cầu...",
         "success": "Đã gửi phiếu hỗ trợ thành công!",
         "redirecting": "Hệ thống đang chuyển bạn về danh sách phiếu...",
-        "back": "Quay lại danh sách"
+        "back": "Quay lại danh sách",
+        "category": {
+          "TECHNICAL": "Lỗi kỹ thuật / Hệ thống",
+          "BILLING": "Thanh toán & Hóa đơn",
+          "CONTRACT": "Hợp đồng & Đặt cọc",
+          "DISPUTE": "Tranh chấp & Khiếu nại",
+          "ACCOUNT": "Tài khoản & Xác thực KYC",
+          "OTHER": "Vấn đề khác"
+        },
+        "priority": {
+          "LOW": "Thấp (Không khẩn cấp)",
+          "MEDIUM": "Bình thường",
+          "HIGH": "Cao (Ảnh hưởng sử dụng)",
+          "URGENT": "Khẩn cấp (Cần xử lý ngay)"
+        }
       },
       "detail": {
         "back": "Quay lại danh sách phiếu",

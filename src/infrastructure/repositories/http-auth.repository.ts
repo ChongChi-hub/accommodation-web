@@ -2,10 +2,23 @@ import { AuthRepository, AuthSession } from '@/domain/repositories/AuthRepositor
 import { User } from '@/domain/entities/User';
 import { ApiClient } from '../http/api-client';
 
+function setRoleCookie(role?: string) {
+  if (typeof document !== 'undefined') {
+    if (role) {
+      document.cookie = `toam_role=${encodeURIComponent(role)}; path=/; max-age=2592000; SameSite=Lax`;
+    } else {
+      document.cookie = 'toam_role=; path=/; max-age=0; SameSite=Lax';
+    }
+  }
+}
+
 export class HttpAuthRepository implements AuthRepository {
   async login(email: string, password: string): Promise<AuthSession> {
     const data = await ApiClient.post<any>('/auth/login', { email, password });
     ApiClient.setToken(data.token);
+    const primaryRole = data.user?.roles?.[0] || 'TENANT';
+    setRoleCookie(primaryRole);
+
     if (typeof window !== 'undefined') {
       localStorage.setItem('toam_refresh_token', data.refreshToken);
       localStorage.setItem('toam_user', JSON.stringify(data.user));
@@ -19,6 +32,9 @@ export class HttpAuthRepository implements AuthRepository {
   async register(data: { email: string; phone: string; password: string; fullName: string; role: string }): Promise<AuthSession> {
     const res = await ApiClient.post<any>('/auth/register', data);
     ApiClient.setToken(res.token);
+    const primaryRole = res.user?.roles?.[0] || data.role || 'TENANT';
+    setRoleCookie(primaryRole);
+
     if (typeof window !== 'undefined') {
       localStorage.setItem('toam_refresh_token', res.refreshToken);
       localStorage.setItem('toam_user', JSON.stringify(res.user));
@@ -32,6 +48,9 @@ export class HttpAuthRepository implements AuthRepository {
   async refreshToken(refreshToken: string): Promise<AuthSession> {
     const data = await ApiClient.post<any>('/auth/refresh-token', { refreshToken });
     ApiClient.setToken(data.token);
+    const primaryRole = data.user?.roles?.[0] || 'TENANT';
+    setRoleCookie(primaryRole);
+
     if (typeof window !== 'undefined') {
       localStorage.setItem('toam_refresh_token', data.refreshToken);
       localStorage.setItem('toam_user', JSON.stringify(data.user));
@@ -62,7 +81,6 @@ export class HttpAuthRepository implements AuthRepository {
       }
       return res;
     } catch {
-      // Fallback local persistence if offline
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('toam_user');
         const currentUser = stored ? JSON.parse(stored) : {};
@@ -75,23 +93,25 @@ export class HttpAuthRepository implements AuthRepository {
   }
 
   async changePassword(oldPassword: string, newPassword: string): Promise<void> {
-    try {
-      await ApiClient.put('/auth/change-password', { oldPassword, newPassword });
-    } catch (err) {
-      // Check if it's network error, simulate success for demo user
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('toam_user');
-        if (stored) return; // Simulated success
-      }
-      throw err;
-    }
+    await ApiClient.post('/auth/change-password', { oldPassword, newPassword });
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    await ApiClient.post('/auth/forgot-password', { email });
+  }
+
+  async resetPassword(email: string, otp: string, newPassword: string): Promise<void> {
+    await ApiClient.post('/auth/reset-password', { email, otp, newPassword });
   }
 
   async logout(): Promise<void> {
     try {
       await ApiClient.post('/auth/logout');
+    } catch {
+      // Ignore network errors on logout
     } finally {
       ApiClient.setToken(null);
+      setRoleCookie();
       if (typeof window !== 'undefined') {
         localStorage.removeItem('toam_refresh_token');
         localStorage.removeItem('toam_user');
@@ -99,4 +119,3 @@ export class HttpAuthRepository implements AuthRepository {
     }
   }
 }
-
