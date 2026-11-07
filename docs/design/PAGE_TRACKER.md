@@ -9,16 +9,16 @@
 ### Nhóm 1: Quản Trị Viên & Kiểm Duyệt Viên (Admin & Moderator)
 | Route | Tên Trang | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
 |---|---|---|---|---|---|---|
-| `/dashboard/admin` | Tổng quan sàn | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/overview-*.png` (19 ảnh) | Đủ 4 trạng thái, i18n vi/en, a11y passed |
-| `/dashboard/admin/rooms` | Duyệt tin đăng | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/rooms-*.png` (19 ảnh) | Tabs trạng thái, bộ lọc tìm kiếm, modal lý do, 4 states, a11y passed |
-| `/dashboard/admin/kyc` | Duyệt eKYC CCCD | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/kyc-*.png` (19 ảnh) | So sánh CCCD 2 mặt, 4 states, i18n vi/en, a11y passed |
-| `/dashboard/admin/users` | Quản lý người dùng | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/users-*.png` (19 ảnh) | Tabs vai trò, tìm kiếm đa trường, khóa/mở khóa, 4 states, a11y passed |
-| `/dashboard/admin/reports` | Báo cáo vi phạm | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/reports-*.png` (19 ảnh) | Tabs trạng thái, xử lý khiếu nại, 4 states, a11y passed |
-| `/dashboard/admin/reviews` | Kiểm duyệt đánh giá | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/reviews-*.png` (19 ảnh) | Tabs hiển thị/ẩn, chuyển đổi trạng thái, 4 states, a11y passed |
-| `/dashboard/admin/dictionaries` | Danh mục hệ thống | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/dictionaries-*.png` (19 ảnh) | Tabs loại phòng, tiện ích, tỉnh thành, 4 states, a11y passed |
-| `/dashboard/admin/analytics` | Phân tích sâu | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/analytics-*.png` (19 ảnh) | Biểu đồ tăng trưởng, top khu vực, 4 states, a11y passed |
-| `/dashboard/admin/audit-logs` | Nhật ký hệ thống | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/audit-logs-*.png` (19 ảnh) | Tìm kiếm IP/Actor/Action, 4 states, a11y passed |
-| `/dashboard/admin/settings` | Cấu hình toàn sàn | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/settings-*.png` (19 ảnh) | Cấu hình vận hành, VietQR, bảo mật 2FA, a11y passed |
+| `/dashboard/admin` | Tổng quan sàn | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/overview-*.png` (8 ảnh) | Đã sửa CSS v4, font Plus Jakarta Sans, KPI cards, E2E visual pass |
+| `/dashboard/admin/rooms` | Duyệt tin đăng | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/rooms-*.png` (8 ảnh) | Đã bổ sung Drawer chi tiết phòng, Tabs chuẩn, E2E visual pass |
+| `/dashboard/admin/kyc` | Duyệt eKYC CCCD | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/kyc-*.png` (8 ảnh) | So sánh CCCD 2 mặt + đối chiếu OCR + lý do từ chối, E2E visual pass |
+| `/dashboard/admin/users` | Quản lý người dùng | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/users-*.png` (8 ảnh) | Đã bổ sung User Detail Drawer, Tabs vai trò, E2E visual pass |
+| `/dashboard/admin/reports` | Báo cáo vi phạm | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/reports-*.png` (8 ảnh) | Đã bổ sung Report Detail Drawer, xử lý khiếu nại, E2E visual pass |
+| `/dashboard/admin/reviews` | Kiểm duyệt đánh giá | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/reviews-*.png` (8 ảnh) | Đã bổ sung Review Detail Drawer, số sao, ẩn/hiện, E2E visual pass |
+| `/dashboard/admin/dictionaries` | Danh mục hệ thống | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/dictionaries-*.png` (8 ảnh) | Tabs danh mục chuẩn, modal thêm mới, E2E visual pass |
+| `/dashboard/admin/analytics` | Phân tích sâu | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/analytics-*.png` (8 ảnh) | ChartCards, thanh tiến độ khu vực semantic, E2E visual pass |
+| `/dashboard/admin/audit-logs` | Nhật ký hệ thống | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/audit-logs-*.png` (8 ảnh) | IP monospace badges, search, E2E visual pass |
+| `/dashboard/admin/settings` | Cấu hình toàn sàn | `StaticAdminRepository` | Hoàn thành Rework | 07/11/2026 | `before-after/settings-*.png` (8 ảnh) | Toggle switches chuẩn, Ops/Payment/Security, E2E visual pass |
 
 ### Nhóm 2: Chủ Trọ (Landlord)
 | Route | Tên Trang | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
