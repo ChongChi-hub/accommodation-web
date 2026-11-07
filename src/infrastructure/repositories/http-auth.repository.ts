@@ -2,12 +2,19 @@ import { AuthRepository, AuthSession } from '@/domain/repositories/AuthRepositor
 import { User } from '@/domain/entities/User';
 import { ApiClient } from '../http/api-client';
 
-function setRoleCookie(role?: string) {
+function setAuthCookies(token?: string, role?: string) {
   if (typeof document !== 'undefined') {
-    if (role) {
-      document.cookie = `toam_role=${encodeURIComponent(role)}; path=/; max-age=2592000; SameSite=Lax`;
+    const isProduction = process.env.NODE_ENV === 'production';
+    const secureFlag = isProduction ? '; Secure' : '';
+    if (token) {
+      document.cookie = `toam_token=${encodeURIComponent(token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
     } else {
-      document.cookie = 'toam_role=; path=/; max-age=0; SameSite=Lax';
+      document.cookie = `toam_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
+    }
+    if (role) {
+      document.cookie = `toam_role=${encodeURIComponent(role)}; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
+    } else {
+      document.cookie = `toam_role=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
     }
   }
 }
@@ -17,7 +24,7 @@ export class HttpAuthRepository implements AuthRepository {
     const data = await ApiClient.post<any>('/auth/login', { email, password });
     ApiClient.setToken(data.token);
     const primaryRole = data.user?.roles?.[0] || 'TENANT';
-    setRoleCookie(primaryRole);
+    setAuthCookies(data.token, primaryRole);
 
     if (typeof window !== 'undefined') {
       localStorage.setItem('toam_refresh_token', data.refreshToken);
@@ -33,7 +40,7 @@ export class HttpAuthRepository implements AuthRepository {
     const res = await ApiClient.post<any>('/auth/register', data);
     ApiClient.setToken(res.token);
     const primaryRole = res.user?.roles?.[0] || data.role || 'TENANT';
-    setRoleCookie(primaryRole);
+    setAuthCookies(res.token, primaryRole);
 
     if (typeof window !== 'undefined') {
       localStorage.setItem('toam_refresh_token', res.refreshToken);
@@ -49,7 +56,7 @@ export class HttpAuthRepository implements AuthRepository {
     const data = await ApiClient.post<any>('/auth/refresh-token', { refreshToken });
     ApiClient.setToken(data.token);
     const primaryRole = data.user?.roles?.[0] || 'TENANT';
-    setRoleCookie(primaryRole);
+    setAuthCookies(data.token, primaryRole);
 
     if (typeof window !== 'undefined') {
       localStorage.setItem('toam_refresh_token', data.refreshToken);
@@ -111,7 +118,7 @@ export class HttpAuthRepository implements AuthRepository {
       // Ignore network errors on logout
     } finally {
       ApiClient.setToken(null);
-      setRoleCookie();
+      setAuthCookies();
       if (typeof window !== 'undefined') {
         localStorage.removeItem('toam_refresh_token');
         localStorage.removeItem('toam_user');

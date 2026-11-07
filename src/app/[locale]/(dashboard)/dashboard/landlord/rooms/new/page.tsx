@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
 import { Stepper } from '@/presentation/components/ui/Stepper';
 import { Button } from '@/presentation/components/ui/Button';
@@ -9,6 +9,7 @@ import { Select } from '@/presentation/components/ui/Select';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
 import { ImageManager } from '@/presentation/components/rooms/ImageManager';
 import { ManagedImage } from '@/presentation/components/rooms/ImageCard';
+import { ProvinceDto, WardDto } from '@/application/dto/listing.dto';
 import { container } from '@/infrastructure/di/container';
 import { toast } from '@/presentation/stores/toast.store';
 import { useRouter } from '@/i18n/routing';
@@ -19,12 +20,14 @@ export default function NewRoomPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<ManagedImage[]>([]);
+  const [provinces, setProvinces] = useState<ProvinceDto[]>([]);
+  const [wards, setWards] = useState<WardDto[]>([]);
 
   const [formData, setFormData] = useState({
     title: '',
     roomType: 'MINI_APARTMENT',
     province: 'HN',
-    district: 'HN-CG',
+    ward: 'HN_DVH',
     address: '',
     area: '',
     price: '',
@@ -33,6 +36,25 @@ export default function NewRoomPage() {
     allowPets: false,
     allowCooking: true,
   });
+
+  useEffect(() => {
+    container.listing.getLocationsUseCase.getProvinces()
+      .then(setProvinces)
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (formData.province) {
+      container.listing.getLocationsUseCase.getWards(formData.province)
+        .then((wds) => {
+          setWards(wds);
+          if (wds.length > 0 && !wds.some((w) => w.code === formData.ward)) {
+            setFormData((prev) => ({ ...prev, ward: wds[0].code }));
+          }
+        })
+        .catch(() => setWards([]));
+    }
+  }, [formData.province]);
 
   const steps = [
     { id: 1, title: 'Địa chỉ & Loại phòng' },
@@ -54,12 +76,15 @@ export default function NewRoomPage() {
     }
 
     setIsSubmitting(true);
+    let createdRoomId: string | number | null = null;
     try {
+      const selectedWard = wards.find((w) => w.code === formData.ward);
       const newRoom = await container.landlord.landlordRoomRepository.createRoom({
         title: formData.title.trim(),
         address: formData.address.trim(),
         provinceCode: formData.province,
-        districtCode: formData.district,
+        wardCode: formData.ward,
+        wardId: selectedWard?.id,
         roomTypeCode: formData.roomType,
         area: parseFloat(formData.area),
         maxOccupants: parseInt(formData.maxOccupants, 10) || 2,
@@ -67,22 +92,30 @@ export default function NewRoomPage() {
         deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
         allowPets: formData.allowPets,
         allowCooking: formData.allowCooking,
-        submitForReview,
+        submitForReview: false,
       });
+      createdRoomId = newRoom.id;
 
       if (validImages.length > 0) {
         const filesToUpload = validImages.map((img) => img.file as File);
         await container.landlord.landlordRoomRepository.uploadImages(newRoom.id, filesToUpload);
       }
 
-      toast.success(
-        submitForReview
-          ? 'Đăng tin phòng trọ thành công! Tin sẽ được duyệt trong vòng 2 giờ.'
-          : 'Đã lưu bản nháp bài đăng thành công.'
-      );
+      if (submitForReview) {
+        await container.landlord.landlordRoomRepository.submitForReview(newRoom.id);
+        toast.success('Gửi duyệt phòng trọ thành công! Tin sẽ được kiểm duyệt trong thời gian sớm nhất.');
+      } else {
+        toast.success('Đã lưu bản nháp bài đăng thành công.');
+      }
+
       router.push('/dashboard/landlord/rooms');
     } catch (err: any) {
-      toast.error(err?.message || 'Lỗi khi lưu phòng trọ');
+      if (createdRoomId) {
+        toast.error(`Bài đăng đã được lưu bản nháp (#${createdRoomId}), nhưng chưa thể gửi duyệt: ${err?.message || 'Lỗi không xác định'}. Bạn có thể tiếp tục bổ sung ảnh và gửi duyệt trong danh mục phòng.`);
+        router.push('/dashboard/landlord/rooms');
+      } else {
+        toast.error(err?.message || 'Lỗi khi lưu phòng trọ');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -145,19 +178,36 @@ export default function NewRoomPage() {
               />
               <Select
                 label="Tỉnh / Thành phố"
-                options={[
-                  { value: 'HN', label: 'Hà Nội' },
-                  { value: 'HCM', label: 'Hồ Chí Minh' },
-                  { value: 'DNG', label: 'Đà Nẵng' },
-                ]}
+                options={
+                  provinces.length > 0
+                    ? provinces.map((p) => ({ value: p.code, label: p.name }))
+                    : [
+                        { value: 'HN', label: 'Hà Nội' },
+                        { value: 'HCM', label: 'Hồ Chí Minh' },
+                        { value: 'DNG', label: 'Đà Nẵng' },
+                        { value: 'HP', label: 'Hải Phòng' },
+                        { value: 'CT', label: 'Cần Thơ' },
+                        { value: 'HUE', label: 'Huế' },
+                      ]
+                }
                 value={formData.province}
                 onChange={(e) => setFormData({ ...formData, province: e.target.value })}
               />
             </div>
+            <Select
+              label="Phường / Xã"
+              options={
+                wards.length > 0
+                  ? wards.map((w) => ({ value: w.code, label: w.name }))
+                  : [{ value: 'HN_DVH', label: 'Phường Dịch Vọng Hậu' }]
+              }
+              value={formData.ward}
+              onChange={(e) => setFormData({ ...formData, ward: e.target.value })}
+            />
             <Input
-              label="Địa chỉ chi tiết (số nhà, ngõ, tên đường)"
+              label="Địa chỉ chi tiết (số nhà, ngõ, tên đường theo mô hình 2 cấp)"
               required
-              placeholder="Số 15 ngõ 92 Trần Thái Tông, Dịch Vọng Hậu"
+              placeholder="VD: Số 15 ngõ 92 Trần Thái Tông, Phường Dịch Vọng Hậu, Hà Nội"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             />

@@ -14,7 +14,7 @@ export interface IListingRepository {
   getRecommendations(id: number): Promise<RoomDto[]>;
   getProvinces(): Promise<ProvinceDto[]>;
   getDistricts(provinceCode: string): Promise<DistrictDto[]>;
-  getWards(districtCode: string): Promise<WardDto[]>;
+  getWards(code: string, isProvince?: boolean): Promise<WardDto[]>;
   getAmenities(): Promise<AmenityDto[]>;
   getReviews(roomId: number): Promise<ReviewDto[]>;
 }

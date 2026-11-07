@@ -52,7 +52,8 @@ function ResetPasswordForm() {
       toast.success(t('passwordResetSuccess'));
       router.push('/login');
     } else {
-      toast.error(error || t('passwordMismatch'));
+      const activeError = useAuthStore.getState().error;
+      toast.error(activeError || t('resetPasswordError'));
     }
   };
 
@@ -83,6 +84,7 @@ function ResetPasswordForm() {
 
         <div>
           <Input
+            name="newPassword"
             label={t('newPassword')}
             type="password"
             required
@@ -107,6 +109,7 @@ function ResetPasswordForm() {
         </div>
 
         <Input
+          name="confirmPassword"
           label={t('confirmNewPassword')}
           type="password"
           required

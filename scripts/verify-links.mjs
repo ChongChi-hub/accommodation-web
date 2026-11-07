@@ -47,6 +47,7 @@ function getAllFiles(dir) {
 const files = getAllFiles(srcDir);
 const hrefRegex = /href=[\"']([^\"'#?]+)[\"']/g;
 const hrefTemplateRegex = /href=\{`([^`#?]+)`\}/g;
+const objectHrefRegex = /href:\s*['"]([^'"#?]+)['"]/g;
 
 const linksFound = new Set();
 const linkSources = {};
@@ -65,6 +66,9 @@ for (const file of files) {
     addLink(match[1], file);
   }
   while ((match = hrefTemplateRegex.exec(content)) !== null) {
+    addLink(match[1], file);
+  }
+  while ((match = objectHrefRegex.exec(content)) !== null) {
     addLink(match[1], file);
   }
 }

@@ -1,31 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Landlord Image Upload & Validation (LANDLORD-02)', () => {
   test.beforeEach(async ({ context, page }) => {
-    await context.addCookies([
-      {
-        name: 'toam_role',
-        value: 'LANDLORD',
-        domain: 'localhost',
-        path: '/',
-      },
-    ]);
-    await page.addInitScript(() => {
-      localStorage.setItem('toam_access_token', 'mock_landlord_token');
-      localStorage.setItem(
-        'toam_user',
-        JSON.stringify({
-          id: 'u-landlord-01',
-          email: 'landlord@toam.vn',
-          fullName: 'Chủ Trọ Demo',
-          phone: '0901234567',
-          roles: ['LANDLORD'],
-          isKycVerified: true,
-          createdAt: '2026-01-01T00:00:00Z',
-          updatedAt: '2026-01-01T00:00:00Z',
-        })
-      );
-    });
+    await authenticateAs(context, page, 'landlord@toam.vn');
   });
 
   test('Step 4 wizard validates file upload constraints', async ({ page }) => {

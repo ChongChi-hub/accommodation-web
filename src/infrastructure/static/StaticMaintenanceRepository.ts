@@ -6,8 +6,8 @@ export class StaticMaintenanceRepository implements MaintenanceRepository {
     {
       id: 'MN-201',
       roomId: 'room_101',
-      roomTitle: 'Phòng Studio Ban Công Đẹp Quận 1',
-      roomAddress: '124/8 Nguyễn Đình Chiểu, Phường Đa Kao, Quận 1, TP.HCM',
+      roomTitle: 'Phòng Studio Ban Công Đẹp Phường Đa Kao',
+      roomAddress: '124/8 Nguyễn Đình Chiểu, Phường Đa Kao, TP. Hồ Chí Minh',
       tenantId: 'usr_tenant_1',
       tenantName: 'Nguyễn Văn Thuê',
       tenantPhone: '0987654321',
@@ -25,8 +25,8 @@ export class StaticMaintenanceRepository implements MaintenanceRepository {
     {
       id: 'MN-202',
       roomId: 'room_102',
-      roomTitle: 'Căn Hộ Dịch Vụ 1PN Bình Thạnh',
-      roomAddress: '45/3 Điện Biên Phủ, Phường 15, Quận Bình Thạnh, TP.HCM',
+      roomTitle: 'Căn Hộ Dịch Vụ 1PN Phường 15',
+      roomAddress: '45/3 Điện Biên Phủ, Phường 15, TP. Hồ Chí Minh',
       tenantId: 'usr_tenant_2',
       tenantName: 'Lê Hoàng Minh',
       tenantPhone: '0933456789',
@@ -44,8 +44,8 @@ export class StaticMaintenanceRepository implements MaintenanceRepository {
     {
       id: 'MN-203',
       roomId: 'room_103',
-      roomTitle: 'Phòng Trọ Gác Lửng Giá Rẻ Gò Vấp',
-      roomAddress: '78/12 Quang Trung, Phường 8, Quận Gò Vấp, TP.HCM',
+      roomTitle: 'Phòng Trọ Gác Lửng Giá Rẻ Phường 8',
+      roomAddress: '78/12 Quang Trung, Phường 8, TP. Hồ Chí Minh',
       tenantId: 'usr_tenant_1',
       tenantName: 'Nguyễn Văn Thuê',
       tenantPhone: '0987654321',

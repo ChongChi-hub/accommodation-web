@@ -15,6 +15,19 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    const apiGatewayUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${apiGatewayUrl}/api/v1/:path*`,
+      },
+      {
+        source: '/.well-known/:path*',
+        destination: `${apiGatewayUrl}/.well-known/:path*`,
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

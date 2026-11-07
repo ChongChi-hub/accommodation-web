@@ -1,18 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Command Palette Role Access Enforcement', () => {
-  test('TENANT role can only see tenant & public commands, never admin or landlord commands', async ({ page }) => {
-    await page.addInitScript(() => {
-      localStorage.setItem('toam_access_token', 'mock_tenant_token');
-      localStorage.setItem('toam_user', JSON.stringify({
-        id: 'usr_tenant_test',
-        fullName: 'Nguyễn Văn Thuê',
-        email: 'tenant@toam.vn',
-        phone: '0987654321',
-        roles: ['TENANT'],
-        isKycVerified: true,
-      }));
-    });
+  test('TENANT role can only see tenant & public commands, never admin or landlord commands', async ({ context, page }) => {
+    await authenticateAs(context, page, 'tenant@toam.vn');
 
     await page.goto('http://localhost:3000/dashboard/tenant', { waitUntil: 'networkidle' });
 
@@ -44,18 +35,8 @@ test.describe('Command Palette Role Access Enforcement', () => {
     await expect(dialog.locator('[data-command-id="support"]')).toBeVisible();
   });
 
-  test('ADMIN role can access administrative commands', async ({ page }) => {
-    await page.addInitScript(() => {
-      localStorage.setItem('toam_access_token', 'mock_admin_token');
-      localStorage.setItem('toam_user', JSON.stringify({
-        id: 'usr_admin_test',
-        fullName: 'Quản Trị Viên Sàn',
-        email: 'admin@toam.vn',
-        phone: '0901234567',
-        roles: ['ADMIN'],
-        isKycVerified: true,
-      }));
-    });
+  test('ADMIN role can access administrative commands', async ({ context, page }) => {
+    await authenticateAs(context, page, 'admin@toam.vn');
 
     await page.goto('http://localhost:3000/dashboard/admin', { waitUntil: 'networkidle' });
     await page.keyboard.press('Control+k');

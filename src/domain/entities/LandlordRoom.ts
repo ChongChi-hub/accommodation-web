@@ -64,6 +64,7 @@ export interface LandlordRoomDetail {
   provinceCode?: string;
   districtCode?: string;
   wardCode?: string;
+  wardId?: number;
   latitude?: number;
   longitude?: number;
   area: number;
@@ -117,6 +118,7 @@ export interface UpdateRoomPayload {
   provinceCode?: string;
   districtCode?: string;
   wardCode?: string;
+  wardId?: number;
   roomTypeId?: number;
   roomTypeCode?: string;
   area: number;

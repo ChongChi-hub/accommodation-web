@@ -64,6 +64,7 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
   const router = useRouter();
   const { user, logout, switchRole } = useAuthStore();
   const [badges, setBadges] = useState<DashboardBadges | null>(null);
+  const [pendingAppointments, setPendingAppointments] = useState<number>(0);
 
   const isAdmin = user?.roles?.includes('ADMIN');
   const isModerator = user?.roles?.includes('MODERATOR');
@@ -73,7 +74,12 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
 
   useEffect(() => {
     container.badge.badgeRepository.getBadges(role, user?.id).then(setBadges);
-  }, [role, user?.id]);
+    if (isLandlord) {
+      container.landlord.appointmentRepository.getSummary()
+        .then((s) => setPendingAppointments(s.totalPending))
+        .catch(() => {});
+    }
+  }, [role, user?.id, isLandlord]);
 
   // ADMIN SECTIONS
   const adminSections: NavSection[] = [
@@ -138,7 +144,7 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
         { label: 'Tổng quan chủ trọ', href: '/dashboard/landlord', icon: <LayoutDashboard className="w-4 h-4" /> },
         { label: 'Quản lý phòng trọ', href: '/dashboard/landlord/rooms', icon: <Building className="w-4 h-4" /> },
         { label: 'Đăng phòng mới', href: '/dashboard/landlord/rooms/new', icon: <PlusCircle className="w-4 h-4" /> },
-        { label: 'Lịch hẹn xem phòng', href: '/dashboard/landlord/appointments', icon: <Calendar className="w-4 h-4" /> },
+        { label: 'Lịch hẹn xem phòng', href: '/dashboard/landlord/appointments', icon: <Calendar className="w-4 h-4" />, badge: pendingAppointments, badgeVariant: 'warning' },
         { label: 'Yêu cầu thuê phòng', href: '/dashboard/landlord/rental-requests', icon: <FileText className="w-4 h-4" />, badge: badges?.landlordRentalRequests, badgeVariant: 'brand' },
       ],
     },

@@ -1,6 +1,7 @@
 import { HttpAuthRepository } from '../repositories/http-auth.repository';
 import { HttpListingRepository } from '../repositories/http-listing.repository';
 import { HttpLandlordRoomRepository } from '../repositories/http-landlord-room.repository';
+import { HttpAppointmentRepository } from '../repositories/http-appointment.repository';
 import { StaticAdminRepository } from '../static/StaticAdminRepository';
 import { StaticSupportRepository } from '../static/StaticSupportRepository';
 import { StaticMaintenanceRepository } from '../static/StaticMaintenanceRepository';
@@ -19,6 +20,7 @@ import { GetLocationsUseCase } from '@/application/use-cases/listing/get-locatio
 const authRepository = new HttpAuthRepository();
 const listingRepository = new HttpListingRepository();
 const landlordRoomRepository = new HttpLandlordRoomRepository();
+const appointmentRepository = new HttpAppointmentRepository();
 const adminRepository = new StaticAdminRepository();
 const supportRepository = new StaticSupportRepository();
 const maintenanceRepository = new StaticMaintenanceRepository();
@@ -48,6 +50,10 @@ export const container = {
   },
   landlord: {
     landlordRoomRepository,
+    appointmentRepository,
+  },
+  appointment: {
+    appointmentRepository,
   },
   admin: {
     adminRepository,

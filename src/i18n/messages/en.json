@@ -242,7 +242,7 @@
       "btnAdd": "Add Entry",
       "tabRoomTypes": "Room Types",
       "tabAmenities": "Amenities & Furniture",
-      "tabLocations": "Provinces & Districts",
+      "tabLocations": "Provinces & Wards (2-Tier)",
       "colCode": "Identifier Code",
       "colName": "Category Name",
       "colDesc": "Standard Description",
@@ -557,6 +557,144 @@
         "invalidType": "Unsupported format (JPG, PNG, WebP only)",
         "maxLimit": "Exceeded maximum of 10 photos"
       }
+    },
+    "appointments": {
+      "title": "Viewing Appointments from Tenants",
+      "subtitle": "Manage, confirm, and track in-person viewing appointments at your rental properties.",
+      "stats": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "needingUpdate": "Needs Outcome",
+        "today": "Today",
+        "completed": "Completed"
+      },
+      "tabs": {
+        "all": "All",
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "expired": "Expired"
+      },
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "declined": "Declined",
+        "cancelled": "Cancelled",
+        "completed": "Completed",
+        "noShow": "No-show",
+        "expired": "Expired"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by tenant name, phone, or room...",
+        "allRooms": "All Rooms",
+        "viewList": "List",
+        "viewByRoom": "By Room",
+        "viewCalendar": "Calendar",
+        "refresh": "Refresh"
+      },
+      "empty": {
+        "title": "No appointments found",
+        "subtitle": "When tenants book a viewing appointment, their requests will appear here."
+      },
+      "list": {
+        "tenantPhone": "Tenant Phone"
+      },
+      "actions": {
+        "detail": "Details",
+        "confirm": "Confirm",
+        "decline": "Decline",
+        "cancel": "Cancel",
+        "updateOutcome": "Update Outcome"
+      },
+      "pagination": {
+        "showing": "Showing {from} - {to} of {total} appointments",
+        "prev": "Previous",
+        "next": "Next"
+      },
+      "byRoom": {
+        "pending": "pending",
+        "total": "appointments"
+      },
+      "calendar": {
+        "prev": "Previous Week",
+        "today": "Today",
+        "next": "Next Week",
+        "noAppointments": "No appointments"
+      },
+      "detail": {
+        "title": "Appointment Details",
+        "close": "Close",
+        "timeSection": "Appointment Time",
+        "tenantSection": "Tenant Information",
+        "copyPhone": "Copy phone number",
+        "tenantNote": "Tenant Note",
+        "cancelReason": "Cancellation Reason",
+        "timeline": "Status Timeline",
+        "actions": {
+          "confirm": "Confirm",
+          "decline": "Decline",
+          "cancel": "Cancel",
+          "updateOutcome": "Update Outcome"
+        }
+      },
+      "modals": {
+        "confirm": {
+          "title": "Confirm Appointment",
+          "message": "Are you sure you want to confirm the appointment with {name} at {time}?",
+          "conflictAlertTitle": "Appointment Conflict Warning",
+          "conflictAlertDesc": "This appointment conflicts in time with {roomTitle} at {time}.",
+          "conflictOtherRoom": "another room",
+          "forceConfirmLabel": "I agree to override and confirm this conflicting appointment",
+          "noteLabel": "Note for tenant (optional)",
+          "notePlaceholder": "e.g., Meet at lobby on 1st floor...",
+          "cancel": "Cancel",
+          "submit": "Confirm Appointment"
+        },
+        "cancel": {
+          "titleDecline": "Decline Appointment",
+          "titleCancel": "Cancel Confirmed Appointment",
+          "subtitle": "Please select a reason so the system can notify the tenant.",
+          "reasons": {
+            "busy": "Unexpected busy schedule",
+            "roomTaken": "Room already reserved or rented",
+            "notEligible": "Tenant criteria does not match",
+            "timeConflict": "Time conflict with another schedule",
+            "other": "Other reason"
+          },
+          "noteLabel": "Reason details",
+          "minChars": "characters",
+          "notePlaceholder": "Enter more details if needed...",
+          "notePlaceholderOther": "Please enter a specific reason (at least 10 characters)...",
+          "cancel": "Back",
+          "submitDecline": "Decline Appointment",
+          "submitCancel": "Cancel Appointment"
+        },
+        "complete": {
+          "title": "Update Viewing Outcome",
+          "subtitle": "Confirm the outcome after the in-person room viewing.",
+          "completed": "Tenant attended the viewing",
+          "noShow": "Tenant did not show up (no-show)",
+          "noteLabel": "Outcome note",
+          "notePlaceholder": "Additional notes about the viewing...",
+          "cancel": "Cancel",
+          "submit": "Save Outcome"
+        }
+      }
+    }
+  },
+  "tenant": {
+    "appointments": {
+      "title": "Your Viewing Appointments",
+      "subtitle": "Track your in-person viewing appointments with landlords.",
+      "bookNew": "Book New Appointment",
+      "empty": {
+        "title": "No viewing appointments yet",
+        "subtitle": "Explore suitable rooms and schedule a visit directly with landlords."
+      },
+      "landlordPhone": "Landlord Phone",
+      "myNote": "Your note",
+      "cancelReason": "Cancellation Reason"
     }
   }
 }

@@ -4,14 +4,14 @@ import React from 'react';
 import { Search, RotateCcw } from 'lucide-react';
 import { Select } from '@/presentation/components/ui/Select';
 import { Button } from '@/presentation/components/ui/Button';
-import { RoomFilterParams, ProvinceDto, DistrictDto } from '@/application/dto/listing.dto';
+import { RoomFilterParams, ProvinceDto, WardDto } from '@/application/dto/listing.dto';
 
 export interface RoomFilterBarProps {
   params: RoomFilterParams;
   onChange: (newParams: Partial<RoomFilterParams>) => void;
   onReset: () => void;
   provinces: ProvinceDto[];
-  districts: DistrictDto[];
+  wards?: WardDto[];
 }
 
 export function RoomFilterBar({
@@ -19,16 +19,16 @@ export function RoomFilterBar({
   onChange,
   onReset,
   provinces,
-  districts,
+  wards = [],
 }: RoomFilterBarProps) {
   const provinceOptions = [
-    { value: '', label: 'Tất cả Tỉnh / Thành' },
+    { value: '', label: 'Tất cả Tỉnh / Thành phố' },
     ...provinces.map((p) => ({ value: p.code, label: p.name })),
   ];
 
-  const districtOptions = [
-    { value: '', label: 'Tất cả Quận / Huyện' },
-    ...districts.map((d) => ({ value: d.code, label: d.name })),
+  const wardOptions = [
+    { value: '', label: 'Tất cả Phường / Xã' },
+    ...wards.map((w) => ({ value: w.code, label: w.name })),
   ];
 
   const roomTypeOptions = [
@@ -66,22 +66,26 @@ export function RoomFilterBar({
     <div className="bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 p-4 rounded-2xl shadow-xs space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
         <Select
+          aria-label="Chọn Tỉnh hoặc Thành phố"
           options={provinceOptions}
           value={params.provinceCode || ''}
-          onChange={(e) => onChange({ provinceCode: e.target.value, districtCode: undefined })}
+          onChange={(e) => onChange({ provinceCode: e.target.value, wardCode: undefined, districtCode: undefined })}
         />
         <Select
-          options={districtOptions}
-          value={params.districtCode || ''}
-          onChange={(e) => onChange({ districtCode: e.target.value })}
+          aria-label="Chọn Phường hoặc Xã"
+          options={wardOptions}
+          value={params.wardCode || ''}
+          onChange={(e) => onChange({ wardCode: e.target.value })}
           disabled={!params.provinceCode}
         />
         <Select
+          aria-label="Chọn Loại phòng"
           options={roomTypeOptions}
           value={params.roomTypeCode || ''}
           onChange={(e) => onChange({ roomTypeCode: e.target.value })}
         />
         <Select
+          aria-label="Chọn Mức giá"
           options={priceOptions}
           value={currentPriceValue}
           onChange={handlePriceChange}

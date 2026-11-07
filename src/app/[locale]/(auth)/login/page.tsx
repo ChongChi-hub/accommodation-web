@@ -1,16 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { Link, useRouter } from '@/i18n/routing';
 import { useAuthStore } from '@/presentation/stores/auth.store';
 import Image from 'next/image';
 import { LogIn, Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 import { GoogleLoginButton } from '@/presentation/components/auth/GoogleLoginButton';
 
-export default function LoginPage() {
+function LoginForm() {
   const t = useTranslations('auth');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl');
   const { login, isLoading, error, clearError } = useAuthStore();
 
   const [email, setEmail] = useState('');
@@ -21,13 +24,19 @@ export default function LoginPage() {
     clearError();
     const success = await login(email, password);
     if (success) {
+      if (returnUrl) {
+        router.push(returnUrl as any);
+        return;
+      }
       const user = useAuthStore.getState().user;
       if (user?.roles.includes('ADMIN')) {
-        router.push('/admin');
+        router.push('/dashboard/admin');
+      } else if (user?.roles.includes('MODERATOR')) {
+        router.push('/dashboard/moderator');
       } else if (user?.roles.includes('LANDLORD')) {
-        router.push('/landlord');
+        router.push('/dashboard/landlord');
       } else {
-        router.push('/tenant');
+        router.push('/dashboard/tenant');
       }
     }
   };
@@ -155,6 +164,14 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-stone-50" />}>
+      <LoginForm />
+    </Suspense>
   );
 }
 

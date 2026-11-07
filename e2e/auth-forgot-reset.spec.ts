@@ -51,4 +51,96 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
     await newPasswordInput.fill('StrongPassword123!');
     await expect(page.locator('body')).toContainText(/Mạnh|Strong/i);
   });
+
+  test('Reset Password handles invalid OTP rejection gracefully', async ({ page }) => {
+    await page.route('**/api/v1/auth/reset-password', async (route) => {
+      await route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: false,
+          message: 'Mã xác thực OTP không chính xác',
+          errorCode: 'ERR_AUTH_INVALID_OTP',
+        }),
+      });
+    });
+
+    await page.goto('http://localhost:3000/reset-password?email=tenant1@toam.vn');
+
+    await page.locator('input[placeholder="123456"]').fill('999999');
+    await page.locator('input[name="newPassword"]').fill('NewPass123!@#');
+    await page.locator('input[name="confirmPassword"]').fill('NewPass123!@#');
+
+    await page.locator('button[type="submit"]').click();
+    await expect(page.locator('body')).toContainText(/Mã xác thực OTP không chính xác|ERR_AUTH_INVALID_OTP/i, { timeout: 5000 });
+  });
+
+  test('Reset Password handles expired OTP rejection', async ({ page }) => {
+    await page.route('**/api/v1/auth/reset-password', async (route) => {
+      await route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: false,
+          message: 'Mã OTP đã hết hạn hoặc vượt quá số lần thử cho phép (tối đa 5 lần)',
+          errorCode: 'ERR_AUTH_OTP_EXPIRED',
+        }),
+      });
+    });
+
+    await page.goto('http://localhost:3000/reset-password?email=tenant1@toam.vn');
+
+    await page.locator('input[placeholder="123456"]').fill('123456');
+    await page.locator('input[name="newPassword"]').fill('NewPass123!@#');
+    await page.locator('input[name="confirmPassword"]').fill('NewPass123!@#');
+
+    await page.locator('button[type="submit"]').click();
+    await expect(page.locator('body')).toContainText(/Mã OTP đã hết hạn|ERR_AUTH_OTP_EXPIRED/i, { timeout: 5000 });
+  });
+
+  test('Reset Password handles account/OTP lockout after 5 attempts', async ({ page }) => {
+    await page.route('**/api/v1/auth/reset-password', async (route) => {
+      await route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: false,
+          message: 'Mã OTP đã bị vô hiệu hóa do nhập sai quá 5 lần liên tiếp. Vui lòng gửi lại yêu cầu khôi phục.',
+          errorCode: 'ERR_AUTH_OTP_LOCKED',
+        }),
+      });
+    });
+
+    await page.goto('http://localhost:3000/reset-password?email=tenant1@toam.vn');
+
+    await page.locator('input[placeholder="123456"]').fill('000000');
+    await page.locator('input[name="newPassword"]').fill('NewPass123!@#');
+    await page.locator('input[name="confirmPassword"]').fill('NewPass123!@#');
+
+    await page.locator('button[type="submit"]').click();
+    await expect(page.locator('body')).toContainText(/quá 5 lần liên tiếp|ERR_AUTH_OTP_LOCKED/i, { timeout: 5000 });
+  });
+
+  test('Reset Password rejects reuse of current/old password', async ({ page }) => {
+    await page.route('**/api/v1/auth/reset-password', async (route) => {
+      await route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: false,
+          message: 'Mật khẩu mới không được trùng với mật khẩu gần nhất',
+          errorCode: 'ERR_AUTH_OLD_PASSWORD_REUSE',
+        }),
+      });
+    });
+
+    await page.goto('http://localhost:3000/reset-password?email=tenant1@toam.vn');
+
+    await page.locator('input[placeholder="123456"]').fill('123456');
+    await page.locator('input[name="newPassword"]').fill('OldPassword123!');
+    await page.locator('input[name="confirmPassword"]').fill('OldPassword123!');
+
+    await page.locator('button[type="submit"]').click();
+    await expect(page.locator('body')).toContainText(/không được trùng với mật khẩu gần nhất|ERR_AUTH_OLD_PASSWORD_REUSE/i, { timeout: 5000 });
+  });
 });

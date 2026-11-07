@@ -1,68 +1,92 @@
 import { test, expect } from '@playwright/test';
+import { setupAuthMockRoutes } from './helpers/auth-helper';
 
-test.describe('[AUTH-03] RBAC Route Guard & Middleware Protection', () => {
-  test('Unauthenticated user visiting /dashboard/admin is redirected to /login with returnUrl', async ({ page }) => {
-    // Clear cookies
+test.describe('[AUTH-03] Cryptographic RBAC Route Guard & Next.js Middleware Protection', () => {
+  test.beforeEach(async ({ page }) => {
+    await setupAuthMockRoutes(page);
     await page.context().clearCookies();
+  });
 
-    // Directly access protected admin dashboard
-    await page.goto('http://localhost:3000/dashboard/admin');
-
-    // Should redirect to login page with returnUrl query param
+  test('1. Unauthenticated guest visiting /dashboard/admin is redirected to /login with returnUrl', async ({ page }) => {
+    await page.goto('/dashboard/admin');
     await expect(page).toHaveURL(/.*\/login\?returnUrl=.*/);
     await expect(page.locator('input[type="email"]')).toBeVisible();
   });
 
-  test('Tenant user attempting to access /dashboard/admin is redirected to /403 Forbidden', async ({ page, context }) => {
-    // Set TENANT role cookie
-    await context.addCookies([
-      {
-        name: 'toam_role',
-        value: 'TENANT',
-        domain: 'localhost',
-        path: '/',
-      },
-    ]);
+  test('2. Real form login with Tenant account lands on /dashboard/tenant, cannot access /dashboard/admin (403)', async ({ page }) => {
+    await page.goto('/login');
+    await page.fill('input[type="email"]', 'tenant@toam.vn');
+    await page.fill('input[type="password"]', 'password123');
+    await page.click('button[type="submit"]');
 
-    // Tenant attempts to access admin dashboard
-    await page.goto('http://localhost:3000/dashboard/admin');
+    // Successfully redirects to tenant dashboard
+    await expect(page).toHaveURL(/.*\/dashboard\/tenant/);
 
-    // Should redirect to 403 Forbidden page
+    // Tenant attempts to access /dashboard/admin -> blocked with 403
+    await page.goto('/dashboard/admin');
     await expect(page).toHaveURL(/.*\/403/);
     await expect(page.locator('body')).toContainText('403');
   });
 
-  test('Admin user with ADMIN role cookie can access /dashboard/admin', async ({ page, context }) => {
-    await context.addCookies([
-      {
-        name: 'toam_role',
-        value: 'ADMIN',
-        domain: 'localhost',
-        path: '/',
-      },
-    ]);
+  test('3. Role spoofing attempt: Tenant modifying document.cookie toam_role=ADMIN is still blocked by signed JWT', async ({ page }) => {
+    // Perform genuine tenant login
+    await page.goto('/login');
+    await page.fill('input[type="email"]', 'tenant@toam.vn');
+    await page.fill('input[type="password"]', 'password123');
+    await page.click('button[type="submit"]');
+    await expect(page).toHaveURL(/.*\/dashboard\/tenant/);
 
-    // Admin accesses admin dashboard
-    await page.goto('http://localhost:3000/dashboard/admin');
+    // Malicious tenant attempts to forge toam_role cookie in client browser
+    await page.evaluate(() => {
+      document.cookie = 'toam_role=ADMIN; path=/; SameSite=Lax';
+    });
 
-    // Should stay on admin dashboard
-    await expect(page).toHaveURL(/.*\/dashboard\/admin/);
+    // Tenant attempts to access admin dashboard with forged cookie
+    await page.goto('/dashboard/admin');
+
+    // Middleware MUST reject because toam_token cryptographic signature shows role=TENANT
+    await expect(page).toHaveURL(/.*\/403/);
+    await expect(page.locator('body')).toContainText('403');
   });
 
-  test('Landlord user with LANDLORD role cookie can access /dashboard/landlord', async ({ page, context }) => {
-    await context.addCookies([
-      {
-        name: 'toam_role',
-        value: 'LANDLORD',
-        domain: 'localhost',
-        path: '/',
-      },
-    ]);
+  test('4. Real form login with Landlord account lands on /dashboard/landlord, cannot access /dashboard/admin (403)', async ({ page }) => {
+    await page.goto('/login');
+    await page.fill('input[type="email"]', 'landlord@toam.vn');
+    await page.fill('input[type="password"]', 'password123');
+    await page.click('button[type="submit"]');
 
-    // Landlord accesses landlord dashboard
-    await page.goto('http://localhost:3000/dashboard/landlord');
-
-    // Should stay on landlord dashboard
+    // Successfully redirects to landlord dashboard
     await expect(page).toHaveURL(/.*\/dashboard\/landlord/);
+
+    // Landlord attempts to access /dashboard/admin -> blocked with 403
+    await page.goto('/dashboard/admin');
+    await expect(page).toHaveURL(/.*\/403/);
+    await expect(page.locator('body')).toContainText('403');
+  });
+
+  test('5. Real form login with Moderator account lands on /dashboard/moderator, cannot access /dashboard/admin (403)', async ({ page }) => {
+    await page.goto('/login');
+    await page.fill('input[type="email"]', 'moderator@toam.vn');
+    await page.fill('input[type="password"]', 'password123');
+    await page.click('button[type="submit"]');
+
+    // Successfully redirects to moderator dashboard
+    await expect(page).toHaveURL(/.*\/dashboard\/moderator/);
+
+    // Moderator attempts to access /dashboard/admin -> blocked with 403
+    await page.goto('/dashboard/admin');
+    await expect(page).toHaveURL(/.*\/403/);
+    await expect(page.locator('body')).toContainText('403');
+  });
+
+  test('6. Real form login with Admin account lands on /dashboard/admin and has full access', async ({ page }) => {
+    await page.goto('/login');
+    await page.fill('input[type="email"]', 'admin@toam.vn');
+    await page.fill('input[type="password"]', 'password123');
+    await page.click('button[type="submit"]');
+
+    // Successfully redirects to admin dashboard
+    await expect(page).toHaveURL(/.*\/dashboard\/admin/);
+    await expect(page.locator('h1')).toBeVisible();
   });
 });

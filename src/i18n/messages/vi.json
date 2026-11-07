@@ -242,7 +242,7 @@
       "btnAdd": "Thêm danh mục",
       "tabRoomTypes": "Loại phòng trọ",
       "tabAmenities": "Tiện ích & Nội thất",
-      "tabLocations": "Tỉnh thành & Quận huyện",
+      "tabLocations": "Tỉnh thành & Phường xã (2 cấp)",
       "colCode": "Mã định danh",
       "colName": "Tên danh mục",
       "colDesc": "Mô tả quy chuẩn",
@@ -557,6 +557,144 @@
         "invalidType": "Định dạng không được hỗ trợ (chỉ nhận JPG, PNG, WebP)",
         "maxLimit": "Đã vượt quá số lượng 10 ảnh tối đa"
       }
+    },
+    "appointments": {
+      "title": "Lịch hẹn xem phòng từ khách",
+      "subtitle": "Quản lý, xác nhận và theo dõi các cuộc hẹn gặp trực tiếp tại phòng trọ.",
+      "stats": {
+        "pending": "Chờ duyệt",
+        "confirmed": "Đã xác nhận",
+        "needingUpdate": "Cần cập nhật",
+        "today": "Hôm nay",
+        "completed": "Hoàn thành"
+      },
+      "tabs": {
+        "all": "Tất cả",
+        "pending": "Chờ duyệt",
+        "confirmed": "Đã xác nhận",
+        "completed": "Hoàn thành",
+        "cancelled": "Đã hủy",
+        "expired": "Quá hạn"
+      },
+      "status": {
+        "pending": "Chờ duyệt",
+        "confirmed": "Đã xác nhận",
+        "declined": "Đã từ chối",
+        "cancelled": "Đã hủy",
+        "completed": "Hoàn thành",
+        "noShow": "Khách vắng mặt",
+        "expired": "Quá hạn"
+      },
+      "filters": {
+        "searchPlaceholder": "Tìm theo tên khách, SĐT hoặc phòng...",
+        "allRooms": "Tất cả các phòng",
+        "viewList": "Danh sách",
+        "viewByRoom": "Theo phòng",
+        "viewCalendar": "Lịch tuần",
+        "refresh": "Làm mới"
+      },
+      "empty": {
+        "title": "Không có lịch hẹn nào",
+        "subtitle": "Khi khách đặt hẹn xem phòng, các yêu cầu sẽ xuất hiện tại đây."
+      },
+      "list": {
+        "tenantPhone": "SĐT khách"
+      },
+      "actions": {
+        "detail": "Chi tiết",
+        "confirm": "Xác nhận",
+        "decline": "Từ chối",
+        "cancel": "Hủy lịch",
+        "updateOutcome": "Cập nhật kết quả"
+      },
+      "pagination": {
+        "showing": "Hiển thị {from} - {to} trong tổng số {total} lịch hẹn",
+        "prev": "Trước",
+        "next": "Sau"
+      },
+      "byRoom": {
+        "pending": "chờ duyệt",
+        "total": "lịch hẹn"
+      },
+      "calendar": {
+        "prev": "Tuần trước",
+        "today": "Hôm nay",
+        "next": "Tuần sau",
+        "noAppointments": "Không có lịch hẹn"
+      },
+      "detail": {
+        "title": "Chi tiết lịch hẹn",
+        "close": "Đóng",
+        "timeSection": "Thời gian hẹn",
+        "tenantSection": "Thông tin người hẹn",
+        "copyPhone": "Sao chép số điện thoại",
+        "tenantNote": "Lời nhắn của khách",
+        "cancelReason": "Lý do hủy/từ chối",
+        "timeline": "Lịch sử trạng thái",
+        "actions": {
+          "confirm": "Xác nhận",
+          "decline": "Từ chối",
+          "cancel": "Hủy lịch",
+          "updateOutcome": "Cập nhật kết quả"
+        }
+      },
+      "modals": {
+        "confirm": {
+          "title": "Xác nhận lịch hẹn",
+          "message": "Bạn có chắc chắn muốn xác nhận lịch hẹn của {name} vào lúc {time}?",
+          "conflictAlertTitle": "Cảnh báo trùng lịch hẹn",
+          "conflictAlertDesc": "Lịch hẹn này trùng thời gian với {roomTitle} vào lúc {time}.",
+          "conflictOtherRoom": "phòng khác",
+          "forceConfirmLabel": "Tôi đồng ý ghi đè và xác nhận lịch hẹn trùng giờ",
+          "noteLabel": "Ghi chú cho khách (tùy chọn)",
+          "notePlaceholder": "Ví dụ: Hẹn gặp tại sảnh tầng 1...",
+          "cancel": "Hủy bỏ",
+          "submit": "Xác nhận lịch hẹn"
+        },
+        "cancel": {
+          "titleDecline": "Từ chối lịch hẹn",
+          "titleCancel": "Hủy lịch hẹn đã xác nhận",
+          "subtitle": "Vui lòng chọn lý do để hệ thống thông báo cho khách thuê.",
+          "reasons": {
+            "busy": "Bận việc đột xuất",
+            "roomTaken": "Phòng đã có người cọc/thuê",
+            "notEligible": "Khách không phù hợp tiêu chí",
+            "timeConflict": "Trùng lịch hẹn khác",
+            "other": "Lý do khác"
+          },
+          "noteLabel": "Chi tiết lý do",
+          "minChars": "ký tự",
+          "notePlaceholder": "Nhập thêm thông tin nếu cần...",
+          "notePlaceholderOther": "Vui lòng nhập lý do cụ thể (tối thiểu 10 ký tự)...",
+          "cancel": "Quay lại",
+          "submitDecline": "Từ chối lịch",
+          "submitCancel": "Hủy lịch hẹn"
+        },
+        "complete": {
+          "title": "Cập nhật kết quả xem phòng",
+          "subtitle": "Xác nhận kết quả sau buổi hẹn xem phòng thực tế.",
+          "completed": "Đã gặp khách xem phòng",
+          "noShow": "Khách không đến (vắng mặt)",
+          "noteLabel": "Ghi chú kết quả",
+          "notePlaceholder": "Ghi chú thêm về buổi xem phòng...",
+          "cancel": "Hủy bỏ",
+          "submit": "Lưu kết quả"
+        }
+      }
+    }
+  },
+  "tenant": {
+    "appointments": {
+      "title": "Lịch hẹn xem phòng của bạn",
+      "subtitle": "Theo dõi thời gian hẹn gặp trực tiếp chủ nhà tại phòng trọ.",
+      "bookNew": "Đặt hẹn phòng mới",
+      "empty": {
+        "title": "Chưa có lịch hẹn xem phòng nào",
+        "subtitle": "Hãy khám phá các phòng trọ phù hợp và đặt lịch xem trực tiếp nhé."
+      },
+      "landlordPhone": "SĐT chủ nhà",
+      "myNote": "Lời nhắn của bạn",
+      "cancelReason": "Lý do hủy/từ chối"
     }
   }
 }

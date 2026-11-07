@@ -1,31 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Landlord Rooms Page (LANDLORD-04)', () => {
   test.beforeEach(async ({ context, page }) => {
-    await context.addCookies([
-      {
-        name: 'toam_role',
-        value: 'LANDLORD',
-        domain: 'localhost',
-        path: '/',
-      },
-    ]);
-    await page.addInitScript(() => {
-      localStorage.setItem('toam_access_token', 'mock_landlord_token');
-      localStorage.setItem(
-        'toam_user',
-        JSON.stringify({
-          id: 'u-landlord-01',
-          email: 'landlord@toam.vn',
-          fullName: 'Chủ Trọ Demo',
-          phone: '0901234567',
-          roles: ['LANDLORD'],
-          isKycVerified: true,
-          createdAt: '2026-01-01T00:00:00Z',
-          updatedAt: '2026-01-01T00:00:00Z',
-        })
-      );
-    });
+    await authenticateAs(context, page, 'landlord@toam.vn');
   });
 
   test('Desktop 1440px renders table and controls without overflow', async ({ page }) => {
@@ -65,5 +43,28 @@ test.describe('Landlord Rooms Page (LANDLORD-04)', () => {
   test('Simulated state=loading renders skeleton loader', async ({ page }) => {
     await page.goto('http://localhost:3000/vi/dashboard/landlord/rooms?state=loading', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.animate-pulse').first()).toBeVisible();
+  });
+
+  test('New Room form validates minimum 3 images before submitting for review', async ({ page }) => {
+    await page.goto('http://localhost:3000/vi/dashboard/landlord/rooms/new', { waitUntil: 'networkidle' });
+
+    // Fill Step 1
+    await page.getByRole('textbox', { name: /Tiêu đề/i }).fill('Phòng Thử Nghiệm Duyệt');
+    await page.getByRole('textbox', { name: /Địa chỉ/i }).fill('Số 99 Phố Duy Tân');
+    await page.getByRole('button', { name: /Tiếp tục/i }).click();
+
+    // Step 2
+    await page.getByLabel(/Diện tích/i).fill('28');
+    await page.getByLabel(/Giá thuê/i).fill('4500000');
+    await page.getByRole('button', { name: /Tiếp tục/i }).click();
+
+    // Step 3
+    await page.getByRole('button', { name: /Tiếp tục/i }).click();
+
+    // Step 4 - Submit for review without images
+    await page.getByRole('button', { name: /Gửi duyệt tin đăng/i }).click();
+
+    // Should show error toast demanding at least 3 images
+    await expect(page.getByText(/tối thiểu 3 ảnh/i).first()).toBeVisible();
   });
 });

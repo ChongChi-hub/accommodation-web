@@ -12,8 +12,8 @@ export default function TenantSavedSearchesPage() {
   const savedSearches = [
     {
       id: 1,
-      title: 'Chung cư mini Cầu Giấy dưới 5 triệu',
-      location: 'Cầu Giấy, Hà Nội',
+      title: 'Chung cư mini Dịch Vọng Hậu dưới 5 triệu',
+      location: 'Phường Dịch Vọng Hậu, Hà Nội',
       priceRange: '3 - 5 triệu',
       roomType: 'Chung cư mini',
       notifications: true,
@@ -21,8 +21,8 @@ export default function TenantSavedSearchesPage() {
     },
     {
       id: 2,
-      title: 'Studio Quận 1 có ban công & nuôi mèo',
-      location: 'Quận 1, TP.HCM',
+      title: 'Studio Bến Nghé có ban công & nuôi mèo',
+      location: 'Phường Bến Nghé, TP. Hồ Chí Minh',
       priceRange: '6 - 9 triệu',
       roomType: 'Căn hộ Studio',
       notifications: false,
