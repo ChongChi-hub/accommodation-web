@@ -265,6 +265,36 @@
       "emptyDesc": "Chưa có hành động quản trị nào khớp với tiêu chí tìm kiếm.",
       "errorTitle": "Lỗi tải nhật ký kiểm toán",
       "errorDesc": "Không thể kết nối đến máy chủ quản trị."
+    },
+    "settings": {
+      "title": "Cấu hình hệ thống",
+      "subtitle": "Thiết lập các tham số vận hành, cổng thanh toán và bảo mật toàn sàn",
+      "btnClearCache": "Xóa bộ nhớ đệm",
+      "btnSave": "Lưu thay đổi",
+      "btnSaving": "Đang lưu...",
+      "sectionOps": "Vận hành và dịch vụ",
+      "sectionOpsDesc": "Trạng thái bảo trì và tham số kết nối người dùng",
+      "maintenance": "Chế độ bảo trì sàn",
+      "maintenanceDesc": "Chỉ quản trị viên mới truy cập được các dịch vụ cốt lõi",
+      "autoApprove": "Duyệt tin đăng tự động",
+      "autoApproveDesc": "Tự động duyệt tin đăng từ chủ nhà có điểm tín nhiệm cao",
+      "supportHotline": "Hotline hỗ trợ khẩn cấp",
+      "commissionRate": "Phí dịch vụ môi giới / đối tác (%)",
+      "sectionPayment": "Cổng thanh toán và đối soát",
+      "sectionPaymentDesc": "Cấu hình tích hợp thanh toán VietQR và đối soát ngân hàng",
+      "vietQr": "Cổng VietQR NAPAS 24/7",
+      "vietQrDesc": "Tạo mã QR thanh toán động kèm mã hóa đơn theo tiêu chuẩn NAPAS",
+      "sectionSecurity": "Bảo mật và phiên làm việc",
+      "sectionSecurityDesc": "Quy định giới hạn truy cập và thời gian hết hạn phiên",
+      "sessionTimeout": "Thời gian hết hạn phiên (phút)",
+      "maxLoginAttempts": "Số lần đăng nhập sai tối đa",
+      "require2FA": "Bắt buộc 2FA ban quản trị",
+      "require2FADesc": "Yêu cầu mã xác thực 2 lớp khi vào Admin/Mod",
+      "toastSaved": "Cấu hình hệ thống đã được cập nhật thành công",
+      "toastCacheCleared": "Đã xóa bộ nhớ đệm hệ thống thành công",
+      "toastClearingCache": "Đang làm mới bộ nhớ đệm Redis và CDN...",
+      "errorTitle": "Lỗi tải cấu hình hệ thống",
+      "errorDesc": "Không thể kết nối đến máy chủ quản trị."
     }
   }
 }

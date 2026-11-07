@@ -265,6 +265,36 @@
       "emptyDesc": "No administrative actions match your current search criteria.",
       "errorTitle": "Error loading audit logs",
       "errorDesc": "Could not connect to the administration service."
+    },
+    "settings": {
+      "title": "System Configuration & Settings",
+      "subtitle": "Configure operations parameters, payment gateway integration, and security policies",
+      "btnClearCache": "Purge Cache",
+      "btnSave": "Save Changes",
+      "btnSaving": "Saving...",
+      "sectionOps": "Operations & Services",
+      "sectionOpsDesc": "Maintenance mode and tenant connection parameters",
+      "maintenance": "Platform Maintenance Mode",
+      "maintenanceDesc": "Only administrators can access core platform services",
+      "autoApprove": "Auto-Approve Listings",
+      "autoApproveDesc": "Automatically approve listings from high-trust landlords",
+      "supportHotline": "Emergency Support Hotline",
+      "commissionRate": "Partner / Brokerage Service Fee (%)",
+      "sectionPayment": "Payment Gateways & Reconciliation",
+      "sectionPaymentDesc": "VietQR payment integration and automated bank reconciliation",
+      "vietQr": "NAPAS 24/7 VietQR Gateway",
+      "vietQrDesc": "Generate dynamic QR codes with embedded invoice identifiers",
+      "sectionSecurity": "Security & Sessions",
+      "sectionSecurityDesc": "Access controls and session expiration thresholds",
+      "sessionTimeout": "Session Timeout (minutes)",
+      "maxLoginAttempts": "Max Failed Login Attempts",
+      "require2FA": "Mandatory 2FA for Staff",
+      "require2FADesc": "Require two-factor authentication for Admin and Moderator logins",
+      "toastSaved": "System configuration has been successfully updated",
+      "toastCacheCleared": "System cache purged successfully",
+      "toastClearingCache": "Flushing Redis cache and CDN edges...",
+      "errorTitle": "Error loading system configuration",
+      "errorDesc": "Could not connect to the administration service."
     }
   }
 }

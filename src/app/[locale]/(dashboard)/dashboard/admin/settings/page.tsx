@@ -1,65 +1,87 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense } from 'react';
+import { useTranslations } from 'next-intl';
+import { useAdminSettings } from '@/presentation/hooks/useAdminSettings';
 import { Card } from '@/presentation/components/ui/Card';
 import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
-import { toast } from '@/presentation/stores/toast.store';
+import { Skeleton } from '@/presentation/components/ui/Skeleton';
+import { ErrorState } from '@/presentation/components/ui/ErrorState';
 import { Settings, ShieldCheck, CreditCard, Server, Save, RefreshCw } from 'lucide-react';
 
-export default function AdminSettingsPage() {
-  const [maintenanceMode, setMaintenanceMode] = useState(false);
-  const [vietQrActive, setVietQrActive] = useState(true);
-  const [autoApproveRooms, setAutoApproveRooms] = useState(false);
-  const [require2FAStaff, setRequire2FAStaff] = useState(true);
-  const [sessionTimeoutMinutes, setSessionTimeoutMinutes] = useState('60');
-  const [maxLoginAttempts, setMaxLoginAttempts] = useState('5');
-  const [supportHotline, setSupportHotline] = useState('1900 6868');
-  const [commissionRate, setCommissionRate] = useState('1.5');
-  const [isSaving, setIsSaving] = useState(false);
+function AdminSettingsContent() {
+  const t = useTranslations('admin.settings');
+  const {
+    maintenanceMode,
+    setMaintenanceMode,
+    vietQrActive,
+    setVietQrActive,
+    autoApproveRooms,
+    setAutoApproveRooms,
+    require2FAStaff,
+    setRequire2FAStaff,
+    sessionTimeoutMinutes,
+    setSessionTimeoutMinutes,
+    maxLoginAttempts,
+    setMaxLoginAttempts,
+    supportHotline,
+    setSupportHotline,
+    commissionRate,
+    setCommissionRate,
+    isSaving,
+    isLoading,
+    error,
+    retry,
+    handleSave,
+    handleClearCache,
+  } = useAdminSettings();
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      toast.success('Cấu hình hệ thống đã được cập nhật thành công');
-    }, 600);
-  };
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-72" />
+        <Skeleton className="h-4 w-96" />
+        <Skeleton className="h-48 w-full rounded-2xl" />
+        <Skeleton className="h-36 w-full rounded-2xl" />
+        <Skeleton className="h-48 w-full rounded-2xl" />
+      </div>
+    );
+  }
 
-  const handleClearCache = () => {
-    toast.info('Đang làm mới bộ nhớ đệm Redis và CDN...');
-    setTimeout(() => {
-      toast.success('Đã xóa bộ nhớ đệm hệ thống thành công');
-    }, 800);
-  };
+  if (error) {
+    return (
+      <div className="py-12">
+        <ErrorState title={t('errorTitle')} message={t('errorDesc')} onRetry={retry} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 flex items-center gap-2">
             <Settings className="w-6 h-6 text-primary-600" />
-            Cấu hình hệ thống
+            {t('title')}
           </h1>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            Thiết lập các tham số vận hành, cổng thanh toán và bảo mật toàn sàn
+          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+            {t('subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleClearCache}>
             <RefreshCw className="w-4 h-4 mr-2" />
-            Xóa bộ nhớ đệm
+            {t('btnClearCache')}
           </Button>
           <Button size="sm" onClick={handleSave} disabled={isSaving}>
             <Save className="w-4 h-4 mr-2" />
-            {isSaving ? 'Đang lưu...' : 'Lưu thay đổi'}
+            {isSaving ? t('btnSaving') : t('btnSave')}
           </Button>
         </div>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
-        {/* Operations & System */}
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-950 flex items-center justify-center text-blue-600 dark:text-blue-400">
@@ -67,10 +89,10 @@ export default function AdminSettingsPage() {
             </div>
             <div>
               <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
-                Vận hành và dịch vụ
+                {t('sectionOps')}
               </h2>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Trạng thái bảo trì và tham số kết nối người dùng
+                {t('sectionOpsDesc')}
               </p>
             </div>
           </div>
@@ -78,8 +100,10 @@ export default function AdminSettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">Chế độ bảo trì sàn</p>
-                <p className="text-xs text-neutral-500">Chỉ quản trị viên mới truy cập được các dịch vụ cốt lõi</p>
+                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">
+                  {t('maintenance')}
+                </p>
+                <p className="text-xs text-neutral-500 mt-0.5">{t('maintenanceDesc')}</p>
               </div>
               <input
                 type="checkbox"
@@ -91,8 +115,10 @@ export default function AdminSettingsPage() {
 
             <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">Duyệt tin đăng tự động</p>
-                <p className="text-xs text-neutral-500">Tự động duyệt tin đăng từ chủ nhà có điểm tín nhiệm cao</p>
+                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">
+                  {t('autoApprove')}
+                </p>
+                <p className="text-xs text-neutral-500 mt-0.5">{t('autoApproveDesc')}</p>
               </div>
               <input
                 type="checkbox"
@@ -104,29 +130,26 @@ export default function AdminSettingsPage() {
 
             <div>
               <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                Hotline hỗ trợ khẩn cấp
+                {t('supportHotline')}
               </label>
               <Input
                 value={supportHotline}
                 onChange={(e) => setSupportHotline(e.target.value)}
-                placeholder="1900 6868"
               />
             </div>
 
             <div>
               <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                Phí dịch vụ môi giới / đối tác (%)
+                {t('commissionRate')}
               </label>
               <Input
                 value={commissionRate}
                 onChange={(e) => setCommissionRate(e.target.value)}
-                placeholder="1.5"
               />
             </div>
           </div>
         </Card>
 
-        {/* Payments Gateway */}
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
@@ -134,10 +157,10 @@ export default function AdminSettingsPage() {
             </div>
             <div>
               <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
-                Cổng thanh toán và đối soát
+                {t('sectionPayment')}
               </h2>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Cấu hình tích hợp thanh toán VietQR và đối soát ngân hàng
+                {t('sectionPaymentDesc')}
               </p>
             </div>
           </div>
@@ -145,8 +168,10 @@ export default function AdminSettingsPage() {
           <div className="space-y-4">
             <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">Cổng VietQR NAPAS 24/7</p>
-                <p className="text-xs text-neutral-500">Tạo mã QR thanh toán động kèm mã hóa đơn theo tiêu chuẩn NAPAS</p>
+                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">
+                  {t('vietQr')}
+                </p>
+                <p className="text-xs text-neutral-500 mt-0.5">{t('vietQrDesc')}</p>
               </div>
               <input
                 type="checkbox"
@@ -158,7 +183,6 @@ export default function AdminSettingsPage() {
           </div>
         </Card>
 
-        {/* Security & Access */}
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-9 h-9 rounded-lg bg-purple-100 dark:bg-purple-950 flex items-center justify-center text-purple-600 dark:text-purple-400">
@@ -166,10 +190,10 @@ export default function AdminSettingsPage() {
             </div>
             <div>
               <h2 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
-                Bảo mật và phiên làm việc
+                {t('sectionSecurity')}
               </h2>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Quy định giới hạn truy cập và thời gian hết hạn phiên
+                {t('sectionSecurityDesc')}
               </p>
             </div>
           </div>
@@ -177,7 +201,7 @@ export default function AdminSettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                Thời gian hết hạn phiên (phút)
+                {t('sessionTimeout')}
               </label>
               <Input
                 type="number"
@@ -188,7 +212,7 @@ export default function AdminSettingsPage() {
 
             <div>
               <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                Số lần đăng nhập sai tối đa
+                {t('maxLoginAttempts')}
               </label>
               <Input
                 type="number"
@@ -199,8 +223,10 @@ export default function AdminSettingsPage() {
 
             <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">Bắt buộc 2FA ban quản trị</p>
-                <p className="text-xs text-neutral-500">Yêu cầu mã xác thực 2 lớp khi vào Admin/Mod</p>
+                <p className="font-medium text-sm text-neutral-900 dark:text-neutral-100">
+                  {t('require2FA')}
+                </p>
+                <p className="text-xs text-neutral-500 mt-0.5">{t('require2FADesc')}</p>
               </div>
               <input
                 type="checkbox"
@@ -216,3 +242,10 @@ export default function AdminSettingsPage() {
   );
 }
 
+export default function AdminSettingsPage() {
+  return (
+    <Suspense fallback={<Skeleton className="h-96 w-full rounded-2xl" />}>
+      <AdminSettingsContent />
+    </Suspense>
+  );
+}
