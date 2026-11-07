@@ -210,6 +210,27 @@
       "emptyDesc": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc trạng thái.",
       "errorTitle": "Lỗi tải danh sách đánh giá",
       "errorDesc": "Không thể kết nối đến máy chủ quản trị."
+    },
+    "dictionaries": {
+      "title": "Danh mục & Từ điển hệ thống",
+      "subtitle": "Cấu hình các loại phòng, danh sách tiện nghi và danh mục địa bàn hành chính",
+      "btnAdd": "Thêm danh mục",
+      "tabRoomTypes": "Loại phòng trọ",
+      "tabAmenities": "Tiện ích & Nội thất",
+      "tabLocations": "Tỉnh thành & Quận huyện",
+      "colCode": "Mã định danh",
+      "colName": "Tên danh mục",
+      "colDesc": "Mô tả quy chuẩn",
+      "colCategory": "Phân nhóm",
+      "colCoverage": "Độ phủ",
+      "colStatus": "Trạng thái",
+      "statusActive": "Hoạt động",
+      "statusCovered": "Phủ sóng",
+      "emptyTitle": "Không có danh mục nào trong nhóm này",
+      "emptyDesc": "Chưa có bản ghi từ điển nào được cấu hình.",
+      "errorTitle": "Lỗi tải từ điển hệ thống",
+      "errorDesc": "Không thể kết nối đến máy chủ quản trị.",
+      "toastAdd": "Tính năng thêm danh mục mới sẽ ra mắt trong bản cập nhật kế tiếp!"
     }
   }
 }

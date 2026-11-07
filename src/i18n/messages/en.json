@@ -210,6 +210,27 @@
       "emptyDesc": "Try adjusting your search keyword or status filter.",
       "errorTitle": "Error loading reviews list",
       "errorDesc": "Could not connect to the moderation service."
+    },
+    "dictionaries": {
+      "title": "System Dictionaries & Master Data",
+      "subtitle": "Configure room categories, standard amenities, and administrative territories",
+      "btnAdd": "Add Entry",
+      "tabRoomTypes": "Room Types",
+      "tabAmenities": "Amenities & Furniture",
+      "tabLocations": "Provinces & Districts",
+      "colCode": "Identifier Code",
+      "colName": "Category Name",
+      "colDesc": "Standard Description",
+      "colCategory": "Grouping",
+      "colCoverage": "Coverage",
+      "colStatus": "Status",
+      "statusActive": "Active",
+      "statusCovered": "Covered",
+      "emptyTitle": "No entries found in this category",
+      "emptyDesc": "No master data records have been configured yet.",
+      "errorTitle": "Error loading master data",
+      "errorDesc": "Could not connect to the administration service.",
+      "toastAdd": "Adding new master data entries will be available in the upcoming release!"
     }
   }
 }
