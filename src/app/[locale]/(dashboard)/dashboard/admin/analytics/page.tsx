@@ -8,7 +8,7 @@ import { ChartCard } from '@/presentation/components/ui/ChartCard';
 import { Skeleton } from '@/presentation/components/ui/Skeleton';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { ErrorState } from '@/presentation/components/ui/ErrorState';
-import { BarChart3, TrendingUp, MapPin } from 'lucide-react';
+import { BarChart3, TrendingUp, MapPin, Compass } from 'lucide-react';
 
 function AdminAnalyticsContent() {
   const t = useTranslations('admin.analytics');
@@ -46,20 +46,24 @@ function AdminAnalyticsContent() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/50">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-primary-600" />
-            {t('title')}
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400">
+              <BarChart3 className="w-5 h-5" />
+            </span>
+            <span>{t('title')}</span>
           </h1>
-          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-foreground-muted mt-1">
             {t('subtitle')}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
         <ChartCard
           title={t('metricSuccessRate')}
           value={`${data.successRate}%`}
@@ -86,25 +90,30 @@ function AdminAnalyticsContent() {
         />
       </div>
 
-      <Card className="p-6 space-y-5">
-        <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-primary-600" />
-          {t('topAreasTitle')}
-        </h2>
+      {/* Top Search Areas Breakdown */}
+      <Card className="p-6 space-y-6">
+        <div className="flex items-center gap-2.5 pb-3 border-b border-border">
+          <span className="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400">
+            <MapPin className="w-4 h-4" />
+          </span>
+          <h2 className="text-sm font-bold text-foreground">
+            {t('topAreasTitle')}
+          </h2>
+        </div>
         <div className="space-y-4 text-xs">
           {data.topAreas.map((area, idx) => (
             <div key={area.id} className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <span className="font-semibold text-neutral-800 dark:text-neutral-200">
+                <span className="font-semibold text-foreground">
                   {idx + 1}. {t(area.key)}
                 </span>
-                <span className="font-bold text-primary-600 dark:text-primary-400">
+                <span className="font-bold text-teal-700 dark:text-teal-400">
                   {t('areaPercent', { percent: area.percent })}
                 </span>
               </div>
-              <div className="w-full bg-neutral-100 dark:bg-neutral-800 h-2.5 rounded-full overflow-hidden">
+              <div className="w-full bg-surface-muted h-3 rounded-full overflow-hidden border border-border/50">
                 <div
-                  className="bg-primary-600 dark:bg-primary-500 h-full rounded-full transition-all duration-500"
+                  className="bg-teal-700 dark:bg-teal-600 h-full rounded-full transition-all duration-500"
                   style={{ width: `${area.percent}%` }}
                 />
               </div>
