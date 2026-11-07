@@ -145,6 +145,37 @@ export class StaticAdminRepository implements AdminRepository {
 
   async resolveReport(_id: number): Promise<void> {}
 
+  async getReviews(): Promise<import('@/domain/repositories/AdminRepository').AdminReviewItem[]> {
+    return [
+      {
+        id: 1,
+        tenantName: 'Nguyễn Văn Thuê',
+        roomTitle: 'Chung cư mini ban công rộng tại Dịch Vọng Hậu',
+        rating: 5,
+        comment: 'Phòng rất đẹp và mới giống y hình ảnh chụp. Anh Tuấn chủ nhà hỗ trợ rất nhiệt tình.',
+        status: 'VISIBLE',
+      },
+      {
+        id: 2,
+        tenantName: 'Tài khoản ẩn danh',
+        roomTitle: 'Studio ngập tràn ánh sáng view công viên Quan Hoa',
+        rating: 1,
+        comment: 'Có dấu hiệu spam quảng cáo sang số điện thoại khác 09xx...',
+        status: 'HIDDEN',
+      },
+      {
+        id: 3,
+        tenantName: 'Trần Thị Hằng',
+        roomTitle: 'Căn hộ dịch vụ 1N1K trung tâm Quận 1 cao cấp',
+        rating: 4,
+        comment: 'Vị trí thuận tiện đi lại, phòng ốc sạch sẽ, tiện nghi đầy đủ.',
+        status: 'VISIBLE',
+      },
+    ];
+  }
+
+  async toggleReviewVisibility(_id: number): Promise<void> {}
+
   async getAuditLogs(): Promise<AuditLogItem[]> {
     return [
       {

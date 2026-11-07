@@ -65,6 +65,15 @@ export interface AuditLogItem {
   timestamp: string;
 }
 
+export interface AdminReviewItem {
+  id: number;
+  tenantName: string;
+  roomTitle: string;
+  rating: number;
+  comment: string;
+  status: 'VISIBLE' | 'HIDDEN';
+}
+
 export interface AdminRepository {
   getStats(): Promise<AdminStats>;
   getPendingRooms(): Promise<PendingRoomItem[]>;
@@ -77,6 +86,8 @@ export interface AdminRepository {
   toggleUserLock(id: number): Promise<void>;
   getReports(): Promise<ReportItem[]>;
   resolveReport(id: number): Promise<void>;
+  getReviews(): Promise<AdminReviewItem[]>;
+  toggleReviewVisibility(id: number): Promise<void>;
   getAuditLogs(): Promise<AuditLogItem[]>;
 }
 

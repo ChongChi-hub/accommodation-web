@@ -187,6 +187,29 @@
       "emptyDesc": "Hệ thống đang hoạt động an toàn, không có khiếu nại tồn đọng.",
       "errorTitle": "Lỗi tải danh sách báo cáo",
       "errorDesc": "Không thể kết nối đến máy chủ quản trị."
+    },
+    "reviews": {
+      "title": "Quản lý đánh giá & bình luận",
+      "subtitle": "Giám sát nội dung bình luận để ngăn chặn từ ngữ thù địch, spam hoặc thông tin sai lệch",
+      "searchPlaceholder": "Tìm theo tên người đánh giá, phòng trọ hoặc nội dung...",
+      "tabAll": "Tất cả",
+      "tabVisible": "Đang hiển thị",
+      "tabHidden": "Đã ẩn vi phạm",
+      "colAuthor": "Người đánh giá",
+      "colRoom": "Phòng trọ",
+      "colRating": "Điểm",
+      "colComment": "Nội dung nhận xét",
+      "colStatus": "Trạng thái",
+      "colActions": "Thao tác",
+      "statusVisible": "Hiển thị",
+      "statusHidden": "Đã ẩn",
+      "btnHide": "Ẩn đánh giá",
+      "btnShow": "Hiện đánh giá",
+      "toastStatus": "Đánh giá #{id} đã được chuyển sang trạng thái: {status}.",
+      "emptyTitle": "Không tìm thấy đánh giá nào",
+      "emptyDesc": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc trạng thái.",
+      "errorTitle": "Lỗi tải danh sách đánh giá",
+      "errorDesc": "Không thể kết nối đến máy chủ quản trị."
     }
   }
 }

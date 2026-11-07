@@ -187,6 +187,29 @@
       "emptyDesc": "The platform is operating smoothly with no pending disputes.",
       "errorTitle": "Error loading reports list",
       "errorDesc": "Could not connect to the moderation service."
+    },
+    "reviews": {
+      "title": "Reviews & Feedback Moderation",
+      "subtitle": "Monitor comments and feedback to prevent abusive language, spam, or false information",
+      "searchPlaceholder": "Search by reviewer name, room, or content...",
+      "tabAll": "All",
+      "tabVisible": "Visible",
+      "tabHidden": "Hidden",
+      "colAuthor": "Reviewer",
+      "colRoom": "Room Listing",
+      "colRating": "Rating",
+      "colComment": "Comment Content",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "statusVisible": "Visible",
+      "statusHidden": "Hidden",
+      "btnHide": "Hide Review",
+      "btnShow": "Show Review",
+      "toastStatus": "Review #{id} status changed to: {status}.",
+      "emptyTitle": "No matching reviews found",
+      "emptyDesc": "Try adjusting your search keyword or status filter.",
+      "errorTitle": "Error loading reviews list",
+      "errorDesc": "Could not connect to the moderation service."
     }
   }
 }

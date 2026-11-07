@@ -14,7 +14,7 @@
 | `/dashboard/admin/kyc` | Duyệt eKYC CCCD | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/kyc-*.png` (19 ảnh) | So sánh CCCD 2 mặt, 4 states, i18n vi/en, a11y passed |
 | `/dashboard/admin/users` | Quản lý người dùng | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/users-*.png` (19 ảnh) | Tabs vai trò, tìm kiếm đa trường, khóa/mở khóa, 4 states, a11y passed |
 | `/dashboard/admin/reports` | Báo cáo vi phạm | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/reports-*.png` (19 ảnh) | Tabs trạng thái, xử lý khiếu nại, 4 states, a11y passed |
-| `/dashboard/admin/reviews` | Kiểm duyệt đánh giá | `StaticAdminRepository` | Chờ rà soát | - | - | Ẩn/hiện đánh giá vi phạm |
+| `/dashboard/admin/reviews` | Kiểm duyệt đánh giá | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/reviews-*.png` (19 ảnh) | Tabs hiển thị/ẩn, chuyển đổi trạng thái, 4 states, a11y passed |
 | `/dashboard/admin/dictionaries` | Danh mục hệ thống | `StaticAdminRepository` | Chờ rà soát | - | - | Loại phòng, tiện nghi, địa giới |
 | `/dashboard/admin/analytics` | Phân tích sâu | `StaticAdminRepository` | Chờ rà soát | - | - | Biểu đồ tìm kiếm & tỷ lệ lấp đầy |
 | `/dashboard/admin/audit-logs` | Nhật ký hệ thống | `StaticAdminRepository` | Chờ rà soát | - | - | Tra cứu hành động & địa chỉ IP |
