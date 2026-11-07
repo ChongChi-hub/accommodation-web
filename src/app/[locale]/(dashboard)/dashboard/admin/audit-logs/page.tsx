@@ -1,79 +1,109 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
+import { useTranslations } from 'next-intl';
+import { useAdminAuditLogs } from '@/presentation/hooks/useAdminAuditLogs';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
+import { Input } from '@/presentation/components/ui/Input';
+import { Skeleton } from '@/presentation/components/ui/Skeleton';
+import { EmptyState } from '@/presentation/components/ui/EmptyState';
+import { ErrorState } from '@/presentation/components/ui/ErrorState';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
-import { History, Shield, User, CheckCircle } from 'lucide-react';
+import { History, Shield } from 'lucide-react';
 
-export default function AdminAuditLogsPage() {
-  const logs = [
-    {
-      id: 1,
-      actor: 'Admin Hệ Thống (admin@toam.vn)',
-      action: 'APPROVE_KYC',
-      description: 'Phê duyệt hồ sơ eKYC cho tài khoản landlord@toam.vn',
-      ip: '14.232.208.45',
-      time: '11:20:15 Hôm nay',
-    },
-    {
-      id: 2,
-      actor: 'Kiểm duyệt viên (moderator@toam.vn)',
-      action: 'APPROVE_ROOM',
-      description: 'Duyệt xuất bản phòng trọ ID #1 tại Cầu Giấy',
-      ip: '118.70.190.12',
-      time: '10:45:00 Hôm nay',
-    },
-    {
-      id: 3,
-      actor: 'Hệ thống tự động',
-      action: 'GENERATE_INVOICE',
-      description: 'Tự động tạo hóa đơn tiền phòng tháng 11 cho hợp đồng HĐ-2026-0042',
-      ip: '127.0.0.1 (Internal)',
-      time: '00:01:00 01/11/2026',
-    },
-  ];
+function AdminAuditLogsContent() {
+  const t = useTranslations('admin.auditLogs');
+  const { logs, searchTerm, setSearchTerm, isLoading, error, retry } = useAdminAuditLogs();
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-72" />
+        <Skeleton className="h-10 w-full max-w-sm" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-12">
+        <ErrorState title={t('errorTitle')} message={t('errorDesc')} onRetry={retry} />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6 max-w-5xl">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Nhật ký kiểm toán & Giám sát hệ thống ({logs.length})
-        </h1>
-        <p className="text-xs text-stone-500 mt-0.5">
-          Ghi nhận toàn bộ vết hành động quản trị, bảo mật và thay đổi trạng thái nhạy cảm.
-        </p>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 flex items-center gap-2">
+            <History className="w-6 h-6 text-primary-600" />
+            {t('title')}
+          </h1>
+          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
+            {t('subtitle')}
+          </p>
+        </div>
       </div>
 
-      <Card className="p-0 overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Thời gian</TableHead>
-              <TableHead>Người thực hiện</TableHead>
-              <TableHead>Hành động</TableHead>
-              <TableHead>Chi tiết</TableHead>
-              <TableHead>Địa chỉ IP</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {logs.map((l) => (
-              <TableRow key={l.id}>
-                <TableCell className="text-xs text-stone-400 font-mono">{l.time}</TableCell>
-                <TableCell className="text-xs font-semibold">{l.actor}</TableCell>
-                <TableCell>
-                  <Badge variant="primary" size="sm">{l.action}</Badge>
-                </TableCell>
-                <TableCell className="text-xs text-stone-600 dark:text-stone-300 max-w-[280px]">
-                  {l.description}
-                </TableCell>
-                <TableCell className="text-xs text-stone-400 font-mono">{l.ip}</TableCell>
+      <div className="w-full sm:w-80">
+        <Input
+          placeholder={t('searchPlaceholder')}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      {logs.length === 0 ? (
+        <EmptyState title={t('emptyTitle')} description={t('emptyDesc')} />
+      ) : (
+        <Card className="p-0 overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('colTime')}</TableHead>
+                <TableHead>{t('colActor')}</TableHead>
+                <TableHead>{t('colAction')}</TableHead>
+                <TableHead>{t('colTarget')}</TableHead>
+                <TableHead className="text-right">{t('colIp')}</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+            </TableHeader>
+            <TableBody>
+              {logs.map((l) => (
+                <TableRow key={l.id}>
+                  <TableCell className="text-xs text-neutral-500 font-mono">
+                    {l.timestamp}
+                  </TableCell>
+                  <TableCell className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">
+                    {l.actor}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="primary" size="sm">
+                      {l.action}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-xs text-neutral-600 dark:text-neutral-300 max-w-xs">
+                    {l.target}
+                  </TableCell>
+                  <TableCell className="text-xs text-neutral-400 font-mono text-right">
+                    {l.ip}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      )}
     </div>
   );
 }
 
+export default function AdminAuditLogsPage() {
+  return (
+    <Suspense fallback={<Skeleton className="h-96 w-full rounded-2xl" />}>
+      <AdminAuditLogsContent />
+    </Suspense>
+  );
+}

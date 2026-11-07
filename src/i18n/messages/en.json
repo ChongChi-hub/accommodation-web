@@ -251,6 +251,20 @@
       "emptyDesc": "Analytical metrics will be aggregated automatically every 24 hours.",
       "errorTitle": "Error loading analytics report",
       "errorDesc": "Could not connect to the analytics service."
+    },
+    "auditLogs": {
+      "title": "System Audit Logs & Security Monitoring",
+      "subtitle": "Trace logs for administrative actions, security events, and sensitive status mutations",
+      "searchPlaceholder": "Search by actor, action, or IP address...",
+      "colTime": "Timestamp",
+      "colActor": "Actor",
+      "colAction": "Action",
+      "colTarget": "Target / Details",
+      "colIp": "IP Address",
+      "emptyTitle": "No matching audit logs found",
+      "emptyDesc": "No administrative actions match your current search criteria.",
+      "errorTitle": "Error loading audit logs",
+      "errorDesc": "Could not connect to the administration service."
     }
   }
 }

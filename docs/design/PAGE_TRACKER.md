@@ -17,7 +17,7 @@
 | `/dashboard/admin/reviews` | Kiểm duyệt đánh giá | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/reviews-*.png` (19 ảnh) | Tabs hiển thị/ẩn, chuyển đổi trạng thái, 4 states, a11y passed |
 | `/dashboard/admin/dictionaries` | Danh mục hệ thống | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/dictionaries-*.png` (19 ảnh) | Tabs loại phòng, tiện ích, tỉnh thành, 4 states, a11y passed |
 | `/dashboard/admin/analytics` | Phân tích sâu | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/analytics-*.png` (19 ảnh) | Biểu đồ tăng trưởng, top khu vực, 4 states, a11y passed |
-| `/dashboard/admin/audit-logs` | Nhật ký hệ thống | `StaticAdminRepository` | Chờ rà soát | - | - | Tra cứu hành động & địa chỉ IP |
+| `/dashboard/admin/audit-logs` | Nhật ký hệ thống | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/audit-logs-*.png` (19 ảnh) | Tìm kiếm IP/Actor/Action, 4 states, a11y passed |
 | `/dashboard/admin/settings` | Cấu hình toàn sàn | `StaticAdminRepository` | Chờ rà soát | - | - | Bảo trì, VietQR, bảo mật phiên |
 
 ### Nhóm 2: Chủ Trọ (Landlord)
