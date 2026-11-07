@@ -6,6 +6,7 @@ import { Link, useRouter } from '@/i18n/routing';
 import { useAuthStore } from '@/presentation/stores/auth.store';
 import Image from 'next/image';
 import { LogIn, Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
+import { GoogleLoginButton } from '@/presentation/components/auth/GoogleLoginButton';
 
 export default function LoginPage() {
   const t = useTranslations('auth');
@@ -98,6 +99,17 @@ export default function LoginPage() {
             <LogIn size={16} />
             <span>{isLoading ? 'Đang xác thực...' : t('loginBtn')}</span>
           </button>
+
+          <div className="relative my-3">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-stone-200" />
+            </div>
+            <div className="relative flex justify-center text-[11px] uppercase">
+              <span className="bg-white px-2 text-stone-400">{t('or')}</span>
+            </div>
+          </div>
+
+          <GoogleLoginButton label={t('googleLogin')} />
         </form>
 
         {/* Quick Demo Login Picker */}

@@ -6,6 +6,7 @@ import { Link, useRouter } from '@/i18n/routing';
 import { useAuthStore } from '@/presentation/stores/auth.store';
 import Image from 'next/image';
 import { UserPlus, Mail, Phone, Lock, User, AlertCircle, Building2 } from 'lucide-react';
+import { GoogleLoginButton } from '@/presentation/components/auth/GoogleLoginButton';
 
 export default function RegisterPage() {
   const t = useTranslations('auth');
@@ -154,6 +155,17 @@ export default function RegisterPage() {
             <UserPlus size={16} />
             <span>{isLoading ? 'Đang khởi tạo tài khoản...' : t('registerBtn')}</span>
           </button>
+
+          <div className="relative my-3">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-stone-200" />
+            </div>
+            <div className="relative flex justify-center text-[11px] uppercase">
+              <span className="bg-white px-2 text-stone-400">{t('or')}</span>
+            </div>
+          </div>
+
+          <GoogleLoginButton label="Đăng ký nhanh với Google" />
         </form>
 
         <div className="text-center text-xs text-stone-500">
