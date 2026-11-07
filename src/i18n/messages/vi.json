@@ -165,6 +165,28 @@
       "emptyDesc": "Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc vai trò.",
       "errorTitle": "Lỗi tải danh sách người dùng",
       "errorDesc": "Không thể kết nối đến máy chủ quản trị."
+    },
+    "reports": {
+      "title": "Khiếu nại & Báo cáo vi phạm",
+      "subtitle": "Tiếp nhận và xử lý các báo cáo về tin ảo, tranh chấp tiền cọc hoặc sai lệch giá cả",
+      "searchPlaceholder": "Tìm theo đối tượng vi phạm, người báo cáo hoặc nội dung...",
+      "tabAll": "Tất cả",
+      "tabPending": "Cần xử lý",
+      "tabResolved": "Đã giải quyết",
+      "colTarget": "Đối tượng vi phạm",
+      "colReporter": "Người báo cáo",
+      "colReason": "Nội dung vi phạm",
+      "colTime": "Thời gian",
+      "colStatus": "Trạng thái",
+      "colActions": "Thao tác",
+      "statusPending": "Cần xử lý",
+      "statusResolved": "Đã giải quyết",
+      "btnResolve": "Xử lý vi phạm",
+      "toastResolved": "Đã xử lý khiếu nại vi phạm và gửi biên bản cho các bên liên quan!",
+      "emptyTitle": "Không có báo cáo vi phạm nào",
+      "emptyDesc": "Hệ thống đang hoạt động an toàn, không có khiếu nại tồn đọng.",
+      "errorTitle": "Lỗi tải danh sách báo cáo",
+      "errorDesc": "Không thể kết nối đến máy chủ quản trị."
     }
   }
 }

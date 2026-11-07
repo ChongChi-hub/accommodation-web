@@ -165,6 +165,28 @@
       "emptyDesc": "Try adjusting your search keyword or role filter.",
       "errorTitle": "Error loading users list",
       "errorDesc": "Could not connect to the administration service."
+    },
+    "reports": {
+      "title": "Violation Reports & Disputes",
+      "subtitle": "Review and resolve user reports on fake listings, deposit disputes, or tariff discrepancies",
+      "searchPlaceholder": "Search by reported target, reporter, or content...",
+      "tabAll": "All",
+      "tabPending": "Pending",
+      "tabResolved": "Resolved",
+      "colTarget": "Reported Target",
+      "colReporter": "Reporter",
+      "colReason": "Violation Details",
+      "colTime": "Time",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "statusPending": "Pending",
+      "statusResolved": "Resolved",
+      "btnResolve": "Resolve",
+      "toastResolved": "Resolved violation report and dispatched resolution summary to parties!",
+      "emptyTitle": "No violation reports found",
+      "emptyDesc": "The platform is operating smoothly with no pending disputes.",
+      "errorTitle": "Error loading reports list",
+      "errorDesc": "Could not connect to the moderation service."
     }
   }
 }
