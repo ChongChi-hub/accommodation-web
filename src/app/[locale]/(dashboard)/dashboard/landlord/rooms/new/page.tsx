@@ -76,6 +76,7 @@ export default function NewRoomPage() {
     }
 
     setIsSubmitting(true);
+    let createdRoomId: string | number | null = null;
     try {
       const selectedWard = wards.find((w) => w.code === formData.ward);
       const newRoom = await container.landlord.landlordRoomRepository.createRoom({
@@ -91,22 +92,30 @@ export default function NewRoomPage() {
         deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
         allowPets: formData.allowPets,
         allowCooking: formData.allowCooking,
-        submitForReview,
+        submitForReview: false,
       });
+      createdRoomId = newRoom.id;
 
       if (validImages.length > 0) {
         const filesToUpload = validImages.map((img) => img.file as File);
         await container.landlord.landlordRoomRepository.uploadImages(newRoom.id, filesToUpload);
       }
 
-      toast.success(
-        submitForReview
-          ? 'Đăng tin phòng trọ thành công! Tin sẽ được duyệt trong vòng 2 giờ.'
-          : 'Đã lưu bản nháp bài đăng thành công.'
-      );
+      if (submitForReview) {
+        await container.landlord.landlordRoomRepository.submitForReview(newRoom.id);
+        toast.success('Gửi duyệt phòng trọ thành công! Tin sẽ được kiểm duyệt trong thời gian sớm nhất.');
+      } else {
+        toast.success('Đã lưu bản nháp bài đăng thành công.');
+      }
+
       router.push('/dashboard/landlord/rooms');
     } catch (err: any) {
-      toast.error(err?.message || 'Lỗi khi lưu phòng trọ');
+      if (createdRoomId) {
+        toast.error(`Bài đăng đã được lưu bản nháp (#${createdRoomId}), nhưng chưa thể gửi duyệt: ${err?.message || 'Lỗi không xác định'}. Bạn có thể tiếp tục bổ sung ảnh và gửi duyệt trong danh mục phòng.`);
+        router.push('/dashboard/landlord/rooms');
+      } else {
+        toast.error(err?.message || 'Lỗi khi lưu phòng trọ');
+      }
     } finally {
       setIsSubmitting(false);
     }

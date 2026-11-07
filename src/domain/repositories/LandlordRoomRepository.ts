@@ -27,4 +27,5 @@ export interface ILandlordRoomRepository {
   setCoverImage(roomId: number | string, imageId: number): Promise<void>;
   deleteImage(roomId: number | string, imageId: number): Promise<void>;
   reorderImages(roomId: number | string, imageIds: number[]): Promise<void>;
+  submitForReview(roomId: number | string): Promise<void>;
 }

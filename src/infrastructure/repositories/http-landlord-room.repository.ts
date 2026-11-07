@@ -89,4 +89,8 @@ export class HttpLandlordRoomRepository implements ILandlordRoomRepository {
   async reorderImages(roomId: number | string, imageIds: number[]): Promise<void> {
     await ApiClient.put(`/landlord/rooms/${roomId}/images/order`, { imageIds });
   }
+
+  async submitForReview(roomId: number | string): Promise<void> {
+    await ApiClient.post(`/landlord/rooms/${roomId}/submit`);
+  }
 }
