@@ -79,3 +79,4 @@ export interface AdminRepository {
   resolveReport(id: number): Promise<void>;
   getAuditLogs(): Promise<AuditLogItem[]>;
 }
+

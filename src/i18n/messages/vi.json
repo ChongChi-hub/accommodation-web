@@ -53,6 +53,39 @@
     "viewDetails": "Xem chi tiết",
     "pricePerMonth": "/tháng",
     "currency": "đ"
+  },
+  "admin": {
+    "overview": {
+      "title": "Trung tâm Điều hành & Quản trị Hệ thống",
+      "subtitle": "Quản lý kiểm duyệt nội dung, định danh người dùng và an toàn vận hành sàn",
+      "seniorAdmin": "Quản trị viên cấp cao",
+      "moderator": "Kiểm duyệt viên",
+      "totalUsersTitle": "Tổng người dùng hoạt động",
+      "totalUsersDesc": "Người thuê & Chủ trọ đã KYC",
+      "activeRoomsTitle": "Phòng trọ đang niêm yết",
+      "activeRoomsDesc": "Tại Hà Nội, TP.HCM & Đà Nẵng",
+      "pendingRoomsTitle": "Phòng trọ chờ duyệt",
+      "pendingRoomsDesc": "Thời gian xử lý trung bình: 18 phút",
+      "pendingRoomsAction": "Duyệt tin đăng",
+      "pendingKycTitle": "Hồ sơ eKYC chờ thẩm định",
+      "pendingKycDesc": "Xác minh CCCD 2 mặt",
+      "pendingKycAction": "Thẩm định CCCD",
+      "ekycBadge": "eKYC Chờ thẩm định",
+      "svcGateway": "Cổng API Gateway (:8080)",
+      "svcIdentity": "Dịch vụ Định danh (:8081)",
+      "svcListing": "Dịch vụ Phòng trọ (:8082)",
+      "svcBookingBilling": "Đặt phòng & Hóa đơn (:8083, :8084)",
+      "recentReportsTitle": "Báo cáo vi phạm gần đây",
+      "recentReportsDesc": "Báo cáo phòng ảo ngõ 105 Láng Hạ",
+      "recentReportsReporter": "Người báo cáo: Nguyễn Văn Thuê • 1 giờ trước",
+      "handleReport": "Xử lý",
+      "systemHealthTitle": "Tình trạng sức khỏe hệ thống",
+      "serviceNormal": "Hoạt động bình thường",
+      "serviceDegraded": "Cần kiểm tra",
+      "emptyState": "Hiện tại không có số liệu thống kê hoặc hệ thống đang được khởi động.",
+      "errorTitle": "Không thể tải dữ liệu điều hành",
+      "errorSubtitle": "Đã xảy ra lỗi khi kết nối với máy chủ quản trị."
+    }
   }
 }
 

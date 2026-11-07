@@ -9,7 +9,7 @@
 ### Nhóm 1: Quản Trị Viên & Kiểm Duyệt Viên (Admin & Moderator)
 | Route | Tên Trang | Nguồn Dữ Liệu | Trạng Thái | Ngày | Ảnh Chụp | Ghi Chú |
 |---|---|---|---|---|---|---|
-| `/dashboard/admin` | Tổng quan sàn | `StaticAdminRepository` | Chờ rà soát | - | - | Bảng điều khiển KPI & Health Check |
+| `/dashboard/admin` | Tổng quan sàn | `StaticAdminRepository` | Đạt (100%) | 07/11/2026 | `screenshots/admin/overview-*.png` (19 ảnh) | Đủ 4 trạng thái, i18n vi/en, a11y passed |
 | `/dashboard/admin/rooms` | Duyệt tin đăng | `StaticAdminRepository` | Chờ rà soát | - | - | Danh sách chờ duyệt & Modal lý do |
 | `/dashboard/admin/kyc` | Duyệt eKYC CCCD | `StaticAdminRepository` | Chờ rà soát | - | - | So sánh ảnh CCCD 2 mặt |
 | `/dashboard/admin/users` | Quản lý người dùng | `StaticAdminRepository` | Chờ rà soát | - | - | Khóa/mở khóa & phân quyền |
@@ -91,3 +91,4 @@
 - Viewports: `1440` (Desktop), `1024` (Tablet ngang), `768` (Tablet dọc), `390` (Mobile)
 - Themes: `light`, `dark`
 - Locales: `vi`, `en`
+

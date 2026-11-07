@@ -166,3 +166,4 @@ export class StaticAdminRepository implements AdminRepository {
     ];
   }
 }
+

@@ -53,6 +53,39 @@
     "viewDetails": "View Details",
     "pricePerMonth": "/month",
     "currency": "VND"
+  },
+  "admin": {
+    "overview": {
+      "title": "Platform Operations & Administration Center",
+      "subtitle": "Content moderation, user identity verification, and platform safety operations",
+      "seniorAdmin": "Senior Administrator",
+      "moderator": "Moderator",
+      "totalUsersTitle": "Total Active Users",
+      "totalUsersDesc": "Tenants & Landlords with verified KYC",
+      "activeRoomsTitle": "Active Listed Rooms",
+      "activeRoomsDesc": "Across Hanoi, HCMC & Da Nang",
+      "pendingRoomsTitle": "Rooms Pending Approval",
+      "pendingRoomsDesc": "Average processing time: 18 mins",
+      "pendingRoomsAction": "Moderate listings",
+      "pendingKycTitle": "eKYC Profiles Pending Review",
+      "pendingKycDesc": "2-sided National ID verification",
+      "pendingKycAction": "Review National ID",
+      "ekycBadge": "eKYC Review",
+      "svcGateway": "API Gateway (:8080)",
+      "svcIdentity": "Identity Service (:8081)",
+      "svcListing": "Listing Service (:8082)",
+      "svcBookingBilling": "Booking & Billing (:8083, :8084)",
+      "recentReportsTitle": "Recent Violation Reports",
+      "recentReportsDesc": "Fake listing report at Lane 105 Lang Ha",
+      "recentReportsReporter": "Reported by: Nguyen Van Thue • 1 hour ago",
+      "handleReport": "Process",
+      "systemHealthTitle": "System Health Status",
+      "serviceNormal": "Operational",
+      "serviceDegraded": "Needs Attention",
+      "emptyState": "No administrative statistics currently available or system is initializing.",
+      "errorTitle": "Unable to load operations data",
+      "errorSubtitle": "An error occurred while connecting to the admin service."
+    }
   }
 }
 
