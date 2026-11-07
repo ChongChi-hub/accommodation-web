@@ -10,7 +10,7 @@ import { Skeleton } from '@/presentation/components/ui/Skeleton';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { ErrorState } from '@/presentation/components/ui/ErrorState';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
-import { History, Shield } from 'lucide-react';
+import { History, Search, Shield, Globe } from 'lucide-react';
 
 function AdminAuditLogsContent() {
   const t = useTranslations('admin.auditLogs');
@@ -36,23 +36,28 @@ function AdminAuditLogsContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/50">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 flex items-center gap-2">
-            <History className="w-6 h-6 text-primary-600" />
-            {t('title')}
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400">
+              <History className="w-5 h-5" />
+            </span>
+            <span>{t('title')}</span>
           </h1>
-          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
+          <p className="text-xs sm:text-sm text-foreground-muted mt-1">
             {t('subtitle')}
           </p>
         </div>
       </div>
 
+      {/* Search Bar */}
       <div className="w-full sm:w-80">
         <Input
           placeholder={t('searchPlaceholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          leftIcon={<Search className="w-4 h-4" />}
         />
       </div>
 
@@ -73,10 +78,10 @@ function AdminAuditLogsContent() {
             <TableBody>
               {logs.map((l) => (
                 <TableRow key={l.id}>
-                  <TableCell className="text-xs text-neutral-500 font-mono">
+                  <TableCell className="text-xs text-foreground-muted font-mono whitespace-nowrap">
                     {l.timestamp}
                   </TableCell>
-                  <TableCell className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">
+                  <TableCell className="text-xs font-semibold text-foreground whitespace-nowrap">
                     {l.actor}
                   </TableCell>
                   <TableCell>
@@ -84,11 +89,13 @@ function AdminAuditLogsContent() {
                       {l.action}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-xs text-neutral-600 dark:text-neutral-300 max-w-xs">
+                  <TableCell className="text-xs text-foreground max-w-xs truncate">
                     {l.target}
                   </TableCell>
-                  <TableCell className="text-xs text-neutral-400 font-mono text-right">
-                    {l.ip}
+                  <TableCell className="text-xs text-foreground-muted font-mono text-right whitespace-nowrap">
+                    <span className="px-2 py-0.5 rounded bg-surface-muted border border-border">
+                      {l.ip}
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}
