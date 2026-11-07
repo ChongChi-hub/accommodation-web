@@ -16,23 +16,13 @@ export class ApiError extends Error {
 
 export class ApiClient {
   private static token: string | null = null;
+  private static isRefreshing = false;
 
   static setToken(token: string | null) {
     this.token = token;
-    if (typeof window !== 'undefined') {
-      if (token) {
-        localStorage.setItem('toam_access_token', token);
-      } else {
-        localStorage.removeItem('toam_access_token');
-      }
-    }
   }
 
   static getToken(): string | null {
-    if (this.token) return this.token;
-    if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('toam_access_token');
-    }
     return this.token;
   }
 
@@ -52,6 +42,7 @@ export class ApiClient {
     try {
       const response = await fetch(url, {
         ...options,
+        credentials: 'include',
         headers,
       });
 
