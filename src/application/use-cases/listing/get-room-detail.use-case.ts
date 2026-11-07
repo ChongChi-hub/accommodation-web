@@ -18,3 +18,4 @@ export class GetRoomDetailUseCase {
     return { room, recommendations, reviews };
   }
 }
+

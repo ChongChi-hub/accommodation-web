@@ -40,3 +40,4 @@ export function useRoomDetail(id: number) {
     retry: fetchDetail,
   };
 }
+

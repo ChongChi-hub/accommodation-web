@@ -58,3 +58,4 @@ export class HttpListingRepository implements IListingRepository {
     return ApiClient.get<ReviewDto[]>(`/reviews?roomId=${roomId}`);
   }
 }
+

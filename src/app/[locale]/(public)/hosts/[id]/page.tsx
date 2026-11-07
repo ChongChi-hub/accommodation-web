@@ -81,3 +81,4 @@ export default function HostProfilePage({ params }: { params: Promise<{ id: stri
     </div>
   );
 }
+

@@ -16,3 +16,4 @@ export class GetLocationsUseCase {
     return this.listingRepo.getAmenities();
   }
 }
+

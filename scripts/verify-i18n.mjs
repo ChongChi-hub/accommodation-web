@@ -45,3 +45,4 @@ if (missingInEn.length > 0 || missingInVi.length > 0) {
 } else {
   console.log('100% parity between vi.json and en.json.');
 }
+

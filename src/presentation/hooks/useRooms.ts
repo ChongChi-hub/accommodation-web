@@ -79,3 +79,4 @@ export function useRooms(initialParams: RoomFilterParams = {}) {
     retry: fetchRooms,
   };
 }
+

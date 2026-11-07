@@ -18,3 +18,4 @@ export interface IListingRepository {
   getAmenities(): Promise<AmenityDto[]>;
   getReviews(roomId: number): Promise<ReviewDto[]>;
 }
+

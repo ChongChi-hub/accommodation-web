@@ -43,3 +43,4 @@ export const toast = {
   warning: (msg: string) => useToastStore.getState().showToast(msg, 'warning'),
   error: (msg: string) => useToastStore.getState().showToast(msg, 'danger'),
 };
+

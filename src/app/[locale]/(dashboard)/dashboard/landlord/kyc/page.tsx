@@ -87,3 +87,4 @@ export default function LandlordKycPage() {
     </div>
   );
 }
+

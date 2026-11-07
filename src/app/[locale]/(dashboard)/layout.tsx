@@ -10,3 +10,4 @@ export default function AppDashboardLayout({
 }) {
   return <DashboardLayout>{children}</DashboardLayout>;
 }
+

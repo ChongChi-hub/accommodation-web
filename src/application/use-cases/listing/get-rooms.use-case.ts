@@ -8,3 +8,4 @@ export class GetRoomsUseCase {
     return this.listingRepo.getRooms(params);
   }
 }
+

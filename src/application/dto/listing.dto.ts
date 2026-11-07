@@ -89,3 +89,4 @@ export interface RoomFilterParams {
   page?: number;
   size?: number;
 }
+
