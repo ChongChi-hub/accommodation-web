@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit",
     "verify:links": "node scripts/verify-links.mjs",
     "verify:i18n": "node scripts/verify-i18n.mjs",
+    "check:seed-text": "node scripts/check-seed-text.mjs",
     "test": "vitest run && node scripts/verify-i18n.mjs && node scripts/verify-links.mjs",
     "test:e2e": "playwright test"
   },

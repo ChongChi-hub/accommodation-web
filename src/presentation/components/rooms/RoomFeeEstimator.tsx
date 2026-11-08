@@ -169,3 +169,4 @@ export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
     </div>
   );
 }
+

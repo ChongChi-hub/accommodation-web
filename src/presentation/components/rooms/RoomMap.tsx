@@ -80,3 +80,4 @@ export function RoomMap({ latitude, longitude, address }: RoomMapProps) {
     </div>
   );
 }
+

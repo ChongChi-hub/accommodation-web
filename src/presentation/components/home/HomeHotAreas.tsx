@@ -45,7 +45,7 @@ export function HomeHotAreas({ areas, isLoading }: HomeHotAreasProps) {
             className="group relative aspect-4/3 rounded-2xl overflow-hidden border border-stone-200/60 dark:border-stone-800 bg-stone-900 shadow-xs hover:shadow-md transition-all cursor-pointer"
           >
             <Image
-              src={area.imageUrl || 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=400&q=80'}
+              src={area.imageUrl || '/uploads/locations/ha-noi.webp'}
               alt={area.name}
               fill
               className="object-cover opacity-80 group-hover:scale-105 group-hover:opacity-90 transition-all duration-300"
@@ -66,3 +66,4 @@ export function HomeHotAreas({ areas, isLoading }: HomeHotAreasProps) {
     </div>
   );
 }
+

@@ -106,3 +106,4 @@ export function RoomAmenities({ amenities }: RoomAmenitiesProps) {
     </div>
   );
 }
+

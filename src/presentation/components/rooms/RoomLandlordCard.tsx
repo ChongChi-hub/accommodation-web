@@ -62,3 +62,4 @@ export function RoomLandlordCard({ landlord }: RoomLandlordCardProps) {
     </div>
   );
 }
+

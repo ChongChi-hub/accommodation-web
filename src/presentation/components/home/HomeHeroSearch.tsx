@@ -37,7 +37,7 @@ export function HomeHeroSearch({ hotProvinces = [] }: HomeHeroSearchProps) {
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          placeholder="Tìm theo phố, quận, tên phòng trọ..."
+          placeholder="Tìm theo phố, phường/xã, tên phòng trọ..."
           className="w-full bg-transparent text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none"
         />
       </div>
@@ -85,3 +85,4 @@ export function HomeHeroSearch({ hotProvinces = [] }: HomeHeroSearchProps) {
     </form>
   );
 }
+

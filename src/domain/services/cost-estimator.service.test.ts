@@ -75,3 +75,4 @@ describe('calculateMonthlyCost Pure Domain Service', () => {
     expect(result.grandTotal).toBe(50000);
   });
 });
+

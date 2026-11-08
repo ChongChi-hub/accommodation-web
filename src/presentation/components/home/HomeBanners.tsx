@@ -81,3 +81,4 @@ export function HomeBanners({ banners, isLoading }: HomeBannersProps) {
     </div>
   );
 }
+

@@ -201,3 +201,4 @@ export function RoomImageCarousel({ images, title }: RoomImageCarouselProps) {
     </div>
   );
 }
+
