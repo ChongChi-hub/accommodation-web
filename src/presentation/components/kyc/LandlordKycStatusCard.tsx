@@ -1,12 +1,14 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
 import { LandlordKycStatus } from '@/domain/entities/LandlordKyc';
 import { useAuthenticatedKycImage } from '@/presentation/hooks/useAuthenticatedKycImage';
+import { useFaceVerification } from '@/presentation/hooks/useFaceVerification';
 import { ShieldCheck, Clock, AlertTriangle, ShieldX, RefreshCw } from 'lucide-react';
 
 interface LandlordKycStatusCardProps {
@@ -18,6 +20,7 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
   const t = useTranslations('kyc');
   const frontImage = useAuthenticatedKycImage(status.hasFrontImage ? '/landlord/kyc/images/front' : null);
   const backImage = useAuthenticatedKycImage(status.hasBackImage ? '/landlord/kyc/images/back' : null);
+  const { faceStatus } = useFaceVerification();
 
   const renderBadge = () => {
     switch (status.status) {
@@ -62,6 +65,46 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
           </p>
         </div>
         {renderBadge()}
+      </div>
+
+      {/* Tiến độ 2 phần KYC: Giấy tờ & Khuôn mặt */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-muted/40 rounded-xl border border-border">
+        <div className="space-y-1.5 border-b sm:border-b-0 sm:border-r border-border pb-3 sm:pb-0 sm:pr-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">1</span>
+              Giấy tờ tùy thân (CCCD)
+            </span>
+            <Badge variant={status.status === 'APPROVED' ? 'success' : status.status === 'REJECTED' ? 'danger' : status.status === 'PENDING' ? 'warning' : 'neutral'} size="sm">
+              {status.status}
+            </Badge>
+          </div>
+          <p className="text-[11px] text-foreground-muted">
+            {status.status === 'APPROVED' ? 'Đã xác minh thông tin giấy tờ' : status.status === 'PENDING' ? 'Đang chờ đối chiếu giấy tờ' : status.status === 'REJECTED' ? 'Giấy tờ bị từ chối' : 'Chưa nộp giấy tờ'}
+          </p>
+        </div>
+
+        <div className="space-y-1.5 sm:pl-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+              <span className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">2</span>
+              Xác thực khuôn mặt
+            </span>
+            <Badge variant={faceStatus?.status === 'PASSED' ? 'success' : faceStatus?.status === 'FAILED' ? 'danger' : faceStatus?.status === 'PENDING' ? 'warning' : 'neutral'} size="sm">
+              {faceStatus?.status || 'NONE'}
+            </Badge>
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[11px] text-foreground-muted">
+              {faceStatus?.status === 'PASSED' ? 'Khuôn mặt đã khớp CCCD' : faceStatus?.status === 'PENDING' ? 'Đang chờ đối chiếu khuôn mặt' : faceStatus?.status === 'FAILED' ? 'Khuôn mặt chưa đạt' : 'Chưa thực hiện'}
+            </p>
+            {faceStatus?.status !== 'PASSED' && (
+              <Link href="/dashboard/landlord/kyc/face" className="text-[11px] font-medium text-primary hover:underline flex items-center gap-0.5">
+                {faceStatus?.status === 'FAILED' ? 'Thử lại' : 'Thực hiện'} &rarr;
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
 
       {status.status === 'PENDING' && (

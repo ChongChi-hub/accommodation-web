@@ -71,9 +71,12 @@ export default async function middleware(req: NextRequest) {
     cleanPath.startsWith('/landlord') ||
     cleanPath.startsWith('/tenant') ||
     cleanPath.startsWith('/admin') ||
-    cleanPath.startsWith('/moderator')
+    cleanPath.startsWith('/moderator') ||
+    cleanPath.startsWith('/account/kyc')
   ) {
-    const targetDashboard = `/dashboard${cleanPath}`;
+    const targetDashboard = cleanPath.startsWith('/account/kyc')
+      ? cleanPath.replace('/account/kyc', '/dashboard/landlord/kyc')
+      : `/dashboard${cleanPath}`;
     const redirectUrl = new URL(`${localePrefix}${targetDashboard}`, req.url);
     req.nextUrl.searchParams.forEach((v, k) => redirectUrl.searchParams.set(k, v));
     return NextResponse.redirect(redirectUrl);

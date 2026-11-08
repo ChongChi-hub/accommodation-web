@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Camera, AlertCircle, CheckCircle2, RotateCcw, ShieldCheck, VideoOff } from 'lucide-react';
-import { FaceChallenge, FaceChallengeAction } from '@/domain/entities/FaceVerification';
+import { Camera, AlertCircle, RotateCcw, ShieldCheck } from 'lucide-react';
+import { FaceChallenge } from '@/domain/entities/FaceVerification';
 import { Button } from '@/presentation/components/ui/Button';
 
 interface Props {
@@ -11,7 +11,6 @@ interface Props {
   onCancel: () => void;
   isSubmitting: boolean;
 }
-
 type Stage = 'CAMERA_PERM' | 'READY' | 'CAPTURING_NEUTRAL' | 'CAPTURING_ACTIONS' | 'REVIEW';
 
 export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmitting }: Props) {
@@ -19,15 +18,9 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [currentActionIndex, setCurrentActionIndex] = useState(0);
   const [countdown, setCountdown] = useState<number | null>(null);
-
-  const [neutralBlob, setNeutralBlob] = useState<Blob | null>(null);
-  const [actionBlobs, setActionBlobs] = useState<Blob[]>([]);
-  const [neutralPreview, setNeutralPreview] = useState<string | null>(null);
-  const [actionPreviews, setActionPreviews] = useState<string[]>([]);
-
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
+  const [neutralBlob, setNeutralBlob] = useState<Blob | null>(null), [actionBlobs, setActionBlobs] = useState<Blob[]>([]);
+  const [neutralPreview, setNeutralPreview] = useState<string | null>(null), [actionPreviews, setActionPreviews] = useState<string[]>([]);
+  const videoRef = useRef<HTMLVideoElement | null>(null), canvasRef = useRef<HTMLCanvasElement | null>(null), streamRef = useRef<MediaStream | null>(null);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -36,11 +29,7 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
     }
   }, []);
 
-  useEffect(() => {
-    return () => {
-      stopCamera();
-    };
-  }, [stopCamera]);
+  useEffect(() => () => stopCamera(), [stopCamera]);
 
   const startCamera = async () => {
     setCameraError(null);
@@ -59,58 +48,38 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
       }
       setStage('READY');
     } catch (err: any) {
-      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-        setCameraError('Quyền truy cập máy ảnh bị từ chối. Vui lòng cho phép quyền máy ảnh trên trình duyệt.');
-      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-        setCameraError('Không tìm thấy thiết bị máy ảnh trên máy tính hoặc điện thoại của bạn.');
-      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
-        setCameraError('Máy ảnh đang được sử dụng bởi một ứng dụng khác. Vui lòng đóng ứng dụng đó và thử lại.');
-      } else {
-        setCameraError(err.message || 'Không thể khởi động máy ảnh');
-      }
+      const errMap: Record<string, string> = {
+        NotAllowedError: 'Quyền truy cập máy ảnh bị từ chối. Vui lòng cho phép quyền máy ảnh trên trình duyệt.',
+        PermissionDeniedError: 'Quyền truy cập máy ảnh bị từ chối. Vui lòng cho phép quyền máy ảnh trên trình duyệt.',
+        NotFoundError: 'Không tìm thấy thiết bị máy ảnh trên máy tính hoặc điện thoại của bạn.',
+        NotReadableError: 'Máy ảnh đang được sử dụng bởi ứng dụng khác. Vui lòng đóng ứng dụng đó và thử lại.',
+      };
+      setCameraError(errMap[err.name] || err.message || 'Không thể khởi động máy ảnh');
     }
   };
 
   const captureCurrentFrame = (): Blob | null => {
     if (!videoRef.current || !canvasRef.current) return null;
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
-    canvas.width = 480;
-    canvas.height = 480;
+    const canvas = canvasRef.current, video = videoRef.current;
+    canvas.width = 480; canvas.height = 480;
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
-
-    // Center crop to square
     const minDim = Math.min(video.videoWidth, video.videoHeight);
-    const startX = (video.videoWidth - minDim) / 2;
-    const startY = (video.videoHeight - minDim) / 2;
-    ctx.drawImage(video, startX, startY, minDim, minDim, 0, 0, 480, 480);
-
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-    const arr = dataUrl.split(',');
-    const mime = arr[0].match(/:(.*?);/)![1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) u8arr[n] = bstr.charCodeAt(n);
-    return new Blob([u8arr], { type: mime });
+    ctx.drawImage(video, (video.videoWidth - minDim) / 2, (video.videoHeight - minDim) / 2, minDim, minDim, 0, 0, 480, 480);
+    const arr = canvas.toDataURL('image/jpeg', 0.9).split(','), bstr = atob(arr[1]);
+    const u8 = new Uint8Array(bstr.length);
+    for (let i = 0; i < bstr.length; i++) u8[i] = bstr.charCodeAt(i);
+    return new Blob([u8], { type: 'image/jpeg' });
   };
 
   const startCaptureSequence = () => {
-    setNeutralBlob(null);
-    setActionBlobs([]);
-    setNeutralPreview(null);
-    setActionPreviews([]);
-    setCurrentActionIndex(0);
-    setStage('CAPTURING_NEUTRAL');
+    setNeutralBlob(null); setActionBlobs([]); setNeutralPreview(null); setActionPreviews([]);
+    setCurrentActionIndex(0); setStage('CAPTURING_NEUTRAL');
     runCountdown(() => {
       const blob = captureCurrentFrame();
       if (blob) {
-        setNeutralBlob(blob);
-        setNeutralPreview(URL.createObjectURL(blob));
-        // Transition to action 1
-        setStage('CAPTURING_ACTIONS');
-        startActionCapture(0);
+        setNeutralBlob(blob); setNeutralPreview(URL.createObjectURL(blob));
+        setStage('CAPTURING_ACTIONS'); startActionCapture(0);
       }
     });
   };
@@ -120,17 +89,10 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
     runCountdown(() => {
       const blob = captureCurrentFrame();
       if (blob) {
-        const newBlobs = [...actionBlobs, blob];
-        const newPreviews = [...actionPreviews, URL.createObjectURL(blob)];
-        setActionBlobs(newBlobs);
-        setActionPreviews(newPreviews);
-
-        if (actionIdx + 1 < challenge.actions.length) {
-          startActionCapture(actionIdx + 1);
-        } else {
-          stopCamera();
-          setStage('REVIEW');
-        }
+        setActionBlobs((prev) => [...prev, blob]);
+        setActionPreviews((prev) => [...prev, URL.createObjectURL(blob)]);
+        if (actionIdx + 1 < challenge.actions.length) startActionCapture(actionIdx + 1);
+        else { stopCamera(); setStage('REVIEW'); }
       }
     });
   };
@@ -139,22 +101,14 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
     setCountdown(3);
     const timer = setInterval(() => {
       setCountdown((prev) => {
-        if (prev === null || prev <= 1) {
-          clearInterval(timer);
-          setCountdown(null);
-          onFinish();
-          return null;
-        }
+        if (prev === null || prev <= 1) { clearInterval(timer); onFinish(); return null; }
         return prev - 1;
       });
     }, 1000);
   };
 
   const handleRetake = () => {
-    setNeutralBlob(null);
-    setActionBlobs([]);
-    setNeutralPreview(null);
-    setActionPreviews([]);
+    setNeutralBlob(null); setActionBlobs([]); setNeutralPreview(null); setActionPreviews([]);
     startCamera();
   };
 
@@ -170,9 +124,7 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
           <ShieldCheck className="w-5 h-5 text-emerald-600" />
           <h2 className="font-semibold text-lg text-foreground">Thu nhận ảnh thử thách sinh trắc học</h2>
         </div>
-        <span className="text-xs font-mono bg-muted px-2 py-1 rounded text-muted-foreground">
-          Lượt thử {challenge.attemptNo}/3
-        </span>
+        <span className="text-xs font-mono bg-muted px-2 py-1 rounded text-muted-foreground">Lượt thử {challenge.attemptNo}/3</span>
       </div>
 
       {stage === 'CAMERA_PERM' && (
@@ -281,8 +233,8 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
           </div>
 
           <div className="flex gap-3 justify-end pt-2">
-            <Button variant="outline" onClick={handleRetake} disabled={isSubmitting}>
-              <RotateCcw className="w-4 h-4 mr-1.5" /> Chụp lại
+            <Button variant="outline" onClick={handleRetake} disabled={isSubmitting} leftIcon={<RotateCcw className="w-4 h-4" />}>
+              Chụp lại
             </Button>
             <Button onClick={handleSubmit} disabled={isSubmitting}>
               {isSubmitting ? 'Đang mã hóa & gửi...' : 'Gửi xác thực'}
