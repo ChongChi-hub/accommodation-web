@@ -1,112 +1,85 @@
-# To Am - Web Frontend Application (`accommodation-web`)
+# Cozynest (Tổ Ấm) - Web Frontend Application (`accommodation-web`)
 
-Ung dung web tim kiem va quan ly phong tro truc tuyen **To Am**, xay dung bang **Next.js 16.2 App Router**, **React 19**, **Tailwind CSS v4** va tuan thu nghiem ngat **Clean Architecture**.
+Ứng dụng web tìm kiếm, đặt lịch hẹn và quản lý phòng trọ trực tuyến **Cozynest (Tổ Ấm)**, xây dựng bằng **Next.js 16.2 App Router**, **React 19**, **Tailwind CSS v4** và tuân thủ nghiêm ngặt **Clean Architecture**.
 
 ---
 
-## Cong Nghe Cot Loi
-* **Framework:** Next.js 16.2.12 (App Router) + React 19.3.1.
-* **Kien truc:** Clean Architecture (`domain/` -> `application/` -> `infrastructure/` -> `presentation/`), ep luat bang `eslint-plugin-boundaries`.
-* **Design System:** Tailwind CSS v4.3.5 voi design tokens (`@theme`) tong mau chu dao Teal `#0F766E` va Amber `#F59E0B`.
-* **Icon:** `lucide-react` (tuyet doi khong dung emoji).
-* **Da ngon ngu:** `next-intl` (mac dinh tieng Viet `vi`, ho tro tieng Anh `en`).
-* **State:** `@tanstack/react-query` (server state) + `zustand` (UI state).
+## 1. Công Nghệ Cốt Lõi
+
+* **Framework:** Next.js 16.2.12 (App Router & Turbopack) + React 19.3.1.
+* **Kiến trúc:** Clean Architecture (`domain/` -> `application/` -> `infrastructure/` -> `presentation/`), thực thi qua `eslint-plugin-boundaries`.
+* **Design System:** Tailwind CSS v4 với design tokens (`@theme`) tông màu chủ đạo Teal `#0F766E` và Amber `#F59E0B`.
+* **Biểu tượng:** `lucide-react` (tối ưu SVG, không lạm dụng emoji).
+* **Đa ngôn ngữ:** `next-intl` (mặc định tiếng Việt `vi`, hỗ trợ tiếng Anh `en`, 100% parity 689 keys).
+* **Quản lý State:** `@tanstack/react-query` (server cache) + `zustand` (UI state).
 * **Form & Validation:** `react-hook-form` + `zod`.
 
 ---
 
-## Cac Trung Tam Chuc Nang & Man Hinh
+## 2. Các Phân Hệ & Màn Hình Chính
 
-### 1. Trang Cong Cong (Public Pages)
-* Trang chu (`/`): Tim kiem da tieu chi, phong noi bat, khu vuc pho bien (Ha Noi, TP.HCM, Da Nang).
-* Danh sach phong (`/rooms`): Bo loc gia, dien tich, tien nghi, quan huyen, sap xep.
-* Chi tiet phong (`/rooms/[id]`): Bo suu tap anh, ban do, tien nghi, chu nha, danh gia, modal dat lich & thue phong.
-* Trang ho so chu nha (`/hosts/[id]`): Thong tin chu nha, danh gia va cac phong dang quan ly.
-* Cac trang thong tin: Gioi thieu (`/about`), Huong dan an toan (`/safety-guide`), Bang gia (`/pricing`), Cau hoi thuong gap (`/faq`), Lien he (`/contact`), Dieu khoan (`/terms`), Chinh sach bao mat (`/privacy`).
+### Trang Công Cộng (Public)
+* **Trang chủ (`/`)**: Tìm kiếm đa tiêu chí, khu vực nổi bật, phòng trọ mới xác thực nhất.
+* **Danh sách phòng (`/rooms`)**: Bộ lọc giá, diện tích, tiện nghi, quận huyện, sắp xếp và phân trang.
+* **Chi tiết phòng (`/rooms/[slug]`)**: Bộ sưu tập ảnh carousel, tiện nghi theo nhóm, bản đồ tọa độ, bảng chi phí dịch vụ, thông tin chủ trọ kèm nhãn xác minh, modal hẹn xem phòng & thuê phòng.
+* **Trang thông tin**: Giới thiệu (`/about`), An toàn (`/safety-guide`), Bảng giá (`/pricing`), FAQ (`/faq`), Liên hệ (`/contact`), Điều khoản (`/terms`), Bảo mật (`/privacy`).
 
-### 2. Xac Thuc & Tai Khoan (Authentication)
-* Dang nhap (`/login`) & Dang ky (`/register`) voi form Zod validation va dang nhap Google.
-* Quen mat khau (`/forgot-password`), Dat lai mat khau (`/reset-password`), Xac thuc email (`/verify-email`).
+### Xác Thực & Tài Khoản (Authentication)
+* **Đăng nhập (`/login`) & Đăng ký (`/register`)**: Đăng nhập mật khẩu bảo mật và Google Identity Services (GIS OAuth2) với Nonce & CSRF protection.
+* **Luồng Đăng ký Tenant-First**: Mọi đăng ký mới khởi tạo vai trò Người thuê; chọn Chủ trọ sẽ tạo hồ sơ `AWAITING_KYC` chờ xét duyệt.
+* **Quên & Đặt lại mật khẩu (`/forgot-password`, `/reset-password`)**: Xác thực OTP gửi qua email (Mailpit tích hợp).
 
-### 3. Bang Dieu Khien Nguoi Thue (Tenant Dashboard - `/dashboard/tenant`)
-* Tong quan: Hop dong hien tai, hoa don den han, lich hen xem phong sap toi.
-* Ho so ca nhan, eKYC xac minh CCCD 2 mat, phong da luu, tim kiem da luu.
-* Quan ly lich hen, yeu cau thue phong, danh sach hop dong va chi tiet hop dong (ky OTP, tai PDF).
-* Quan ly hoa don va chi tiet hoa don (ma VietQR), lich su thanh toan, hoi thoai tin nhan, thong bao, danh gia va cai dat.
+### Bảng Điều Khiển Chủ Trọ (Landlord Dashboard - `/dashboard/landlord`)
+* **Tổng quan**: Chỉ số doanh thu, tỷ lệ lấp đầy, thông báo cần xử lý.
+* **Quản lý Lịch hẹn Xem phòng ([APPT-02])**: Danh sách lịch hẹn, lọc theo trạng thái (`PENDING`, `ACCEPTED`, `REJECTED`, `CANCELLED`), modal chấp nhận và từ chối kèm lý do bắt buộc, che giấu thông tin nhạy cảm (PII).
+* **Quản lý phòng trọ**: Danh sách phòng, đăng tin mới quy trình 4 bước, chỉnh sửa và cập nhật trạng thái phòng (Có sẵn, Đã thuê, Đang sửa chữa - [LANDLORD-05]).
+* **Xác minh danh tính (eKYC)**: Tải ảnh CCCD 2 mặt ([KYC-01]) và xác thực khuôn mặt sinh trắc học ([KYC-02]).
 
-### 4. Bang Dieu Khien Chu Tro (Landlord Dashboard - `/dashboard/landlord`)
-* Tong quan: Doanh thu, ty le lap day, cong viec can xu ly ngay.
-* Quan ly phong: Danh sach, tao phong moi (quy trinh Stepper 4 buoc), sua phong.
-* Quan ly lich hen xem phong, duyet yeu cau thue, quan ly hop dong va lap hop dong moi.
-* Danh sach khach thue, ghi chi so dien nuoc (cong to), tao hoa don va nhac no SMS.
-* Phan tich bao cao doanh thu, danh gia nhan duoc, hoi thoai tin nhan, eKYC chu nha, cai dat VietQR va don gia tien ich.
+### Bảng Điều Khiển Người Thuê (Tenant Dashboard - `/dashboard/tenant`)
+* **Tổng quan**: Hợp đồng thuê hiện tại, hóa đơn sắp đến hạn, lịch hẹn xem phòng kế tiếp.
+* **Phòng đã lưu (`/dashboard/tenant/saved-rooms`)**: Quản lý phòng yêu thích với cơ chế lưu idempotent ([ROOM-02]).
+* **Lịch hẹn của tôi**: Theo dõi trạng thái lịch hẹn xem phòng đã gửi tới chủ trọ.
 
-### 5. Trung Tam Kiem Duyet & Quan Tri (Admin & Moderator Dashboard - `/dashboard/admin`)
-* Tong quan: Chi so toan san, bieu do tang truong, trang thai cac microservices backend.
-* Duyet tin dang phong tro (kiem duyet tin moi, modal tu choi kem ly do).
-* Kiem duyet eKYC (xem anh CCCD 2 mat, thong tin chu nha/khach thue).
-* Quan ly nguoi dung (khoa/mo khoa tai khoan, phan quyen vai tro).
-* Xu ly bao cao vi pham, kiem duyet danh gia (an/hien danh gia vi pham).
-* Quan ly danh muc he thong (loai phong, tien nghi, dia gioi hanh chinh).
-* Phan tich chuyen sau san, nhat ky kiem toan he thong (Audit Logs).
-* Cau hinh he thong (che do bao tri, duyet tin tu dong, cong VietQR, bao mat phien).
+### Bảng Điều Khiển Quản Trị & Kiểm Duyệt (Admin/Moderator Dashboard - `/dashboard/admin`)
+* **Kiểm duyệt phòng**: Xem xét, phê duyệt hoặc từ chối tin đăng phòng kèm phản hồi lý do.
+* **Kiểm duyệt eKYC**: Đối chiếu ảnh chụp CCCD và dữ liệu sinh trắc khuôn mặt.
+* **Quản lý người dùng & Hệ thống**: Phân quyền, khóa/mở khóa tài khoản, giám sát sức khỏe microservices.
 
 ---
 
-## Huong Dan Cai Dat & Khoi Chay
+## 3. Tài Khoản Kiểm Thử (Môi Trường Dev)
 
-### 1. Yeu cau he thong
-* **Node.js:** v22+ LTS
-* **npm:** v10+
+| Vai trò | Email | Mật khẩu | Màn hình mặc định |
+|---|---|---|---|
+| **Người thuê (Tenant)** | `tenant@cozynest.vn` | `password123` | `/dashboard/tenant` |
+| **Chủ trọ (Landlord)** | `landlord@cozynest.vn` | `password123` | `/dashboard/landlord` |
+| **Kiểm duyệt (Moderator)** | `moderator@cozynest.vn` | `password123` | `/dashboard/moderator` |
+| **Quản trị (Admin)** | `admin@cozynest.vn` | `password123` | `/dashboard/admin` |
 
-### 2. Thiet lap bien moi truong
-Tao file `.env.local` tu mau:
+---
+
+## 4. Hướng Dẫn Cài Đặt & Kiểm Thử
+
+### Cài Đặt Thư Viện & Chạy Ứng Dụng
 ```bash
-cp .env.example .env.local
-```
-Noi dung mac dinh ket noi toi Backend Gateway:
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
-NEXT_PUBLIC_DEFAULT_LOCALE=vi
-```
-
-### 3. Cai dat phu thuoc & Chay moi truong Dev
-```bash
-# Cai dat thu vien
+# Cài đặt dependencies
 npm install
 
-# Khoi chay may chu phat trien (Cong 3000)
+# Khởi chạy dev server (Cổng 3000)
 npm run dev
 ```
-Truy cap ung dung tai: `http://localhost:3000`.
 
-### 4. Kiem tra chat luong ma nguon
+### Bộ Lệnh Kiểm Tra Chất Lượng Mã Nguồn
 ```bash
-# Kiem tra loi cu phap & luat kien truc Clean Architecture
+# Kiểm tra định dạng & kiến trúc Clean Architecture
 npm run lint
 
-# Kiem tra kieu TypeScript
-npm run type-check
+# Chạy kiểm thử tự động (Unit test, i18n parity, route link check)
+npm test
 
-# Chay kiem thu tu dong (Unit tests + i18n parity + Route links verification)
-npm run test
+# Chạy kịch bản E2E kiểm thử xác thực cô lập
+npm run e2e:auth
 
-# Build ung dung san pham
+# Biên dịch sản phẩm Next.js (166 routes)
 npm run build
 ```
-
----
-
-## Tai Khoan Thu Nghiem (Ket noi Backend)
-
-| Vai tro | Email | Mat khau |
-|---|---|---|
-| **Nguoi thue (Tenant)** | `tenant@cozynest.vn` | `password123` |
-| **Chu tro (Landlord)** | `landlord@cozynest.vn` | `password123` |
-| **Kiem duyet vien (Moderator)** | `moderator@cozynest.vn` | `password123` |
-| **Quan tri vien (Admin)** | `admin@cozynest.vn` | `password123` |
-
----
-
-## Tai Lieu Ky Thuat
-* Quy chuan lap trinh chi tiet: Xem tai [`AGENT.md`](./AGENT.md).
