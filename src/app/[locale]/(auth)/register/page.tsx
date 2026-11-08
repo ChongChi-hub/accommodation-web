@@ -165,7 +165,11 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <GoogleLoginButton label="Đăng ký nhanh với Google" />
+          <GoogleLoginButton
+            label="Đăng ký nhanh với Google"
+            isRegister={true}
+            intendedRole={role}
+          />
         </form>
 
         <div className="text-center text-xs text-stone-500">

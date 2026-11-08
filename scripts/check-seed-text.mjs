@@ -45,3 +45,4 @@ if (hasErrors) {
 } else {
   console.log('✅ Check passed: 100% valid UTF-8, zero U+FFFD, zero broken ?? in string literals.');
 }
+

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { Input } from '@/presentation/components/ui/Input';
 import { Button } from '@/presentation/components/ui/Button';
 import { Card } from '@/presentation/components/ui/Card';
@@ -61,6 +62,16 @@ export function UserChangePasswordView() {
   return (
     <Card className="p-6 border border-border">
       <form onSubmit={handleSubmit} className="space-y-5 max-w-lg">
+        <div className="p-3.5 rounded-lg bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 text-xs text-teal-800 dark:text-teal-200 flex items-start gap-2.5">
+          <KeyRound className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+          <div>
+            <span>Bạn đăng nhập bằng tài khoản Google và chưa có mật khẩu riêng? </span>
+            <Link href="/forgot-password" className="font-semibold underline hover:text-teal-900 dark:hover:text-teal-100">
+              Dùng Quên mật khẩu để đặt mật khẩu
+            </Link>
+          </div>
+        </div>
+
         <div className="p-3.5 rounded-lg bg-warning/10 border border-warning/20 flex gap-3 text-xs text-warning-foreground">
           <ShieldAlert className="w-4 h-4 text-warning flex-shrink-0 mt-0.5" />
           <p>{t('passwordSessionNotice')}</p>

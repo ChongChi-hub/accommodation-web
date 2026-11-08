@@ -53,6 +53,30 @@ export class HttpAuthRepository implements AuthRepository {
     };
   }
 
+  async getGoogleStatus(): Promise<{ enabled: boolean; clientIdFingerprint: string }> {
+    return ApiClient.get<{ enabled: boolean; clientIdFingerprint: string }>('/auth/google/status');
+  }
+
+  async getGoogleNonce(): Promise<{ nonce: string }> {
+    return ApiClient.get<{ nonce: string }>('/auth/google/nonce');
+  }
+
+  async loginWithGoogle(data: { credential: string; nonce: string; intendedRole?: string }): Promise<AuthSession> {
+    const res = await ApiClient.post<any>('/auth/google', data);
+    ApiClient.setToken(res.token);
+    const primaryRole = res.user?.roles?.[0] || data.intendedRole || 'TENANT';
+    setAuthCookies(res.token, primaryRole);
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cozynest_refresh_token', res.refreshToken);
+      localStorage.setItem('cozynest_user', JSON.stringify(res.user));
+    }
+    return {
+      tokens: { token: res.token, refreshToken: res.refreshToken },
+      user: res.user,
+    };
+  }
+
   async refreshToken(refreshToken: string): Promise<AuthSession> {
     const data = await ApiClient.post<any>('/auth/refresh-token', { refreshToken });
     ApiClient.setToken(data.token);

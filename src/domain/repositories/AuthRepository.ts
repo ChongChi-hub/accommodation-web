@@ -24,5 +24,8 @@ export interface AuthRepository {
   changePassword(currentPassword: string, newPassword: string): Promise<void>;
   forgotPassword(email: string): Promise<void>;
   resetPassword(email: string, otp: string, newPassword: string): Promise<void>;
+  getGoogleStatus(): Promise<{ enabled: boolean; clientIdFingerprint: string }>;
+  getGoogleNonce(): Promise<{ nonce: string }>;
+  loginWithGoogle(data: { credential: string; nonce: string; intendedRole?: string }): Promise<AuthSession>;
   logout(): Promise<void>;
 }

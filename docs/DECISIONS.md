@@ -274,8 +274,13 @@ Lịch hẹn xem phòng (`ViewingAppointment`) tuân thủ nghiêm ngặt máy t
   * Nghiêm cấm tuyệt đối in số CCCD, đường dẫn ảnh lưu trữ nội bộ vào log hệ thống, thông báo ngoại lệ (exception messages) hoặc phản hồi lỗi API.
 
 ### 12.3 Chính sách Lưu giữ và Hủy Dữ liệu KYC Bị Từ chối (Retention & Cleanup Policy)
-* Khi hồ sơ KYC bị từ chối (`REJECTED`), ảnh CCCD nhạy cảm chỉ được lưu giữ tạm thời trong vòng 30 ngày (cấu hình qua `app.kyc.retention-days=30`) nhằm phục vụ việc đối soát và khiếu nại.
-* Sau thời hạn trên, một Scheduled Job (`KycImageCleanupScheduler`) định kỳ quét và xóa vĩnh viễn file vật lý của hồ sơ bị từ chối, cập nhật đường dẫn ảnh thành `PURGED`.
+* **Thời hạn lưu trữ và Cấp quyết định**:
+  * Thời hạn lưu trữ hiện dùng là **30 ngày** (cấu hình qua `app.kyc.retention-days=30`).
+  * Thời hạn này do **Bộ phận Pháp chế & Tuân thủ (Legal & Compliance) phối hợp với Cán bộ Bảo vệ Dữ liệu Cá nhân (Data Protection Officer - DPO)** quyết định, căn cứ theo Nghị định số 13/2023/NĐ-CP về Bảo vệ Dữ liệu Cá nhân và quy định khiếu nại dân sự của Việt Nam (cho phép người dùng có 30 ngày để khiếu nại quyết định từ chối trước khi dữ liệu nhạy cảm bị tiêu hủy hoàn toàn).
+* **Cơ chế An toàn của Scheduled Job (`KycImageCleanupScheduler`)**:
+  * Cờ kích hoạt `app.kyc.cleanup-enabled`: **MẶC ĐỊNH LÀ FALSE (TẮT)**. Chỉ khi quản trị viên chủ động bật qua biến môi trường hoặc cấu hình hệ thống, tác vụ mới chạy.
+  * **Tuyệt đối KHÔNG xóa hồ sơ PENDING hoặc APPROVED**: Truy vấn cơ sở dữ liệu (`findRejectedBefore(cutoff)`) được lọc chặt chẽ chỉ lấy các bản ghi có trạng thái `REJECTED` và thời điểm bị từ chối cũ hơn 30 ngày. Các hồ sơ đang chờ duyệt (`PENDING`) và hồ sơ đã xác thực thành công (`APPROVED`) không bao giờ bị scheduler chạm tới hay xóa ảnh.
+  * Khi quét và xóa file vật lý trên đĩa, đường dẫn ảnh được cập nhật thành giá trị đại diện `PURGED` để đánh dấu hồ sơ đã được thanh tẩy dữ liệu.
 
 ### 12.4 Cổng Chặn Đăng Tin (Listing KYC Gate) & Inter-Service Token
 * **Quy định**: Chủ trọ chỉ được phép gửi duyệt phòng (`POST /api/v1/landlord/rooms/{id}/submit`) và xuất bản phòng khi KYC ở trạng thái `APPROVED`. Nếu chưa được duyệt, hệ thống từ chối với HTTP 403 và mã lỗi `ERR_KYC_REQUIRED` kèm trạng thái KYC hiện tại (`NONE`, `PENDING`, `REJECTED`). Thao tác lưu nháp (`DRAFT`) vẫn được cho phép.
@@ -298,12 +303,58 @@ Lịch hẹn xem phòng (`ViewingAppointment`) tuân thủ nghiêm ngặt máy t
 ### 13.1 Thuật toán Băm Mật khẩu & Chống Dò Tài khoản (Timing Attack)
 * **Thuật toán thật đang sử dụng**: BCrypt với hệ số phức tạp 12 (`BCryptPasswordEncoder(12)`).
 * **Lý do & Bảo đảm tiêu chuẩn**: BCrypt hệ số 12 tạo độ trễ tính toán ~80-100ms cho mỗi lần băm/so sánh trên CPU hiện đại, đáp ứng đầy đủ khuyến nghị của OWASP Authentication Cheat Sheet và NIST SP 800-63B.
-* **Chống Timing Attack (Timing Enumeration)**: Khi người dùng đăng nhập với email không tồn tại trong hệ thống, `LoginUseCase` vẫn kích hoạt việc so sánh mật khẩu với hằng số `DUMMY_BCRYPT_HASH`. Đảm bảo thời gian phản hồi giữa "email không tồn tại" và "mật khẩu không đúng" xấp xỉ nhau (~80-100ms).
+* **Chống Timing Attack (Timing Enumeration)**: Khi người dùng đăng nhập với email không tồn tại trong hệ thống, `LoginUseCase` vẫn kích hoạt việc so sánh mật khẩu với hằng số `DUMMY_BCRYPT_HASH` (`$2a$12$7kPj5aXN62q.7XJjN8wGxeQJv9XW1Nq2g5U1rQ0M5J4L3K2H1G0F.`). Việc này đảm bảo thời gian phản hồi giữa trường hợp "email không tồn tại" và "mật khẩu không đúng" là hoàn toàn xấp xỉ nhau (~80-100ms), ngăn chặn kẻ tấn công đo thời gian để dò email hợp lệ.
 
 ### 13.2 Chính sách Khóa Tài khoản Chống DoS (Lockout Policy)
 * **Quyết định**: Khóa theo cặp `(email, IP)` thay vì khóa toàn cầu theo `email`.
-* **Lý do**: Khóa toàn cầu theo email mở ra nguy cơ DoS khi kẻ tấn công cố ý nhập sai 5 lần để khóa người dùng thực. Cơ chế khóa theo cặp `(email, IP)` cô lập địa chỉ IP của kẻ tấn công trong 15 phút, người dùng thực ở IP khác vẫn đăng nhập bình thường.
+* **Lý do**: Nếu khóa toàn cục theo email, bất kỳ kẻ tấn công nào biết trước email nạn nhân đều có thể gửi 5 request sai mật khẩu để làm tê liệt tài khoản của nạn nhân (Denial-of-Service). Bằng cách đếm số lần sai theo `(email, ipAddress)`, kẻ tấn công chỉ bị khóa trên chính IP của họ trong 15 phút, trong khi người dùng thực từ địa chỉ IP hợp lệ vẫn có thể đăng nhập bình thường.
 
 ### 13.3 Đánh đổi Khi Đăng ký Email Trùng
-* **Quyết định**: Khi đăng ký bằng email đã tồn tại, trả về `400 Bad Request` kèm mã lỗi `ERR_AUTH_EMAIL_EXISTS`.
-* **Đánh đổi**: Tối ưu UX người dùng để chuyển nhanh sang Đăng nhập/Quên mật khẩu, kết hợp Redis Rate Limiter (10 req/phút/IP) để triệt tiêu hành vi dò quét danh sách email.
+* **Quyết định**: Khi đăng ký bằng email đã tồn tại, trả về `400 Bad Request` kèm mã lỗi `ERR_AUTH_EMAIL_EXISTS` ("Email đã tồn tại trên hệ thống").
+* **Đánh đổi**: Thay vì gửi email ẩn thông báo trùng (gây chậm trễ và khó khăn lớn cho người dùng thực muốn đăng ký nhanh), hệ thống chấp nhận thông báo lỗi trực tiếp để tối ưu trải nghiệm người dùng (UX). Rủi ro brute-force quét email được triệt tiêu thông qua cơ chế Redis Rate Limiting nghiêm ngặt (tối đa 10 lần đăng ký / 1 phút / IP, quá ngưỡng trả về HTTP 429).
+
+
+## 14. Quyết Định Di Chuyển Node.js Sang Microservices [SERVICE-01]
+
+### 14.1 Phân Chia Microservices & Phạm Vi Nghiệp Vụ (DDD Bounded Contexts)
+* Hệ thống phân tách thành 6 microservices độc lập nghiệp vụ và 1 API Gateway:
+  1. `api-gateway` (Port 8080): Điểm đón tiếp duy nhất, quản lý CORS, chặn tuyệt đối `/internal/**`.
+  2. `identity-service` (Port 8081): Xác thực, người dùng, phân quyền RBAC, hồ sơ KYC CCCD và Sinh trắc học khuôn mặt.
+  3. `listing-service` (Port 8082): Tin đăng phòng trọ, danh mục tiện ích, tìm kiếm, lưu phòng (Bookmarks), đánh giá.
+  4. `booking-service` (Port 8083): Lịch hẹn xem phòng, yêu cầu thuê, hợp đồng điện tử.
+  5. `billing-service` (Port 8084): Chỉ số điện nước, hóa đơn, thanh toán.
+  6. `communication-service` (Port 8085): Trò chuyện thời gian thực, thông báo in-app.
+  7. `admin-service` (Port 8086): Kiểm duyệt, báo cáo vi phạm, thống kê hệ thống.
+
+### 14.2 Cô Lập Cơ Sở Dữ Liệu Tuyệt Đối (Database Isolation & Zero Cross-Schema FK)
+* Mỗi microservice sở hữu CSDL schema riêng biệt trên MySQL 9.1 (`cozynest_identity`, `cozynest_listing`, `cozynest_booking`, `cozynest_billing`, `cozynest_communication`, `cozynest_admin`).
+* Cấm hoàn toàn Foreign Key liên schema (xác thực qua truy vấn `information_schema.KEY_COLUMN_USAGE` trả về 0 liên kết).
+* Giao tiếp liên dịch vụ thực hiện qua REST API nội bộ hoặc Outbox Pattern, không chia sẻ database connection.
+
+### 14.3 Bỏ Có Chủ Đích Địa Giới Cấp Quận/Huyện
+* Áp dụng quy chuẩn địa giới hành chính 2 cấp (Tỉnh/Thành -> Phường/Xã).
+* Loại bỏ route `GET /api/v1/location/districts` và bảng `districts` trong nghiệp vụ. Phường/Xã liên kết trực tiếp với mã Tỉnh/Thành qua trường `province_code`.
+
+---
+
+## 15. Quyết Định Kiến Trúc & Bảo Mật Đăng Nhập/Đăng Ký Bằng Google [AUTH-02]
+
+### 15.1 Xác Thực Qua Google Identity Services (GIS) Không Cần Client Secret
+* **Mô hình**: Sử dụng ID Token do Google Identity Services SDK phát hành trực tiếp trên trình duyệt, gửi về Backend (`POST /api/v1/auth/google`) để xác thực chữ ký số bằng thuật toán RS256 thông qua Google Public JWKS (`https://www.googleapis.com/oauth2/v3/certs`) với thư viện chuẩn `NimbusJwtDecoder` trong Spring Security OAuth2.
+* **Bảo mật Secret**: Tuyệt đối không cấu hình `GOOGLE_CLIENT_SECRET` trên Backend lẫn Frontend. GIS ID token flow là luồng công khai chuẩn được Google khuyến nghị cho Web App, loại bỏ hoàn toàn nguy cơ rò rỉ Client Secret.
+* **Chống Replay Attack bằng Nonce một lần**: Mỗi phiên đăng nhập bắt buộc phải lấy một giá trị ngẫu nhiên cryptographically secure qua `GET /api/v1/auth/google/nonce`. Nonce được lưu trong Redis với TTL 5 phút và cơ chế tiêu thụ 1 lần duy nhất (single-use consumption). Nếu nonce đã dùng hoặc không khớp giá trị trong ID token, backend từ chối với `400 Bad Request`.
+
+### 15.2 Chính Sách Khóa Mật Khẩu Đối Với Google OAuth
+* **Quy tắc**: Việc tài khoản bị khóa tạm thời 15 phút do nhập sai mật khẩu cục bộ 5 lần liên tiếp (chống brute-force) KHÔNG làm khóa việc đăng nhập bằng Google.
+* **Lý do**: Đăng nhập bằng Google là xác thực qua nhà cung cấp danh tính bên thứ ba (Google Identity Provider) đã được xác minh bảo mật nhiều lớp (2FA/OTP của Google). Việc kẻ xấu cố tình gõ sai mật khẩu cục bộ không được phép làm tê liệt quyền truy cập qua kênh xác thực an toàn của người dùng thực.
+* **Ngoại lệ duy nhất**: Nếu tài khoản bị Admin gắn cờ đình chỉ vi phạm chính sách (`status = SUSPENDED`) hoặc xóa mềm (`DELETED`), hệ thống sẽ chặn tất cả mọi hình thức đăng nhập kể cả Google OAuth với mã lỗi `403 Forbidden`.
+
+### 15.3 Khả Năng Thiết Lập Mật Khẩu Cục Bộ Cho Tài Khoản Tạo Mới Bằng Google
+* **Quy tắc**: Người dùng đăng ký ban đầu hoàn toàn qua Google (`password_hash = NULL`, `phone = NULL`) được phép sử dụng luồng Quên mật khẩu (`/forgot-password` -> OTP qua email) để thiết lập mật khẩu đăng nhập cục bộ bất cứ lúc nào.
+* **Lý do**: Tối ưu tính linh hoạt và quyền tự chủ của người dùng khi muốn đăng nhập bằng phương thức email + mật khẩu truyền thống mà không bị phụ thuộc duy nhất vào tài khoản Google.
+
+### 15.4 Kiểm Tra Lệch Client ID Trong Dev Mode Không Lộ Secret
+* **Quy tắc**: Endpoint `GET /api/v1/auth/google/status` trả về cờ `enabled: boolean` và `clientIdFingerprint: string` (8 ký tự đầu của chuỗi SHA-256 hash của Client ID).
+* **Lý do**: Cho phép Frontend phát hiện ngay lập tức tình trạng cấu hình lệch giữa `.env.local` của Frontend và cấu hình backend trên môi trường dev/staging mà tuyệt đối không để lộ toàn bộ Client ID qua API public.
+
+

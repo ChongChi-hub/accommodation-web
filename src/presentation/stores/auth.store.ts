@@ -12,6 +12,7 @@ interface AuthState {
 
   initSession: () => Promise<void>;
   login: (email: string, password: string) => Promise<boolean>;
+  loginWithGoogle: (credential: string, nonce: string, intendedRole?: string) => Promise<{ success: boolean; role?: string }>;
   register: (data: { email: string; phone: string; password: string; fullName: string; role: string }) => Promise<boolean>;
   forgotPassword: (email: string) => Promise<boolean>;
   resetPassword: (email: string, otp: string, newPassword: string) => Promise<boolean>;
@@ -75,6 +76,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         error: err instanceof Error ? err.message : 'Đăng nhập thất bại',
       });
       return false;
+    }
+  },
+
+  loginWithGoogle: async (credential, nonce, intendedRole) => {
+    set({ isLoading: true, error: null });
+    try {
+      const session = await container.auth.googleAuthUseCase.execute(credential, nonce, intendedRole);
+      ApiClient.setToken(session.tokens.token);
+      set({
+        user: session.user,
+        accessToken: session.tokens.token,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+      const primaryRole = session.user?.roles?.[0] || intendedRole || 'TENANT';
+      return { success: true, role: primaryRole };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Đăng nhập Google thất bại';
+      set({
+        isLoading: false,
+        error: msg,
+      });
+      throw err;
     }
   },
 

@@ -97,3 +97,4 @@ WHERE DATA_TYPE IN ('varchar', 'text', 'mediumtext', 'longtext')
 3. **Khối Danh sách phòng gợi ý & Phòng mới**:
    - *Hạn chế*: Khi số lượng phòng trống lớn, danh sách chưa hỗ trợ lazy loading cho ảnh thumbnail thứ 2 trở đi.
    - *Đã tinh chỉnh*: Đặt thuộc tính `priority` cho ảnh bìa đầu tiên và `loading="lazy"` cho các ảnh chi tiết phụ nhằm tối ưu điểm Core Web Vitals (LCP/CLS).
+

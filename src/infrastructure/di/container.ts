@@ -18,6 +18,7 @@ import { StaticNotificationRepository } from '../static/StaticNotificationReposi
 import { StaticBadgeRepository } from '../static/StaticBadgeRepository';
 import { LoginUseCase } from '@/application/use-cases/auth/login.use-case';
 import { RegisterUseCase } from '@/application/use-cases/auth/register.use-case';
+import { GoogleAuthUseCase } from '@/application/use-cases/auth/google-auth.use-case';
 import { GetProfileUseCase } from '@/application/use-cases/auth/get-profile.use-case';
 import { GetRoomsUseCase } from '@/application/use-cases/listing/get-rooms.use-case';
 import { GetRoomDetailUseCase } from '@/application/use-cases/listing/get-room-detail.use-case';
@@ -50,6 +51,7 @@ export const container = {
   auth: {
     loginUseCase: new LoginUseCase(authRepository),
     registerUseCase: new RegisterUseCase(authRepository),
+    googleAuthUseCase: new GoogleAuthUseCase(authRepository),
     getProfileUseCase: new GetProfileUseCase(authRepository),
     authRepository,
   },

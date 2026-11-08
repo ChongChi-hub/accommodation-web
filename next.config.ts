@@ -23,6 +23,31 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://*.google.com https://apis.google.com",
+              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
+              "frame-src 'self' https://accounts.google.com https://*.google.com",
+              "connect-src 'self' http://localhost:8080 http://localhost:3000 ws://localhost:3000 https://accounts.google.com https://*.googleapis.com",
+              "img-src 'self' data: blob: https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co",
+              "font-src 'self' data:",
+            ].join('; '),
+          },
+        ],
+      },
+    ];
+  },
   async rewrites() {
     const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
     const apiGatewayBase = rawApiUrl.replace(/\/api\/v1\/?$/, '');
