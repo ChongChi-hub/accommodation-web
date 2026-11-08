@@ -809,5 +809,17 @@
     "noRequests": "No verification requests found",
     "zoomImage": "Zoom Image",
     "close": "Close"
+  },
+  "roomTypes": {
+    "MINI_APARTMENT": "Mini Apartment",
+    "STUDIO": "Studio Apartment",
+    "HOMESTAY": "Premium Homestay",
+    "APARTMENT": "Serviced Apartment",
+    "SINGLE": "Self-contained Room",
+    "FULL_HOUSE": "Whole House",
+    "SHARED": "Shared Room",
+    "DORMITORY": "Dormitory",
+    "ROOM": "Rental Room",
+    "UNKNOWN": "Rental Room"
   }
 }

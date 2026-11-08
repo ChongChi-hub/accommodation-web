@@ -29,7 +29,7 @@ export function RoomMap({ latitude, longitude, address }: RoomMapProps) {
     : null;
 
   return (
-    <div className="space-y-4 rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-5">
+    <div id="location" className="space-y-4 rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="space-y-1">
           <h2 className="text-base font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">

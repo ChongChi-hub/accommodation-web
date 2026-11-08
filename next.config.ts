@@ -38,7 +38,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://*.google.com https://apis.google.com",
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
-              "frame-src 'self' https://accounts.google.com https://*.google.com",
+              "frame-src 'self' https://accounts.google.com https://*.google.com https://*.openstreetmap.org https://www.openstreetmap.org",
               "connect-src 'self' http://localhost:8080 http://localhost:3000 ws://localhost:3000 https://accounts.google.com https://*.googleapis.com",
               "img-src 'self' data: blob: https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co",
               "font-src 'self' data:",

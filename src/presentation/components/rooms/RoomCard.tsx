@@ -9,15 +9,21 @@ import { Badge } from '@/presentation/components/ui/Badge';
 import { BookmarkButton } from './BookmarkButton';
 import { cn } from '@/lib/cn';
 
+import { formatRoomType } from '@/presentation/utils/room-type';
+import { useTranslations } from 'next-intl';
+
 export interface RoomCardProps {
   room: RoomDto;
   className?: string;
 }
 
 export function RoomCard({ room, className }: RoomCardProps) {
+  const t = useTranslations();
   const formatPrice = (val: number) => {
     return new Intl.NumberFormat('vi-VN').format(val);
   };
+
+  const roomLink = room.slug ? `/rooms/${room.slug}` : `/rooms/${room.id}`;
 
   return (
     <Card
@@ -29,7 +35,7 @@ export function RoomCard({ room, className }: RoomCardProps) {
     >
       <div className="relative aspect-4/3 w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
         <Link
-          href={`/rooms/${room.id}`}
+          href={roomLink}
           className="absolute inset-0 z-0"
           aria-label={room.title}
         />
@@ -40,18 +46,12 @@ export function RoomCard({ room, className }: RoomCardProps) {
         />
         <div className="absolute top-3 left-3 flex gap-1.5 pointer-events-none z-10">
           <Badge variant="primary" size="sm" className="bg-white/95 dark:bg-stone-900/90 backdrop-blur-xs font-semibold">
-            {room.roomTypeCode === 'MINI_APARTMENT'
-              ? 'Chung cư mini'
-              : room.roomTypeCode === 'STUDIO'
-              ? 'Studio'
-              : room.roomTypeCode === 'APARTMENT'
-              ? 'Căn hộ'
-              : 'Phòng trọ'}
+            {formatRoomType(room.roomTypeCode, t)}
           </Badge>
           {room.approved && (
             <Badge variant="success" size="sm" className="bg-emerald-500 text-white border-transparent">
               <ShieldCheck className="w-3 h-3" />
-              <span>Đã xác thực</span>
+              <span>Đã xác minh</span>
             </Badge>
           )}
         </div>
@@ -70,7 +70,7 @@ export function RoomCard({ room, className }: RoomCardProps) {
 
       <div className="relative p-4 flex-1 flex flex-col justify-between space-y-3">
         <Link
-          href={`/rooms/${room.id}`}
+          href={roomLink}
           className="absolute inset-0 z-0"
           aria-hidden="true"
           tabIndex={-1}

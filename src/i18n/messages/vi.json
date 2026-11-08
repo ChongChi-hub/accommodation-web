@@ -809,5 +809,17 @@
     "noRequests": "Không có yêu cầu xác minh nào phù hợp",
     "zoomImage": "Phóng to ảnh",
     "close": "Đóng"
+  },
+  "roomTypes": {
+    "MINI_APARTMENT": "Chung cư mini",
+    "STUDIO": "Căn hộ Studio",
+    "HOMESTAY": "Homestay cao cấp",
+    "APARTMENT": "Căn hộ dịch vụ",
+    "SINGLE": "Phòng trọ khép kín",
+    "FULL_HOUSE": "Nhà nguyên căn",
+    "SHARED": "Ở ghép",
+    "DORMITORY": "Ký túc xá",
+    "ROOM": "Phòng trọ",
+    "UNKNOWN": "Phòng trọ"
   }
 }

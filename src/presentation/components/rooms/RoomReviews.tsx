@@ -32,14 +32,14 @@ export function RoomReviews({
   ];
 
   return (
-    <div className="space-y-6">
+    <div id="reviews" className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200 dark:border-stone-800">
         <div>
           <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
             Đánh giá từ người thuê ({reviewCount})
           </h2>
           <p className="text-xs text-stone-500">
-            100% đánh giá từ khách thuê thực tế đã ký hợp đồng điện tử qua Tổ Ấm.
+            Đánh giá từ khách thuê thực tế đã trải nghiệm và ký hợp đồng qua Tổ Ấm.
           </p>
         </div>
 

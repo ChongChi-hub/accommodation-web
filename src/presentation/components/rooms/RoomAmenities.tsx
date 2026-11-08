@@ -78,7 +78,7 @@ export function RoomAmenities({ amenities }: RoomAmenitiesProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div id="amenities" className="space-y-6">
       <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">
         Tiện nghi & Dịch vụ có sẵn ({amenities.length})
       </h2>

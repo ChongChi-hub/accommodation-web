@@ -41,7 +41,7 @@ export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
   };
 
   return (
-    <div className="space-y-6 rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-5">
+    <div id="pricing" className="space-y-6 rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-5">
       <div className="space-y-1">
         <h2 className="text-base font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
           <Calculator className="w-4 h-4 text-teal-700 dark:text-teal-400" />

@@ -24,21 +24,17 @@ export function RoomShareButton() {
       variant="outline"
       size="sm"
       onClick={handleShare}
-      className="gap-1.5 text-xs text-stone-600 dark:text-stone-300"
+      className="text-xs text-stone-700 dark:text-stone-300 whitespace-nowrap shrink-0"
       aria-label="Chia sẻ liên kết phòng trọ"
-    >
-      {copied ? (
-        <>
+      leftIcon={
+        copied ? (
           <Check className="w-3.5 h-3.5 text-emerald-600" />
-          <span className="text-emerald-600 font-semibold">Đã sao chép!</span>
-        </>
-      ) : (
-        <>
+        ) : (
           <Share2 className="w-3.5 h-3.5" />
-          <span>Chia sẻ</span>
-        </>
-      )}
+        )
+      }
+    >
+      {copied ? <span className="text-emerald-600 font-semibold">Đã sao chép!</span> : 'Chia sẻ'}
     </Button>
   );
 }
-
