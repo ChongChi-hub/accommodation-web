@@ -12,7 +12,8 @@
     "verify:i18n": "node scripts/verify-i18n.mjs",
     "check:seed-text": "node scripts/check-seed-text.mjs",
     "test": "vitest run && node scripts/verify-i18n.mjs && node scripts/verify-links.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "e2e:auth": "node docs/audit/test_auth_e2e.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "7.0.3",

@@ -149,7 +149,7 @@ function LoginForm() {
             </div>
           </div>
 
-          <GoogleLoginButton label={t('googleLogin')} returnUrl={returnUrl} />
+          <GoogleLoginButton label={t('googleLogin')} returnUrl={returnUrl || undefined} />
         </form>
 
         {/* Quick Demo Login Picker */}

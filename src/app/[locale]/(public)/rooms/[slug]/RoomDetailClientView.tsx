@@ -213,7 +213,7 @@ export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
         <RoomBookingModal
           isOpen={true}
           onClose={() => setModalType(null)}
-          room={room}
+          roomTitle={room.title}
           type={modalType}
         />
       )}

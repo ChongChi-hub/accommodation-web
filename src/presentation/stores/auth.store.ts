@@ -12,7 +12,7 @@ interface AuthState {
 
   initSession: () => Promise<void>;
   login: (email: string, password: string) => Promise<boolean>;
-  loginWithGoogle: (credential: string, nonce: string, intendedRole?: string) => Promise<{ success: boolean; role?: string }>;
+  loginWithGoogle: (credential: string, nonce: string, intendedRole?: string) => Promise<{ success: boolean; role?: string; user?: User }>;
   register: (data: { email: string; phone: string; password: string; fullName: string; role: string }) => Promise<boolean>;
   forgotPassword: (email: string) => Promise<boolean>;
   resetPassword: (email: string, otp: string, newPassword: string) => Promise<boolean>;
