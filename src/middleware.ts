@@ -66,6 +66,19 @@ export default async function middleware(req: NextRequest) {
   const localeMatch = pathname.match(/^\/(vi|en)/);
   const localePrefix = localeMatch ? `/${localeMatch[1]}` : '';
 
+  // Alias non-prefixed role routes e.g. /landlord/rooms -> /dashboard/landlord/rooms
+  if (
+    cleanPath.startsWith('/landlord') ||
+    cleanPath.startsWith('/tenant') ||
+    cleanPath.startsWith('/admin') ||
+    cleanPath.startsWith('/moderator')
+  ) {
+    const targetDashboard = `/dashboard${cleanPath}`;
+    const redirectUrl = new URL(`${localePrefix}${targetDashboard}`, req.url);
+    req.nextUrl.searchParams.forEach((v, k) => redirectUrl.searchParams.set(k, v));
+    return NextResponse.redirect(redirectUrl);
+  }
+
   // 1. Protected Dashboard Routes
   if (cleanPath.startsWith('/dashboard')) {
     // If not authenticated or token invalid/expired, redirect to login
