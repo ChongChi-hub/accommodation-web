@@ -54,7 +54,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title.trim() || !formData.address.trim() || !formData.area || !formData.price) {
+    if (!room || !formData.title.trim() || !formData.address.trim() || !formData.area || !formData.price) {
       return;
     }
 
@@ -67,6 +67,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
       deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
       allowPets: formData.allowPets,
       allowCooking: formData.allowCooking,
+      version: room.version,
     });
 
     if (ok) {

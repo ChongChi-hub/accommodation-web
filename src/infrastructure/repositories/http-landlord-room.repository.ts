@@ -24,7 +24,10 @@ export class HttpLandlordRoomRepository implements ILandlordRoomRepository {
 
     const qs = query.toString();
     const endpoint = `/landlord/rooms${qs ? `?${qs}` : ''}`;
-    const envelope = await ApiClient.getEnvelope<LandlordRoomItem[]>(endpoint);
+    const envelope = await ApiClient.getEnvelope<LandlordRoomItem[]>(
+      endpoint,
+      params.signal ? { signal: params.signal } : undefined
+    );
 
     const paginationRaw = envelope.pagination || {
       page: params.page || 0,

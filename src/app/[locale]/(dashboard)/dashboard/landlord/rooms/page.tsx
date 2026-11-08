@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { useLandlordRooms } from '@/presentation/hooks/useLandlordRooms';
@@ -43,6 +43,15 @@ export default function LandlordRoomsPage() {
   const [selectedDeleteRoom, setSelectedDeleteRoom] = useState<LandlordRoomItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [togglingId, setTogglingId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== search) {
+        setSearch(searchInput);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput, search, setSearch]);
 
   const tabs = [
     { id: 'ALL', label: t('tabs.all'), badge: summary.total },

@@ -45,7 +45,11 @@ export function useLandlordRoomDetail(roomId: number | string) {
       await fetchDetail();
       return true;
     } catch (err: any) {
-      toast.error(err?.message || 'Không thể lưu thay đổi');
+      if (err?.status === 409 || err?.message?.includes('409') || err?.errorCode === 'ERR_OPTIMISTIC_LOCK_CONFLICT') {
+        toast.error('Dữ liệu phòng đã bị thay đổi bởi phiên làm việc khác. Vui lòng tải lại trang.');
+      } else {
+        toast.error(err?.message || 'Không thể lưu thay đổi');
+      }
       return false;
     } finally {
       setIsSaving(false);
