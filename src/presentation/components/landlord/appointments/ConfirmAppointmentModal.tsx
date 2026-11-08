@@ -34,13 +34,24 @@ export function ConfirmAppointmentModal({
 
   if (!isOpen || !appointment) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (conflictWarning && !force) return;
     setIsSubmitting(true);
     try {
       await onConfirm(force, landlordNote || undefined);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      onClose();
+    } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit();
     }
   };
 
@@ -59,7 +70,7 @@ export function ConfirmAppointmentModal({
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title={t('title')} size="md">
-      <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+      <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-4 pt-2" aria-labelledby="confirm-appointment-title">
         <p className="text-xs text-stone-600 dark:text-stone-300">
           {t('message', {
             name: appointment.contactName,
