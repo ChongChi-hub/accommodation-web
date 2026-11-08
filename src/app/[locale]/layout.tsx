@@ -42,7 +42,7 @@ export default async function RootLayout({
       <head>
         <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
       </head>
-      <body className="min-h-screen bg-background text-foreground antialiased transition-colors">
+      <body className="min-h-screen bg-background text-foreground antialiased transition-colors" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           {children}
           <ToastContainer />

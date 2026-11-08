@@ -12,19 +12,19 @@ test.describe('Landlord Visual Matrix Screenshots', () => {
     test(`Capture matrix at ${size.name}px`, async ({ context, page }) => {
       await context.addCookies([
         {
-          name: 'toam_role',
+          name: 'cozynest_role',
           value: 'LANDLORD',
           domain: 'localhost',
           path: '/',
         },
       ]);
       await page.addInitScript(() => {
-        localStorage.setItem('toam_access_token', 'mock_landlord_token');
+        localStorage.setItem('cozynest_access_token', 'mock_landlord_token');
         localStorage.setItem(
-          'toam_user',
+          'cozynest_user',
           JSON.stringify({
             id: 'u-landlord-01',
-            email: 'landlord@toam.vn',
+            email: 'landlord@cozynest.vn',
             fullName: 'Chủ Trọ Demo',
             phone: '0901234567',
             roles: ['LANDLORD'],

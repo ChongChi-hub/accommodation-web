@@ -22,13 +22,7 @@ interface Props {
 }
 
 export function ImageManager({
-  initialImages = [],
-  onChange,
-  onUploadAsync,
-  onSetCoverAsync,
-  onDeleteAsync,
-  onReorderAsync,
-  disabled = false,
+  initialImages = [], onChange, onUploadAsync, onSetCoverAsync, onDeleteAsync, onReorderAsync, disabled = false,
 }: Props) {
   const t = useTranslations('landlord.images');
   const [images, setImages] = useState<ManagedImage[]>(initialImages);
@@ -39,9 +33,7 @@ export function ImageManager({
 
   // Sync external changes
   useEffect(() => {
-    if (initialImages && initialImages.length > 0) {
-      setImages(initialImages);
-    }
+    if (initialImages && initialImages.length > 0) setImages(initialImages);
   }, [initialImages]);
 
   // Cleanup object URLs on unmount

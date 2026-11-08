@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useTransition } from 'react';
+import { useState, useEffect, useCallback, useTransition, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter, usePathname } from '@/i18n/routing';
 import { container } from '@/infrastructure/di/container';
@@ -51,6 +51,7 @@ export function useLandlordRooms() {
   const [status, setStatusState] = useState(initialStatus);
   const [sort, setSortState] = useState(initialSort);
   const [page, setPageState] = useState(initialPage);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const updateUrl = useCallback((newParams: Record<string, string | number | null>) => {
     const next = new URLSearchParams(searchParams.toString());
@@ -83,6 +84,12 @@ export function useLandlordRooms() {
       return;
     }
 
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setIsLoading(true);
     setError(null);
     try {
@@ -92,13 +99,21 @@ export function useLandlordRooms() {
         sort,
         page,
         size: 10,
+        signal: controller.signal,
       });
-      setRooms(res.data);
-      setPagination(res.pagination);
-    } catch (err) {
+      if (!controller.signal.aborted) {
+        setRooms(res.data);
+        setPagination(res.pagination);
+      }
+    } catch (err: any) {
+      if (err?.name === 'AbortError' || controller.signal.aborted) {
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Lỗi tải danh sách phòng');
     } finally {
-      setIsLoading(false);
+      if (!controller.signal.aborted) {
+        setIsLoading(false);
+      }
     }
   }, [stateParam, search, status, sort, page]);
 

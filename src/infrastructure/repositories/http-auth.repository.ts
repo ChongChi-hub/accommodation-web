@@ -1,5 +1,6 @@
 import { AuthRepository, AuthSession } from '@/domain/repositories/AuthRepository';
 import { User } from '@/domain/entities/User';
+import { UserProfile, UpdateUserProfileDto } from '@/domain/entities/UserProfile';
 import { ApiClient } from '../http/api-client';
 
 function setAuthCookies(token?: string, role?: string) {
@@ -7,14 +8,14 @@ function setAuthCookies(token?: string, role?: string) {
     const isProduction = process.env.NODE_ENV === 'production';
     const secureFlag = isProduction ? '; Secure' : '';
     if (token) {
-      document.cookie = `toam_token=${encodeURIComponent(token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
+      document.cookie = `cozynest_token=${encodeURIComponent(token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
     } else {
-      document.cookie = `toam_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
+      document.cookie = `cozynest_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
     }
     if (role) {
-      document.cookie = `toam_role=${encodeURIComponent(role)}; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
+      document.cookie = `cozynest_role=${encodeURIComponent(role)}; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
     } else {
-      document.cookie = `toam_role=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
+      document.cookie = `cozynest_role=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
     }
   }
 }
@@ -27,8 +28,8 @@ export class HttpAuthRepository implements AuthRepository {
     setAuthCookies(data.token, primaryRole);
 
     if (typeof window !== 'undefined') {
-      localStorage.setItem('toam_refresh_token', data.refreshToken);
-      localStorage.setItem('toam_user', JSON.stringify(data.user));
+      localStorage.setItem('cozynest_refresh_token', data.refreshToken);
+      localStorage.setItem('cozynest_user', JSON.stringify(data.user));
     }
     return {
       tokens: { token: data.token, refreshToken: data.refreshToken },
@@ -39,12 +40,36 @@ export class HttpAuthRepository implements AuthRepository {
   async register(data: { email: string; phone: string; password: string; fullName: string; role: string }): Promise<AuthSession> {
     const res = await ApiClient.post<any>('/auth/register', data);
     ApiClient.setToken(res.token);
-    const primaryRole = res.user?.roles?.[0] || data.role || 'TENANT';
+    const primaryRole = res.user?.roles?.[0] || 'TENANT';
     setAuthCookies(res.token, primaryRole);
 
     if (typeof window !== 'undefined') {
-      localStorage.setItem('toam_refresh_token', res.refreshToken);
-      localStorage.setItem('toam_user', JSON.stringify(res.user));
+      localStorage.setItem('cozynest_refresh_token', res.refreshToken);
+      localStorage.setItem('cozynest_user', JSON.stringify(res.user));
+    }
+    return {
+      tokens: { token: res.token, refreshToken: res.refreshToken },
+      user: res.user,
+    };
+  }
+
+  async getGoogleStatus(): Promise<{ enabled: boolean; clientIdFingerprint: string }> {
+    return ApiClient.get<{ enabled: boolean; clientIdFingerprint: string }>('/auth/google/status');
+  }
+
+  async getGoogleNonce(): Promise<{ nonce: string }> {
+    return ApiClient.get<{ nonce: string }>('/auth/google/nonce');
+  }
+
+  async loginWithGoogle(data: { credential: string; nonce: string; intendedRole?: string }): Promise<AuthSession> {
+    const res = await ApiClient.post<any>('/auth/google', data);
+    ApiClient.setToken(res.token);
+    const primaryRole = res.user?.roles?.[0] || 'TENANT';
+    setAuthCookies(res.token, primaryRole);
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cozynest_refresh_token', res.refreshToken);
+      localStorage.setItem('cozynest_user', JSON.stringify(res.user));
     }
     return {
       tokens: { token: res.token, refreshToken: res.refreshToken },
@@ -59,8 +84,8 @@ export class HttpAuthRepository implements AuthRepository {
     setAuthCookies(data.token, primaryRole);
 
     if (typeof window !== 'undefined') {
-      localStorage.setItem('toam_refresh_token', data.refreshToken);
-      localStorage.setItem('toam_user', JSON.stringify(data.user));
+      localStorage.setItem('cozynest_refresh_token', data.refreshToken);
+      localStorage.setItem('cozynest_user', JSON.stringify(data.user));
     }
     return {
       tokens: { token: data.token, refreshToken: data.refreshToken },
@@ -73,7 +98,7 @@ export class HttpAuthRepository implements AuthRepository {
       return await ApiClient.get<User>('/auth/profile');
     } catch {
       if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('toam_user');
+        const stored = localStorage.getItem('cozynest_user');
         if (stored) return JSON.parse(stored);
       }
       throw new Error('Không thể tải thông tin hồ sơ');
@@ -84,23 +109,76 @@ export class HttpAuthRepository implements AuthRepository {
     try {
       const res = await ApiClient.put<User>('/auth/profile', data);
       if (typeof window !== 'undefined') {
-        localStorage.setItem('toam_user', JSON.stringify(res));
+        localStorage.setItem('cozynest_user', JSON.stringify(res));
       }
       return res;
     } catch {
       if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('toam_user');
+        const stored = localStorage.getItem('cozynest_user');
         const currentUser = stored ? JSON.parse(stored) : {};
         const updated = { ...currentUser, ...data, updatedAt: new Date().toISOString() };
-        localStorage.setItem('toam_user', JSON.stringify(updated));
+        localStorage.setItem('cozynest_user', JSON.stringify(updated));
         return updated;
       }
       throw new Error('Lỗi cập nhật hồ sơ');
     }
   }
 
-  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
-    await ApiClient.post('/auth/change-password', { oldPassword, newPassword });
+  async getUserProfile(): Promise<UserProfile> {
+    return await ApiClient.get<UserProfile>('/users/me');
+  }
+
+  async updateUserProfile(data: UpdateUserProfileDto): Promise<UserProfile> {
+    const res = await ApiClient.put<UserProfile>('/users/me', data);
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('cozynest_user');
+      const currentUser = stored ? JSON.parse(stored) : {};
+      const updated = {
+        ...currentUser,
+        fullName: res.fullName,
+        phone: res.phone,
+        avatarUrl: res.avatarUrl,
+        gender: res.gender,
+        dateOfBirth: res.dateOfBirth,
+      };
+      localStorage.setItem('cozynest_user', JSON.stringify(updated));
+    }
+    return res;
+  }
+
+  async uploadAvatar(file: File): Promise<{ avatarUrl: string }> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    const res = await ApiClient.post<{ avatarUrl: string }>('/users/me/avatar', formData);
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('cozynest_user');
+      if (stored) {
+        const u = JSON.parse(stored);
+        u.avatarUrl = res.avatarUrl;
+        localStorage.setItem('cozynest_user', JSON.stringify(u));
+      }
+    }
+    return res;
+  }
+
+  async deleteAvatar(): Promise<void> {
+    await ApiClient.delete('/users/me/avatar');
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('cozynest_user');
+      if (stored) {
+        const u = JSON.parse(stored);
+        u.avatarUrl = null;
+        localStorage.setItem('cozynest_user', JSON.stringify(u));
+      }
+    }
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await ApiClient.post('/auth/change-password', {
+      currentPassword,
+      oldPassword: currentPassword,
+      newPassword,
+    });
   }
 
   async forgotPassword(email: string): Promise<void> {
@@ -120,8 +198,8 @@ export class HttpAuthRepository implements AuthRepository {
       ApiClient.setToken(null);
       setAuthCookies();
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('toam_refresh_token');
-        localStorage.removeItem('toam_user');
+        localStorage.removeItem('cozynest_refresh_token');
+        localStorage.removeItem('cozynest_user');
       }
     }
   }

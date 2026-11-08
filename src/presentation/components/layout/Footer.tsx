@@ -14,7 +14,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link href="/" className="inline-block">
-              <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} />
+              <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} style={{ width: 'auto', height: 'auto' }} />
             </Link>
             <p className="text-xs leading-relaxed text-stone-500 dark:text-stone-400">
               Nền tảng công nghệ kết nối người thuê và chủ nhà trọ minh bạch, an toàn, chuẩn xác hàng đầu Việt Nam.
@@ -88,7 +88,7 @@ export function Footer() {
               <li className="flex items-center gap-2">
                 <Mail size={14} className="text-teal-700 dark:text-teal-400 shrink-0" />
                 <Link href="/contact" className="hover:text-teal-700 dark:hover:text-teal-400">
-                  lienhe@toam.vn
+                  lienhe@cozynest.vn
                 </Link>
               </li>
               <li className="flex items-center gap-2">

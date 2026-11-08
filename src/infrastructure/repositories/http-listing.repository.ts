@@ -1,12 +1,16 @@
 import { IListingRepository } from '@/application/repositories/listing.repository.interface';
 import {
   RoomDto,
+  RoomDetailDto,
   RoomFilterParams,
   ProvinceDto,
   DistrictDto,
   WardDto,
   AmenityDto,
   ReviewDto,
+  HotAreaDto,
+  BannerDto,
+  PlatformStatsDto,
 } from '@/application/dto/listing.dto';
 import { ApiClient } from '../http/api-client';
 
@@ -35,8 +39,16 @@ export class HttpListingRepository implements IListingRepository {
     return ApiClient.get<RoomDto>(`/rooms/${id}`);
   }
 
+  async getRoomDetail(slugOrId: string): Promise<RoomDetailDto> {
+    return ApiClient.get<RoomDetailDto>(`/rooms/${slugOrId}`);
+  }
+
   async getRecommendations(id: number): Promise<RoomDto[]> {
     return ApiClient.get<RoomDto[]>(`/rooms/${id}/recommendations`);
+  }
+
+  async getSimilarRooms(id: number): Promise<RoomDto[]> {
+    return ApiClient.get<RoomDto[]>(`/rooms/${id}/similar`);
   }
 
   async getProvinces(): Promise<ProvinceDto[]> {
@@ -59,5 +71,16 @@ export class HttpListingRepository implements IListingRepository {
   async getReviews(roomId: number): Promise<ReviewDto[]> {
     return ApiClient.get<ReviewDto[]>(`/reviews?roomId=${roomId}`);
   }
-}
 
+  async getHotAreas(): Promise<HotAreaDto[]> {
+    return ApiClient.get<HotAreaDto[]>('/locations/hot-areas');
+  }
+
+  async getBanners(): Promise<BannerDto[]> {
+    return ApiClient.get<BannerDto[]>('/cms/banners');
+  }
+
+  async getPlatformStats(): Promise<PlatformStatsDto> {
+    return ApiClient.get<PlatformStatsDto>('/rooms/stats');
+  }
+}

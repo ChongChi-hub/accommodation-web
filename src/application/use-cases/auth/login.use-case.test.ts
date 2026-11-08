@@ -14,6 +14,13 @@ describe('LoginUseCase', () => {
       forgotPassword: vi.fn(),
       resetPassword: vi.fn(),
       logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
     };
     const useCase = new LoginUseCase(mockRepo);
 
@@ -26,7 +33,7 @@ describe('LoginUseCase', () => {
     const mockRepo: AuthRepository = {
       login: vi.fn().mockResolvedValue({
         tokens: { token: 'mock-jwt', refreshToken: 'mock-refresh' },
-        user: { id: 'u1', email: 'tenant@toam.vn', fullName: 'Demo Tenant' } as any,
+        user: { id: 'u1', email: 'tenant@cozynest.vn', fullName: 'Demo Tenant' } as any,
       }),
       register: vi.fn(),
       refreshToken: vi.fn(),
@@ -36,12 +43,19 @@ describe('LoginUseCase', () => {
       forgotPassword: vi.fn(),
       resetPassword: vi.fn(),
       logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
     };
     const useCase = new LoginUseCase(mockRepo);
 
-    const result = await useCase.execute({ email: 'tenant@toam.vn', password: 'password123' });
+    const result = await useCase.execute({ email: 'tenant@cozynest.vn', password: 'password123' });
     expect(result.tokens.token).toBe('mock-jwt');
-    expect(mockRepo.login).toHaveBeenCalledWith('tenant@toam.vn', 'password123');
+    expect(mockRepo.login).toHaveBeenCalledWith('tenant@cozynest.vn', 'password123');
   });
 });
 

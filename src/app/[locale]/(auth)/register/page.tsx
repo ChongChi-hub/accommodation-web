@@ -31,9 +31,9 @@ export default function RegisterPage() {
     });
     if (success) {
       if (role === 'LANDLORD') {
-        router.push('/landlord');
+        router.push('/dashboard/landlord/kyc');
       } else {
-        router.push('/tenant');
+        router.push('/dashboard/tenant');
       }
     }
   };
@@ -43,7 +43,7 @@ export default function RegisterPage() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl border border-stone-200 shadow-sm">
         <div className="text-center">
           <Link href="/" className="inline-block">
-            <Image src="/logo.svg" alt="Tổ Ấm" width={140} height={34} />
+            <Image src="/logo.svg" alt="Tổ Ấm" width={140} height={34} style={{ width: 'auto', height: 'auto' }} priority />
           </Link>
           <h2 className="mt-6 text-2xl font-bold tracking-tight text-stone-900">{t('registerTitle')}</h2>
           <p className="mt-2 text-sm text-stone-500">{t('registerSubtitle')}</p>
@@ -165,7 +165,11 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <GoogleLoginButton label="Đăng ký nhanh với Google" />
+          <GoogleLoginButton
+            label="Đăng ký nhanh với Google"
+            isRegister={true}
+            intendedRole={role}
+          />
         </form>
 
         <div className="text-center text-xs text-stone-500">

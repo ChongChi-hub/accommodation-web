@@ -16,20 +16,39 @@ export default function TenantAppointmentsPage() {
   const [appointments, setAppointments] = useState<ViewingAppointmentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchAppointments = useCallback(async () => {
-    setIsLoading(true);
+  const fetchAppointments = useCallback(async (isBackground = false) => {
+    if (!isBackground) setIsLoading(true);
     try {
       const res = await container.appointment.appointmentRepository.getTenantAppointments(0, 50);
       setAppointments(res.data);
     } catch {
-      toast.error('Không thể tải danh sách lịch hẹn của bạn');
+      if (!isBackground) toast.error('Không thể tải danh sách lịch hẹn của bạn');
     } finally {
-      setIsLoading(false);
+      if (!isBackground) setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchAppointments();
+    fetchAppointments(false);
+
+    const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        fetchAppointments(true);
+      }
+    }, 5000);
+
+    const handleVisibility = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        fetchAppointments(true);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, [fetchAppointments]);
 
   const formatDateTime = (iso: string) => {

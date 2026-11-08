@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { useLandlordRooms } from '@/presentation/hooks/useLandlordRooms';
@@ -16,6 +16,7 @@ import { Tabs } from '@/presentation/components/ui/Tabs';
 import { Pagination } from '@/presentation/components/ui/Pagination';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { ErrorState } from '@/presentation/components/ui/ErrorState';
+import { KycGateBanner } from '@/presentation/components/kyc/KycGateBanner';
 import { PlusCircle, Search, Building, RefreshCw, X } from 'lucide-react';
 
 export default function LandlordRoomsPage() {
@@ -42,6 +43,15 @@ export default function LandlordRoomsPage() {
   const [selectedDeleteRoom, setSelectedDeleteRoom] = useState<LandlordRoomItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [togglingId, setTogglingId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== search) {
+        setSearch(searchInput);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput, search, setSearch]);
 
   const tabs = [
     { id: 'ALL', label: t('tabs.all'), badge: summary.total },
@@ -100,6 +110,8 @@ export default function LandlordRoomsPage() {
           </Button>
         </Link>
       </div>
+
+      <KycGateBanner />
 
       {/* Tabs by Status */}
       <div className="overflow-x-auto pb-1">

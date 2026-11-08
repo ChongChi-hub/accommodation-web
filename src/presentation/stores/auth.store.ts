@@ -12,12 +12,14 @@ interface AuthState {
 
   initSession: () => Promise<void>;
   login: (email: string, password: string) => Promise<boolean>;
+  loginWithGoogle: (credential: string, nonce: string, intendedRole?: string) => Promise<{ success: boolean; role?: string; user?: User }>;
   register: (data: { email: string; phone: string; password: string; fullName: string; role: string }) => Promise<boolean>;
   forgotPassword: (email: string) => Promise<boolean>;
   resetPassword: (email: string, otp: string, newPassword: string) => Promise<boolean>;
   logout: () => Promise<void>;
   clearError: () => void;
   switchRole: (role: 'TENANT' | 'LANDLORD') => void;
+  updateUser: (partial: Partial<User>) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -30,8 +32,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   initSession: async () => {
     if (typeof window === 'undefined') return;
     try {
-      const storedUser = localStorage.getItem('toam_user');
-      const refreshToken = localStorage.getItem('toam_refresh_token');
+      const storedUser = localStorage.getItem('cozynest_user');
+      const refreshToken = localStorage.getItem('cozynest_refresh_token');
 
       if (storedUser && refreshToken) {
         const user = JSON.parse(storedUser);
@@ -74,6 +76,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         error: err instanceof Error ? err.message : 'Đăng nhập thất bại',
       });
       return false;
+    }
+  },
+
+  loginWithGoogle: async (credential, nonce, intendedRole) => {
+    set({ isLoading: true, error: null });
+    try {
+      const session = await container.auth.googleAuthUseCase.execute(credential, nonce, intendedRole);
+      ApiClient.setToken(session.tokens.token);
+      set({
+        user: session.user,
+        accessToken: session.tokens.token,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+      const primaryRole = session.user?.roles?.[0] || 'TENANT';
+      return { success: true, role: primaryRole, user: session.user };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Đăng nhập Google thất bại';
+      set({
+        isLoading: false,
+        error: msg,
+      });
+      throw err;
     }
   },
 
@@ -148,10 +173,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const updatedUser = { ...current, roles: updatedRoles };
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('toam_user', JSON.stringify(updatedUser));
-        document.cookie = `toam_role=${newRole}; path=/; max-age=2592000; SameSite=Lax`;
+        localStorage.setItem('cozynest_user', JSON.stringify(updatedUser));
+        document.cookie = `cozynest_role=${newRole}; path=/; max-age=2592000; SameSite=Lax`;
       } catch {}
     }
     set({ user: updatedUser });
+  },
+
+  updateUser: (partial: Partial<User>) => {
+    const current = get().user;
+    if (!current) return;
+    const updated = { ...current, ...partial };
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('cozynest_user', JSON.stringify(updated));
+      } catch {}
+    }
+    set({ user: updated });
   },
 }));

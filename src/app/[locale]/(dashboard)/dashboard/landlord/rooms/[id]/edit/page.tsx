@@ -30,27 +30,15 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
   } = useLandlordRoomDetail(id);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    address: '',
-    area: '',
-    price: '',
-    deposit: '',
-    allowPets: false,
-    allowCooking: true,
+    title: '', description: '', address: '', area: '', price: '', deposit: '', allowPets: false, allowCooking: true,
   });
 
   useEffect(() => {
     if (room) {
       setFormData({
-        title: room.title || '',
-        description: room.description || '',
-        address: room.address || '',
-        area: room.area ? String(room.area) : '',
-        price: room.price ? String(room.price) : '',
-        deposit: room.deposit ? String(room.deposit) : '',
-        allowPets: room.allowPets ?? false,
-        allowCooking: room.allowCooking ?? true,
+        title: room.title || '', description: room.description || '', address: room.address || '',
+        area: room.area ? String(room.area) : '', price: room.price ? String(room.price) : '',
+        deposit: room.deposit ? String(room.deposit) : '', allowPets: room.allowPets ?? false, allowCooking: room.allowCooking ?? true,
       });
     }
   }, [room]);
@@ -66,7 +54,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title.trim() || !formData.address.trim() || !formData.area || !formData.price) {
+    if (!room || !formData.title.trim() || !formData.address.trim() || !formData.area || !formData.price) {
       return;
     }
 
@@ -79,6 +67,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
       deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
       allowPets: formData.allowPets,
       allowCooking: formData.allowCooking,
+      version: room.version,
     });
 
     if (ok) {

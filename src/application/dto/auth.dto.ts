@@ -11,6 +11,21 @@ export interface RegisterRequestDto {
   role: string;
 }
 
+export interface GoogleAuthRequestDto {
+  credential: string;
+  nonce: string;
+  intendedRole?: string;
+}
+
+export interface GoogleStatusResponseDto {
+  enabled: boolean;
+  clientIdFingerprint: string;
+}
+
+export interface GoogleNonceResponseDto {
+  nonce: string;
+}
+
 export interface ApiResponseDto<T> {
   message: string;
   data: T;

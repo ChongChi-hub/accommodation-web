@@ -22,7 +22,7 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
     await expect(emailInput).toBeVisible();
 
     // Fill valid email
-    await emailInput.fill('tenant1@toam.vn');
+    await emailInput.fill('tenant1@cozynest.vn');
 
     // Click submit button
     const submitBtn = page.locator('button[type="submit"]');
@@ -34,7 +34,7 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
   });
 
   test('Reset Password page shows password strength indicator and validates matching passwords', async ({ page }) => {
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@toam.vn');
+    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
 
     // OTP field, new password and confirm password inputs
     const otpInput = page.locator('input[placeholder="123456"]').first();
@@ -65,7 +65,7 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
       });
     });
 
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@toam.vn');
+    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
 
     await page.locator('input[placeholder="123456"]').fill('999999');
     await page.locator('input[name="newPassword"]').fill('NewPass123!@#');
@@ -88,7 +88,7 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
       });
     });
 
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@toam.vn');
+    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
 
     await page.locator('input[placeholder="123456"]').fill('123456');
     await page.locator('input[name="newPassword"]').fill('NewPass123!@#');
@@ -111,7 +111,7 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
       });
     });
 
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@toam.vn');
+    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
 
     await page.locator('input[placeholder="123456"]').fill('000000');
     await page.locator('input[name="newPassword"]').fill('NewPass123!@#');
@@ -134,7 +134,7 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
       });
     });
 
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@toam.vn');
+    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
 
     await page.locator('input[placeholder="123456"]').fill('123456');
     await page.locator('input[name="newPassword"]').fill('OldPassword123!');

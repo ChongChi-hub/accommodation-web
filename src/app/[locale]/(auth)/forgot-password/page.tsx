@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md space-y-6 rounded-2xl bg-white dark:bg-stone-900 p-8 shadow-xl border border-stone-200/80 dark:border-stone-800">
         <div className="text-center space-y-2">
           <Link href="/" className="inline-block mb-2">
-            <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} />
+            <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} style={{ width: 'auto', height: 'auto' }} priority />
           </Link>
           <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
             {t('forgotPasswordTitle')}

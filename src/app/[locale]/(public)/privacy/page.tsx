@@ -41,7 +41,7 @@ export default function PrivacyPage() {
         <section className="space-y-2">
           <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">4. Quyền của chủ thể dữ liệu</h2>
           <p>
-            Bạn có quyền yêu cầu tra cứu, chỉnh sửa hoặc xóa dữ liệu cá nhân của mình bất kỳ lúc nào bằng cách liên hệ với bộ phận hỗ trợ khách hàng qua email hotro@toam.vn.
+            Bạn có quyền yêu cầu tra cứu, chỉnh sửa hoặc xóa dữ liệu cá nhân của mình bất kỳ lúc nào bằng cách liên hệ với bộ phận hỗ trợ khách hàng qua email hotro@cozynest.vn.
           </p>
         </section>
       </Card>

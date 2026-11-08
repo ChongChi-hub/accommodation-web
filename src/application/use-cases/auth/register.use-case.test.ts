@@ -14,6 +14,13 @@ describe('RegisterUseCase', () => {
       forgotPassword: vi.fn(),
       resetPassword: vi.fn(),
       logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
     };
     const useCase = new RegisterUseCase(mockRepo);
 
@@ -33,7 +40,7 @@ describe('RegisterUseCase', () => {
       login: vi.fn(),
       register: vi.fn().mockResolvedValue({
         tokens: { token: 'reg-token-123', refreshToken: 'reg-refresh-456' },
-        user: { id: 'u2', email: 'landlord.new@toam.vn', fullName: 'Chủ Trọ Mới' } as any,
+        user: { id: 'u2', email: 'landlord.new@cozynest.vn', fullName: 'Chủ Trọ Mới' } as any,
       }),
       refreshToken: vi.fn(),
       getProfile: vi.fn(),
@@ -42,11 +49,18 @@ describe('RegisterUseCase', () => {
       forgotPassword: vi.fn(),
       resetPassword: vi.fn(),
       logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
     };
     const useCase = new RegisterUseCase(mockRepo);
 
     const dto = {
-      email: 'landlord.new@toam.vn',
+      email: 'landlord.new@cozynest.vn',
       phone: '0902345678',
       password: 'SecurePassword123!',
       fullName: 'Chủ Trọ Mới',

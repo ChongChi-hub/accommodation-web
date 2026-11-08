@@ -9,7 +9,7 @@ const DEFAULT_PUBLIC_JWK = {
   kty: 'RSA',
   use: 'sig',
   alg: 'RS256',
-  kid: 'toam-identity-key-1',
+  kid: 'cozynest-identity-key-1',
   n: '56BlqpTtCQBNqpLJwhL50U6pMMxUukLlckNBBfnci7TAmYDY9Bs_f9LEAGUY3wCch-cN-dz-ofo3E_AO-AX7xEbyVw-4z9m3K5GJgUQ2jmIMUBkAuwPiCTmW_HaTccp4Sbh5ou7WYLVaQuswIwCKa1Wo8giycy0UnLWBzvKickT-9FGjHz4fQDScFnGxp1tWhqfAzJUGAh7F1WT3qRtb-HG6rZxMCjNHRGlbvyxTOWMF_0zap-CrDiHwluCWYmHJ5Rta8nxCDx8biNLiThvLp4Dh6rkmw2Kfv_ZnCDXifGVMVyZlrKwVNFvFTq13DiCYV81MXUMJoL6ZiKZ9rkHbgw',
   e: 'AQAB',
 };
@@ -58,13 +58,29 @@ export default async function middleware(req: NextRequest) {
   const cleanPath = pathname.replace(/^\/(vi|en)/, '') || '/';
 
   // Read cryptographically signed session token from httpOnly cookie
-  const token = req.cookies.get('toam_token')?.value;
+  const token = req.cookies.get('cozynest_token')?.value;
   const auth = token ? await verifyToken(token) : null;
   const roles = auth?.roles || [];
 
   // Extract locale if present in URL
   const localeMatch = pathname.match(/^\/(vi|en)/);
   const localePrefix = localeMatch ? `/${localeMatch[1]}` : '';
+
+  // Alias non-prefixed role routes e.g. /landlord/rooms -> /dashboard/landlord/rooms
+  if (
+    cleanPath.startsWith('/landlord') ||
+    cleanPath.startsWith('/tenant') ||
+    cleanPath.startsWith('/admin') ||
+    cleanPath.startsWith('/moderator') ||
+    cleanPath.startsWith('/account/kyc')
+  ) {
+    const targetDashboard = cleanPath.startsWith('/account/kyc')
+      ? cleanPath.replace('/account/kyc', '/dashboard/landlord/kyc')
+      : `/dashboard${cleanPath}`;
+    const redirectUrl = new URL(`${localePrefix}${targetDashboard}`, req.url);
+    req.nextUrl.searchParams.forEach((v, k) => redirectUrl.searchParams.set(k, v));
+    return NextResponse.redirect(redirectUrl);
+  }
 
   // 1. Protected Dashboard Routes
   if (cleanPath.startsWith('/dashboard')) {
@@ -97,7 +113,12 @@ export default async function middleware(req: NextRequest) {
     }
 
     if (cleanPath.startsWith('/dashboard/landlord') && !hasRole('LANDLORD')) {
-      return NextResponse.redirect(new URL(`${localePrefix}/403`, req.url));
+      // Deliberate exception (Rule R6): Applicants are permitted to access KYC onboarding
+      if (cleanPath.startsWith('/dashboard/landlord/kyc')) {
+        // Allowed
+      } else {
+        return NextResponse.redirect(new URL(`${localePrefix}/dashboard/landlord/kyc`, req.url));
+      }
     }
 
     if (cleanPath.startsWith('/dashboard/tenant') && !hasRole('TENANT')) {

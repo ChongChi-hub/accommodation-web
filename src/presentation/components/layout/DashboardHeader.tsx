@@ -97,7 +97,7 @@ export function DashboardHeader({ onToggleMobileSidebar }: DashboardHeaderProps)
             </button>
 
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/logo.svg" alt="Tổ Ấm" width={120} height={28} priority />
+              <Image src="/logo.svg" alt="Tổ Ấm" width={120} height={28} style={{ width: 'auto', height: 'auto' }} priority />
             </Link>
           </div>
 

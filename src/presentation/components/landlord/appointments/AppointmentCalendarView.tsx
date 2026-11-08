@@ -42,11 +42,21 @@ export function AppointmentCalendarView({
     setBaseDate(new Date());
   };
 
+  const getVietnamDateKey = (dateInput: Date | string): string => {
+    const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(d);
+  };
+
   const getAppointmentsForDay = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = getVietnamDateKey(date);
     return appointments.filter((a) => {
       try {
-        const itemDateStr = new Date(a.scheduledStart).toISOString().split('T')[0];
+        const itemDateStr = getVietnamDateKey(a.scheduledStart);
         return itemDateStr === dateStr;
       } catch {
         return false;

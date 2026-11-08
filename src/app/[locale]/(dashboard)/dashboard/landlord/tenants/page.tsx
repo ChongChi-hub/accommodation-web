@@ -14,7 +14,7 @@ export default function LandlordTenantsPage() {
       id: 1,
       name: 'Nguyễn Văn Thuê',
       phone: '0987 654 321',
-      email: 'tenant@toam.vn',
+      email: 'tenant@cozynest.vn',
       room: 'Phòng 302, Dịch Vọng Hậu',
       moveInDate: '01/11/2026',
       contractEnd: '31/10/2027',

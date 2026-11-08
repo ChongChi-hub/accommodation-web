@@ -3,7 +3,7 @@ import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Landlord Visual Matrix Screenshots (LANDLORD-04 & LANDLORD-02)', () => {
   test.beforeEach(async ({ context, page }) => {
-    await authenticateAs(context, page, 'landlord@toam.vn');
+    await authenticateAs(context, page, 'landlord@cozynest.vn');
   });
 
   test('01: Capture rooms list loading state', async ({ page }) => {

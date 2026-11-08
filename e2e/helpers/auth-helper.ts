@@ -38,27 +38,27 @@ export interface DemoUser {
 }
 
 export const DEMO_USERS: Record<string, DemoUser> = {
-  'tenant@toam.vn': {
+  'tenant@cozynest.vn': {
     id: 'u-tenant-01',
-    email: 'tenant@toam.vn',
+    email: 'tenant@cozynest.vn',
     fullName: 'Nguyễn Văn Thuê',
     roles: ['TENANT'],
   },
-  'landlord@toam.vn': {
+  'landlord@cozynest.vn': {
     id: 'u-landlord-01',
-    email: 'landlord@toam.vn',
+    email: 'landlord@cozynest.vn',
     fullName: 'Trần Thị Chủ Trọ',
     roles: ['LANDLORD'],
   },
-  'moderator@toam.vn': {
+  'moderator@cozynest.vn': {
     id: 'u-mod-01',
-    email: 'moderator@toam.vn',
+    email: 'moderator@cozynest.vn',
     fullName: 'Phạm Minh Kiểm Duyệt',
     roles: ['MODERATOR'],
   },
-  'admin@toam.vn': {
+  'admin@cozynest.vn': {
     id: 'u-admin-01',
-    email: 'admin@toam.vn',
+    email: 'admin@cozynest.vn',
     fullName: 'Lê Hoàng Quản Trị',
     roles: ['ADMIN'],
   },
@@ -71,7 +71,7 @@ export async function createRealSignedToken(user: DemoUser): Promise<string> {
     fullName: user.fullName,
     roles: user.roles.join(','),
   })
-    .setProtectedHeader({ alg: 'RS256', kid: 'toam-identity-key-1' })
+    .setProtectedHeader({ alg: 'RS256', kid: 'cozynest-identity-key-1' })
     .setSubject(user.id)
     .setIssuedAt()
     .setExpirationTime('1h')
@@ -83,13 +83,13 @@ export async function authenticateAs(context: any, page: any, email: keyof typeo
   const token = await createRealSignedToken(user);
   await context.addCookies([
     {
-      name: 'toam_token',
+      name: 'cozynest_token',
       value: token,
       domain: 'localhost',
       path: '/',
     },
     {
-      name: 'toam_role',
+      name: 'cozynest_role',
       value: user.roles[0],
       domain: 'localhost',
       path: '/',
@@ -97,26 +97,26 @@ export async function authenticateAs(context: any, page: any, email: keyof typeo
   ]);
   await page.addInitScript(
     ({ t, u }: { t: string; u: any }) => {
-      localStorage.setItem('toam_access_token', t);
-      localStorage.setItem('toam_refresh_token', 'mock_refresh_token');
-      localStorage.setItem('toam_user', JSON.stringify(u));
+      localStorage.setItem('cozynest_access_token', t);
+      localStorage.setItem('cozynest_refresh_token', 'mock_refresh_token');
+      localStorage.setItem('cozynest_user', JSON.stringify(u));
     },
     { t: token, u: user }
   );
 }
 
-export async function addAuthCookieForUser(context: any, email: keyof typeof DEMO_USERS = 'landlord@toam.vn') {
+export async function addAuthCookieForUser(context: any, email: keyof typeof DEMO_USERS = 'landlord@cozynest.vn') {
   const user = DEMO_USERS[email];
   const token = await createRealSignedToken(user);
   await context.addCookies([
     {
-      name: 'toam_token',
+      name: 'cozynest_token',
       value: token,
       domain: 'localhost',
       path: '/',
     },
     {
-      name: 'toam_role',
+      name: 'cozynest_role',
       value: user.roles[0],
       domain: 'localhost',
       path: '/',
@@ -140,7 +140,7 @@ export async function setupAuthMockRoutes(page: Page) {
     return route.fulfill({
       status: 200,
       headers: {
-        'Set-Cookie': `toam_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`,
+        'Set-Cookie': `cozynest_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`,
       },
       json: {
         success: true,

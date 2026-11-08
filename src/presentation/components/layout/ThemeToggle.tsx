@@ -8,8 +8,8 @@ export function ThemeToggle() {
 
   useEffect(() => {
     const isDarkMode =
-      localStorage.getItem('toam_theme') === 'dark' ||
-      (!('toam_theme' in localStorage) &&
+      localStorage.getItem('cozynest_theme') === 'dark' ||
+      (!('cozynest_theme' in localStorage) &&
         window.matchMedia('(prefers-color-scheme: dark)').matches);
     setIsDark(isDarkMode);
     if (isDarkMode) {
@@ -24,10 +24,10 @@ export function ThemeToggle() {
     setIsDark(nextDark);
     if (nextDark) {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('toam_theme', 'dark');
+      localStorage.setItem('cozynest_theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('toam_theme', 'light');
+      localStorage.setItem('cozynest_theme', 'light');
     }
   };
 

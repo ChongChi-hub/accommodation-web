@@ -5,15 +5,37 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Link, useRouter } from '@/i18n/routing';
 import { useAuthStore } from '@/presentation/stores/auth.store';
+import { container } from '@/infrastructure/di/container';
 import Image from 'next/image';
 import { LogIn, Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 import { GoogleLoginButton } from '@/presentation/components/auth/GoogleLoginButton';
+
+function getSafeRedirectUrl(rawUrl: string | null, roles: string[]): string | null {
+  if (!rawUrl) return null;
+  // Prevent open redirect attacks (must start with single /)
+  if (!rawUrl.startsWith('/') || rawUrl.startsWith('//') || rawUrl.includes('://')) {
+    return null;
+  }
+  const clean = rawUrl.replace(/^\/(vi|en)/, '') || '/';
+  if (clean.startsWith('/dashboard/admin') && !roles.includes('ADMIN')) {
+    return '/403';
+  }
+  if (clean.startsWith('/dashboard/landlord') && !roles.includes('LANDLORD')) {
+    return '/403';
+  }
+  if (clean.startsWith('/dashboard/tenant') && !roles.includes('TENANT')) {
+    return '/403';
+  }
+  return rawUrl;
+}
 
 function LoginForm() {
   const t = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl');
+  const returnUrl = searchParams.get('returnUrl') || searchParams.get('redirect');
+  const action = searchParams.get('action');
+  const roomId = searchParams.get('roomId');
   const { login, isLoading, error, clearError } = useAuthStore();
 
   const [email, setEmail] = useState('');
@@ -24,16 +46,25 @@ function LoginForm() {
     clearError();
     const success = await login(email, password);
     if (success) {
-      if (returnUrl) {
-        router.push(returnUrl as any);
-        return;
+      if (action === 'bookmark' && roomId) {
+        try {
+          await container.bookmark.bookmarkRepository.addBookmark(Number(roomId));
+        } catch {
+          // bookmark error should not block redirection
+        }
       }
       const user = useAuthStore.getState().user;
-      if (user?.roles.includes('ADMIN')) {
+      const roles = user?.roles || [];
+      const safeTarget = getSafeRedirectUrl(returnUrl, roles);
+      if (safeTarget) {
+        router.push(safeTarget as any);
+        return;
+      }
+      if (roles.includes('ADMIN')) {
         router.push('/dashboard/admin');
-      } else if (user?.roles.includes('MODERATOR')) {
+      } else if (roles.includes('MODERATOR')) {
         router.push('/dashboard/moderator');
-      } else if (user?.roles.includes('LANDLORD')) {
+      } else if (roles.includes('LANDLORD')) {
         router.push('/dashboard/landlord');
       } else {
         router.push('/dashboard/tenant');
@@ -51,7 +82,7 @@ function LoginForm() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl border border-stone-200 shadow-sm">
         <div className="text-center">
           <Link href="/" className="inline-block">
-            <Image src="/logo.svg" alt="Tổ Ấm" width={140} height={34} />
+            <Image src="/logo.svg" alt="Tổ Ấm" width={140} height={34} style={{ width: 'auto', height: 'auto' }} priority />
           </Link>
           <h2 className="mt-6 text-2xl font-bold tracking-tight text-stone-900">{t('loginTitle')}</h2>
           <p className="mt-2 text-sm text-stone-500">{t('loginSubtitle')}</p>
@@ -118,7 +149,7 @@ function LoginForm() {
             </div>
           </div>
 
-          <GoogleLoginButton label={t('googleLogin')} />
+          <GoogleLoginButton label={t('googleLogin')} returnUrl={returnUrl || undefined} />
         </form>
 
         {/* Quick Demo Login Picker */}
@@ -127,28 +158,28 @@ function LoginForm() {
           <div className="grid grid-cols-2 gap-2 text-xs">
             <button
               type="button"
-              onClick={() => handleDemoFill('tenant@toam.vn')}
+              onClick={() => handleDemoFill('tenant@cozynest.vn')}
               className="px-2.5 py-1.5 rounded border border-stone-200 text-stone-700 hover:bg-teal-50 hover:border-teal-300 transition text-left"
             >
               Người thuê (Tenant)
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('landlord@toam.vn')}
+              onClick={() => handleDemoFill('landlord@cozynest.vn')}
               className="px-2.5 py-1.5 rounded border border-stone-200 text-stone-700 hover:bg-teal-50 hover:border-teal-300 transition text-left"
             >
               Chủ trọ (Landlord)
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('admin@toam.vn')}
+              onClick={() => handleDemoFill('admin@cozynest.vn')}
               className="px-2.5 py-1.5 rounded border border-stone-200 text-stone-700 hover:bg-teal-50 hover:border-teal-300 transition text-left"
             >
               Quản trị (Admin)
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('moderator@toam.vn')}
+              onClick={() => handleDemoFill('moderator@cozynest.vn')}
               className="px-2.5 py-1.5 rounded border border-stone-200 text-stone-700 hover:bg-teal-50 hover:border-teal-300 transition text-left"
             >
               Kiểm duyệt (Mod)

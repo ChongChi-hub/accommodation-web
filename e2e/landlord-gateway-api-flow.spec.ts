@@ -11,7 +11,7 @@ test.describe('[LANDLORD-04] Landlord Real Authentication & API Access Matrix', 
       const authHeader = headers['authorization'];
 
       // Check if request is authenticated
-      if (!authHeader && !headers['cookie']?.includes('toam_token')) {
+      if (!authHeader && !headers['cookie']?.includes('cozynest_token')) {
         await route.fulfill({
           status: 401,
           contentType: 'application/json',
@@ -47,10 +47,10 @@ test.describe('[LANDLORD-04] Landlord Real Authentication & API Access Matrix', 
     });
   });
 
-  test('Real form login with landlord@toam.vn calls /api/v1/landlord/rooms with 200 OK', async ({ page }) => {
+  test('Real form login with landlord@cozynest.vn calls /api/v1/landlord/rooms with 200 OK', async ({ page }) => {
     await page.goto('http://localhost:3000/login');
 
-    await page.locator('input[type="email"]').fill('landlord@toam.vn');
+    await page.locator('input[type="email"]').fill('landlord@cozynest.vn');
     await page.locator('input[type="password"]').fill('password123');
     await page.locator('button[type="submit"]').click();
 
@@ -77,11 +77,11 @@ test.describe('[LANDLORD-04] Landlord Real Authentication & API Access Matrix', 
   });
 
   test('Namespace Security Matrix: Tenant cannot access /dashboard/landlord (403)', async ({ page, context }) => {
-    const tenantUser = DEMO_USERS['tenant@toam.vn'];
+    const tenantUser = DEMO_USERS['tenant@cozynest.vn'];
     const tenantToken = await createRealSignedToken(tenantUser);
     await context.addCookies([
-      { name: 'toam_token', value: tenantToken, domain: 'localhost', path: '/' },
-      { name: 'toam_role', value: 'TENANT', domain: 'localhost', path: '/' },
+      { name: 'cozynest_token', value: tenantToken, domain: 'localhost', path: '/' },
+      { name: 'cozynest_role', value: 'TENANT', domain: 'localhost', path: '/' },
     ]);
 
     await page.goto('http://localhost:3000/dashboard/landlord');
@@ -90,11 +90,11 @@ test.describe('[LANDLORD-04] Landlord Real Authentication & API Access Matrix', 
   });
 
   test('Namespace Security Matrix: Moderator cannot access /dashboard/landlord (403)', async ({ page, context }) => {
-    const modUser = DEMO_USERS['moderator@toam.vn'];
+    const modUser = DEMO_USERS['moderator@cozynest.vn'];
     const modToken = await createRealSignedToken(modUser);
     await context.addCookies([
-      { name: 'toam_token', value: modToken, domain: 'localhost', path: '/' },
-      { name: 'toam_role', value: 'MODERATOR', domain: 'localhost', path: '/' },
+      { name: 'cozynest_token', value: modToken, domain: 'localhost', path: '/' },
+      { name: 'cozynest_role', value: 'MODERATOR', domain: 'localhost', path: '/' },
     ]);
 
     await page.goto('http://localhost:3000/dashboard/landlord');
@@ -103,11 +103,11 @@ test.describe('[LANDLORD-04] Landlord Real Authentication & API Access Matrix', 
   });
 
   test('Namespace Security Matrix: Admin cannot access /dashboard/landlord (403)', async ({ page, context }) => {
-    const adminUser = DEMO_USERS['admin@toam.vn'];
+    const adminUser = DEMO_USERS['admin@cozynest.vn'];
     const adminToken = await createRealSignedToken(adminUser);
     await context.addCookies([
-      { name: 'toam_token', value: adminToken, domain: 'localhost', path: '/' },
-      { name: 'toam_role', value: 'ADMIN', domain: 'localhost', path: '/' },
+      { name: 'cozynest_token', value: adminToken, domain: 'localhost', path: '/' },
+      { name: 'cozynest_role', value: 'ADMIN', domain: 'localhost', path: '/' },
     ]);
 
     await page.goto('http://localhost:3000/dashboard/landlord');

@@ -87,6 +87,7 @@ export interface LandlordRoomDetail {
   hiddenBy?: string | null;
   hiddenReason?: string | null;
   rejectedReason?: string | null;
+  version?: number;
   createdAt: string;
   updatedAt?: string;
   images: RoomImage[];
@@ -131,6 +132,7 @@ export interface UpdateRoomPayload {
   serviceCost?: number;
   allowPets?: boolean;
   allowCooking?: boolean;
+  version?: number;
 }
 
 export interface CreateRoomPayload extends UpdateRoomPayload {
@@ -143,4 +145,5 @@ export interface LandlordRoomFilterParams {
   sort?: string;
   page?: number;
   size?: number;
+  signal?: AbortSignal;
 }

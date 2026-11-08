@@ -3,7 +3,7 @@ import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Admin Rooms Page (Visual & Layout)', () => {
   test.beforeEach(async ({ context, page }) => {
-    await authenticateAs(context, page, 'admin@toam.vn');
+    await authenticateAs(context, page, 'admin@cozynest.vn');
   });
 
   test('Desktop 1440px renders moderation table and detail drawer', async ({ page }) => {

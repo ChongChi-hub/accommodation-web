@@ -25,7 +25,7 @@ export function DashboardLayout({ children, allowedRoles }: DashboardLayoutProps
 
   useEffect(() => {
     initSession();
-    const token = typeof window !== 'undefined' ? localStorage.getItem('toam_access_token') : null;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('cozynest_access_token') : null;
     if (!token && !isAuthenticated) {
       router.replace('/login');
     } else {

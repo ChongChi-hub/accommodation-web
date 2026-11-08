@@ -1,6 +1,9 @@
 import { ApiResponseDto } from '@/application/dto/auth.dto';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+const BASE_URL =
+  typeof window !== 'undefined'
+    ? '/api/v1'
+    : (process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1');
 
 export interface ApiEnvelope<T> {
   message?: string;
@@ -46,16 +49,16 @@ export class ApiClient {
     if (typeof document !== 'undefined') {
       const isProduction = process.env.NODE_ENV === 'production';
       const secureFlag = isProduction ? '; Secure' : '';
-      document.cookie = `toam_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
-      document.cookie = `toam_role=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
-      localStorage.removeItem('toam_refresh_token');
-      localStorage.removeItem('toam_user');
+      document.cookie = `cozynest_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
+      document.cookie = `cozynest_role=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
+      localStorage.removeItem('cozynest_refresh_token');
+      localStorage.removeItem('cozynest_user');
     }
   }
 
   private static async tryAutoRefresh(): Promise<boolean> {
     if (typeof window === 'undefined') return false;
-    const refreshToken = localStorage.getItem('toam_refresh_token');
+    const refreshToken = localStorage.getItem('cozynest_refresh_token');
     if (!refreshToken) return false;
 
     if (this.refreshPromise) {
@@ -79,12 +82,12 @@ export class ApiClient {
           this.setToken(data.token);
           const isProduction = process.env.NODE_ENV === 'production';
           const secureFlag = isProduction ? '; Secure' : '';
-          document.cookie = `toam_token=${encodeURIComponent(data.token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
+          document.cookie = `cozynest_token=${encodeURIComponent(data.token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
           if (data.refreshToken) {
-            localStorage.setItem('toam_refresh_token', data.refreshToken);
+            localStorage.setItem('cozynest_refresh_token', data.refreshToken);
           }
           if (data.user) {
-            localStorage.setItem('toam_user', JSON.stringify(data.user));
+            localStorage.setItem('cozynest_user', JSON.stringify(data.user));
           }
           return true;
         }
@@ -194,6 +197,18 @@ export class ApiClient {
 
   static delete<T>(endpoint: string, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
+  }
+
+  static async getBlob(endpoint: string): Promise<Blob> {
+    const token = this.getToken();
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const url = endpoint.startsWith('http') ? endpoint : `${BASE_URL}${endpoint}`;
+    const response = await fetch(url, { headers, credentials: 'include' });
+    if (!response.ok) {
+      throw new ApiError('Loi tai tep tin', 'ERR_FETCH_BLOB', response.status);
+    }
+    return response.blob();
   }
 }
 

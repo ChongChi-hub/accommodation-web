@@ -3,7 +3,7 @@ import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Landlord Rooms Page (LANDLORD-04)', () => {
   test.beforeEach(async ({ context, page }) => {
-    await authenticateAs(context, page, 'landlord@toam.vn');
+    await authenticateAs(context, page, 'landlord@cozynest.vn');
   });
 
   test('Desktop 1440px renders table and controls without overflow', async ({ page }) => {
