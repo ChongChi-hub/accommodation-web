@@ -34,7 +34,7 @@ function VerifyEmailForm() {
   return (
     <div className="w-full max-w-md space-y-6 rounded-2xl bg-white dark:bg-stone-900 p-8 shadow-xl border border-stone-200/80 dark:border-stone-800 text-center">
       <Link href="/" className="inline-block mb-1">
-        <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} />
+        <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} style={{ width: 'auto', height: 'auto' }} priority />
       </Link>
 
       <div className="w-14 h-14 mx-auto rounded-2xl bg-teal-50 dark:bg-teal-950 flex items-center justify-center text-teal-700 dark:text-teal-400">

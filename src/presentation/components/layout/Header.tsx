@@ -35,7 +35,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-stone-200/80 dark:border-stone-800 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3">
-          <Image src="/logo.svg" alt="Tổ Ấm" width={135} height={32} priority />
+          <Image src="/logo.svg" alt="Tổ Ấm" width={135} height={32} style={{ width: 'auto', height: 'auto' }} priority />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-stone-600 dark:text-stone-300">

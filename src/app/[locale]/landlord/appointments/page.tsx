@@ -8,3 +8,4 @@ export default async function LandlordAppointmentsRedirect({
   const { locale } = await params;
   redirect(`/${locale}/dashboard/landlord/appointments`);
 }
+

@@ -13,6 +13,10 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       forgotPassword: vi.fn().mockResolvedValue('Mã OTP khôi phục mật khẩu đã được gửi đến email.'),
       resetPassword: vi.fn(),
       logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
     };
 
     const result = await mockRepo.forgotPassword('tenant@cozynest.vn');
@@ -31,6 +35,10 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       forgotPassword: vi.fn(),
       resetPassword: vi.fn().mockResolvedValue(undefined),
       logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
     };
 
     await mockRepo.resetPassword('tenant@cozynest.vn', 'valid-otp-123456', 'NewPassword123!');
@@ -51,6 +59,10 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       forgotPassword: vi.fn(),
       resetPassword: vi.fn(),
       logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
     };
 
     const session = await mockRepo.refreshToken('old-refresh-token');

@@ -11,6 +11,8 @@ export interface ProvinceDto {
   code: string;
   name: string;
   fullName: string;
+  slug?: string;
+  imageUrl?: string;
 }
 
 export interface DistrictDto {
@@ -40,10 +42,77 @@ export interface ReviewDto {
   comment: string;
   landlordReply?: string;
   createdAt: string;
+  isVerifiedTenant?: boolean;
+}
+
+export interface RoomImageDetailDto {
+  id: number;
+  roomId: number;
+  imageUrl: string;
+  width: number;
+  height: number;
+  cover: boolean;
+  sortOrder?: number;
+  altText?: string;
+}
+
+export interface RoomFeeDto {
+  id?: number;
+  roomId?: number;
+  label: string;
+  price: number;
+  unit: string;
+  billingMode: 'METERED' | 'PER_PERSON' | 'FIXED' | 'INCLUDED' | string;
+  metered?: boolean;
+  meterType?: string;
+}
+
+export interface LandlordSnapshotDto {
+  id?: number;
+  landlordId: number;
+  name: string;
+  phone?: string;
+  avatarUrl?: string;
+  email?: string;
+  verified: boolean;
+  ratingAvg?: number;
+  reviewCount?: number;
+  responseRatePercent?: number;
+  responseTimeMinutes?: number;
+  roomCount?: number;
+  joinedAt?: string;
+}
+
+export interface HotAreaDto {
+  code: string;
+  name: string;
+  fullName: string;
+  slug: string;
+  imageUrl: string;
+  roomCount: number;
+}
+
+export interface BannerDto {
+  id: number;
+  title: string;
+  subtitle?: string;
+  badgeText?: string;
+  imageUrl: string;
+  linkUrl: string;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface PlatformStatsDto {
+  activeRooms: number;
+  verifiedLandlords: number;
+  totalReviews: number;
+  happyTenants: number;
 }
 
 export interface RoomDto {
   id: number;
+  slug?: string;
   landlordId: number;
   landlordName: string;
   landlordPhone?: string;
@@ -66,6 +135,8 @@ export interface RoomDto {
   internetCost: number;
   serviceCost: number;
   status: string;
+  publicationStatus?: string;
+  occupancyStatus?: string;
   approved: boolean;
   allowPets: boolean;
   allowCooking: boolean;
@@ -76,6 +147,70 @@ export interface RoomDto {
   primaryImageUrl: string;
   imageUrls: string[];
   amenities: AmenityDto[];
+}
+
+export interface RoomDetailDto {
+  id: number;
+  roomUuid?: string;
+  slug: string;
+  title: string;
+  description: string;
+  address: string;
+  provinceCode: string;
+  provinceName?: string;
+  wardCode?: string;
+  wardName?: string;
+  wardId?: number;
+  latitude?: number;
+  longitude?: number;
+
+  roomTypeId?: number;
+  roomTypeCode: string;
+  roomTypeName?: string;
+
+  area: number;
+  floor: number;
+  bedrooms: number;
+  bathrooms: number;
+  maxOccupants: number;
+
+  price: number;
+  deposit: number;
+  electricityCost: number;
+  waterCost: number;
+  internetCost: number;
+  serviceCost: number;
+
+  status: string;
+  publicationStatus: string;
+  occupancyStatus: string;
+  approved: boolean;
+
+  allowPets: boolean;
+  allowCooking: boolean;
+  genderPreference: string;
+  furnishing: string;
+  curfew: string;
+  availableDate: string;
+  minLeaseMonths: number;
+
+  ratingAvg: number;
+  reviewCount: number;
+  ratingCleanliness: number;
+  ratingLocation: number;
+  ratingPriceQuality: number;
+  ratingSecurity: number;
+
+  viewCount: number;
+  bookmarkCount: number;
+  isBookmarked?: boolean;
+  publishedAt?: string;
+
+  images: RoomImageDetailDto[];
+  amenities: AmenityDto[];
+  roomFees: RoomFeeDto[];
+  landlord: LandlordSnapshotDto;
+  reviews: ReviewDto[];
 }
 
 export interface RoomFilterParams {
@@ -95,4 +230,3 @@ export interface RoomFilterParams {
   page?: number;
   size?: number;
 }
-

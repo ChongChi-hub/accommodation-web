@@ -82,7 +82,7 @@ function LoginForm() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl border border-stone-200 shadow-sm">
         <div className="text-center">
           <Link href="/" className="inline-block">
-            <Image src="/logo.svg" alt="Tổ Ấm" width={140} height={34} />
+            <Image src="/logo.svg" alt="Tổ Ấm" width={140} height={34} style={{ width: 'auto', height: 'auto' }} priority />
           </Link>
           <h2 className="mt-6 text-2xl font-bold tracking-tight text-stone-900">{t('loginTitle')}</h2>
           <p className="mt-2 text-sm text-stone-500">{t('loginSubtitle')}</p>

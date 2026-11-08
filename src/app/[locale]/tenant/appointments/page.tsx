@@ -8,3 +8,4 @@ export default async function TenantAppointmentsRedirect({
   const { locale } = await params;
   redirect(`/${locale}/dashboard/tenant/appointments`);
 }
+

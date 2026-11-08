@@ -14,7 +14,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link href="/" className="inline-block">
-              <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} />
+              <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} style={{ width: 'auto', height: 'auto' }} />
             </Link>
             <p className="text-xs leading-relaxed text-stone-500 dark:text-stone-400">
               Nền tảng công nghệ kết nối người thuê và chủ nhà trọ minh bạch, an toàn, chuẩn xác hàng đầu Việt Nam.

@@ -14,6 +14,10 @@ describe('RegisterUseCase', () => {
       forgotPassword: vi.fn(),
       resetPassword: vi.fn(),
       logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
     };
     const useCase = new RegisterUseCase(mockRepo);
 
@@ -42,6 +46,10 @@ describe('RegisterUseCase', () => {
       forgotPassword: vi.fn(),
       resetPassword: vi.fn(),
       logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
     };
     const useCase = new RegisterUseCase(mockRepo);
 
