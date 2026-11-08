@@ -18,6 +18,9 @@ describe('LoginUseCase', () => {
       updateUserProfile: vi.fn(),
       uploadAvatar: vi.fn(),
       deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
     };
     const useCase = new LoginUseCase(mockRepo);
 
@@ -44,6 +47,9 @@ describe('LoginUseCase', () => {
       updateUserProfile: vi.fn(),
       uploadAvatar: vi.fn(),
       deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
     };
     const useCase = new LoginUseCase(mockRepo);
 

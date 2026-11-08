@@ -17,6 +17,9 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       updateUserProfile: vi.fn(),
       uploadAvatar: vi.fn(),
       deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
     };
 
     const result = await mockRepo.forgotPassword('tenant@cozynest.vn');
@@ -39,6 +42,9 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       updateUserProfile: vi.fn(),
       uploadAvatar: vi.fn(),
       deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
     };
 
     await mockRepo.resetPassword('tenant@cozynest.vn', 'valid-otp-123456', 'NewPassword123!');
@@ -63,6 +69,9 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       updateUserProfile: vi.fn(),
       uploadAvatar: vi.fn(),
       deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
     };
 
     const session = await mockRepo.refreshToken('old-refresh-token');
