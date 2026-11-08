@@ -10,6 +10,25 @@ import Image from 'next/image';
 import { LogIn, Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 import { GoogleLoginButton } from '@/presentation/components/auth/GoogleLoginButton';
 
+function getSafeRedirectUrl(rawUrl: string | null, roles: string[]): string | null {
+  if (!rawUrl) return null;
+  // Prevent open redirect attacks (must start with single /)
+  if (!rawUrl.startsWith('/') || rawUrl.startsWith('//') || rawUrl.includes('://')) {
+    return null;
+  }
+  const clean = rawUrl.replace(/^\/(vi|en)/, '') || '/';
+  if (clean.startsWith('/dashboard/admin') && !roles.includes('ADMIN')) {
+    return '/403';
+  }
+  if (clean.startsWith('/dashboard/landlord') && !roles.includes('LANDLORD')) {
+    return '/403';
+  }
+  if (clean.startsWith('/dashboard/tenant') && !roles.includes('TENANT')) {
+    return '/403';
+  }
+  return rawUrl;
+}
+
 function LoginForm() {
   const t = useTranslations('auth');
   const router = useRouter();
@@ -34,16 +53,18 @@ function LoginForm() {
           // bookmark error should not block redirection
         }
       }
-      if (returnUrl) {
-        router.push(returnUrl as any);
+      const user = useAuthStore.getState().user;
+      const roles = user?.roles || [];
+      const safeTarget = getSafeRedirectUrl(returnUrl, roles);
+      if (safeTarget) {
+        router.push(safeTarget as any);
         return;
       }
-      const user = useAuthStore.getState().user;
-      if (user?.roles.includes('ADMIN')) {
+      if (roles.includes('ADMIN')) {
         router.push('/dashboard/admin');
-      } else if (user?.roles.includes('MODERATOR')) {
+      } else if (roles.includes('MODERATOR')) {
         router.push('/dashboard/moderator');
-      } else if (user?.roles.includes('LANDLORD')) {
+      } else if (roles.includes('LANDLORD')) {
         router.push('/dashboard/landlord');
       } else {
         router.push('/dashboard/tenant');

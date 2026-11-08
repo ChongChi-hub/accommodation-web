@@ -291,3 +291,19 @@ Lịch hẹn xem phòng (`ViewingAppointment`) tuân thủ nghiêm ngặt máy t
 * Đổi mật khẩu yêu cầu nhập đúng mật khẩu hiện tại. Mật khẩu mới bắt buộc phải khác mật khẩu cũ và đáp ứng độ phức tạp tối thiểu.
 * Áp dụng Rate Limiting qua Redis: Nếu nhập sai mật khẩu cũ 5 lần liên tiếp trong 15 phút, tài khoản bị tạm khóa đổi mật khẩu để chống brute-force.
 * Khi đổi mật khẩu thành công: Hệ thống tự động thu hồi tất cả các `refresh_tokens` của các thiết bị khác, chỉ duy trì phiên đăng nhập hiện tại để người dùng không bị văng ra ngoài đột ngột. Đồng thời gửi email cảnh báo bảo mật tới người dùng.
+
+
+## 13. Quyết định Kiến trúc & Bảo mật Xác thực [AUTH-01, AUTH-03, AUTH-04]
+
+### 13.1 Thuật toán Băm Mật khẩu & Chống Dò Tài khoản (Timing Attack)
+* **Thuật toán thật đang sử dụng**: BCrypt với hệ số phức tạp 12 (`BCryptPasswordEncoder(12)`).
+* **Lý do & Bảo đảm tiêu chuẩn**: BCrypt hệ số 12 tạo độ trễ tính toán ~80-100ms cho mỗi lần băm/so sánh trên CPU hiện đại, đáp ứng đầy đủ khuyến nghị của OWASP Authentication Cheat Sheet và NIST SP 800-63B.
+* **Chống Timing Attack (Timing Enumeration)**: Khi người dùng đăng nhập với email không tồn tại trong hệ thống, `LoginUseCase` vẫn kích hoạt việc so sánh mật khẩu với hằng số `DUMMY_BCRYPT_HASH`. Đảm bảo thời gian phản hồi giữa "email không tồn tại" và "mật khẩu không đúng" xấp xỉ nhau (~80-100ms).
+
+### 13.2 Chính sách Khóa Tài khoản Chống DoS (Lockout Policy)
+* **Quyết định**: Khóa theo cặp `(email, IP)` thay vì khóa toàn cầu theo `email`.
+* **Lý do**: Khóa toàn cầu theo email mở ra nguy cơ DoS khi kẻ tấn công cố ý nhập sai 5 lần để khóa người dùng thực. Cơ chế khóa theo cặp `(email, IP)` cô lập địa chỉ IP của kẻ tấn công trong 15 phút, người dùng thực ở IP khác vẫn đăng nhập bình thường.
+
+### 13.3 Đánh đổi Khi Đăng ký Email Trùng
+* **Quyết định**: Khi đăng ký bằng email đã tồn tại, trả về `400 Bad Request` kèm mã lỗi `ERR_AUTH_EMAIL_EXISTS`.
+* **Đánh đổi**: Tối ưu UX người dùng để chuyển nhanh sang Đăng nhập/Quên mật khẩu, kết hợp Redis Rate Limiter (10 req/phút/IP) để triệt tiêu hành vi dò quét danh sách email.
