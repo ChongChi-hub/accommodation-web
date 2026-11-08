@@ -31,9 +31,9 @@ export default function RegisterPage() {
     });
     if (success) {
       if (role === 'LANDLORD') {
-        router.push('/landlord');
+        router.push('/dashboard/landlord/kyc');
       } else {
-        router.push('/tenant');
+        router.push('/dashboard/tenant');
       }
     }
   };

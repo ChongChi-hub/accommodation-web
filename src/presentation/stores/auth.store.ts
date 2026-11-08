@@ -90,8 +90,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isAuthenticated: true,
         isLoading: false,
       });
-      const primaryRole = session.user?.roles?.[0] || intendedRole || 'TENANT';
-      return { success: true, role: primaryRole };
+      const primaryRole = session.user?.roles?.[0] || 'TENANT';
+      return { success: true, role: primaryRole, user: session.user };
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Đăng nhập Google thất bại';
       set({

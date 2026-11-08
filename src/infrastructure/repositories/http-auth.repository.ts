@@ -40,7 +40,7 @@ export class HttpAuthRepository implements AuthRepository {
   async register(data: { email: string; phone: string; password: string; fullName: string; role: string }): Promise<AuthSession> {
     const res = await ApiClient.post<any>('/auth/register', data);
     ApiClient.setToken(res.token);
-    const primaryRole = res.user?.roles?.[0] || data.role || 'TENANT';
+    const primaryRole = res.user?.roles?.[0] || 'TENANT';
     setAuthCookies(res.token, primaryRole);
 
     if (typeof window !== 'undefined') {
@@ -64,7 +64,7 @@ export class HttpAuthRepository implements AuthRepository {
   async loginWithGoogle(data: { credential: string; nonce: string; intendedRole?: string }): Promise<AuthSession> {
     const res = await ApiClient.post<any>('/auth/google', data);
     ApiClient.setToken(res.token);
-    const primaryRole = res.user?.roles?.[0] || data.intendedRole || 'TENANT';
+    const primaryRole = res.user?.roles?.[0] || 'TENANT';
     setAuthCookies(res.token, primaryRole);
 
     if (typeof window !== 'undefined') {

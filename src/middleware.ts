@@ -110,7 +110,12 @@ export default async function middleware(req: NextRequest) {
     }
 
     if (cleanPath.startsWith('/dashboard/landlord') && !hasRole('LANDLORD')) {
-      return NextResponse.redirect(new URL(`${localePrefix}/403`, req.url));
+      // Deliberate exception (Rule R6): Applicants are permitted to access KYC onboarding
+      if (cleanPath.startsWith('/dashboard/landlord/kyc')) {
+        // Allowed
+      } else {
+        return NextResponse.redirect(new URL(`${localePrefix}/dashboard/landlord/kyc`, req.url));
+      }
     }
 
     if (cleanPath.startsWith('/dashboard/tenant') && !hasRole('TENANT')) {
