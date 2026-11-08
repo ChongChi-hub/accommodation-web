@@ -7,6 +7,7 @@ import { Avatar } from '@/presentation/components/ui/Avatar';
 import { Link } from '@/i18n/routing';
 import { ShieldCheck, Calendar, Send, Zap, Droplets, Wifi } from 'lucide-react';
 import { RoomDto } from '@/application/dto/listing.dto';
+import { BookmarkButton } from './BookmarkButton';
 
 interface RoomSidebarProps {
   room: RoomDto;
@@ -19,17 +20,26 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
 
   return (
     <Card className="p-6 sticky top-24 space-y-5">
-      <div>
-        <span className="text-xs text-neutral-500 uppercase tracking-wider font-semibold">Giá niêm yết</span>
-        <div className="flex items-baseline gap-1 mt-1">
-          <span className="text-3xl font-extrabold text-primary-600 dark:text-primary-400">
-            {formatPrice(room.price)}
-          </span>
-          <span className="text-xs text-neutral-500">đ/tháng</span>
+      <div className="flex justify-between items-start">
+        <div>
+          <span className="text-xs text-neutral-500 uppercase tracking-wider font-semibold">Giá niêm yết</span>
+          <div className="flex items-baseline gap-1 mt-1">
+            <span className="text-3xl font-extrabold text-primary-600 dark:text-primary-400">
+              {formatPrice(room.price)}
+            </span>
+            <span className="text-xs text-neutral-500">đ/tháng</span>
+          </div>
+          <p className="text-xs text-neutral-500 mt-1">
+            Cọc: <strong className="text-neutral-700 dark:text-neutral-300">{formatPrice(room.deposit)} đ</strong>
+          </p>
         </div>
-        <p className="text-xs text-neutral-500 mt-1">
-          Cọc: <strong className="text-neutral-700 dark:text-neutral-300">{formatPrice(room.deposit)} đ</strong>
-        </p>
+        <BookmarkButton
+          roomId={room.id}
+          initialBookmarked={room.isBookmarked}
+          initialCount={room.bookmarkCount}
+          showCount
+          size="md"
+        />
       </div>
 
       <div className="space-y-2 pt-2 border-t border-neutral-200 dark:border-neutral-800 text-xs">

@@ -71,6 +71,8 @@ export interface RoomDto {
   allowCooking: boolean;
   ratingAvg: number;
   reviewCount: number;
+  bookmarkCount?: number;
+  isBookmarked?: boolean;
   primaryImageUrl: string;
   imageUrls: string[];
   amenities: AmenityDto[];

@@ -695,6 +695,14 @@
       "landlordPhone": "Landlord Phone",
       "myNote": "Your note",
       "cancelReason": "Cancellation Reason"
+    },
+    "savedRooms": {
+      "title": "Saved Rooms",
+      "subtitle": "List of accommodation rooms you have bookmarked for comparison and tracking.",
+      "exploreMore": "Explore more",
+      "emptyTitle": "No saved rooms yet",
+      "emptyDescription": "When browsing rooms, click the heart icon to save the rooms you love.",
+      "errorTitle": "Failed to load saved rooms"
     }
   },
   "profile": {

@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Link, useRouter } from '@/i18n/routing';
 import { useAuthStore } from '@/presentation/stores/auth.store';
+import { container } from '@/infrastructure/di/container';
 import Image from 'next/image';
 import { LogIn, Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
 import { GoogleLoginButton } from '@/presentation/components/auth/GoogleLoginButton';
@@ -13,7 +14,9 @@ function LoginForm() {
   const t = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl');
+  const returnUrl = searchParams.get('returnUrl') || searchParams.get('redirect');
+  const action = searchParams.get('action');
+  const roomId = searchParams.get('roomId');
   const { login, isLoading, error, clearError } = useAuthStore();
 
   const [email, setEmail] = useState('');
@@ -24,6 +27,13 @@ function LoginForm() {
     clearError();
     const success = await login(email, password);
     if (success) {
+      if (action === 'bookmark' && roomId) {
+        try {
+          await container.bookmark.bookmarkRepository.addBookmark(Number(roomId));
+        } catch {
+          // bookmark error should not block redirection
+        }
+      }
       if (returnUrl) {
         router.push(returnUrl as any);
         return;

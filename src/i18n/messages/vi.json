@@ -695,6 +695,14 @@
       "landlordPhone": "SĐT chủ nhà",
       "myNote": "Lời nhắn của bạn",
       "cancelReason": "Lý do hủy/từ chối"
+    },
+    "savedRooms": {
+      "title": "Phòng đã lưu",
+      "subtitle": "Danh sách các phòng trọ bạn đã đánh dấu để so sánh và theo dõi.",
+      "exploreMore": "Khám phá thêm",
+      "emptyTitle": "Chưa có phòng trọ nào được lưu",
+      "emptyDescription": "Khi duyệt danh sách phòng, hãy nhấn nút lưu để lưu lại những căn phòng bạn yêu thích.",
+      "errorTitle": "Lỗi tải danh sách phòng đã lưu"
     }
   },
   "profile": {

@@ -3,6 +3,7 @@ import { HttpListingRepository } from '../repositories/http-listing.repository';
 import { HttpLandlordRoomRepository } from '../repositories/http-landlord-room.repository';
 import { HttpAppointmentRepository } from '../repositories/http-appointment.repository';
 import { HttpKycRepository } from '../repositories/http-kyc.repository';
+import { HttpBookmarkRepository } from '../repositories/http-bookmark.repository';
 import { ProfileUseCases } from '@/application/use-cases/profile/profile.use-cases';
 import { LandlordKycUseCases } from '@/application/use-cases/kyc/landlord-kyc.use-cases';
 import { KycModerationUseCases } from '@/application/use-cases/kyc/kyc-moderation.use-cases';
@@ -26,6 +27,7 @@ const listingRepository = new HttpListingRepository();
 const landlordRoomRepository = new HttpLandlordRoomRepository();
 const appointmentRepository = new HttpAppointmentRepository();
 const kycRepository = new HttpKycRepository();
+const bookmarkRepository = new HttpBookmarkRepository();
 const adminRepository = new StaticAdminRepository();
 const supportRepository = new StaticSupportRepository();
 const maintenanceRepository = new StaticMaintenanceRepository();
@@ -69,6 +71,9 @@ export const container = {
   },
   appointment: {
     appointmentRepository,
+  },
+  bookmark: {
+    bookmarkRepository,
   },
   admin: {
     adminRepository,

@@ -6,6 +6,7 @@ import { Link } from '@/i18n/routing';
 import { RoomDto } from '@/application/dto/listing.dto';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
+import { BookmarkButton } from './BookmarkButton';
 import { cn } from '@/lib/cn';
 
 export interface RoomCardProps {
@@ -49,6 +50,14 @@ export function RoomCard({ room, className }: RoomCardProps) {
                 <span>Đã xác thực</span>
               </Badge>
             )}
+          </div>
+          <div className="absolute top-3 right-3 z-10 shadow-xs">
+            <BookmarkButton
+              roomId={room.id}
+              initialBookmarked={room.isBookmarked}
+              initialCount={room.bookmarkCount}
+              size="sm"
+            />
           </div>
           <div className="absolute bottom-3 right-3 bg-stone-900/80 backdrop-blur-xs text-white text-xs font-bold px-2.5 py-1 rounded-lg">
             {formatPrice(room.price)} đ<span className="font-normal text-[10px] text-stone-300">/tháng</span>
