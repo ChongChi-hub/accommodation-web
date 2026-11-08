@@ -69,7 +69,7 @@ export class StaticAdminRepository implements AdminRepository {
         id: 201,
         userId: 2,
         userName: 'Trần Minh Tuấn',
-        userEmail: 'landlord@toam.vn',
+        userEmail: 'landlord@cozynest.vn',
         idNumber: '001090012345',
         frontImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600',
         backImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600',
@@ -87,7 +87,7 @@ export class StaticAdminRepository implements AdminRepository {
       {
         id: 1,
         name: 'Nguyễn Văn Thuê',
-        email: 'tenant@toam.vn',
+        email: 'tenant@cozynest.vn',
         phone: '0987 654 321',
         role: 'TENANT',
         roleText: 'Người thuê',
@@ -97,7 +97,7 @@ export class StaticAdminRepository implements AdminRepository {
       {
         id: 2,
         name: 'Trần Minh Tuấn',
-        email: 'landlord@toam.vn',
+        email: 'landlord@cozynest.vn',
         phone: '0912 345 678',
         role: 'LANDLORD',
         roleText: 'Chủ trọ',
@@ -107,7 +107,7 @@ export class StaticAdminRepository implements AdminRepository {
       {
         id: 3,
         name: 'Hoàng Thị Thảo',
-        email: 'moderator@toam.vn',
+        email: 'moderator@cozynest.vn',
         phone: '0933 888 999',
         role: 'MODERATOR',
         roleText: 'Kiểm duyệt viên',
@@ -117,7 +117,7 @@ export class StaticAdminRepository implements AdminRepository {
       {
         id: 4,
         name: 'Quản Trị Viên Tổ Ấm',
-        email: 'admin@toam.vn',
+        email: 'admin@cozynest.vn',
         phone: '0909 000 111',
         role: 'ADMIN',
         roleText: 'Quản trị viên',
@@ -180,7 +180,7 @@ export class StaticAdminRepository implements AdminRepository {
     return [
       {
         id: 401,
-        actor: 'admin@toam.vn',
+        actor: 'admin@cozynest.vn',
         action: 'APPROVE_ROOM',
         target: 'Phòng #101 (Trần Minh Tuấn)',
         ip: '14.232.208.55',
@@ -188,7 +188,7 @@ export class StaticAdminRepository implements AdminRepository {
       },
       {
         id: 402,
-        actor: 'moderator@toam.vn',
+        actor: 'moderator@cozynest.vn',
         action: 'VERIFY_KYC',
         target: 'CCCD #001090012345',
         ip: '113.190.23.4',

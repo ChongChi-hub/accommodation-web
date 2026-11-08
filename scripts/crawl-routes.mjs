@@ -37,7 +37,7 @@ async function generateSignedToken(userId, email, roles) {
     fullName: 'Test User',
     roles: roles.join(','),
   })
-    .setProtectedHeader({ alg: 'RS256', kid: 'toam-identity-key-1' })
+    .setProtectedHeader({ alg: 'RS256', kid: 'cozynest-identity-key-1' })
     .setSubject(userId)
     .setIssuedAt()
     .setExpirationTime('1h')
@@ -124,10 +124,10 @@ async function runCrawler() {
   }
 
   console.log('\n--- 3. Testing RBAC Role Matrix with Cryptographic Redirect Target Verification ---');
-  const tenantToken = await generateSignedToken('u-tenant-01', 'tenant@toam.vn', ['TENANT']);
-  const landlordToken = await generateSignedToken('u-landlord-01', 'landlord@toam.vn', ['LANDLORD']);
-  const modToken = await generateSignedToken('u-mod-01', 'moderator@toam.vn', ['MODERATOR']);
-  const adminToken = await generateSignedToken('u-admin-01', 'admin@toam.vn', ['ADMIN']);
+  const tenantToken = await generateSignedToken('u-tenant-01', 'tenant@cozynest.vn', ['TENANT']);
+  const landlordToken = await generateSignedToken('u-landlord-01', 'landlord@cozynest.vn', ['LANDLORD']);
+  const modToken = await generateSignedToken('u-mod-01', 'moderator@cozynest.vn', ['MODERATOR']);
+  const adminToken = await generateSignedToken('u-admin-01', 'admin@cozynest.vn', ['ADMIN']);
 
   const rbacTests = [
     { role: 'TENANT', path: '/dashboard/tenant', token: tenantToken, expectTarget: 'ALLOW' },
@@ -148,7 +148,7 @@ async function runCrawler() {
 
   let rbacPassed = 0;
   for (const test of rbacTests) {
-    const res = await requestRoute(test.path, `toam_token=${test.token}`);
+    const res = await requestRoute(test.path, `cozynest_token=${test.token}`);
     let pass = false;
     if (test.expectTarget === 'ALLOW') {
       pass = res.statusCode === 200;
@@ -160,10 +160,10 @@ async function runCrawler() {
   }
 
   console.log('\n--- 4. Role Spoofing Security Test ---');
-  // Tenant modifying cookie toam_role=ADMIN but keeping signed tenant JWT
-  const spoofRes = await requestRoute('/dashboard/admin', `toam_token=${tenantToken}; toam_role=ADMIN`);
+  // Tenant modifying cookie cozynest_role=ADMIN but keeping signed tenant JWT
+  const spoofRes = await requestRoute('/dashboard/admin', `cozynest_token=${tenantToken}; cozynest_role=ADMIN`);
   const spoofBlocked = spoofRes.statusCode === 403 || (spoofRes.statusCode === 307 && spoofRes.location?.includes('/403'));
-  console.log(`  [${spoofBlocked ? 'PASS' : 'FAIL'}] Spoofed toam_role=ADMIN with Tenant JWT -> Status: ${spoofRes.statusCode}, Location: ${spoofRes.location}`);
+  console.log(`  [${spoofBlocked ? 'PASS' : 'FAIL'}] Spoofed cozynest_role=ADMIN with Tenant JWT -> Status: ${spoofRes.statusCode}, Location: ${spoofRes.location}`);
 
   console.log('\n====================================================');
   console.log(`SUMMARY: Public: ${publicPassed}/${publicRoutes.length}, Guest Redirects: ${guestRedirectsPassed}/${dashboardRoutes.length}, RBAC: ${rbacPassed}/${rbacTests.length}, Spoof Blocked: ${spoofBlocked ? 'YES' : 'NO'}`);

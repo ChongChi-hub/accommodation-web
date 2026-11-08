@@ -3,7 +3,7 @@ import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Admin Analytics Page (Visual & Layout)', () => {
   test.beforeEach(async ({ context, page }) => {
-    await authenticateAs(context, page, 'admin@toam.vn');
+    await authenticateAs(context, page, 'admin@cozynest.vn');
   });
 
   test('Desktop 1440px renders analytics metrics and progress bars', async ({ page }) => {

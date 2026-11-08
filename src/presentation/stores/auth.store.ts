@@ -31,8 +31,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   initSession: async () => {
     if (typeof window === 'undefined') return;
     try {
-      const storedUser = localStorage.getItem('toam_user');
-      const refreshToken = localStorage.getItem('toam_refresh_token');
+      const storedUser = localStorage.getItem('cozynest_user');
+      const refreshToken = localStorage.getItem('cozynest_refresh_token');
 
       if (storedUser && refreshToken) {
         const user = JSON.parse(storedUser);
@@ -149,8 +149,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const updatedUser = { ...current, roles: updatedRoles };
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('toam_user', JSON.stringify(updatedUser));
-        document.cookie = `toam_role=${newRole}; path=/; max-age=2592000; SameSite=Lax`;
+        localStorage.setItem('cozynest_user', JSON.stringify(updatedUser));
+        document.cookie = `cozynest_role=${newRole}; path=/; max-age=2592000; SameSite=Lax`;
       } catch {}
     }
     set({ user: updatedUser });
@@ -162,7 +162,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const updated = { ...current, ...partial };
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('toam_user', JSON.stringify(updated));
+        localStorage.setItem('cozynest_user', JSON.stringify(updated));
       } catch {}
     }
     set({ user: updated });

@@ -33,7 +33,7 @@ describe('RegisterUseCase', () => {
       login: vi.fn(),
       register: vi.fn().mockResolvedValue({
         tokens: { token: 'reg-token-123', refreshToken: 'reg-refresh-456' },
-        user: { id: 'u2', email: 'landlord.new@toam.vn', fullName: 'Chủ Trọ Mới' } as any,
+        user: { id: 'u2', email: 'landlord.new@cozynest.vn', fullName: 'Chủ Trọ Mới' } as any,
       }),
       refreshToken: vi.fn(),
       getProfile: vi.fn(),
@@ -46,7 +46,7 @@ describe('RegisterUseCase', () => {
     const useCase = new RegisterUseCase(mockRepo);
 
     const dto = {
-      email: 'landlord.new@toam.vn',
+      email: 'landlord.new@cozynest.vn',
       phone: '0902345678',
       password: 'SecurePassword123!',
       fullName: 'Chủ Trọ Mới',

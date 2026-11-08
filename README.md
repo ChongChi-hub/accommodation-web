@@ -101,10 +101,10 @@ npm run build
 
 | Vai tro | Email | Mat khau |
 |---|---|---|
-| **Nguoi thue (Tenant)** | `tenant@toam.vn` | `password123` |
-| **Chu tro (Landlord)** | `landlord@toam.vn` | `password123` |
-| **Kiem duyet vien (Moderator)** | `moderator@toam.vn` | `password123` |
-| **Quan tri vien (Admin)** | `admin@toam.vn` | `password123` |
+| **Nguoi thue (Tenant)** | `tenant@cozynest.vn` | `password123` |
+| **Chu tro (Landlord)** | `landlord@cozynest.vn` | `password123` |
+| **Kiem duyet vien (Moderator)** | `moderator@cozynest.vn` | `password123` |
+| **Quan tri vien (Admin)** | `admin@cozynest.vn` | `password123` |
 
 ---
 

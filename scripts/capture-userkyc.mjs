@@ -33,10 +33,10 @@ async function run() {
 
         // 1. Profile Page
         await page.addInitScript(({ theme }) => {
-          localStorage.setItem('toam_access_token', 'mock_landlord_token');
-          localStorage.setItem('toam_user', JSON.stringify({
+          localStorage.setItem('cozynest_access_token', 'mock_landlord_token');
+          localStorage.setItem('cozynest_user', JSON.stringify({
             id: 'u-landlord-01',
-            email: 'landlord@toam.vn',
+            email: 'landlord@cozynest.vn',
             fullName: 'Nguyễn Văn Toàn',
             phone: '0902000001',
             roles: ['LANDLORD'],
@@ -84,3 +84,4 @@ async function run() {
 }
 
 run().catch(console.error);
+

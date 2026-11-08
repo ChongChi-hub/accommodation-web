@@ -9,7 +9,7 @@ const DEFAULT_PUBLIC_JWK = {
   kty: 'RSA',
   use: 'sig',
   alg: 'RS256',
-  kid: 'toam-identity-key-1',
+  kid: 'cozynest-identity-key-1',
   n: '56BlqpTtCQBNqpLJwhL50U6pMMxUukLlckNBBfnci7TAmYDY9Bs_f9LEAGUY3wCch-cN-dz-ofo3E_AO-AX7xEbyVw-4z9m3K5GJgUQ2jmIMUBkAuwPiCTmW_HaTccp4Sbh5ou7WYLVaQuswIwCKa1Wo8giycy0UnLWBzvKickT-9FGjHz4fQDScFnGxp1tWhqfAzJUGAh7F1WT3qRtb-HG6rZxMCjNHRGlbvyxTOWMF_0zap-CrDiHwluCWYmHJ5Rta8nxCDx8biNLiThvLp4Dh6rkmw2Kfv_ZnCDXifGVMVyZlrKwVNFvFTq13DiCYV81MXUMJoL6ZiKZ9rkHbgw',
   e: 'AQAB',
 };
@@ -58,7 +58,7 @@ export default async function middleware(req: NextRequest) {
   const cleanPath = pathname.replace(/^\/(vi|en)/, '') || '/';
 
   // Read cryptographically signed session token from httpOnly cookie
-  const token = req.cookies.get('toam_token')?.value;
+  const token = req.cookies.get('cozynest_token')?.value;
   const auth = token ? await verifyToken(token) : null;
   const roles = auth?.roles || [];
 

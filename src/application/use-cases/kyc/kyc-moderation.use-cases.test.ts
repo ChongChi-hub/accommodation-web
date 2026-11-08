@@ -10,7 +10,7 @@ describe('KycModerationUseCases', () => {
   const sampleDetail: KycModerationDetail = {
     id: 'kyc-mod-1',
     userId: 'u-landlord-02',
-    userEmail: 'landlord2@toam.vn',
+    userEmail: 'landlord2@cozynest.vn',
     userPhone: '0900000002',
     fullNameOnId: 'Tran Thi B',
     idNumberMasked: '********0002',
@@ -32,7 +32,7 @@ describe('KycModerationUseCases', () => {
           {
             id: 'kyc-mod-1',
             userId: 'u-landlord-02',
-            userEmail: 'landlord2@toam.vn',
+            userEmail: 'landlord2@cozynest.vn',
             userPhone: '0900000002',
             fullNameOnId: 'Tran Thi B',
             idNumberMasked: '********0002',

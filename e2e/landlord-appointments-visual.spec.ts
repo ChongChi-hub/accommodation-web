@@ -110,7 +110,7 @@ test.describe('[APPT-02] Landlord Appointments Visual Verification', () => {
 
   test.beforeEach(async ({ page, context }) => {
     await setupAuthMockRoutes(page);
-    await authenticateAs(context, page, 'landlord@toam.vn');
+    await authenticateAs(context, page, 'landlord@cozynest.vn');
 
     await page.route('**/api/v1/landlord/appointments/summary**', async (route) => {
       await route.fulfill({

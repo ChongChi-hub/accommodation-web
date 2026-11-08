@@ -30,10 +30,10 @@ async function capture() {
 
   // Set authenticated admin session
   await page.addInitScript(() => {
-    localStorage.setItem('toam_access_token', 'mock_admin_token');
-    localStorage.setItem('toam_user', JSON.stringify({
+    localStorage.setItem('cozynest_access_token', 'mock_admin_token');
+    localStorage.setItem('cozynest_user', JSON.stringify({
       id: 'usr_admin_1',
-      email: 'admin@toam.vn',
+      email: 'admin@cozynest.vn',
       fullName: 'Quản Trị Viên',
       phone: '0901234567',
       roles: ['ADMIN'],

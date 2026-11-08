@@ -15,9 +15,9 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       logout: vi.fn(),
     };
 
-    const result = await mockRepo.forgotPassword('tenant@toam.vn');
+    const result = await mockRepo.forgotPassword('tenant@cozynest.vn');
     expect(result).toContain('OTP khôi phục');
-    expect(mockRepo.forgotPassword).toHaveBeenCalledWith('tenant@toam.vn');
+    expect(mockRepo.forgotPassword).toHaveBeenCalledWith('tenant@cozynest.vn');
   });
 
   it('calls authRepository.resetPassword with token and new password', async () => {
@@ -33,8 +33,8 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       logout: vi.fn(),
     };
 
-    await mockRepo.resetPassword('tenant@toam.vn', 'valid-otp-123456', 'NewPassword123!');
-    expect(mockRepo.resetPassword).toHaveBeenCalledWith('tenant@toam.vn', 'valid-otp-123456', 'NewPassword123!');
+    await mockRepo.resetPassword('tenant@cozynest.vn', 'valid-otp-123456', 'NewPassword123!');
+    expect(mockRepo.resetPassword).toHaveBeenCalledWith('tenant@cozynest.vn', 'valid-otp-123456', 'NewPassword123!');
   });
 
   it('calls authRepository.refreshToken with refresh token and returns new session', async () => {
@@ -43,7 +43,7 @@ describe('Password Recovery & Refresh Token Repository Tests', () => {
       register: vi.fn(),
       refreshToken: vi.fn().mockResolvedValue({
         tokens: { token: 'refreshed-jwt', refreshToken: 'new-refresh-token' },
-        user: { id: 'u1', email: 'tenant@toam.vn' } as any,
+        user: { id: 'u1', email: 'tenant@cozynest.vn' } as any,
       }),
       getProfile: vi.fn(),
       updateProfile: vi.fn(),

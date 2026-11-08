@@ -3,7 +3,7 @@ import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Command Palette Role Access Enforcement', () => {
   test('TENANT role can only see tenant & public commands, never admin or landlord commands', async ({ context, page }) => {
-    await authenticateAs(context, page, 'tenant@toam.vn');
+    await authenticateAs(context, page, 'tenant@cozynest.vn');
 
     await page.goto('http://localhost:3000/dashboard/tenant', { waitUntil: 'networkidle' });
 
@@ -36,7 +36,7 @@ test.describe('Command Palette Role Access Enforcement', () => {
   });
 
   test('ADMIN role can access administrative commands', async ({ context, page }) => {
-    await authenticateAs(context, page, 'admin@toam.vn');
+    await authenticateAs(context, page, 'admin@cozynest.vn');
 
     await page.goto('http://localhost:3000/dashboard/admin', { waitUntil: 'networkidle' });
     await page.keyboard.press('Control+k');

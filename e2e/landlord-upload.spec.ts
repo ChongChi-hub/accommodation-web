@@ -3,7 +3,7 @@ import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('Landlord Image Upload & Validation (LANDLORD-02)', () => {
   test.beforeEach(async ({ context, page }) => {
-    await authenticateAs(context, page, 'landlord@toam.vn');
+    await authenticateAs(context, page, 'landlord@cozynest.vn');
   });
 
   test('Step 4 wizard validates file upload constraints', async ({ page }) => {

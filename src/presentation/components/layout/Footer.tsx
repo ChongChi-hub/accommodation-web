@@ -88,7 +88,7 @@ export function Footer() {
               <li className="flex items-center gap-2">
                 <Mail size={14} className="text-teal-700 dark:text-teal-400 shrink-0" />
                 <Link href="/contact" className="hover:text-teal-700 dark:hover:text-teal-400">
-                  lienhe@toam.vn
+                  lienhe@cozynest.vn
                 </Link>
               </li>
               <li className="flex items-center gap-2">

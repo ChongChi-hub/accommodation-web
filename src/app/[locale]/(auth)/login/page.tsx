@@ -127,28 +127,28 @@ function LoginForm() {
           <div className="grid grid-cols-2 gap-2 text-xs">
             <button
               type="button"
-              onClick={() => handleDemoFill('tenant@toam.vn')}
+              onClick={() => handleDemoFill('tenant@cozynest.vn')}
               className="px-2.5 py-1.5 rounded border border-stone-200 text-stone-700 hover:bg-teal-50 hover:border-teal-300 transition text-left"
             >
               Người thuê (Tenant)
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('landlord@toam.vn')}
+              onClick={() => handleDemoFill('landlord@cozynest.vn')}
               className="px-2.5 py-1.5 rounded border border-stone-200 text-stone-700 hover:bg-teal-50 hover:border-teal-300 transition text-left"
             >
               Chủ trọ (Landlord)
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('admin@toam.vn')}
+              onClick={() => handleDemoFill('admin@cozynest.vn')}
               className="px-2.5 py-1.5 rounded border border-stone-200 text-stone-700 hover:bg-teal-50 hover:border-teal-300 transition text-left"
             >
               Quản trị (Admin)
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('moderator@toam.vn')}
+              onClick={() => handleDemoFill('moderator@cozynest.vn')}
               className="px-2.5 py-1.5 rounded border border-stone-200 text-stone-700 hover:bg-teal-50 hover:border-teal-300 transition text-left"
             >
               Kiểm duyệt (Mod)

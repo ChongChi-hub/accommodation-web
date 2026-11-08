@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import { authenticateAs } from './helpers/auth-helper';
 
 test.describe('[AUTH-03/05] Silent Token Refresh Flow on Expired Session', () => {
-  test('Expired toam_token automatically triggers silent refresh without redirecting to login', async ({ context, page }) => {
+  test('Expired cozynest_token automatically triggers silent refresh without redirecting to login', async ({ context, page }) => {
     // 1. Authenticate with initial valid session
-    await authenticateAs(context, page, 'landlord@toam.vn');
+    await authenticateAs(context, page, 'landlord@cozynest.vn');
 
     let refreshCalled = false;
     let originalRequestRetried = false;
@@ -23,7 +23,7 @@ test.describe('[AUTH-03/05] Silent Token Refresh Flow on Expired Session', () =>
             refreshToken: 'renewed-refresh-token-uuid-5678',
             user: {
               id: 'u-landlord-01',
-              email: 'landlord@toam.vn',
+              email: 'landlord@cozynest.vn',
               fullName: 'Chủ Trọ Demo',
               roles: ['ROLE_LANDLORD'],
             },

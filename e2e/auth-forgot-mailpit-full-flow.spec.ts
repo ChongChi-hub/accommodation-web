@@ -53,10 +53,10 @@ test.describe('[AUTH-04] Full End-to-End Forgot Password via Mailpit & Reset Flo
 
       if (url.includes('/login') && method === 'POST') {
         const body = JSON.parse(route.request().postData() || '{}');
-        if (body.email === 'tenant@toam.vn' && body.password === currentPassword) {
+        if (body.email === 'tenant@cozynest.vn' && body.password === currentPassword) {
           const user = {
             id: 'u-tenant-01',
-            email: 'tenant@toam.vn',
+            email: 'tenant@cozynest.vn',
             fullName: 'Nguyễn Văn Thuê',
             roles: ['TENANT'],
           };
@@ -64,7 +64,7 @@ test.describe('[AUTH-04] Full End-to-End Forgot Password via Mailpit & Reset Flo
           await route.fulfill({
             status: 200,
             headers: {
-              'Set-Cookie': `toam_token=${token}; Path=/; HttpOnly; SameSite=Lax`,
+              'Set-Cookie': `cozynest_token=${token}; Path=/; HttpOnly; SameSite=Lax`,
             },
             contentType: 'application/json',
             body: JSON.stringify({
@@ -97,14 +97,14 @@ test.describe('[AUTH-04] Full End-to-End Forgot Password via Mailpit & Reset Flo
     await expect(page.locator('input[type="email"]')).toBeVisible();
 
     // 2. Submit email
-    await page.locator('input[type="email"]').fill('tenant@toam.vn');
+    await page.locator('input[type="email"]').fill('tenant@cozynest.vn');
     await page.locator('button[type="submit"]').click();
 
     // Verify confirmation and redirect link to reset-password
     await expect(page.locator('body')).toContainText(/gửi lại|đã được gửi|reset/i);
 
     // 3. Visit /reset-password with email query parameter
-    await page.goto('http://localhost:3000/reset-password?email=tenant@toam.vn');
+    await page.goto('http://localhost:3000/reset-password?email=tenant@cozynest.vn');
 
     // 4. Input OTP & New Strong Password
     const otpInput = page.locator('input[placeholder="123456"]').first();
@@ -124,7 +124,7 @@ test.describe('[AUTH-04] Full End-to-End Forgot Password via Mailpit & Reset Flo
     await expect(page).toHaveURL(/.*\/login/);
 
     // 6. Login using NEW password
-    await page.locator('input[type="email"]').fill('tenant@toam.vn');
+    await page.locator('input[type="email"]').fill('tenant@cozynest.vn');
     await page.locator('input[type="password"]').fill('NewStrongPassword123@');
     await page.locator('button[type="submit"]').click();
 

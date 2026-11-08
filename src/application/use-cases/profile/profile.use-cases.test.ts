@@ -9,7 +9,7 @@ describe('ProfileUseCases', () => {
 
   const sampleProfile: UserProfile = {
     userId: 'u-123',
-    email: 'user@toam.vn',
+    email: 'user@cozynest.vn',
     phone: '0901234567',
     fullName: 'Nguyen Van A',
     avatarUrl: '/avatars/u-123.webp',

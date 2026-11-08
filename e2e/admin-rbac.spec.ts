@@ -4,7 +4,7 @@ import { authenticateAs } from './helpers/auth-helper';
 test.describe('Admin/Moderator RBAC & Menu Authorization', () => {
   test('Moderator sees only authorized menu items and is blocked from Admin-only routes', async ({ context, page }) => {
     // Authenticate as MODERATOR
-    await authenticateAs(context, page, 'moderator@toam.vn');
+    await authenticateAs(context, page, 'moderator@cozynest.vn');
 
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('http://localhost:3000/dashboard/moderator', { waitUntil: 'networkidle' });
@@ -29,7 +29,7 @@ test.describe('Admin/Moderator RBAC & Menu Authorization', () => {
   });
 
   test('Admin sees all menu items and can access system settings', async ({ context, page }) => {
-    await authenticateAs(context, page, 'admin@toam.vn');
+    await authenticateAs(context, page, 'admin@cozynest.vn');
 
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('http://localhost:3000/dashboard/admin', { waitUntil: 'networkidle' });

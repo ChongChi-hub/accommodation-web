@@ -39,7 +39,7 @@ export default function NewSupportTicketPage() {
       await container.support.supportRepository.createTicket({
         userId: user?.id || 'usr_guest',
         userName: user?.fullName || 'Khách vãng lai',
-        userEmail: user?.email || 'guest@toam.vn',
+        userEmail: user?.email || 'guest@cozynest.vn',
         userPhone: user?.phone || '0900000000',
         subject,
         category,
