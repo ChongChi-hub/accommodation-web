@@ -38,6 +38,8 @@ export function MobileNavDrawer({ isOpen, onClose, onOpenSearch }: MobileNavDraw
   const primaries = getNavItemsByGroup('topPrimary', visRole);
   const ctaState = getHeaderCtaState(isAuthenticated ? user : null);
 
+  const targetBase = ['/phong-tro', '/nha-nguyen-can', '/can-ho', '/o-ghep'].some((b) => pathname.startsWith(b)) ? pathname : '/rooms';
+
   useEffect(() => {
     if (!isOpen) return;
     container.listing.listingRepository
@@ -174,7 +176,7 @@ export function MobileNavDrawer({ isOpen, onClose, onOpenSearch }: MobileNavDraw
                   {areas.map((a) => (
                     <Link
                       key={a.code}
-                      href={`/rooms?provinceCode=${a.code}`}
+                      href={`${targetBase}?provinceCode=${a.code}`}
                       onClick={onClose}
                       className="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs text-foreground-muted hover:text-foreground hover:bg-surface-muted"
                     >
@@ -182,7 +184,7 @@ export function MobileNavDrawer({ isOpen, onClose, onOpenSearch }: MobileNavDraw
                       <span className="text-[11px]">{a.roomCount}</span>
                     </Link>
                   ))}
-                  <Link href="/rooms" onClick={onClose} className="block px-3 py-1.5 rounded-lg text-xs font-semibold text-primary dark:text-primary-300">
+                  <Link href="/khu-vuc" onClick={onClose} className="block px-3 py-1.5 rounded-lg text-xs font-semibold text-primary dark:text-primary-300">
                     {tNav('allAreas')}
                   </Link>
                 </div>
