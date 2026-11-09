@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
         port: '8080',
@@ -40,7 +45,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "frame-src 'self' https://accounts.google.com https://*.google.com https://*.openstreetmap.org https://www.openstreetmap.org",
               "connect-src 'self' http://localhost:8080 http://localhost:3000 ws://localhost:3000 https://accounts.google.com https://*.googleapis.com",
-              "img-src 'self' data: blob: https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co",
+              "img-src 'self' data: blob: https://res.cloudinary.com https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co",
               "font-src 'self' data:",
             ].join('; '),
           },
