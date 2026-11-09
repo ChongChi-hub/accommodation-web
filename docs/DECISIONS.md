@@ -302,7 +302,7 @@ Lịch hẹn xem phòng (`ViewingAppointment`) tuân thủ nghiêm ngặt máy t
 
 ### 13.1 Thuật toán Băm Mật khẩu & Chống Dò Tài khoản (Timing Attack)
 * **Thuật toán thật đang sử dụng**: BCrypt với hệ số phức tạp 12 (`BCryptPasswordEncoder(12)`).
-* **Lý do & Bảo đảm tiêu chuẩn**: BCrypt hệ số 12 tạo độ trễ tính toán ~80-100ms cho mỗi lần băm/so sánh trên CPU hiện đại, đáp ứng đầy đủ khuyến nghị của OWASP Authentication Cheat Sheet và NIST SP 800-63B.
+* **Lý do & Bảo đảm tiêu chuẩn**: BCrypt hệ số 12 tạo độ trễ tính toán ~80-100ms cho mỗi lần băm/so sánh trên CPU hiện đại, đáp ứng đầy đủ khuyến nghị của OWASP Password Storage Cheat Sheet.
 * **Chống Timing Attack (Timing Enumeration)**: Khi người dùng đăng nhập với email không tồn tại trong hệ thống, `LoginUseCase` vẫn kích hoạt việc so sánh mật khẩu với hằng số `DUMMY_BCRYPT_HASH` (`$2a$12$7kPj5aXN62q.7XJjN8wGxeQJv9XW1Nq2g5U1rQ0M5J4L3K2H1G0F.`). Việc này đảm bảo thời gian phản hồi giữa trường hợp "email không tồn tại" và "mật khẩu không đúng" là hoàn toàn xấp xỉ nhau (~80-100ms), ngăn chặn kẻ tấn công đo thời gian để dò email hợp lệ.
 
 ### 13.2 Chính sách Khóa Tài khoản Chống DoS (Lockout Policy)
@@ -421,47 +421,50 @@ Trước đây, hệ thống cấp vai trò `LANDLORD` ngay lập tức khi đă
 
 ---
 
-## 16. Kiến Trúc Tái Cấu Trúc Trang Chủ, Hệ Thống Hiệu Ứng Cuộn và Tài Sản Hình Ảnh Có Bản Quyền [HOME-1]
+## 13. Quyết định Pháp lý & Mô hình Dòng tiền (LEGAL-02 / ADR-008)
 
-> Ngày quyết định: 09/11/2026  
-> Áp dụng cho: `accommodation-web`, `accommodation-service` (`listing-service`), và quy trình xử lý tài sản media `seed-assets/`.
+> **Mã định danh:** `ADR-008`  
+> **Chủ đề:** Mô hình Kiến trúc Dòng tiền, Giữ cọc (Escrow) & Trách nhiệm Thuế  
+> **Trạng thái:** `PENDING_EXTERNAL_LEGAL_REVIEW` (Chờ ý kiến tư vấn chính thức từ Luật sư và Kiểm toán viên độc lập)  
+> **Ngày ghi nhận:** 09/11/2026  
+> **Tài liệu tham chiếu:** `docs/legal/LEGAL-02-PAYMENT-TAX-LEGAL-ASSESSMENT.md`
 
-### 16.1 Lựa chọn Hệ Thống Hiệu Ứng Cuộn (Motion Architecture)
-* **Vấn đề đặt ra:** Yêu cầu hỗ trợ hệ thống hiệu ứng cuộn (`presentation/components/motion/`: `Reveal`, `Stagger`, `CountUp`, `ImageReveal`, `ParallaxLayer`, `ScrollProgress`) đồng thời tuân thủ ngân sách hiệu năng nghiêm ngặt: JS gzip route trang chủ không tăng quá $+60\text{ KB}$ so với baseline ($262.67\text{ KB gzip}$), LCP $\le 2.5\text{s}$, CLS $\le 0.05$, $0$ long tasks $> 50\text{ms}$, và nội dung phải hiển thị $100\%$ khi tắt JavaScript (`javaScriptEnabled=false`).
-* **Quyết định:** Chọn giải pháp **Zero-dependency Progressive CSS + IntersectionObserver / Passive rAF**:
-  1. *Không cài đặt `framer-motion` hay `motion`:* Thư viện `framer-motion` bổ sung $\approx 25 - 35\text{ KB gzip}$ và dễ gây layout thrashing khi cuộn nhanh. Giải pháp tự xây dựng chỉ chiếm $\approx 2.5\text{ KB gzip}$, tiết kiệm tới $90\%$ tải trọng JavaScript.
-  2. *Nguyên lý Cải tiến Lũy tiến (Progressive Enhancement):*
-     - Khi SSR hoặc khi tắt JavaScript: mọi phần tử đều có class mặc định `opacity-100 transform-none`, văn bản và ảnh luôn sẵn sàng cho bot SEO và người dùng.
-     - Sau khi trình duyệt hydrate thành công (`useLayoutEffect` / `useEffect`), các phần tử được xác nhận nằm dưới nếp gấp màn hình đầu (`below-fold`) mới được gắn class trạng thái ẩn để chuẩn bị hiệu ứng vào, triệt tiêu hoàn toàn nhấp nháy (FOUC) và CLS.
-     - Các phần tử thuộc Hero hoặc màn hình đầu không bao giờ bị chờ `IntersectionObserver`.
-  3. *Tương thích Trợ năng (`prefers-reduced-motion`):*
-     - Tự động phát hiện qua CSS media query `@media (prefers-reduced-motion: reduce)` và JavaScript check `window.matchMedia('(prefers-reduced-motion: reduce)')`. Khi người dùng bật tùy chọn giảm chuyển động: mọi phần tử hiện ngay trạng thái cuối, tắt parallax, tắt tự động chuyển ảnh nền hero, tắt hiệu ứng đếm số.
-  4. *Ràng buộc phần cứng & rAF:*
-     - Parallax và ScrollProgress chỉ biến đổi thuộc tính GPU (`transform`, `opacity`, `clip-path`), không bao giờ animate các thuộc tính layout (`top`, `height`, `margin`).
-     - Tự động tắt Parallax khi thiết bị có màn hình cảm ứng / con trỏ thô (`pointer: coarse`).
+### 13.1. Bối cảnh & Căn cứ Pháp lý
+1. Tổ Ấm vận hành sàn thương mại điện tử kết nối cho thuê nhà ở. Các giao dịch có giá trị lớn bao gồm: Tiền đặt cọc hợp đồng, Tiền thuê phòng hàng tháng, Tiền dịch vụ tiện ích, Phí gói VIP và Phí dịch vụ sàn.
+2. Theo **Nghị định 52/2024/NĐ-CP** (hiệu lực 01/07/2024), việc nhận tiền của khách hàng vào tài khoản của doanh nghiệp, lưu giữ và chi trả theo lệnh cấu thành Dịch vụ trung gian thanh toán (thu hộ, chi hộ, ví điện tử) bắt buộc phải có Giấy phép của Ngân hàng Nhà nước.
+3. Theo **Luật Quản lý thuế số 56/2024/QH15**, sàn TMĐT có chức năng thanh toán có trách nhiệm khấu trừ, nộp thuế thay cho cá nhân kinh doanh. Trong khi đó, theo **Thông tư 40/2021/TT-BTC**, cá nhân cho thuê tài sản có doanh thu $\le 100$ triệu đồng/năm thuộc diện miễn thuế GTGT và TNCN.
 
-### 16.2 Pipeline Tài Sản Hình Ảnh Có Bản Quyền & Sổ Nguồn (`manifest.json`)
-* **Nguồn ảnh:** $100\%$ ảnh chụp thực tế lấy từ các nguồn mở có giấy phép minh bạch (Unsplash, Pexels, Pixabay, Wikimedia Commons theo giấy phép CC0 hoặc CC-BY) và ảnh tự cung cấp.
-* **Quy chuẩn chất lượng & an toàn thông tin:**
-  - Tuyệt đối cấm ảnh có khuôn mặt người, watermark, logo thương hiệu, chữ in trên ảnh hoặc địa chỉ nhà có thật.
-  - Tẩy sạch toàn bộ siêu dữ liệu EXIF/GPS qua pipeline `sharp`.
-  - Sinh 4 cỡ phân giải chuẩn: $640\text{px}$, $1080\text{px}$, $1920\text{px}$, $2560\text{px}$ dưới hai định dạng hiện đại **AVIF** và **WebP**.
-  - Tự động sinh chuỗi `blurDataURL` (base64 thumbnail $16\text{px}$) nhúng trực tiếp vào Next.js `<Image placeholder="blur">` giúp giao diện không bị giật layout.
-  - Ảnh Hero đầu tiên bảo đảm kích thước tệp $\le 250\text{ KB}$ ở độ phân giải $1920\text{px}$ WebP để tối ưu LCP $\le 2.5\text{s}$.
-* **Kiểm tra tự động (CI Gate):**
-  - File `seed-assets/manifest.json` ghi nhận đầy đủ siêu dữ liệu của từng ảnh: `file`, `sourceUrl`, `author`, `license`, `licenseUrl`, `fetchedAt`, `altVi`, `altEn`.
-  - Script `scripts/verify-manifest.mjs` chạy trong CI: nếu bất kỳ file ảnh raster nào trong `public/images/` thiếu bản ghi trong manifest hoặc ảnh Hero #1 $> 250\text{ KB}$, CI sẽ fail ngay lập tức (`exit 1`).
+### 13.2. Quyết định Định hướng Kiến trúc
+1. **BÁC BỎ HOÀN TOÀN MÔ HÌNH NỀN TẢNG TỰ GIỮ CỌC (MÔ HÌNH D):**  
+   Tuyệt đối không sử dụng tài khoản ngân hàng của Công ty Tổ Ấm để nhận và tạm giữ tiền cọc của người thuê. Không xây dựng tính năng "Ví nội bộ" (In-house Wallet) cho phép người dùng nạp tiền vào hệ thống.
+2. **ÁP DỤNG MÔ HÌNH CHUYỂN KHOẢN TRỰC TIẾP P2P (MÔ HÌNH A) CHO SPRINT 3:**  
+   - Người thuê chuyển khoản tiền cọc và tiền thuê trực tiếp vào số tài khoản ngân hàng chính chủ của Chủ trọ thông qua mã VietQR động do hệ thống sinh.
+   - Hệ thống tạo mã tham chiếu giao dịch chuẩn `TOAM-REF-xxxxxx` để theo dõi và hỗ trợ hai bên ghi nhận trạng thái thanh toán.
+   - Tổ Ấm không tham gia vào dòng tiền thanh toán tiền phòng/tiền cọc, do đó không phát sinh trách nhiệm khấu trừ thuế tiền thuê nhà. Nguồn thu duy nhất của Tổ Ấm là Phí dịch vụ đăng tin / Gói VIP xuất hóa đơn GTGT đầy đủ.
+3. **ĐỊNH HƯỚNG MÔ HÌNH B CHO TƯƠNG LAI (TÍCH HỢP ĐỐI TÁC TRUNG GIAN THANH TOÁN CÓ GIẤY PHÉP NHNN):**  
+   Khi có nhu cầu cung cấp dịch vụ giữ cọc bảo đảm (Escrow), Tổ Ấm sẽ ký hợp đồng hợp tác với Tổ chức Trung gian thanh toán hoặc Ngân hàng được NHNN cấp phép để tiền cọc được lưu giữ trên Tài khoản đảm bảo thanh toán của đối tác.
 
-### 16.3 Đơn Vị Giá Phòng (`price_unit`) & Danh Mục Loại Hình
-* **Mở rộng Schema (`V12__home_price_unit_cms_and_clean_banners.sql`):**
-  - Bổ sung cột `price_unit VARCHAR(16) NOT NULL DEFAULT 'ROOM'` vào bảng `rooms`.
-  - Đối với phòng loại `SHARED` ("Ở ghép"): giá trị `price_unit = 'BED'`, giao diện hiển thị tiền tố/hậu tố `i18n` là `/giường/tháng` trên `RoomCard`, trang chi tiết và bộ lọc giá.
-  - Đối với các loại phòng khác: `price_unit = 'ROOM'`, giao diện hiển thị `/tháng`.
-* **API Facets & Danh mục 4 Alias:**
-  - Bổ sung endpoint `GET /api/v1/rooms/facets` trước `GET /api/v1/rooms/{slugOrId}` trong `RoomController.java`.
-  - Trả về số lượng phòng thực tế theo từng loại hình và theo 4 nhóm alias chuẩn của Frontend:
-    1. `phongTro`: `SINGLE`, `HOMESTAY`
-    2. `nhaNguyenCan`: `FULL_HOUSE`
-    3. `canHo`: `MINI_APARTMENT`, `STUDIO`, `APARTMENT`
-    4. `oGhep`: `SHARED`
-  - Đảm bảo seed dữ liệu dev `R__04` phủ đủ $\ge 6$ phòng hoạt động cho mỗi nhóm trên ít nhất 3 tỉnh/thành, phủ tối thiểu 8 tỉnh/thành phố trên cả nước để lưới Bento không bao giờ bị khuyết hàng.
+---
+
+## 14. Quyết định Bằng chứng Pháp lý Hợp đồng Điện tử & Ký số (LEGAL-02 / ADR-010)
+
+> **Mã định danh:** `ADR-010`  
+> **Chủ đề:** Bằng chứng Hợp đồng Điện tử, Tính toàn vẹn Dữ liệu & Ký xác thực OTP  
+> **Trạng thái:** `PENDING_EXTERNAL_LEGAL_REVIEW`  
+> **Ngày ghi nhận:** 09/11/2026  
+> **Tài liệu tham chiếu:** `docs/legal/LEGAL-02-PAYMENT-TAX-LEGAL-ASSESSMENT.md`
+
+### 14.1. Căn cứ Pháp lý
+1. **Luật Nhà ở 2023 (Điều 163, 164):** Hợp đồng thuê nhà ở lập thành văn bản, không bắt buộc công chứng, chứng thực.
+2. **Luật Giao dịch điện tử 2023 (Điều 9, 12, 22):** Thông điệp dữ liệu có giá trị như văn bản gốc nếu bảo đảm tính toàn vẹn và khả năng truy cập hoàn chỉnh. Mã OTP qua SMS/Email là phương thức xác thực điện tử thể hiện sự chấp thuận của các bên.
+
+### 14.2. Chuẩn hóa Kỹ thuật Lưu vết Chứng cứ (Technical Evidentiary Standard)
+1. **Tạo Snapshot Bất biến:** Tại thời điểm các bên xác nhận ký, hệ thống kết xuất toàn văn nội dung hợp đồng và lưu trữ dưới dạng bản chụp bất biến (Immutable Snapshot).
+2. **Mã băm SHA-256:** Mỗi bản chụp hợp đồng được băm bằng thuật toán `SHA-256` trên toàn bộ nội dung văn bản kèm thông tin phiên bản để chứng minh văn bản không bị can thiệp sau khi ký.
+3. **Nhật ký Ký số (Append-only Signature Audit Trail):** Bảng `contract_signatures` bắt buộc lưu trữ:
+   - `contract_id`, `version`, `document_hash` (SHA-256).
+   - `signer_id`, `signer_role` (`TENANT` / `LANDLORD`).
+   - `auth_method` (`OTP_SMS` / `OTP_EMAIL`).
+   - `ip_address`, `user_agent`, `signed_at` (UTC timestamp).
+   - Tuyệt đối không lưu mã OTP thô (chỉ lưu mã băm OTP hoặc trạng thái xác thực).
+4. **Định danh Chủ thể trước khi ký:** Cả Người thuê và Chủ trọ đều phải hoàn thành xác thực danh tính (eKYC CCCD) và số điện thoại trước khi được phép kích hoạt luồng ký hợp đồng điện tử.
