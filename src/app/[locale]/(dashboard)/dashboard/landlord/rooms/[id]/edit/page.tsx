@@ -45,7 +45,9 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
 
   const managedImages: ManagedImage[] = backendImages.map((img) => ({
     id: img.id,
-    url: img.thumbKey ? `/api/v1/media/${img.thumbKey}` : img.imageUrl,
+    url: (img.thumbKey && img.thumbKey.startsWith('http'))
+      ? img.thumbKey
+      : (img.imageUrl || (img.thumbKey ? `/api/v1/media/${img.thumbKey}` : '')),
     isCover: img.cover,
     sortOrder: img.sortOrder,
     name: img.originalFilename,
