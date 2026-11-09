@@ -3,6 +3,7 @@ import path from 'node:path';
 
 const sqlDirs = [
   'D:/RIKKEI/THUC_TAP/PROJECT/accommodation-service/listing-service/src/main/resources/db/migration',
+  'D:/RIKKEI/THUC_TAP/PROJECT/accommodation-service/listing-service/src/main/resources/db/seed',
   'D:/RIKKEI/THUC_TAP/PROJECT/accommodation-service/identity-service/src/main/resources/db/migration',
   'D:/RIKKEI/THUC_TAP/PROJECT/accommodation-service/booking-service/src/main/resources/db/migration',
   'D:/RIKKEI/THUC_TAP/PROJECT/accommodation-service/billing-service/src/main/resources/db/migration',

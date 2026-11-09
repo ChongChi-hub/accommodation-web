@@ -417,3 +417,51 @@ Trước đây, hệ thống cấp vai trò `LANDLORD` ngay lập tức khi đă
 * **Quyền rút đồng ý:** Người dùng có quyền xóa ngay lập tức mọi khung hình đã lưu thông qua nút "Xóa dữ liệu ảnh sinh trắc học" hoặc gọi API `DELETE /api/v1/me/kyc/face/consent`.
 * **Nhật ký kiểm toán vĩnh viễn:** Bảng `face_access_logs` (append-only) ghi lại từng lượt truy cập, stream khung hình hoặc quyết định của kiểm duyệt viên (actorId, role, frameId, timestamp, IP, User-Agent) và không bao giờ bị xóa.
 
+
+
+---
+
+## 16. Kiến Trúc Tái Cấu Trúc Trang Chủ, Hệ Thống Hiệu Ứng Cuộn và Tài Sản Hình Ảnh Có Bản Quyền [HOME-1]
+
+> Ngày quyết định: 09/11/2026  
+> Áp dụng cho: `accommodation-web`, `accommodation-service` (`listing-service`), và quy trình xử lý tài sản media `seed-assets/`.
+
+### 16.1 Lựa chọn Hệ Thống Hiệu Ứng Cuộn (Motion Architecture)
+* **Vấn đề đặt ra:** Yêu cầu hỗ trợ hệ thống hiệu ứng cuộn (`presentation/components/motion/`: `Reveal`, `Stagger`, `CountUp`, `ImageReveal`, `ParallaxLayer`, `ScrollProgress`) đồng thời tuân thủ ngân sách hiệu năng nghiêm ngặt: JS gzip route trang chủ không tăng quá $+60\text{ KB}$ so với baseline ($262.67\text{ KB gzip}$), LCP $\le 2.5\text{s}$, CLS $\le 0.05$, $0$ long tasks $> 50\text{ms}$, và nội dung phải hiển thị $100\%$ khi tắt JavaScript (`javaScriptEnabled=false`).
+* **Quyết định:** Chọn giải pháp **Zero-dependency Progressive CSS + IntersectionObserver / Passive rAF**:
+  1. *Không cài đặt `framer-motion` hay `motion`:* Thư viện `framer-motion` bổ sung $\approx 25 - 35\text{ KB gzip}$ và dễ gây layout thrashing khi cuộn nhanh. Giải pháp tự xây dựng chỉ chiếm $\approx 2.5\text{ KB gzip}$, tiết kiệm tới $90\%$ tải trọng JavaScript.
+  2. *Nguyên lý Cải tiến Lũy tiến (Progressive Enhancement):*
+     - Khi SSR hoặc khi tắt JavaScript: mọi phần tử đều có class mặc định `opacity-100 transform-none`, văn bản và ảnh luôn sẵn sàng cho bot SEO và người dùng.
+     - Sau khi trình duyệt hydrate thành công (`useLayoutEffect` / `useEffect`), các phần tử được xác nhận nằm dưới nếp gấp màn hình đầu (`below-fold`) mới được gắn class trạng thái ẩn để chuẩn bị hiệu ứng vào, triệt tiêu hoàn toàn nhấp nháy (FOUC) và CLS.
+     - Các phần tử thuộc Hero hoặc màn hình đầu không bao giờ bị chờ `IntersectionObserver`.
+  3. *Tương thích Trợ năng (`prefers-reduced-motion`):*
+     - Tự động phát hiện qua CSS media query `@media (prefers-reduced-motion: reduce)` và JavaScript check `window.matchMedia('(prefers-reduced-motion: reduce)')`. Khi người dùng bật tùy chọn giảm chuyển động: mọi phần tử hiện ngay trạng thái cuối, tắt parallax, tắt tự động chuyển ảnh nền hero, tắt hiệu ứng đếm số.
+  4. *Ràng buộc phần cứng & rAF:*
+     - Parallax và ScrollProgress chỉ biến đổi thuộc tính GPU (`transform`, `opacity`, `clip-path`), không bao giờ animate các thuộc tính layout (`top`, `height`, `margin`).
+     - Tự động tắt Parallax khi thiết bị có màn hình cảm ứng / con trỏ thô (`pointer: coarse`).
+
+### 16.2 Pipeline Tài Sản Hình Ảnh Có Bản Quyền & Sổ Nguồn (`manifest.json`)
+* **Nguồn ảnh:** $100\%$ ảnh chụp thực tế lấy từ các nguồn mở có giấy phép minh bạch (Unsplash, Pexels, Pixabay, Wikimedia Commons theo giấy phép CC0 hoặc CC-BY) và ảnh tự cung cấp.
+* **Quy chuẩn chất lượng & an toàn thông tin:**
+  - Tuyệt đối cấm ảnh có khuôn mặt người, watermark, logo thương hiệu, chữ in trên ảnh hoặc địa chỉ nhà có thật.
+  - Tẩy sạch toàn bộ siêu dữ liệu EXIF/GPS qua pipeline `sharp`.
+  - Sinh 4 cỡ phân giải chuẩn: $640\text{px}$, $1080\text{px}$, $1920\text{px}$, $2560\text{px}$ dưới hai định dạng hiện đại **AVIF** và **WebP**.
+  - Tự động sinh chuỗi `blurDataURL` (base64 thumbnail $16\text{px}$) nhúng trực tiếp vào Next.js `<Image placeholder="blur">` giúp giao diện không bị giật layout.
+  - Ảnh Hero đầu tiên bảo đảm kích thước tệp $\le 250\text{ KB}$ ở độ phân giải $1920\text{px}$ WebP để tối ưu LCP $\le 2.5\text{s}$.
+* **Kiểm tra tự động (CI Gate):**
+  - File `seed-assets/manifest.json` ghi nhận đầy đủ siêu dữ liệu của từng ảnh: `file`, `sourceUrl`, `author`, `license`, `licenseUrl`, `fetchedAt`, `altVi`, `altEn`.
+  - Script `scripts/verify-manifest.mjs` chạy trong CI: nếu bất kỳ file ảnh raster nào trong `public/images/` thiếu bản ghi trong manifest hoặc ảnh Hero #1 $> 250\text{ KB}$, CI sẽ fail ngay lập tức (`exit 1`).
+
+### 16.3 Đơn Vị Giá Phòng (`price_unit`) & Danh Mục Loại Hình
+* **Mở rộng Schema (`V12__home_price_unit_cms_and_clean_banners.sql`):**
+  - Bổ sung cột `price_unit VARCHAR(16) NOT NULL DEFAULT 'ROOM'` vào bảng `rooms`.
+  - Đối với phòng loại `SHARED` ("Ở ghép"): giá trị `price_unit = 'BED'`, giao diện hiển thị tiền tố/hậu tố `i18n` là `/giường/tháng` trên `RoomCard`, trang chi tiết và bộ lọc giá.
+  - Đối với các loại phòng khác: `price_unit = 'ROOM'`, giao diện hiển thị `/tháng`.
+* **API Facets & Danh mục 4 Alias:**
+  - Bổ sung endpoint `GET /api/v1/rooms/facets` trước `GET /api/v1/rooms/{slugOrId}` trong `RoomController.java`.
+  - Trả về số lượng phòng thực tế theo từng loại hình và theo 4 nhóm alias chuẩn của Frontend:
+    1. `phongTro`: `SINGLE`, `HOMESTAY`
+    2. `nhaNguyenCan`: `FULL_HOUSE`
+    3. `canHo`: `MINI_APARTMENT`, `STUDIO`, `APARTMENT`
+    4. `oGhep`: `SHARED`
+  - Đảm bảo seed dữ liệu dev `R__04` phủ đủ $\ge 6$ phòng hoạt động cho mỗi nhóm trên ít nhất 3 tỉnh/thành, phủ tối thiểu 8 tỉnh/thành phố trên cả nước để lưới Bento không bao giờ bị khuyết hàng.

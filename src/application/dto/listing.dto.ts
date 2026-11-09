@@ -105,9 +105,36 @@ export interface BannerDto {
 
 export interface PlatformStatsDto {
   activeRooms: number;
+  provincesWithRooms?: number;
   verifiedLandlords: number;
   totalReviews: number;
   happyTenants: number;
+}
+
+export interface RoomFacetsDto {
+  provinces: Array<{ code: string; name: string; count: number }>;
+  priceRange: { min: number; max: number };
+  amenities: Array<{ id: number; code: string; name: string; count: number }>;
+  roomTypes: Array<{ code: string; name: string; count: number }>;
+  categories: Array<{ code: string; name: string; count: number }>;
+}
+
+export interface CmsArticleDto {
+  id: number;
+  slug: string;
+  titleVi: string;
+  titleEn: string;
+  summaryVi: string;
+  summaryEn: string;
+  contentVi: string;
+  contentEn: string;
+  category: string;
+  readingMinutes: number;
+  imageUrl: string;
+  imageAltVi: string;
+  imageAltEn: string;
+  publishedAt: string;
+  sortOrder: number;
 }
 
 export interface RoomDto {
@@ -130,6 +157,7 @@ export interface RoomDto {
   area: number;
   maxOccupants: number;
   price: number;
+  priceUnit?: 'ROOM' | 'BED';
   deposit: number;
   electricityCost: number;
   waterCost: number;
@@ -176,6 +204,7 @@ export interface RoomDetailDto {
   maxOccupants: number;
 
   price: number;
+  priceUnit?: 'ROOM' | 'BED';
   deposit: number;
   electricityCost: number;
   waterCost: number;

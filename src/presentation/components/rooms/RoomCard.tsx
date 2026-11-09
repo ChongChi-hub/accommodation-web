@@ -40,7 +40,7 @@ export function RoomCard({ room, className }: RoomCardProps) {
           aria-label={room.title}
         />
         <img
-          src={room.primaryImageUrl || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80'}
+          src={room.primaryImageUrl || '/images/rooms/room-fallback-640.webp'}
           alt={room.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-103 pointer-events-none"
         />
@@ -64,7 +64,7 @@ export function RoomCard({ room, className }: RoomCardProps) {
           />
         </div>
         <div className="absolute bottom-3 right-3 bg-stone-900/80 backdrop-blur-xs text-white text-xs font-bold px-2.5 py-1 rounded-lg pointer-events-none z-10">
-          {formatPrice(room.price)} đ<span className="font-normal text-[10px] text-stone-300">/tháng</span>
+          {formatPrice(room.price)} đ<span className="font-normal text-[10px] text-stone-300">/{room.priceUnit === 'BED' ? 'giường/tháng' : 'tháng'}</span>
         </div>
       </div>
 

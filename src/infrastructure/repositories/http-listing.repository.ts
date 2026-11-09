@@ -12,6 +12,8 @@ import {
   BannerDto,
   PlatformStatsDto,
   RoomTypeDto,
+  RoomFacetsDto,
+  CmsArticleDto,
 } from '@/application/dto/listing.dto';
 import { ApiClient } from '../http/api-client';
 
@@ -95,5 +97,13 @@ export class HttpListingRepository implements IListingRepository {
 
   async getPlatformStats(): Promise<PlatformStatsDto> {
     return ApiClient.get<PlatformStatsDto>('/rooms/stats');
+  }
+
+  async getFacets(): Promise<RoomFacetsDto> {
+    return ApiClient.get<RoomFacetsDto>('/rooms/facets');
+  }
+
+  async getArticles(): Promise<CmsArticleDto[]> {
+    return ApiClient.get<CmsArticleDto[]>('/cms/articles');
   }
 }

@@ -90,12 +90,102 @@
   --danger-border: rgba(185, 28, 28, 0.5);
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+}
+
 body {
   background-color: var(--bg-background);
   color: var(--text-foreground);
   font-family: var(--font-sans);
   margin: 0;
   padding: 0;
+}
+
+/* Hero Ken Burns slow zoom */
+@keyframes hero-kenburns {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.06);
+  }
+}
+
+.hero-slide-zoom {
+  animation: hero-kenburns 7s ease-out forwards;
+}
+
+/* Line mask reveal for h1 */
+@keyframes line-mask-in {
+  from {
+    transform: translateY(105%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.line-mask-reveal {
+  animation: line-mask-in 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Frosted glass search card */
+.frosted-glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 20px 40px -15px rgba(15, 118, 110, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+}
+
+.dark .frosted-glass-card {
+  background: rgba(28, 25, 23, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .frosted-glass-card {
+    background: #ffffff;
+  }
+  .dark .frosted-glass-card {
+    background: #1c1917;
+  }
+}
+
+/* Micro-interaction hover rules from design-taste-frontend */
+.hover-lift {
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.hover-zoom-img {
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .hover-zoom-img {
+  transform: scale(1.03);
+}
+
+/* Reduced motion universal overrides */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  .hero-slide-zoom,
+  .line-mask-reveal,
+  .hover-lift,
+  .hover-zoom-img,
+  .reveal-animate {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
 }
 
 /* Header & Popover Surface / Motion Utilities */
