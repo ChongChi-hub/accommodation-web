@@ -2,11 +2,12 @@
 
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { ShieldCheck, MapPin, Mail, Phone } from 'lucide-react';
+import { ShieldCheck, MapPin, Mail, Phone, ExternalLink } from 'lucide-react';
 import Image from 'next/image';
 
 export function Footer() {
-  const t = useTranslations('nav');
+  const tNav = useTranslations('nav');
+  const t = useTranslations('footer');
 
   return (
     <footer className="border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 text-stone-600 dark:text-stone-400">
@@ -14,35 +15,35 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link href="/" className="inline-block">
-              <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} style={{ width: 'auto', height: 'auto' }} />
+              <Image src="/logo.svg" alt="CozyNest" width={130} height={30} style={{ width: 'auto', height: 'auto' }} />
             </Link>
             <p className="text-xs leading-relaxed text-stone-500 dark:text-stone-400">
-              Nền tảng công nghệ kết nối người thuê và chủ nhà trọ minh bạch, an toàn, chuẩn xác hàng đầu Việt Nam.
+              {t('tagline')}
             </p>
             <div className="flex items-center gap-2 text-xs text-teal-800 dark:text-teal-400 font-medium">
               <ShieldCheck size={16} />
-              <span>100% phòng được xác thực thực tế</span>
+              <span>{t('verifiedBadge')}</span>
             </div>
           </div>
 
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100 mb-3">
-              Khám phá
+              {t('exploreTitle')}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/rooms" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
-                  {t('rooms')}
+                  {tNav('rooms')}
                 </Link>
               </li>
               <li>
                 <Link href="/pricing" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
-                  Bảng giá dịch vụ
+                  {t('pricing')}
                 </Link>
               </li>
               <li>
                 <Link href="/safety-guide" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
-                  Cẩm nang thuê an toàn
+                  {t('safetyGuide')}
                 </Link>
               </li>
             </ul>
@@ -50,27 +51,27 @@ export function Footer() {
 
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100 mb-3">
-              Thông tin & Pháp lý
+              {t('infoTitle')}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/about" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
-                  Về chúng tôi
+                  {t('about')}
                 </Link>
               </li>
               <li>
                 <Link href="/terms" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
-                  Điều khoản dịch vụ
+                  {t('terms')}
                 </Link>
               </li>
               <li>
                 <Link href="/privacy" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
-                  Chính sách bảo mật
+                  {t('privacy')}
                 </Link>
               </li>
               <li>
                 <Link href="/faq" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
-                  Câu hỏi thường gặp (FAQ)
+                  {t('faq')}
                 </Link>
               </li>
             </ul>
@@ -78,12 +79,12 @@ export function Footer() {
 
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100 mb-3">
-              Liên hệ hỗ trợ
+              {t('contactTitle')}
             </h4>
             <ul className="space-y-2.5 text-xs text-stone-500 dark:text-stone-400">
               <li className="flex items-center gap-2">
                 <MapPin size={14} className="text-teal-700 dark:text-teal-400 shrink-0" />
-                <span>Phường Dịch Vọng Hậu, Hà Nội</span>
+                <span>{t('address')}</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={14} className="text-teal-700 dark:text-teal-400 shrink-0" />
@@ -93,15 +94,25 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={14} className="text-teal-700 dark:text-teal-400 shrink-0" />
-                <span>1900 8866 (8:00 - 21:00)</span>
+                <span>{t('phone')}</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-8 border-t border-stone-200 dark:border-stone-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-400">
-          <p>&copy; {new Date().getFullYear()} Tổ Ấm Platform. Bảo lưu mọi quyền.</p>
-          <p>Nền tảng hỗ trợ sinh viên và người đi làm an cư lạc nghiệp.</p>
+          <p>&copy; {new Date().getFullYear()} CozyNest. {t('allRightsReserved')}</p>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/about#licenses"
+              className="text-stone-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors inline-flex items-center gap-1"
+            >
+              <span>{t('photoLicenses')}</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+            <span>•</span>
+            <p>{t('motto')}</p>
+          </div>
         </div>
       </div>
     </footer>

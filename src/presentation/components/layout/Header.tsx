@@ -175,7 +175,7 @@ export function Header() {
                   <button
                     type="button"
                     onClick={toggleLocale}
-                    aria-label={tHeader('aria.switchLanguage')}
+                    aria-label={`${locale.toUpperCase()} - ${tHeader('aria.switchLanguage')}`}
                     className={cn(
                       'inline-flex items-center gap-1 text-xs font-semibold uppercase px-2.5 py-2 rounded-xl border transition-colors cursor-pointer',
                       onHeroTop

@@ -998,7 +998,15 @@
     "networkError": "Could not load suggestions due to a network or server error.",
     "retry": "Retry",
     "shortcutHint": "Press / to quick search",
-    "submitBtn": "Search"
+    "submitBtn": "Search",
+    "recentSearches": "Recent Searches",
+    "allProvinces": "All provinces",
+    "anyPrice": "Any price",
+    "priceUnder3m": "Under 3 million",
+    "priceUnder5m": "Under 5 million",
+    "priceUnder8m": "Under 8 million",
+    "priceUnder12m": "Under 12 million",
+    "submit": "Search"
   },
   "userMenu": {
     "fallbackName": "User",
@@ -1110,5 +1118,161 @@
     "successToast": "Landlord application initialized! Please complete identity verification.",
     "errorToast": "Unable to submit application right now. Please try again.",
     "loginRequiredNotice": "Please sign in or create an account to apply as a landlord."
+  },
+  "hero": {
+    "badge": "Rental rooms, townhouses, apartments, shared spaces",
+    "title": "Find your first place to call home",
+    "subtitle": "Search rooms by location and budget, with transparent utility costs upfront",
+    "pauseSlides": "Pause slideshow",
+    "playSlides": "Play slideshow",
+    "scrollDown": "Scroll down",
+    "quickSearch": "Quick search",
+    "tabs": {
+      "all": "All",
+      "phongTro": "Single Room",
+      "nhaNguyenCan": "Full House",
+      "canHo": "Apartment",
+      "oGhep": "Shared Room"
+    },
+    "chips": {
+      "under3m": "Under 3M",
+      "loft": "With Mezzanine",
+      "pets": "Pet Friendly",
+      "balcony": "With Balcony"
+    }
+  },
+  "categories": {
+    "sectionSubtitle": "Explore by need",
+    "sectionTitle": "Popular accommodation types",
+    "sectionDescription": "Choose the living space that fits your lifestyle and budget",
+    "roomsAvailable": "{count} rooms available",
+    "explore": "Explore",
+    "errorTitle": "Unable to load room categories",
+    "items": {
+      "phongTro": "Single Room",
+      "phongTroDesc": "Private, practical space for students and professionals",
+      "nhaNguyenCan": "Whole House",
+      "nhaNguyenCanDesc": "Spacious house for families or groups of friends",
+      "canHo": "Studio & Apartment",
+      "canHoDesc": "Modern furniture, high security and complete amenities",
+      "oGhep": "Coliving & Shared Space",
+      "oGhepDesc": "Budget-friendly shared living with shared amenities"
+    }
+  },
+  "featured": {
+    "sectionSubtitle": "Highly rated",
+    "sectionTitle": "Featured & trusted rooms",
+    "sectionDescription": "Rooms with positive verified tenant reviews and clear fee transparency",
+    "prev": "Previous room",
+    "next": "Next room",
+    "errorTitle": "Unable to load featured rooms",
+    "noRooms": "No featured rooms available at the moment"
+  },
+  "areas": {
+    "sectionSubtitle": "Key locations",
+    "sectionTitle": "Explore accommodations by city",
+    "sectionDescription": "Check available listings and average rents across major cities",
+    "roomCount": "{count} rooms available",
+    "errorTitle": "Unable to load areas",
+    "noAreas": "No area data available"
+  },
+  "howItWorks": {
+    "sectionSubtitle": "Transparent process",
+    "sectionTitle": "How CozyNest works",
+    "sectionDescription": "From discovery to check-in, every step is clear and protected",
+    "upcoming": "Upcoming",
+    "steps": {
+      "step1Title": "Search & Compare transparently",
+      "step1Desc": "View unedited real photos and compare public utility fees before contacting hosts.",
+      "step2Title": "Schedule an on-site visit",
+      "step2Desc": "Chat directly with verified hosts and schedule a physical room tour at your convenience.",
+      "step3Title": "Lease & Secure deposit",
+      "step3Desc": "Standard legal lease terms, documented move-in inventory, and transparent deposit protection."
+    }
+  },
+  "latest": {
+    "sectionSubtitle": "Continuously updated",
+    "sectionTitle": "Latest room listings",
+    "sectionDescription": "Newly published and verified rental rooms on the platform",
+    "viewAll": "View all rooms",
+    "viewAllCount": "View all ({count} rooms)",
+    "errorTitle": "Unable to load latest rooms",
+    "noRooms": "No new listings found"
+  },
+  "banners": {
+    "learnMore": "Learn more"
+  },
+  "landlordSection": {
+    "sectionSubtitle": "For property owners",
+    "sectionTitle": "Manage rental properties smoothly and efficiently",
+    "sectionDescription": "CozyNest connects property owners with verified tenants, streamlines billing, and protects both parties.",
+    "cardTitle": "Documented Handover",
+    "cardDesc": "Detailed move-in inventory report, eliminating move-out disputes.",
+    "ctaPostRoom": "Post a new room",
+    "ctaUpgradeRole": "Upgrade to landlord account",
+    "ctaRegisterLandlord": "Register as landlord partner",
+    "benefits": {
+      "benefit1Title": "Tenant verification via identity checks",
+      "benefit1Desc": "Tenants verify phone and identity, minimizing ghosting and no-show tours.",
+      "benefit2Title": "Transparent billing and utility meter tracking",
+      "benefit2Desc": "Automatic periodic rent bills with verifiable utility meter photo records.",
+      "benefit3Title": "Clear listings with zero hidden fees",
+      "benefit3Desc": "No hidden charges, owners retain full control over rent rates and tenant selection."
+    }
+  },
+  "guides": {
+    "sectionSubtitle": "Renting knowledge",
+    "sectionTitle": "Guides & Safe renting practices",
+    "sectionDescription": "Key legal terms, inspection checklists, and tenant rights you need to know",
+    "viewAllGuides": "View all guides",
+    "minutesRead": "min read",
+    "readArticle": "Read article",
+    "errorTitle": "Unable to load guides",
+    "noArticles": "No guide articles available"
+  },
+  "stats": {
+    "sectionSubtitle": "Real metrics",
+    "sectionTitle": "Platform operating metrics",
+    "sectionDescription": "Metrics compiled directly from our live database with zero fabrication",
+    "errorTitle": "Unable to load platform statistics",
+    "items": {
+      "activeRooms": "Active room listings",
+      "activeRoomsDesc": "Currently open for rent with immediate host contact",
+      "provinces": "Provinces & cities covered",
+      "provincesDesc": "Areas with active, verifiable rental inventory",
+      "verifiedHosts": "Verified property hosts",
+      "verifiedHostsDesc": "Completed identity and legal document verification",
+      "reviews": "Tenant reviews & ratings",
+      "reviewsDesc": "Genuine feedback from tenants who lived there"
+    }
+  },
+  "finalCta": {
+    "badge": "Begin your home",
+    "title": "Ready to find your ideal living space?",
+    "description": "Explore transparent room listings or list your property for rent today.",
+    "findRoomCta": "Find a room now",
+    "postRoomCta": "List your property"
+  },
+  "footer": {
+    "tagline": "A transparent and reliable platform connecting tenants and landlords across Vietnam.",
+    "verifiedBadge": "Listings verified against real property records",
+    "exploreTitle": "Explore",
+    "pricing": "Pricing",
+    "safetyGuide": "Safety guide",
+    "infoTitle": "Info & Legal",
+    "about": "About us",
+    "terms": "Terms of service",
+    "privacy": "Privacy policy",
+    "faq": "FAQ",
+    "contactTitle": "Contact & Support",
+    "address": "Dich Vong Hau Ward, Hanoi",
+    "phone": "1900 8866 (8:00 - 21:00)",
+    "allRightsReserved": "All rights reserved.",
+    "photoLicenses": "Photo licenses",
+    "motto": "Building a respectful, transparent renting community."
+  },
+  "rooms": {
+    "perMonth": "/month",
+    "perBedMonth": "/bed/month"
   }
 }

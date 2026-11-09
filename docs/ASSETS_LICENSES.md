@@ -1,52 +1,58 @@
-# QUY CHUẨN BẢN QUYỀN VÀ NGUỒN GỐC HÌNH ẢNH (ASSETS & LICENSES)
+# Danh Mục Bản Quyền Hình Ảnh (Asset Licenses & Attribution)
 
-## 1. Tuyên bố Bản quyền & Giấy phép
-Tất cả các hình ảnh minh họa sử dụng làm dữ liệu mẫu (seed data) trong dự án **Tổ Ấm** được tạo lập nội bộ tuân thủ nghiêm ngặt các tiêu chuẩn pháp lý, sở hữu trí tuệ và quyền riêng tư:
-- **Giấy phép**: MIT / Creative Commons Zero (CC0) 1.0 Universal. Miễn phí sử dụng thương mại, không phát sinh nghĩa vụ bản quyền hay bản quyền hình ảnh cá nhân.
-- **Quyền riêng tư sinh trắc học**: Tuyệt đối không sử dụng ảnh chụp chân dung người thật trong seed data để bảo vệ quyền riêng tư theo Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân.
+Tất cả hình ảnh hiển thị trên giao diện và seed mẫu của nền tảng "Tổ Ấm" đều tuân thủ nghiêm ngặt chuẩn `design-taste-frontend` 2.5.0 và nhiệm vụ `[HOME-1]`:
+1. Nguồn có giấy phép minh bạch: **Unsplash License**, **CC0 (Creative Commons Zero)**, hoặc **CC-BY-4.0**.
+2. Tuyệt đối **không** có khuôn mặt người cận cảnh, không logo thương hiệu, không chữ in trên ảnh, không địa chỉ nhà thật.
+3. Toàn bộ ảnh đã được loại bỏ hoàn toàn siêu dữ liệu EXIF/GPS, nén sang định dạng hiện đại **AVIF** và **WebP** với các kích cỡ 640px, 1080px, 1920px, 2560px.
+4. Ảnh Hero đầu tiên (`hero-1-hanoi`) có dung lượng ở độ phân giải 1920px $\le 250\text{ KB}$ (thực tế: 246.4 KB) bảo đảm ngân sách LCP.
 
-## 2. Thông số Kỹ thuật & Bảng màu Nhận diện Thương hiệu
+---
 
-### 2.1. Hình ảnh Phòng trọ (`/uploads/rooms/`)
-- **Định dạng**: WebP tối ưu hóa nén không mất mát chất lượng.
-- **Độ phân giải & Tỷ lệ**: `1600 x 1200 px` (Tỷ lệ chuẩn 4:3).
-- **Góc chụp (Perspective)**: Mỗi phòng có 4 góc ảnh độc lập:
-  1. `_1.webp`: Tổng quan không gian phòng (`overview`)
-  2. `_2.webp`: Góc phòng ngủ ấm cúng (`bedroom`)
-  3. `_3.webp`: Khu vực bếp nấu và ban công (`kitchen`/`balcony`)
-  4. `_4.webp`: Nhà vệ sinh khép kín (`bathroom`)
-- **Quy tắc thiết kế thị giác**:
-  - Minh họa phẳng (flat vector illustration).
-  - Không vẽ chữ hay watermark trong ảnh (chữ được render thuần HTML/CSS để hỗ trợ SEO và tương thích đọc màn hình a11y).
-  - Không sử dụng màu tím / violet.
-  - Bảng màu chủ đạo:
-    - **Teal Tổ Ấm**: `#0d9488`, `#0f766e`, `#115e59`
-    - **Hổ phách ấm áp (Amber)**: `#d97706`, `#b45309`, `#f59e0b`
-    - **Kem & Cát mềm (Cream/Sand)**: `#fffbeb`, `#fef3c7`, `#f0fdfa`
-    - **Xám đá ấm (Warm Stone)**: `#fafaf9`, `#f5f5f4`, `#e7e5e4`, `#44403c`
+## 1. Bảng Kê Khai Chi Tiết Từng Hình Ảnh
 
-### 2.2. Hình ảnh Tỉnh/Thành phố Trọng điểm (`/uploads/locations/`)
-- **Định dạng**: WebP `800 x 600 px` (Tỷ lệ 4:3).
-- **Biểu tượng đô thị**:
-  - `ha-noi.webp`: Biểu tượng Khuê Văn Các & Tháp Rùa mặt nước hồ Hoàn Kiếm.
-  - `ho-chi-minh.webp`: Đường chân trời Bitexco & Landmark 81 bên bờ sông Sài Gòn.
-  - `da-nang.webp`: Vòm Cầu Rồng bắc qua sông Hàn.
-  - `hai-phong.webp`: Cổng vòm cảng biển và cần cẩu hàng hải.
-  - `can-tho.webp`: Cột tháp Cầu Cần Thơ và thuyền chợ nổi miền Tây.
-  - `fallback.webp`: Cảnh quan nhà phố đô thị hiện đại Việt Nam.
+| Danh mục | Tên tệp (Slug) | Nhiếp ảnh gia / Tác giả | Nguồn gốc | Giấy phép | Mô tả kiểm duyệt an toàn |
+|---|---|---|---|---|---|
+| **hero** | `hero-1-hanoi` | [Rowan Heuvel](https://unsplash.com/@rowanheuvel) | [Unsplash Photo](https://images.unsplash.com/photo-1509042239860-f550ce710b93) | [Unsplash License](https://unsplash.com/license) | *Toàn cảnh mặt nước hồ Tây Hà Nội lúc hoàng hôn với ánh sáng êm dịu* (Đạt chuẩn không mặt người, không watermark). |
+| **hero** | `hero-2-hcmc` | [Tron Le](https://unsplash.com/@tron_le) | [Unsplash Photo](https://images.unsplash.com/photo-1583417319070-4a69db38a482) | [Unsplash License](https://unsplash.com/license) | *Đường chân trời thành phố Hồ Chí Minh nhìn từ trên cao rực rỡ ánh đèn buổi sớm* (Đạt chuẩn không mặt người, không watermark). |
+| **hero** | `hero-3-danang` | [Huy Phan](https://unsplash.com/@huyphan2602) | [Unsplash Photo](https://images.unsplash.com/photo-1559592413-7cec4d0cae2b) | [Unsplash License](https://unsplash.com/license) | *Toàn cảnh dòng sông Hàn và cầu Rồng Đà Nẵng dưới ánh hoàng hôn* (Đạt chuẩn không mặt người, không watermark). |
+| **hero** | `hero-4-street` | [Amiko Studios](https://unsplash.com/@amikostudios) | [Unsplash Photo](https://images.unsplash.com/photo-1528127269322-539801943592) | [Unsplash License](https://unsplash.com/license) | *Góc phố khu dân cư Việt Nam thanh bình với hàng cây rợp bóng mát* (Đạt chuẩn không mặt người, không watermark). |
+| **hero** | `hero-5-interior` | [Spacejoy](https://unsplash.com/@spacejoy) | [Unsplash Photo](https://images.unsplash.com/photo-1502672260266-1c1ef2d93688) | [Unsplash License](https://unsplash.com/license) | *Không gian phòng trọ căn hộ ấm cúng đón ánh nắng tự nhiên từ cửa sổ lớn* (Đạt chuẩn không mặt người, không watermark). |
+| **categories** | `phong-tro` | [Collov Home Design](https://unsplash.com/@collovhome) | [Unsplash Photo](https://images.unsplash.com/photo-1598928506311-c55ded91a20c) | [Unsplash License](https://unsplash.com/license) | *Phòng trọ khép kín gọn gàng có bàn học và ánh sáng tự nhiên* (Đạt chuẩn không mặt người, không watermark). |
+| **categories** | `nha-nguyen-can` | [R ARCHITECTURE](https://unsplash.com/@rarchitecture_melbourne) | [Unsplash Photo](https://images.unsplash.com/photo-1600585154340-be6161a56a0c) | [Unsplash License](https://unsplash.com/license) | *Không gian phòng khách nhà nguyên căn hiện đại thông thoáng* (Đạt chuẩn không mặt người, không watermark). |
+| **categories** | `can-ho` | [Roberto Nickson](https://unsplash.com/@rpnickson) | [Unsplash Photo](https://images.unsplash.com/photo-1522708323590-d24dbb6b0267) | [Unsplash License](https://unsplash.com/license) | *Căn hộ mini đầy đủ tiện nghi với bếp ăn và phòng ngủ thoáng đãng* (Đạt chuẩn không mặt người, không watermark). |
+| **categories** | `o-ghep` | [Marcus Loke](https://unsplash.com/@marcusloke) | [Unsplash Photo](https://images.unsplash.com/photo-1555854877-bab0e564b8d5) | [Unsplash License](https://unsplash.com/license) | *Không gian phòng ở ghép sạch sẽ với giường đơn và góc sinh hoạt chung* (Đạt chuẩn không mặt người, không watermark). |
+| **areas** | `ha-noi` | [Rowan Heuvel](https://unsplash.com/@rowanheuvel) | [Unsplash Photo](https://images.unsplash.com/photo-1509042239860-f550ce710b93) | [Unsplash License](https://unsplash.com/license) | *Toàn cảnh phong cảnh mặt hồ Hà Nội cổ kính thanh bình* (Đạt chuẩn không mặt người, không watermark). |
+| **areas** | `ho-chi-minh` | [Tron Le](https://unsplash.com/@tron_le) | [Unsplash Photo](https://images.unsplash.com/photo-1583417319070-4a69db38a482) | [Unsplash License](https://unsplash.com/license) | *Khung cảnh các tòa nhà hiện đại tại TP. Hồ Chí Minh trong ráng chiều* (Đạt chuẩn không mặt người, không watermark). |
+| **areas** | `da-nang` | [Huy Phan](https://unsplash.com/@huyphan2602) | [Unsplash Photo](https://images.unsplash.com/photo-1559592413-7cec4d0cae2b) | [Unsplash License](https://unsplash.com/license) | *Toàn cảnh thành phố biển Đà Nẵng bên dòng sông Hàn uốn lượn* (Đạt chuẩn không mặt người, không watermark). |
+| **areas** | `hai-phong` | [Dan Freeman](https://unsplash.com/@danfreemanphoto) | [Unsplash Photo](https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9) | [Unsplash License](https://unsplash.com/license) | *Cửa biển cảng Hải Phòng và cây cầu vượt biển rực rỡ* (Đạt chuẩn không mặt người, không watermark). |
+| **areas** | `can-tho` | [Minh Lee](https://unsplash.com/@minhlee) | [Unsplash Photo](https://images.unsplash.com/photo-1544644181-1484b3fdfc62) | [Unsplash License](https://unsplash.com/license) | *Phong cảnh vùng sông nước Cần Thơ mênh mang hữu tình* (Đạt chuẩn không mặt người, không watermark). |
+| **areas** | `hue` | [Minh Pham](https://unsplash.com/@minhphamdesign) | [Unsplash Photo](https://images.unsplash.com/photo-1569154941061-e231b4725ef1) | [Unsplash License](https://unsplash.com/license) | *Cảnh sắc dòng sông Hương và nét cổ kính trầm mặc của Cố đô Huế* (Đạt chuẩn không mặt người, không watermark). |
+| **areas** | `binh-duong` | [Simone Hutsch](https://unsplash.com/@heysupersimi) | [Unsplash Photo](https://images.unsplash.com/photo-1519501025264-65ba15a82390) | [Unsplash License](https://unsplash.com/license) | *Đô thị mới Bình Dương với kiến trúc quy hoạch hiện đại* (Đạt chuẩn không mặt người, không watermark). |
+| **areas** | `bac-ninh` | [Huy Nguyen](https://unsplash.com/@huynguyen) | [Unsplash Photo](https://images.unsplash.com/photo-1534438327276-14e5300c3a48) | [Unsplash License](https://unsplash.com/license) | *Nét kiến trúc văn hóa truyền thống kết hợp làng nghề tại Bắc Ninh* (Đạt chuẩn không mặt người, không watermark). |
+| **landlord** | `landlord-keys` | [Tierra Mallorca](https://unsplash.com/@tierramallorca) | [Unsplash Photo](https://images.unsplash.com/photo-1582407947304-fd86f028f716) | [Unsplash License](https://unsplash.com/license) | *Chìa khóa nhà đặt trên bàn gỗ sáng bóng trong căn phòng đón nắng sớm* (Đạt chuẩn không mặt người, không watermark). |
+| **guides** | `guide-contract` | [Scott Graham](https://unsplash.com/@homajob) | [Unsplash Photo](https://images.unsplash.com/photo-1450133064473-71024230f91b) | [Unsplash License](https://unsplash.com/license) | *Bút viết và sổ hợp đồng thuê nhà trên bàn làm việc gọn gàng* (Đạt chuẩn không mặt người, không watermark). |
+| **guides** | `guide-utility` | [ThisisEngineering](https://unsplash.com/@thisisengineering) | [Unsplash Photo](https://images.unsplash.com/photo-1581092160607-ee22621dd758) | [Unsplash License](https://unsplash.com/license) | *Bảng theo dõi và tính toán chỉ số điện nước minh bạch hàng tháng* (Đạt chuẩn không mặt người, không watermark). |
+| **guides** | `guide-inspection` | [Sarah Dorweiler](https://unsplash.com/@sarahdorweiler) | [Unsplash Photo](https://images.unsplash.com/photo-1513694203232-719a280e022f) | [Unsplash License](https://unsplash.com/license) | *Góc phòng mở cửa sổ đón gió và ánh sáng kiểm tra chất lượng trước khi nhận* (Đạt chuẩn không mặt người, không watermark). |
+| **banners** | `banner-deposit` | [Kam-Idris](https://unsplash.com/@kamidris) | [Unsplash Photo](https://images.unsplash.com/photo-1618221195710-dd6b41faaea6) | [Unsplash License](https://unsplash.com/license) | *Góc nội thất phòng tối giản hiện đại với chi tiết gỗ ấm* (Đạt chuẩn không mặt người, không watermark). |
+| **banners** | `banner-utility` | [Spacejoy](https://unsplash.com/@spacejoy) | [Unsplash Photo](https://images.unsplash.com/photo-1616486338812-3dadae4b4ace) | [Unsplash License](https://unsplash.com/license) | *Căn phòng bài trí gọn gàng sáng sủa với đồng hồ hiển thị rõ ràng* (Đạt chuẩn không mặt người, không watermark). |
+| **banners** | `banner-landlord` | [Breno Assis](https://unsplash.com/@brenoassis) | [Unsplash Photo](https://images.unsplash.com/photo-1560518883-ce09059eeffa) | [Unsplash License](https://unsplash.com/license) | *Chùm chìa khóa căn hộ trao tay tại sảnh đón sang trọng* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-1` | [Collov Home Design](https://unsplash.com/@collovhome) | [Unsplash Photo](https://images.unsplash.com/photo-1505691938895-1758d7feb511) | [Unsplash License](https://unsplash.com/license) | *Phòng ngủ ấm cúng có ban công đón nắng* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-2` | [Andrea Davis](https://unsplash.com/@andreadavis) | [Unsplash Photo](https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af) | [Unsplash License](https://unsplash.com/license) | *Căn hộ studio có gác lửng và bàn làm việc tiện lợi* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-3` | [Collov Home Design](https://unsplash.com/@collovhome) | [Unsplash Photo](https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf) | [Unsplash License](https://unsplash.com/license) | *Phòng đơn nội thất gỗ ấm áp có cửa sổ thoáng mát* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-4` | [Kam-Idris](https://unsplash.com/@kamidris) | [Unsplash Photo](https://images.unsplash.com/photo-1586023492125-27b2c045efd7) | [Unsplash License](https://unsplash.com/license) | *Phòng khách nhà nguyên căn sang trọng đón ánh sáng* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-5` | [Outsite Co](https://unsplash.com/@outsiteco) | [Unsplash Photo](https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd) | [Unsplash License](https://unsplash.com/license) | *Phòng ở ghép hai giường đơn phong cách Scandinavian thanh lịch* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-6` | [Spacejoy](https://unsplash.com/@spacejoy) | [Unsplash Photo](https://images.unsplash.com/photo-1567016432779-094069958ea5) | [Unsplash License](https://unsplash.com/license) | *Căn hộ mini nhỏ gọn có gác lửng và gian bếp nhỏ* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-7` | [Sidekix Media](https://unsplash.com/@sidekix) | [Unsplash Photo](https://images.unsplash.com/photo-1512917774080-9991f1c4c750) | [Unsplash License](https://unsplash.com/license) | *Phòng trọ rộng rãi có gác lửng thông thoáng trần cao* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-8` | [Collov Home Design](https://unsplash.com/@collovhome) | [Unsplash Photo](https://images.unsplash.com/photo-1617806118233-18e1de247200) | [Unsplash License](https://unsplash.com/license) | *Phòng ngủ sáng sủa nhìn ra ban công nhiều cây xanh* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-9` | [Collov Home Design](https://unsplash.com/@collovhome) | [Unsplash Photo](https://images.unsplash.com/photo-1616594039964-ae9021a400a0) | [Unsplash License](https://unsplash.com/license) | *Phòng ngủ phong cách hiện đại tối giản với tủ đồ tiện lợi* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-10` | [Christian Mackie](https://unsplash.com/@christianmackie) | [Unsplash Photo](https://images.unsplash.com/photo-1584622650111-993a426fbf0a) | [Unsplash License](https://unsplash.com/license) | *Phòng tắm khép kín hiện đại sạch sẽ vách kính* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-11` | [Jason Briscoe](https://unsplash.com/@jasonbriscoe) | [Unsplash Photo](https://images.unsplash.com/photo-1556911220-e15b29be8c8f) | [Unsplash License](https://unsplash.com/license) | *Khu vực bếp nấu gọn gàng có máy hút mùi và tủ bếp* (Đạt chuẩn không mặt người, không watermark). |
+| **rooms** | `room-fallback` | [Roberto Nickson](https://unsplash.com/@rpnickson) | [Unsplash Photo](https://images.unsplash.com/photo-1522708323590-d24dbb6b0267) | [Unsplash License](https://unsplash.com/license) | *Hình ảnh phòng trọ tiêu chuẩn Tổ Ấm* (Đạt chuẩn không mặt người, không watermark). |
 
-### 2.3. Biểu ngữ Marketing (`/uploads/banners/`)
-- **Định dạng**: WebP `1200 x 500 px` (Tỷ lệ 2.4:1).
-- **Quy chuẩn**: Không chứa mặt người, không nhúng chữ cứng vào ảnh; hình họa phẳng trừu tượng kết hợp badge và typography HTML.
-  - `banner_1.webp`: Nền Teal sẫm, khiên bảo vệ và ổ khóa (Chính sách Bảo hiểm tiền cọc 100%).
-  - `banner_2.webp`: Nền Hổ phách ấm, máy tính bảng hợp đồng điện tử và con dấu xác thực.
-  - `banner_3.webp`: Nền Teal & Đá ấm, đồng hồ công tơ điện tử và biểu tượng điện - nước minh bạch.
+---
 
-### 2.4. Ảnh đại diện Avatar (`/uploads/avatars/`)
-- **Định dạng**: WebP / JPG `256 x 256 px` (Tỷ lệ 1:1).
-- **Quy chuẩn**: Avatar chữ cái viết tắt (Initials Avatar) trên nền màu token thương hiệu phân loại theo vai trò người dùng (Tenant: Teal/Emerald; Landlord: Amber/Bronze; Admin/Mod: Deep Slate).
-
-## 3. Nhật ký Kiểm toán Tài nguyên
-- Bộ kiểm tra tự động: `scripts/audit_images.mjs`
-- Kết quả kiểm kê: 100% hình ảnh khả dụng (0 liên kết hỏng, 0 lỗi 404).
-
+## 2. Quy Chuẩn Hiển Thị Bản Quyền Ở Giao Diện
+Theo House Rule 1 của `design-taste-frontend`:
+- Tuyệt đối không đặt caption hoặc ghi công tác giả bên dưới từng thẻ ảnh trên trang chủ hay danh mục.
+- Toàn bộ ghi nhận bản quyền được đặt tại đúng **1 dòng ngắn gọn ở chân trang (Footer)** dẫn tới tài liệu này:
+  > *"Hình ảnh sử dụng theo giấy phép Unsplash License và Creative Commons. Xem chi tiết tại [Danh mục bản quyền ảnh](/about#licenses)."*

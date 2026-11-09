@@ -6,6 +6,8 @@ import {
   HotAreaDto,
   BannerDto,
   PlatformStatsDto,
+  RoomFacetsDto,
+  CmsArticleDto,
 } from '@/application/dto/listing.dto';
 import { container } from '@/infrastructure/di/container';
 
@@ -40,17 +42,28 @@ export function useHomePageData() {
     error: null,
   });
 
-  const [stats, setStats] = useState<SectionState<PlatformStatsDto>>({
-    data: { activeRooms: 37, verifiedLandlords: 1, totalReviews: 3, happyTenants: 77 },
+  const [stats, setStats] = useState<SectionState<PlatformStatsDto | null>>({
+    data: null,
     isLoading: true,
     error: null,
   });
 
-  const fetchAll = useCallback(async () => {
-    // Parallel fetch with independent error isolation
-    const listingRepo = container.listing.listingRepository;
+  const [facets, setFacets] = useState<SectionState<RoomFacetsDto | null>>({
+    data: null,
+    isLoading: true,
+    error: null,
+  });
 
-    // 1. Latest Rooms
+  const [articles, setArticles] = useState<SectionState<CmsArticleDto[]>>({
+    data: [],
+    isLoading: true,
+    error: null,
+  });
+
+  const listingRepo = container.listing.listingRepository;
+
+  const fetchLatestRooms = useCallback(() => {
+    setLatestRooms((prev) => ({ ...prev, isLoading: true, error: null }));
     listingRepo
       .getRooms({ size: 8, sortBy: 'newest' })
       .then((data) => setLatestRooms({ data, isLoading: false, error: null }))
@@ -61,10 +74,12 @@ export function useHomePageData() {
           error: err instanceof Error ? err.message : 'Lỗi tải phòng mới nhất',
         })
       );
+  }, [listingRepo]);
 
-    // 2. Featured Rooms
+  const fetchFeaturedRooms = useCallback(() => {
+    setFeaturedRooms((prev) => ({ ...prev, isLoading: true, error: null }));
     listingRepo
-      .getRooms({ size: 4, sortBy: 'rating' })
+      .getRooms({ size: 6, sortBy: 'rating' })
       .then((data) => setFeaturedRooms({ data, isLoading: false, error: null }))
       .catch((err) =>
         setFeaturedRooms({
@@ -73,8 +88,10 @@ export function useHomePageData() {
           error: err instanceof Error ? err.message : 'Lỗi tải phòng nổi bật',
         })
       );
+  }, [listingRepo]);
 
-    // 3. Hot Areas
+  const fetchHotAreas = useCallback(() => {
+    setHotAreas((prev) => ({ ...prev, isLoading: true, error: null }));
     listingRepo
       .getHotAreas()
       .then((data) => setHotAreas({ data, isLoading: false, error: null }))
@@ -82,11 +99,13 @@ export function useHomePageData() {
         setHotAreas({
           data: [],
           isLoading: false,
-          error: err instanceof Error ? err.message : 'Lỗi tải khu vực nổi bật',
+          error: err instanceof Error ? err.message : 'Lỗi tải khu vực',
         })
       );
+  }, [listingRepo]);
 
-    // 4. Banners
+  const fetchBanners = useCallback(() => {
+    setBanners((prev) => ({ ...prev, isLoading: true, error: null }));
     listingRepo
       .getBanners()
       .then((data) => setBanners({ data, isLoading: false, error: null }))
@@ -94,22 +113,70 @@ export function useHomePageData() {
         setBanners({
           data: [],
           isLoading: false,
-          error: err instanceof Error ? err.message : 'Lỗi tải biểu ngữ',
+          error: err instanceof Error ? err.message : 'Lỗi tải thông tin nổi bật',
         })
       );
+  }, [listingRepo]);
 
-    // 5. Stats
+  const fetchStats = useCallback(() => {
+    setStats((prev) => ({ ...prev, isLoading: true, error: null }));
     listingRepo
       .getPlatformStats()
       .then((data) => setStats({ data, isLoading: false, error: null }))
       .catch((err) =>
         setStats({
-          data: { activeRooms: 37, verifiedLandlords: 1, totalReviews: 3, happyTenants: 77 },
+          data: null,
           isLoading: false,
-          error: err instanceof Error ? err.message : 'Lỗi tải số liệu thống kê',
+          error: err instanceof Error ? err.message : 'Lỗi tải thống kê',
         })
       );
-  }, []);
+  }, [listingRepo]);
+
+  const fetchFacets = useCallback(() => {
+    setFacets((prev) => ({ ...prev, isLoading: true, error: null }));
+    listingRepo
+      .getFacets()
+      .then((data) => setFacets({ data, isLoading: false, error: null }))
+      .catch((err) =>
+        setFacets({
+          data: null,
+          isLoading: false,
+          error: err instanceof Error ? err.message : 'Lỗi tải phân loại',
+        })
+      );
+  }, [listingRepo]);
+
+  const fetchArticles = useCallback(() => {
+    setArticles((prev) => ({ ...prev, isLoading: true, error: null }));
+    listingRepo
+      .getArticles()
+      .then((data) => setArticles({ data, isLoading: false, error: null }))
+      .catch((err) =>
+        setArticles({
+          data: [],
+          isLoading: false,
+          error: err instanceof Error ? err.message : 'Lỗi tải cẩm nang',
+        })
+      );
+  }, [listingRepo]);
+
+  const fetchAll = useCallback(() => {
+    fetchLatestRooms();
+    fetchFeaturedRooms();
+    fetchHotAreas();
+    fetchBanners();
+    fetchStats();
+    fetchFacets();
+    fetchArticles();
+  }, [
+    fetchLatestRooms,
+    fetchFeaturedRooms,
+    fetchHotAreas,
+    fetchBanners,
+    fetchStats,
+    fetchFacets,
+    fetchArticles,
+  ]);
 
   useEffect(() => {
     fetchAll();
@@ -121,6 +188,15 @@ export function useHomePageData() {
     hotAreas,
     banners,
     stats,
+    facets,
+    articles,
+    retryLatestRooms: fetchLatestRooms,
+    retryFeaturedRooms: fetchFeaturedRooms,
+    retryHotAreas: fetchHotAreas,
+    retryBanners: fetchBanners,
+    retryStats: fetchStats,
+    retryFacets: fetchFacets,
+    retryArticles: fetchArticles,
     retryAll: fetchAll,
   };
 }

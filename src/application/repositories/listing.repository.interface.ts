@@ -11,6 +11,8 @@ import {
   BannerDto,
   PlatformStatsDto,
   RoomTypeDto,
+  RoomFacetsDto,
+  CmsArticleDto,
 } from '../dto/listing.dto';
 
 export interface IListingRepository {
@@ -28,4 +30,6 @@ export interface IListingRepository {
   getRoomTypes?(): Promise<RoomTypeDto[]>;
   getBanners(): Promise<BannerDto[]>;
   getPlatformStats(): Promise<PlatformStatsDto>;
+  getFacets(): Promise<RoomFacetsDto>;
+  getArticles(): Promise<CmsArticleDto[]>;
 }

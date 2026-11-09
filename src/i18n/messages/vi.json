@@ -998,7 +998,15 @@
     "networkError": "Không thể tải gợi ý lúc này do lỗi kết nối hoặc máy chủ.",
     "retry": "Thử lại",
     "shortcutHint": "Nhấn / để tìm nhanh",
-    "submitBtn": "Tìm"
+    "submitBtn": "Tìm",
+    "recentSearches": "Tìm kiếm gần đây",
+    "allProvinces": "Tất cả tỉnh/thành",
+    "anyPrice": "Mức giá bất kỳ",
+    "priceUnder3m": "Dưới 3 triệu",
+    "priceUnder5m": "Dưới 5 triệu",
+    "priceUnder8m": "Dưới 8 triệu",
+    "priceUnder12m": "Dưới 12 triệu",
+    "submit": "Tìm phòng"
   },
   "userMenu": {
     "fallbackName": "Người dùng",
@@ -1110,5 +1118,161 @@
     "successToast": "Đã khởi tạo hồ sơ Chủ trọ! Vui lòng hoàn tất xác minh danh tính.",
     "errorToast": "Không thể khởi tạo hồ sơ lúc này. Vui lòng thử lại.",
     "loginRequiredNotice": "Vui lòng đăng nhập hoặc đăng ký tài khoản để nộp hồ sơ Chủ trọ."
+  },
+  "hero": {
+    "badge": "Phòng trọ, nhà nguyên căn, căn hộ, ở ghép",
+    "title": "Tìm chốn an cư, bắt đầu từ một tổ ấm",
+    "subtitle": "Tìm phòng theo khu vực và mức giá, xem rõ chi phí điện nước trước khi quyết định",
+    "pauseSlides": "Tạm dừng trình chiếu",
+    "playSlides": "Tiếp tục trình chiếu",
+    "scrollDown": "Cuộn xuống",
+    "quickSearch": "Tìm nhanh",
+    "tabs": {
+      "all": "Tất cả",
+      "phongTro": "Phòng trọ",
+      "nhaNguyenCan": "Nhà nguyên căn",
+      "canHo": "Căn hộ",
+      "oGhep": "Ở ghép"
+    },
+    "chips": {
+      "under3m": "Dưới 3 triệu",
+      "loft": "Có gác lửng",
+      "pets": "Cho nuôi thú cưng",
+      "balcony": "Có ban công"
+    }
+  },
+  "categories": {
+    "sectionSubtitle": "Khám phá theo nhu cầu",
+    "sectionTitle": "Loại hình lưu trú phổ biến",
+    "sectionDescription": "Lựa chọn không gian sống phù hợp với phong cách và ngân sách của bạn",
+    "roomsAvailable": "{count} phòng khả dụng",
+    "explore": "Khám phá",
+    "errorTitle": "Không thể tải danh mục loại hình",
+    "items": {
+      "phongTro": "Phòng trọ",
+      "phongTroDesc": "Không gian riêng tư, tiện lợi cho sinh viên và người đi làm",
+      "nhaNguyenCan": "Nhà nguyên căn",
+      "nhaNguyenCanDesc": "Không gian sinh hoạt rộng rãi cho gia đình hoặc nhóm bạn",
+      "canHo": "Căn hộ mini",
+      "canHoDesc": "Nội thất hiện đại, an ninh cao với đầy đủ tiện ích sống",
+      "oGhep": "Ở ghép - Ký túc xá",
+      "oGhepDesc": "Tiết kiệm chi phí, kết nối bạn bè cùng chia sẻ tiện nghi"
+    }
+  },
+  "featured": {
+    "sectionSubtitle": "Được đánh giá cao",
+    "sectionTitle": "Phòng trọ nổi bật & uy tín",
+    "sectionDescription": "Các phòng có phản hồi tốt từ người thuê thực tế và thông tin minh bạch",
+    "prev": "Phòng trước",
+    "next": "Phòng tiếp theo",
+    "errorTitle": "Không thể tải phòng nổi bật",
+    "noRooms": "Hiện chưa có phòng nào trong danh mục nổi bật"
+  },
+  "areas": {
+    "sectionSubtitle": "Khu vực trọng điểm",
+    "sectionTitle": "Khám phá phòng trọ theo thành phố",
+    "sectionDescription": "Xem số lượng phòng có sẵn và mức giá trung bình tại các thành phố lớn",
+    "roomCount": "{count} phòng trống",
+    "errorTitle": "Không thể tải danh sách khu vực",
+    "noAreas": "Chưa có dữ liệu khu vực"
+  },
+  "howItWorks": {
+    "sectionSubtitle": "Quy trình minh bạch",
+    "sectionTitle": "Cách CozyNest vận hành",
+    "sectionDescription": "Từ bước tìm kiếm đến khi nhận bàn giao phòng, thông tin luôn rõ ràng và được bảo vệ",
+    "upcoming": "Sắp có",
+    "steps": {
+      "step1Title": "Tìm kiếm & So sánh minh bạch",
+      "step1Desc": "Xem ảnh thật không qua chỉnh sửa, đối chiếu biểu phí điện nước công khai trước khi quyết định liên hệ.",
+      "step2Title": "Hẹn lịch xem phòng trực tiếp",
+      "step2Desc": "Trò chuyện trực tiếp với chủ trọ trên hệ thống và thống nhất thời gian đến khảo sát phòng thực tế.",
+      "step3Title": "Hợp đồng & Giữ cọc an toàn",
+      "step3Desc": "Hợp đồng chuẩn quy định pháp lý, biên bản bàn giao cơ sở vật chất rõ ràng, giữ tiền cọc có điều khoản hoàn lại minh bạch."
+    }
+  },
+  "latest": {
+    "sectionSubtitle": "Cập nhật liên tục",
+    "sectionTitle": "Phòng trọ mới đăng tải",
+    "sectionDescription": "Các bài đăng cho thuê mới nhất vừa được kiểm duyệt trên nền tảng",
+    "viewAll": "Xem tất cả phòng",
+    "viewAllCount": "Xem tất cả ({count} phòng)",
+    "errorTitle": "Không thể tải danh sách phòng mới",
+    "noRooms": "Hiện chưa có phòng nào mới đăng"
+  },
+  "banners": {
+    "learnMore": "Tìm hiểu chính sách"
+  },
+  "landlordSection": {
+    "sectionSubtitle": "Dành cho chủ nhà trọ",
+    "sectionTitle": "Đồng hành quản lý phòng trọ văn minh & hiệu quả",
+    "sectionDescription": "CozyNest giúp chủ trọ tiếp cận khách thuê uy tín, tối ưu quy trình quản lý hóa đơn và bảo vệ quyền lợi đôi bên.",
+    "cardTitle": "Bàn giao minh bạch",
+    "cardDesc": "Biên bản kiểm kê hiện trạng chi tiết, giảm thiểu tranh chấp khi kết thúc hợp đồng.",
+    "ctaPostRoom": "Đăng tin phòng mới",
+    "ctaUpgradeRole": "Nâng cấp tài khoản chủ trọ",
+    "ctaRegisterLandlord": "Đăng ký làm đối tác chủ trọ",
+    "benefits": {
+      "benefit1Title": "Kiểm duyệt khách thuê qua xác thực danh tính",
+      "benefit1Desc": "Khách thuê được xác minh số điện thoại và thông tin cơ bản, hạn chế tối đa rủi ro hủy hẹn xem phòng.",
+      "benefit2Title": "Quản lý hóa đơn & chỉ số điện nước chuẩn xác",
+      "benefit2Desc": "Tự động tính hóa đơn tiền nhà định kỳ kèm đối chiếu ảnh chỉ số công tơ điện nước minh bạch.",
+      "benefit3Title": "Niêm yết thông tin rõ ràng, không phí ẩn",
+      "benefit3Desc": "Không thu phí bất hợp lý, chủ trọ toàn quyền quyết định giá thuê và người thuê phù hợp."
+    }
+  },
+  "guides": {
+    "sectionSubtitle": "Kiến thức thuê phòng",
+    "sectionTitle": "Cẩm nang & Kinh nghiệm thuê an toàn",
+    "sectionDescription": "Nắm rõ các lưu ý pháp lý, kỹ năng kiểm tra phòng và quyền lợi của người đi thuê",
+    "viewAllGuides": "Xem tất cả cẩm nang",
+    "minutesRead": "phút đọc",
+    "readArticle": "Đọc bài viết",
+    "errorTitle": "Không thể tải cẩm nang",
+    "noArticles": "Hiện chưa có bài cẩm nang nào"
+  },
+  "stats": {
+    "sectionSubtitle": "Số liệu thực tế",
+    "sectionTitle": "Chỉ số hoạt động trên nền tảng",
+    "sectionDescription": "Các số liệu được tổng hợp trực tiếp từ hệ thống, cam kết trung thực và không bịa đặt",
+    "errorTitle": "Không thể tải số liệu thống kê",
+    "items": {
+      "activeRooms": "Phòng trọ đang hoạt động",
+      "activeRoomsDesc": "Đang mở nhận người thuê và có thể liên hệ ngay",
+      "provinces": "Tỉnh, thành phố phủ sóng",
+      "provincesDesc": "Khu vực có dữ liệu phòng trọ thực tế",
+      "verifiedHosts": "Chủ trọ xác thực danh tính",
+      "verifiedHostsDesc": "Đã hoàn thành đối chiếu thông tin pháp lý",
+      "reviews": "Lượt đánh giá từ người thuê",
+      "reviewsDesc": "Đánh giá thực tế từ khách thuê đã trải nghiệm"
+    }
+  },
+  "finalCta": {
+    "badge": "Khởi đầu tổ ấm",
+    "title": "Sẵn sàng tìm không gian sống lý tưởng của bạn?",
+    "description": "Khám phá hàng chục phòng trọ minh bạch chi phí hoặc đăng tin phòng cho thuê ngay hôm nay.",
+    "findRoomCta": "Tìm phòng ngay",
+    "postRoomCta": "Đăng tin cho thuê"
+  },
+  "footer": {
+    "tagline": "Nền tảng công nghệ kết nối người thuê và chủ nhà trọ minh bạch, tiện lợi tại Việt Nam.",
+    "verifiedBadge": "Phòng trọ đối chiếu thông tin thực tế",
+    "exploreTitle": "Khám phá",
+    "pricing": "Bảng giá dịch vụ",
+    "safetyGuide": "Cẩm nang thuê an toàn",
+    "infoTitle": "Thông tin & Pháp lý",
+    "about": "Về chúng tôi",
+    "terms": "Điều khoản dịch vụ",
+    "privacy": "Chính sách bảo mật",
+    "faq": "Câu hỏi thường gặp",
+    "contactTitle": "Liên hệ hỗ trợ",
+    "address": "Phường Dịch Vọng Hậu, Hà Nội",
+    "phone": "1900 8866 (8:00 - 21:00)",
+    "allRightsReserved": "Bảo lưu mọi quyền.",
+    "photoLicenses": "Bản quyền hình ảnh",
+    "motto": "Chung tay kiến tạo trải nghiệm thuê trọ văn minh."
+  },
+  "rooms": {
+    "perMonth": "/tháng",
+    "perBedMonth": "/giường/tháng"
   }
 }

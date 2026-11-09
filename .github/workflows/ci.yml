@@ -29,6 +29,9 @@ jobs:
       - name: TypeScript Type Check
         run: npm run type-check
 
+      - name: Verify Image Assets & Manifest
+        run: npm run verify:manifest
+
       - name: Run Unit Tests
         run: npm run test
 

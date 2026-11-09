@@ -12,6 +12,8 @@ import {
   BannerDto,
   PlatformStatsDto,
   RoomTypeDto,
+  RoomFacetsDto,
+  CmsArticleDto,
 } from '@/application/dto/listing.dto';
 import { ApiClient } from '../http/api-client';
 
@@ -31,6 +33,11 @@ export class HttpListingRepository implements IListingRepository {
     if (params.occupants) query.append('occupants', params.occupants.toString());
     if (params.allowPets !== undefined) query.append('allowPets', String(params.allowPets));
     if (params.allowCooking !== undefined) query.append('allowCooking', String(params.allowCooking));
+    if (params.bedrooms !== undefined) query.append('bedrooms', params.bedrooms.toString());
+    if (params.furnishing) query.append('furnishing', params.furnishing);
+    if (params.genderPreference) query.append('genderPreference', params.genderPreference);
+    if (params.priceUnit) query.append('priceUnit', params.priceUnit);
+    if (params.minAvailableSpots !== undefined) query.append('minAvailableSpots', params.minAvailableSpots.toString());
     if (params.sortBy) query.append('sortBy', params.sortBy);
     if (params.page !== undefined) query.append('page', params.page.toString());
     if (params.size !== undefined) query.append('size', Math.min(params.size, 50).toString());
@@ -95,5 +102,13 @@ export class HttpListingRepository implements IListingRepository {
 
   async getPlatformStats(): Promise<PlatformStatsDto> {
     return ApiClient.get<PlatformStatsDto>('/rooms/stats');
+  }
+
+  async getFacets(): Promise<RoomFacetsDto> {
+    return ApiClient.get<RoomFacetsDto>('/rooms/facets');
+  }
+
+  async getArticles(): Promise<CmsArticleDto[]> {
+    return ApiClient.get<CmsArticleDto[]>('/cms/articles');
   }
 }

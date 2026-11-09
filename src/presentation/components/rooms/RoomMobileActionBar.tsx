@@ -42,7 +42,7 @@ export function RoomMobileActionBar({ room, onOpenAppointment }: RoomMobileActio
           <span className="text-lg font-black text-teal-700 dark:text-teal-400">
             {formatPrice(room.price)}
           </span>
-          <span className="text-[11px] text-stone-500">đ/tháng</span>
+          <span className="text-[11px] text-stone-500">/{room.priceUnit === 'BED' ? 'giường/tháng' : 'tháng'}</span>
         </div>
         <span className="text-[10px] text-stone-500 block truncate">
           Cọc: {formatPrice(room.deposit)} đ
