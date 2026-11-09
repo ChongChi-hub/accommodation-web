@@ -221,3 +221,4 @@ export function RoomCatalogSeo({
     </section>
   );
 }
+

@@ -46,18 +46,22 @@ export function RoomCardSkeleton({ variant = 'grid' }: { variant?: 'grid' | 'lis
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-white dark:bg-stone-900 flex flex-col">
-      <Skeleton className="w-full aspect-4/3 rounded-none" />
-      <div className="p-4 space-y-3 flex-1">
+    <div className="overflow-hidden rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-stone-900 min-h-[460px] sm:min-h-[490px] relative flex flex-col justify-between p-4 sm:p-5">
+      <div className="flex justify-between items-start">
+        <Skeleton className="w-24 h-6 rounded-full bg-white/20" />
+        <Skeleton className="w-8 h-8 rounded-full bg-white/20" />
+      </div>
+      <div className="space-y-2.5">
         <div className="flex justify-between items-center">
-          <Skeleton className="w-24 h-5" />
-          <Skeleton className="w-16 h-4" />
+          <Skeleton className="w-32 h-6 bg-white/30" />
+          <Skeleton className="w-12 h-5 bg-white/20" />
         </div>
-        <Skeleton className="w-4/5 h-5" />
-        <Skeleton className="w-1/2 h-3" />
-        <div className="flex justify-between items-center pt-2 border-t border-stone-100 dark:border-stone-800">
-          <Skeleton className="w-24 h-4" />
-          <Skeleton className="w-12 h-4" />
+        <Skeleton className="w-4/5 h-6 bg-white/30" />
+        <Skeleton className="w-1/2 h-4 bg-white/20" />
+        <div className="flex gap-2 pt-1">
+          <Skeleton className="w-14 h-5 rounded-md bg-white/15" />
+          <Skeleton className="w-14 h-5 rounded-md bg-white/15" />
+          <Skeleton className="w-14 h-5 rounded-md bg-white/15" />
         </div>
       </div>
     </div>

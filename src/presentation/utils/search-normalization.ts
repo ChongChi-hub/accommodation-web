@@ -43,3 +43,4 @@ export function matchesSearchQuery(
 
   return extraAliases.some((alias) => normalizeVietnamese(alias).includes(normQuery));
 }
+

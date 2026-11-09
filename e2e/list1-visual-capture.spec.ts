@@ -70,3 +70,4 @@ test.describe('Capture LIST-1 After Visual Screenshots', () => {
     });
   });
 });
+

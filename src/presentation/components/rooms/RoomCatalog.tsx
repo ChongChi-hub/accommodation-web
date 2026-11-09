@@ -216,3 +216,4 @@ export function RoomCatalog({ categoryKey = 'phongTro' }: { categoryKey?: Catego
     </div>
   );
 }
+

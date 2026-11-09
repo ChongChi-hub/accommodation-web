@@ -10,6 +10,7 @@ interface RoomCardCarouselProps {
   title: string;
   aspectClassName?: string;
   sizes?: string;
+  dotsClassName?: string;
 }
 
 export function RoomCardCarousel({
@@ -17,6 +18,7 @@ export function RoomCardCarousel({
   title,
   aspectClassName = 'aspect-4/3',
   sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
+  dotsClassName,
 }: RoomCardCarouselProps) {
   const validImages = images.length > 0 ? images.slice(0, 5) : ['/images/rooms/room-fallback-640.webp'];
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -84,7 +86,7 @@ export function RoomCardCarousel({
             type="button"
             onClick={prevImage}
             aria-label="Ảnh trước"
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-xs text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus:opacity-100"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-30 w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-xs text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus:opacity-100 pointer-events-auto"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -92,12 +94,12 @@ export function RoomCardCarousel({
             type="button"
             onClick={nextImage}
             aria-label="Ảnh sau"
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-xs text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus:opacity-100"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-30 w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-xs text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus:opacity-100 pointer-events-auto"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
 
-          <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 pointer-events-none">
+          <div className={cn('absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 pointer-events-none', dotsClassName)}>
             {validImages.map((_, idx) => (
               <span
                 key={idx}
@@ -113,3 +115,4 @@ export function RoomCardCarousel({
     </div>
   );
 }
+

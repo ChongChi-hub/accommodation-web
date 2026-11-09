@@ -32,3 +32,4 @@ describe('search-normalization', () => {
     expect(matchesSearchQuery('Thừa Thiên Huế', 'hue', hueAliases)).toBe(true);
   });
 });
+
