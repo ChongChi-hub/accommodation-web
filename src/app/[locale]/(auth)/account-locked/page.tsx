@@ -8,8 +8,8 @@ export default function AccountLockedPage() {
   const t = useTranslations('pages.accountLocked');
 
   return (
-    <main className="min-h-[85vh] flex items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-lg bg-surface border border-rose-200 dark:border-rose-900/60 rounded-3xl p-6 sm:p-10 shadow-xl text-center space-y-6">
+    <section className="w-full py-2">
+      <div className="w-full bg-surface border border-rose-200 dark:border-rose-900/60 rounded-2xl p-6 shadow-sm text-center space-y-5">
         <div className="mx-auto w-20 h-20 rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 flex items-center justify-center text-rose-600 dark:text-rose-400 shadow-xs">
           <UserX className="w-10 h-10" />
         </div>
@@ -54,7 +54,7 @@ export default function AccountLockedPage() {
           </div>
         </div>
       </div>
-    </main>
+    </section>
   );
 }
 

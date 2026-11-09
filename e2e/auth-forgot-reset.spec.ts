@@ -14,7 +14,7 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
       });
     });
 
-    await page.goto('http://localhost:3000/forgot-password');
+    await page.goto('http://localhost:3000/vi/forgot-password');
 
     // Verify title and input
     await expect(page.locator('h1, h2').first()).toBeVisible();
@@ -34,22 +34,22 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
   });
 
   test('Reset Password page shows password strength indicator and validates matching passwords', async ({ page }) => {
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
+    await page.goto('http://localhost:3000/vi/reset-password?email=tenant1@cozynest.vn');
 
     // OTP field, new password and confirm password inputs
-    const otpInput = page.locator('input[placeholder="123456"]').first();
+    const otpInput = page.locator('input[name="otp"]').first();
     await expect(otpInput).toBeVisible();
     await otpInput.fill('123456');
 
-    const newPasswordInput = page.locator('input[type="password"]').first();
+    const newPasswordInput = page.locator('input[name="newPassword"]').first();
     await newPasswordInput.fill('Weak1');
 
     // Password strength bar should update
-    await expect(page.locator('body')).toContainText(/Yếu|Weak|Trung bình|Medium/i);
+    await expect(page.locator('body')).toContainText(/Quá yếu|Yếu|Trung bình|Very Weak|Weak|Medium/i);
 
     // Fill strong password
-    await newPasswordInput.fill('StrongPassword123!');
-    await expect(page.locator('body')).toContainText(/Mạnh|Strong/i);
+    await newPasswordInput.fill('StrongPassword123!@#');
+    await expect(page.locator('body')).toContainText(/Mạnh|Rất mạnh|Strong|Very Strong/i);
   });
 
   test('Reset Password handles invalid OTP rejection gracefully', async ({ page }) => {
@@ -65,14 +65,14 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
       });
     });
 
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
+    await page.goto('http://localhost:3000/vi/reset-password?email=tenant1@cozynest.vn');
 
-    await page.locator('input[placeholder="123456"]').fill('999999');
+    await page.locator('input[name="otp"]').fill('999999');
     await page.locator('input[name="newPassword"]').fill('NewPass123!@#');
     await page.locator('input[name="confirmPassword"]').fill('NewPass123!@#');
 
     await page.locator('button[type="submit"]').click();
-    await expect(page.locator('body')).toContainText(/Mã xác thực OTP không chính xác|ERR_AUTH_INVALID_OTP/i, { timeout: 5000 });
+    await expect(page.locator('body')).toContainText(/Mã xác thực OTP không chính xác/i, { timeout: 5000 });
   });
 
   test('Reset Password handles expired OTP rejection', async ({ page }) => {
@@ -88,14 +88,14 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
       });
     });
 
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
+    await page.goto('http://localhost:3000/vi/reset-password?email=tenant1@cozynest.vn');
 
-    await page.locator('input[placeholder="123456"]').fill('123456');
+    await page.locator('input[name="otp"]').fill('123456');
     await page.locator('input[name="newPassword"]').fill('NewPass123!@#');
     await page.locator('input[name="confirmPassword"]').fill('NewPass123!@#');
 
     await page.locator('button[type="submit"]').click();
-    await expect(page.locator('body')).toContainText(/Mã OTP đã hết hạn|ERR_AUTH_OTP_EXPIRED/i, { timeout: 5000 });
+    await expect(page.locator('body')).toContainText(/Mã xác thực đã hết hạn|hết hạn/i, { timeout: 5000 });
   });
 
   test('Reset Password handles account/OTP lockout after 5 attempts', async ({ page }) => {
@@ -111,14 +111,14 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
       });
     });
 
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
+    await page.goto('http://localhost:3000/vi/reset-password?email=tenant1@cozynest.vn');
 
-    await page.locator('input[placeholder="123456"]').fill('000000');
+    await page.locator('input[name="otp"]').fill('000000');
     await page.locator('input[name="newPassword"]').fill('NewPass123!@#');
     await page.locator('input[name="confirmPassword"]').fill('NewPass123!@#');
 
     await page.locator('button[type="submit"]').click();
-    await expect(page.locator('body')).toContainText(/quá 5 lần liên tiếp|ERR_AUTH_OTP_LOCKED/i, { timeout: 5000 });
+    await expect(page.locator('body')).toContainText(/quá 5 lần|vô hiệu hóa/i, { timeout: 5000 });
   });
 
   test('Reset Password rejects reuse of current/old password', async ({ page }) => {
@@ -134,13 +134,13 @@ test.describe('[AUTH-04] Password Recovery & Reset Flow UI', () => {
       });
     });
 
-    await page.goto('http://localhost:3000/reset-password?email=tenant1@cozynest.vn');
+    await page.goto('http://localhost:3000/vi/reset-password?email=tenant1@cozynest.vn');
 
-    await page.locator('input[placeholder="123456"]').fill('123456');
+    await page.locator('input[name="otp"]').fill('123456');
     await page.locator('input[name="newPassword"]').fill('OldPassword123!');
     await page.locator('input[name="confirmPassword"]').fill('OldPassword123!');
 
     await page.locator('button[type="submit"]').click();
-    await expect(page.locator('body')).toContainText(/không được trùng với mật khẩu gần nhất|ERR_AUTH_OLD_PASSWORD_REUSE/i, { timeout: 5000 });
+    await expect(page.locator('body')).toContainText(/không được trùng với mật khẩu (hiện tại|gần nhất)|ERR_AUTH_OLD_PASSWORD_REUSE/i, { timeout: 5000 });
   });
 });

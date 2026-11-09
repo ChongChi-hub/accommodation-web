@@ -1,96 +1,217 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
-import { MailCheck, RotateCw, ArrowRight } from 'lucide-react';
-import { Button } from '@/presentation/components/ui/Button';
-import { Input } from '@/presentation/components/ui/Input';
+import { useAuthStore } from '@/presentation/stores/auth.store';
 import { toast } from '@/presentation/stores/toast.store';
-import Image from 'next/image';
+import { TextField } from '@/presentation/components/auth/TextField';
+import { OtpInput } from '@/presentation/components/auth/OtpInput';
+import { SubmitButton, type SubmitStatus } from '@/presentation/components/auth/SubmitButton';
+import { FormErrorSummary } from '@/presentation/components/auth/FormErrorSummary';
+import { resolveAuthErrorKey } from '@/presentation/validation/auth-errors';
+import { emailSchema } from '@/presentation/validation/auth.validation';
+import { ArrowLeft, ArrowRight, Mail, MailCheck, RotateCw } from 'lucide-react';
 
-function VerifyEmailForm() {
+export default function VerifyEmailPage() {
+  const t = useTranslations('auth');
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const emailParam = searchParams.get('email') || 'bạn';
+  const { user, verifyEmail, resendVerifyEmail, clearError } = useAuthStore();
 
+  const [initialEmail, setInitialEmail] = useState(user?.email || '');
+  const [email, setEmail] = useState(user?.email || '');
+
+  useEffect(() => {
+    const paramEmail = new URLSearchParams(window.location.search).get('email');
+    if (paramEmail) {
+      setInitialEmail(paramEmail);
+      setEmail(paramEmail);
+    }
+  }, []);
   const [otp, setOtp] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<SubmitStatus>('idle');
+  const [cooldown, setCooldown] = useState(0);
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [isNetworkError, setIsNetworkError] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; otp?: string }>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success('Xác thực địa chỉ email thành công! Đang chuyển đến Đăng nhập.');
-      router.push('/login');
-    }, 600);
+  const errorSummaryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!email && user?.email) setEmail(user.email);
+  }, [email, user?.email]);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => setCooldown((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  const applyStoreError = (fallbackKey: string) => {
+    const st = useAuthStore.getState();
+    const mapped = resolveAuthErrorKey(st.errorCode);
+    const network = st.errorCode === 'ERR_NETWORK';
+    setIsNetworkError(network);
+
+    if (st.errorStatus === 429 || st.errorCode?.includes('RATE_LIMIT')) {
+      setCooldown(st.retryAfterSeconds && st.retryAfterSeconds > 0 ? st.retryAfterSeconds : 60);
+    }
+
+    const msgKey = mapped
+      ? mapped
+      : st.errorStatus === 503
+        ? 'errors.serviceUnavailable'
+        : st.errorStatus === 429
+          ? 'errors.tooManyRequests'
+          : network
+            ? 'errors.networkError'
+            : fallbackKey;
+
+    setSummaryError(t(msgKey));
+    requestAnimationFrame(() => errorSummaryRef.current?.focus());
   };
 
-  const handleResend = () => {
-    toast.info('Đã gửi lại mã OTP vào hộp thư đến của bạn!');
+  const performVerify = async () => {
+    setSummaryError(null);
+    setIsNetworkError(false);
+    clearError();
+
+    const parsedEmail = emailSchema.safeParse(email);
+    const otpValid = /^\d{6}$/.test(otp.trim());
+
+    if (!parsedEmail.success || !otpValid) {
+      setFieldErrors({
+        email: parsedEmail.success ? undefined : t(parsedEmail.error.issues[0].message),
+        otp: otpValid ? undefined : t('errors.otpRequired'),
+      });
+      return;
+    }
+
+    setFieldErrors({});
+    setStatus('loading');
+    const ok = await verifyEmail(parsedEmail.data, otp.trim());
+
+    if (ok) {
+      setStatus('success');
+      toast.success(t('verifyEmailSuccess'));
+      setTimeout(() => router.push('/login'), 260);
+      return;
+    }
+
+    setStatus('idle');
+    applyStoreError('errors.otpInvalid');
+  };
+
+  const handleResend = async () => {
+    if (cooldown > 0) return;
+    setSummaryError(null);
+    setIsNetworkError(false);
+    clearError();
+
+    const parsedEmail = emailSchema.safeParse(email);
+    if (!parsedEmail.success) {
+      setFieldErrors({ email: t(parsedEmail.error.issues[0].message) });
+      return;
+    }
+
+    const ok = await resendVerifyEmail(parsedEmail.data);
+    if (ok) {
+      setCooldown(60);
+      toast.info(t('otpSentSuccess'));
+    } else {
+      applyStoreError('errors.serviceUnavailable');
+    }
   };
 
   return (
-    <div className="w-full max-w-md space-y-6 rounded-2xl bg-white dark:bg-stone-900 p-8 shadow-xl border border-stone-200/80 dark:border-stone-800 text-center">
-      <Link href="/" className="inline-block mb-1">
-        <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} style={{ width: 'auto', height: 'auto' }} priority />
-      </Link>
-
-      <div className="w-14 h-14 mx-auto rounded-2xl bg-teal-50 dark:bg-teal-950 flex items-center justify-center text-teal-700 dark:text-teal-400">
-        <MailCheck className="w-7 h-7" />
-      </div>
-
-      <div className="space-y-1">
-        <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">Xác thực tài khoản</h1>
-        <p className="text-xs text-stone-500">
-          Vui lòng nhập mã kích hoạt gồm 6 chữ số gửi tới email{' '}
-          <span className="font-semibold text-stone-800 dark:text-stone-200">{emailParam}</span>
+    <div className="space-y-6">
+      <div className="space-y-2 auth-stagger" style={{ '--stagger': 0 } as React.CSSProperties}>
+        <div className="auth-envelope w-12 h-12 rounded-2xl bg-primary-50 dark:bg-primary-950 border border-primary/20 dark:border-primary-400/30 flex items-center justify-center text-primary dark:text-primary-300">
+          <MailCheck className="w-6 h-6" aria-hidden="true" />
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('verifyEmailTitle')}</h1>
+        <p className="text-sm text-foreground-muted">
+          {t('verifyEmailSubtitle', { email: email || t('emailPlaceholder') })}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-        <Input
-          required
-          maxLength={6}
+      <FormErrorSummary
+        ref={errorSummaryRef}
+        message={summaryError}
+        countdownSeconds={cooldown > 0 ? cooldown : null}
+        isNetworkError={isNetworkError}
+        onRetry={performVerify}
+      />
+
+      <form
+        className="space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          performVerify();
+        }}
+        noValidate
+      >
+        {!initialEmail && (
+          <TextField
+            id="verify-email-address"
+            name="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            label={t('email')}
+            placeholder={t('emailPlaceholder')}
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+            }}
+            error={fieldErrors.email}
+            leftIcon={<Mail className="w-4 h-4" />}
+          />
+        )}
+
+        <OtpInput
+          label={t('otpLabel')}
           value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          placeholder="Mã OTP 6 số"
-          className="text-center text-lg tracking-widest font-mono"
+          onChange={(val) => {
+            setOtp(val);
+            if (fieldErrors.otp) setFieldErrors((p) => ({ ...p, otp: undefined }));
+          }}
+          error={fieldErrors.otp}
+          staggerIndex={1}
         />
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="md"
-          className="w-full"
-          isLoading={isLoading}
-          rightIcon={<ArrowRight className="w-4 h-4" />}
-        >
-          Kích hoạt tài khoản
-        </Button>
+        <SubmitButton
+          status={status}
+          idleLabel={t('verifyEmailBtn')}
+          loadingLabel={t('verifyEmailLoading')}
+          idleIcon={<ArrowRight className="w-4 h-4" />}
+          staggerIndex={2}
+        />
       </form>
 
-      <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs text-stone-500">
-        <span>Chưa nhận được mã?</span>
+      <div className="pt-2 border-t border-border flex items-center justify-between text-xs text-foreground-muted">
+        <span>{t('noCodeReceived')}</span>
         <button
           type="button"
           onClick={handleResend}
-          className="text-teal-700 dark:text-teal-400 font-semibold hover:underline inline-flex items-center gap-1 cursor-pointer"
+          disabled={cooldown > 0}
+          className="inline-flex items-center gap-1.5 min-h-[44px] px-2 -mr-2 rounded-md text-primary dark:text-primary-400 font-semibold hover:underline disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          <RotateCw className="w-3 h-3" /> Gửi lại mã
+          <RotateCw className="w-3.5 h-3.5" aria-hidden="true" />
+          <span>{cooldown > 0 ? t('resendOtpCooldown', { seconds: cooldown }) : t('resendOtp')}</span>
         </button>
       </div>
-    </div>
-  );
-}
 
-export default function VerifyEmailPage() {
-  return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-      <Suspense fallback={<div className="text-xs text-stone-400">Đang tải...</div>}>
-        <VerifyEmailForm />
-      </Suspense>
+      <div className="text-center">
+        <Link
+          href="/login"
+          className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-2 text-xs font-semibold text-primary dark:text-primary-400 hover:underline rounded"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+          <span>{t('backToLogin')}</span>
+        </Link>
+      </div>
     </div>
   );
 }

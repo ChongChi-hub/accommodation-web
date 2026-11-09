@@ -43,7 +43,7 @@ export function ToastContainer() {
           </div>
           <button
             onClick={() => removeToast(t.id)}
-            className="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors cursor-pointer"
+            className="min-w-[44px] min-h-[44px] -my-2 -mr-2 flex items-center justify-center rounded-lg text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer shrink-0"
             aria-label="Đóng"
           >
             <X className="w-4 h-4" />

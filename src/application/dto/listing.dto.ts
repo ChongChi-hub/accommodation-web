@@ -121,6 +121,7 @@ export interface RoomDto {
   description: string;
   address: string;
   provinceCode: string;
+  provinceName?: string;
   districtCode?: string;
   wardCode?: string;
   wardId?: number;
@@ -213,7 +214,17 @@ export interface RoomDetailDto {
   reviews: ReviewDto[];
 }
 
+export interface RoomTypeDto {
+  id: number;
+  code: string;
+  name: string;
+  description?: string;
+  icon?: string;
+}
+
 export interface RoomFilterParams {
+  q?: string;
+  provinceSlug?: string;
   provinceCode?: string;
   districtCode?: string;
   wardCode?: string;

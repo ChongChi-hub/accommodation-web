@@ -1,185 +1,225 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Link, useRouter } from '@/i18n/routing';
-import { useAuthStore } from '@/presentation/stores/auth.store';
-import Image from 'next/image';
-import { UserPlus, Mail, Phone, Lock, User, AlertCircle, Building2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Link } from '@/i18n/routing';
+import { RoleCard } from '@/presentation/components/auth/RoleCard';
+import { TextField } from '@/presentation/components/auth/TextField';
+import { PasswordField } from '@/presentation/components/auth/PasswordField';
+import { SubmitButton } from '@/presentation/components/auth/SubmitButton';
+import { FormErrorSummary } from '@/presentation/components/auth/FormErrorSummary';
 import { GoogleLoginButton } from '@/presentation/components/auth/GoogleLoginButton';
+import { useRegisterForm } from '@/presentation/hooks/useRegisterForm';
+import { Mail, Phone, User, UserPlus } from 'lucide-react';
 
 export default function RegisterPage() {
-  const t = useTranslations('auth');
-  const router = useRouter();
-  const { register, isLoading, error, clearError } = useAuthStore();
+  const f = useRegisterForm('TENANT');
+  const { setRole, t, refs } = f;
 
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'TENANT' | 'LANDLORD'>('TENANT');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    clearError();
-    const success = await register({
-      fullName,
-      email,
-      phone,
-      password,
-      role,
-    });
-    if (success) {
-      if (role === 'LANDLORD') {
-        router.push('/dashboard/landlord/kyc');
-      } else {
-        router.push('/dashboard/tenant');
-      }
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.get('role')?.toUpperCase() === 'LANDLORD') {
+      setRole('LANDLORD');
     }
-  };
+  }, [setRole]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-stone-50">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl border border-stone-200 shadow-sm">
-        <div className="text-center">
-          <Link href="/" className="inline-block">
-            <Image src="/logo.svg" alt="Tổ Ấm" width={140} height={34} style={{ width: 'auto', height: 'auto' }} priority />
-          </Link>
-          <h2 className="mt-6 text-2xl font-bold tracking-tight text-stone-900">{t('registerTitle')}</h2>
-          <p className="mt-2 text-sm text-stone-500">{t('registerSubtitle')}</p>
-        </div>
-
-        {error && (
-          <div className="flex items-center gap-2 p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg">
-            <AlertCircle size={18} className="shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-          <div>
-            <label className="block text-xs font-semibold uppercase text-stone-700 mb-1">{t('fullName')}</label>
-            <div className="relative">
-              <User size={18} className="absolute left-3 top-3 text-stone-400" />
-              <input
-                type="text"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-stone-300 focus:outline-none focus:border-teal-700 focus:ring-1 focus:ring-teal-700"
-                placeholder="Nguyễn Văn A"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase text-stone-700 mb-1">{t('email')}</label>
-            <div className="relative">
-              <Mail size={18} className="absolute left-3 top-3 text-stone-400" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-stone-300 focus:outline-none focus:border-teal-700 focus:ring-1 focus:ring-teal-700"
-                placeholder="name@example.com"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase text-stone-700 mb-1">{t('phone')}</label>
-            <div className="relative">
-              <Phone size={18} className="absolute left-3 top-3 text-stone-400" />
-              <input
-                type="tel"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-stone-300 focus:outline-none focus:border-teal-700 focus:ring-1 focus:ring-teal-700"
-                placeholder="0912345678"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase text-stone-700 mb-1">{t('password')}</label>
-            <div className="relative">
-              <Lock size={18} className="absolute left-3 top-3 text-stone-400" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-stone-300 focus:outline-none focus:border-teal-700 focus:ring-1 focus:ring-teal-700"
-                placeholder="Tối thiểu 6 ký tự"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase text-stone-700 mb-2">{t('role')}</label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setRole('TENANT')}
-                className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg border text-xs font-medium transition ${
-                  role === 'TENANT'
-                    ? 'border-teal-700 bg-teal-50 text-teal-800 ring-1 ring-teal-700'
-                    : 'border-stone-200 text-stone-700 hover:bg-stone-50'
-                }`}
-              >
-                <User size={15} />
-                <span>Người thuê phòng</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole('LANDLORD')}
-                className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg border text-xs font-medium transition ${
-                  role === 'LANDLORD'
-                    ? 'border-teal-700 bg-teal-50 text-teal-800 ring-1 ring-teal-700'
-                    : 'border-stone-200 text-stone-700 hover:bg-stone-50'
-                }`}
-              >
-                <Building2 size={15} />
-                <span>Chủ cho thuê</span>
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full mt-4 flex justify-center items-center gap-2 py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-teal-700 hover:bg-teal-800 focus:outline-none transition disabled:opacity-50"
-          >
-            <UserPlus size={16} />
-            <span>{isLoading ? 'Đang khởi tạo tài khoản...' : t('registerBtn')}</span>
-          </button>
-
-          <div className="relative my-3">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-stone-200" />
-            </div>
-            <div className="relative flex justify-center text-[11px] uppercase">
-              <span className="bg-white px-2 text-stone-400">{t('or')}</span>
-            </div>
-          </div>
-
-          <GoogleLoginButton
-            label="Đăng ký nhanh với Google"
-            isRegister={true}
-            intendedRole={role}
-          />
-        </form>
-
-        <div className="text-center text-xs text-stone-500">
-          <span>{t('haveAccount')} </span>
-          <Link href="/login" className="font-semibold text-teal-700 hover:underline">
-            {t('loginBtn')}
-          </Link>
-        </div>
+    <div className="space-y-5">
+      <div className="space-y-1.5 auth-stagger" style={{ '--stagger': 0 } as React.CSSProperties}>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('registerTitle')}</h1>
+        <p className="text-sm text-foreground-muted">{t('registerSubtitle')}</p>
       </div>
+
+      <FormErrorSummary
+        ref={refs.errorSummaryRef}
+        message={f.summaryError}
+        countdownSeconds={f.cooldown > 0 ? f.cooldown : null}
+        isNetworkError={f.isNetworkError}
+        onRetry={f.performSubmit}
+      />
+
+      <form
+        className="space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          f.performSubmit();
+        }}
+        noValidate
+      >
+        <RoleCard value={f.role} onChange={f.setRole} staggerIndex={1} />
+
+        <TextField
+          ref={refs.fullNameRef}
+          id="register-fullname"
+          name="fullName"
+          type="text"
+          autoComplete="name"
+          label={t('fullName')}
+          placeholder={t('fullNamePlaceholder')}
+          value={f.fullName}
+          onChange={(e) => {
+            f.setFullName(e.target.value);
+            if (f.fieldErrors.fullName) f.setFieldErrors((p) => ({ ...p, fullName: undefined }));
+          }}
+          onBlur={() => f.validateSingleField('fullName')}
+          error={f.fieldErrors.fullName}
+          valid={f.fullNameValid && !f.fieldErrors.fullName}
+          leftIcon={<User className="w-4 h-4" />}
+          desktopAutoFocus
+          staggerIndex={2}
+        />
+
+        <TextField
+          ref={refs.emailRef}
+          id="register-email"
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          label={t('email')}
+          placeholder={t('emailPlaceholder')}
+          value={f.email}
+          onChange={(e) => {
+            f.setEmail(e.target.value);
+            if (f.fieldErrors.email) f.setFieldErrors((p) => ({ ...p, email: undefined }));
+          }}
+          onBlur={() => f.validateSingleField('email')}
+          error={f.fieldErrors.email}
+          valid={f.emailValid && !f.fieldErrors.email}
+          suggestion={f.emailSuggestion}
+          onApplySuggestion={(fixed) => {
+            f.setEmail(fixed);
+            f.setFieldErrors((p) => ({ ...p, email: undefined }));
+          }}
+          leftIcon={<Mail className="w-4 h-4" />}
+          staggerIndex={3}
+        />
+
+        <TextField
+          ref={refs.phoneRef}
+          id="register-phone"
+          name="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          label={t('phoneOptional')}
+          placeholder={t('phonePlaceholder')}
+          value={f.phone}
+          onChange={(e) => {
+            f.setPhone(e.target.value);
+            if (f.fieldErrors.phone) f.setFieldErrors((p) => ({ ...p, phone: undefined }));
+          }}
+          onBlur={() => f.validateSingleField('phone')}
+          error={f.fieldErrors.phone}
+          valid={f.phoneValid && !f.fieldErrors.phone}
+          leftIcon={<Phone className="w-4 h-4" />}
+          staggerIndex={4}
+        />
+
+        <PasswordField
+          ref={refs.passwordRef}
+          id="register-password"
+          name="password"
+          autoComplete="new-password"
+          label={t('password')}
+          placeholder={t('passwordPlaceholder')}
+          value={f.password}
+          onChange={(e) => {
+            f.setPassword(e.target.value);
+            if (f.fieldErrors.password) f.setFieldErrors((p) => ({ ...p, password: undefined }));
+          }}
+          onBlur={() => f.validateSingleField('password')}
+          error={f.fieldErrors.password}
+          showStrength
+          strength={f.strength}
+          staggerIndex={5}
+        />
+
+        <PasswordField
+          ref={refs.confirmRef}
+          id="register-confirm-password"
+          name="confirmPassword"
+          autoComplete="new-password"
+          label={t('confirmPassword')}
+          placeholder={t('confirmPasswordPlaceholder')}
+          value={f.confirmPassword}
+          onChange={(e) => {
+            f.setConfirmPassword(e.target.value);
+            if (f.fieldErrors.confirmPassword) {
+              f.setFieldErrors((p) => ({ ...p, confirmPassword: undefined }));
+            }
+          }}
+          onBlur={() => f.validateSingleField('confirmPassword')}
+          error={f.fieldErrors.confirmPassword}
+          matchState={f.matchState}
+          staggerIndex={6}
+        />
+
+        <div className="space-y-1.5 auth-stagger" style={{ '--stagger': 7 } as React.CSSProperties}>
+          <label
+            htmlFor="register-terms"
+            className="flex items-start gap-2.5 min-h-[44px] py-1.5 cursor-pointer select-none text-xs text-foreground-muted leading-relaxed"
+          >
+            <input
+              ref={refs.termsRef}
+              id="register-terms"
+              name="acceptTerms"
+              type="checkbox"
+              checked={f.acceptTerms}
+              onChange={(e) => {
+                f.setAcceptTerms(e.target.checked);
+                if (f.fieldErrors.acceptTerms) {
+                  f.setFieldErrors((p) => ({ ...p, acceptTerms: undefined }));
+                }
+              }}
+              aria-invalid={Boolean(f.fieldErrors.acceptTerms)}
+              className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-primary/30 cursor-pointer shrink-0"
+            />
+            <span>
+              {t('acceptTermsPrefix')}{' '}
+              <Link href="/terms" className="font-semibold text-primary dark:text-primary-400 hover:underline">
+                {t('termsLink')}
+              </Link>{' '}
+              {t('acceptTermsAnd')}{' '}
+              <Link href="/privacy" className="font-semibold text-primary dark:text-primary-400 hover:underline">
+                {t('privacyLink')}
+              </Link>
+            </span>
+          </label>
+          {f.fieldErrors.acceptTerms && (
+            <p className="text-xs font-medium text-red-600 dark:text-red-400">
+              {f.fieldErrors.acceptTerms}
+            </p>
+          )}
+        </div>
+
+        <SubmitButton
+          status={f.status}
+          idleLabel={t('registerBtn')}
+          loadingLabel={t('registerBtnLoading')}
+          successLabel={t('registerBtnSuccess')}
+          idleIcon={<UserPlus className="w-4 h-4" />}
+          disabled={f.cooldown > 0}
+          staggerIndex={8}
+        />
+
+        <div className="relative py-1.5">
+          <div className="absolute inset-0 flex items-center" aria-hidden="true">
+            <div className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-[11px] font-semibold uppercase tracking-wider">
+            <span className="bg-background px-3 text-foreground-muted">{t('or')}</span>
+          </div>
+        </div>
+
+        <GoogleLoginButton label={t('googleRegister')} isRegister intendedRole={f.role} />
+      </form>
+
+      <p className="text-center text-xs text-foreground-muted">
+        <span>{t('haveAccount')} </span>
+        <Link href="/login" className="inline-flex items-center min-h-[44px] -my-2.5 px-1 font-semibold text-primary dark:text-primary-400 hover:underline rounded">
+          {t('loginBtn')}
+        </Link>
+      </p>
     </div>
   );
 }
-

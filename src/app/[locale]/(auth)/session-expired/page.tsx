@@ -8,8 +8,8 @@ export default function SessionExpiredPage() {
   const t = useTranslations('pages.sessionExpired');
 
   return (
-    <main className="min-h-[85vh] flex items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-md bg-surface border border-border rounded-3xl p-6 sm:p-10 shadow-xl text-center space-y-6">
+    <section className="w-full py-2">
+      <div className="w-full bg-surface border border-border rounded-2xl p-6 shadow-sm text-center space-y-5">
         <div className="mx-auto w-20 h-20 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-400 shadow-xs">
           <ClockAlert className="w-10 h-10" />
         </div>
@@ -42,7 +42,7 @@ export default function SessionExpiredPage() {
           </Link>
         </div>
       </div>
-    </main>
+    </section>
   );
 }
 

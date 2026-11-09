@@ -25,9 +25,9 @@
 * **Trang thông tin**: Giới thiệu (`/about`), An toàn (`/safety-guide`), Bảng giá (`/pricing`), FAQ (`/faq`), Liên hệ (`/contact`), Điều khoản (`/terms`), Bảo mật (`/privacy`).
 
 ### Xác Thực & Tài Khoản (Authentication)
-* **Đăng nhập (`/login`) & Đăng ký (`/register`)**: Đăng nhập mật khẩu bảo mật và Google Identity Services (GIS OAuth2) với Nonce & CSRF protection.
-* **Luồng Đăng ký Tenant-First**: Mọi đăng ký mới khởi tạo vai trò Người thuê; chọn Chủ trọ sẽ tạo hồ sơ `AWAITING_KYC` chờ xét duyệt.
-* **Quên & Đặt lại mật khẩu (`/forgot-password`, `/reset-password`)**: Xác thực OTP gửi qua email (Mailpit tích hợp).
+* **Đăng nhập (`/login`) & Đăng ký (`/register`)**: Đăng nhập qua Email hoặc Số điện thoại + mật khẩu, cùng Google Identity Services (GIS OAuth2) với Nonce & CSRF protection. Tài khoản mới được chuẩn hóa kiểm tra hợp lệ đồng nhất với backend (`docs/AUTH_VALIDATION.md`, `docs/auth_test_vectors.json`).
+* **Luồng Đăng ký Tenant-First**: Mọi đăng ký mới (kể cả Google) khởi tạo vai trò Người thuê (`TENANT`); chọn Chủ trọ sẽ tạo thêm hồ sơ `AWAITING_KYC` chờ xét duyệt eKYC.
+* **Quên mật khẩu 2 bước (`/forgot-password`) & Xác thực Email (`/verify-email`)**: Đặt lại mật khẩu 2 bước trên cùng màn hình với mã OTP 6 chữ số qua SMTP thật (Mailpit trong dev, xem cấu hình SMTP tại `accommodation-service/README.md`).
 
 ### Bảng Điều Khiển Chủ Trọ (Landlord Dashboard - `/dashboard/landlord`)
 * **Tổng quan**: Chỉ số doanh thu, tỷ lệ lấp đầy, thông báo cần xử lý.

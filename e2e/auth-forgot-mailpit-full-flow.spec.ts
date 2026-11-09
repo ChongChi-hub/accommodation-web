@@ -92,22 +92,22 @@ test.describe('[AUTH-04] Full End-to-End Forgot Password via Mailpit & Reset Flo
       await route.continue();
     });
 
-    // 1. Visit /forgot-password
-    await page.goto('http://localhost:3000/forgot-password');
+    // 1. Visit /vi/forgot-password
+    await page.goto('http://localhost:3000/vi/forgot-password');
     await expect(page.locator('input[type="email"]')).toBeVisible();
 
     // 2. Submit email
     await page.locator('input[type="email"]').fill('tenant@cozynest.vn');
     await page.locator('button[type="submit"]').click();
 
-    // Verify confirmation and redirect link to reset-password
+    // Verify confirmation and step 2 UI
     await expect(page.locator('body')).toContainText(/gửi lại|đã được gửi|reset/i);
 
-    // 3. Visit /reset-password with email query parameter
-    await page.goto('http://localhost:3000/reset-password?email=tenant@cozynest.vn');
+    // 3. Visit /vi/reset-password with email query parameter
+    await page.goto('http://localhost:3000/vi/reset-password?email=tenant@cozynest.vn');
 
     // 4. Input OTP & New Strong Password
-    const otpInput = page.locator('input[placeholder="123456"]').first();
+    const otpInput = page.locator('input[name="otp"]').first();
     await expect(otpInput).toBeVisible();
     await otpInput.fill(capturedOtp);
 
@@ -124,8 +124,8 @@ test.describe('[AUTH-04] Full End-to-End Forgot Password via Mailpit & Reset Flo
     await expect(page).toHaveURL(/.*\/login/);
 
     // 6. Login using NEW password
-    await page.locator('input[type="email"]').fill('tenant@cozynest.vn');
-    await page.locator('input[type="password"]').fill('NewStrongPassword123@');
+    await page.locator('input[name="identifier"]').fill('tenant@cozynest.vn');
+    await page.locator('input[name="password"]').fill('NewStrongPassword123@');
     await page.locator('button[type="submit"]').click();
 
     // 7. Verify successfully logged in and landed on Tenant Dashboard

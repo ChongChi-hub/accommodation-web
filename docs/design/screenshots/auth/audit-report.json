@@ -1,0 +1,256 @@
+{
+  "overflowChecks": [
+    {
+      "name": "desktop1440_login_vi_light",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_login_error_light",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_login_vi_dark",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_login_en_light",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_register_vi_light",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_register_landlord_strength_light",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_register_landlord_dark",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_forgot_step1_light",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_forgot_step2_light",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_forgot_step2_dark",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "desktop1440_verify_email_light",
+      "sw": 1440,
+      "cw": 1440,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "laptop1024_login_vi_light",
+      "sw": 1024,
+      "cw": 1024,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "laptop1024_register_vi_light",
+      "sw": 1024,
+      "cw": 1024,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "tablet768_login_vi_light",
+      "sw": 768,
+      "cw": 768,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "tablet768_register_vi_light",
+      "sw": 768,
+      "cw": 768,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "mobile390_login_vi_light",
+      "sw": 390,
+      "cw": 390,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "mobile390_register_vi_light",
+      "sw": 390,
+      "cw": 390,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "mobile390_forgot_step1_light",
+      "sw": 390,
+      "cw": 390,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "mobile390_forgot_step2_light",
+      "sw": 390,
+      "cw": 390,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    },
+    {
+      "name": "mobile390_verify_email_light",
+      "sw": 390,
+      "cw": 390,
+      "overflow": false,
+      "hasDemo": false,
+      "smallButtons": []
+    }
+  ],
+  "axeResults": [
+    {
+      "label": "desktop1440_login_vi_light",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "desktop1440_login_vi_dark",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "desktop1440_register_vi_light",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "desktop1440_register_landlord_dark",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "desktop1440_forgot_step1_light",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "desktop1440_forgot_step2_light",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "desktop1440_forgot_step2_dark",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "desktop1440_verify_email_light",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "mobile390_login_vi_light",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "mobile390_register_vi_light",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "mobile390_forgot_step1_light",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "mobile390_forgot_step2_light",
+      "violationCount": 0,
+      "violations": []
+    },
+    {
+      "label": "mobile390_verify_email_light",
+      "violationCount": 0,
+      "violations": []
+    }
+  ],
+  "brandPanelPersisted": true,
+  "consoleErrors": [],
+  "screenshots": [
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_login_vi_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_login_error_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_login_vi_dark.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_login_en_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_register_vi_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_register_landlord_strength_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_register_landlord_dark.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_forgot_step1_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_forgot_step2_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_forgot_step2_dark.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\desktop1440_verify_email_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\laptop1024_login_vi_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\laptop1024_register_vi_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\tablet768_login_vi_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\tablet768_register_vi_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\mobile390_login_vi_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\mobile390_register_vi_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\mobile390_forgot_step1_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\mobile390_forgot_step2_light.png",
+    "D:\\RIKKEI\\THUC_TAP\\PROJECT\\accommodation-web\\docs\\design\\screenshots\\auth\\mobile390_verify_email_light.png"
+  ],
+  "touchTargets": []
+}

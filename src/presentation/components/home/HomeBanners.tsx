@@ -22,7 +22,18 @@ export function HomeBanners({ banners, isLoading }: HomeBannersProps) {
     return () => clearInterval(timer);
   }, [banners.length]);
 
-  if (isLoading || banners.length === 0) return null;
+  if (isLoading) {
+    return (
+      <div
+        aria-hidden="true"
+        className="relative overflow-hidden rounded-3xl border border-border bg-surface-muted animate-pulse"
+      >
+        <div className="aspect-21/9 sm:aspect-28/9 w-full min-h-[160px] sm:min-h-[200px]" />
+      </div>
+    );
+  }
+
+  if (banners.length === 0) return null;
 
   const current = banners[currentIndex];
 

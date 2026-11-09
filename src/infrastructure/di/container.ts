@@ -14,7 +14,7 @@ import { StaticSupportRepository } from '../static/StaticSupportRepository';
 import { StaticMaintenanceRepository } from '../static/StaticMaintenanceRepository';
 import { StaticDisputeRepository } from '../static/StaticDisputeRepository';
 import { StaticTransactionRepository } from '../static/StaticTransactionRepository';
-import { StaticNotificationRepository } from '../static/StaticNotificationRepository';
+import { HttpNotificationRepository } from '../repositories/http-notification.repository';
 import { StaticBadgeRepository } from '../static/StaticBadgeRepository';
 import { LoginUseCase } from '@/application/use-cases/auth/login.use-case';
 import { RegisterUseCase } from '@/application/use-cases/auth/register.use-case';
@@ -38,7 +38,7 @@ const supportRepository = new StaticSupportRepository();
 const maintenanceRepository = new StaticMaintenanceRepository();
 const disputeRepository = new StaticDisputeRepository();
 const transactionRepository = new StaticTransactionRepository();
-const notificationRepository = new StaticNotificationRepository();
+const notificationRepository = new HttpNotificationRepository();
 const badgeRepository = new StaticBadgeRepository(
   adminRepository,
   supportRepository,

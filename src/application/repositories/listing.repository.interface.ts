@@ -10,10 +10,11 @@ import {
   HotAreaDto,
   BannerDto,
   PlatformStatsDto,
+  RoomTypeDto,
 } from '../dto/listing.dto';
 
 export interface IListingRepository {
-  getRooms(params: RoomFilterParams): Promise<RoomDto[]>;
+  getRooms(params: RoomFilterParams, signal?: AbortSignal): Promise<RoomDto[]>;
   getRoomById(id: number): Promise<RoomDto>;
   getRoomDetail(slugOrId: string): Promise<RoomDetailDto>;
   getRecommendations(id: number): Promise<RoomDto[]>;
@@ -23,7 +24,8 @@ export interface IListingRepository {
   getWards(code: string, isProvince?: boolean): Promise<WardDto[]>;
   getAmenities(): Promise<AmenityDto[]>;
   getReviews(roomId: number): Promise<ReviewDto[]>;
-  getHotAreas(): Promise<HotAreaDto[]>;
+  getHotAreas(limit?: number, nonEmptyOnly?: boolean): Promise<HotAreaDto[]>;
+  getRoomTypes?(): Promise<RoomTypeDto[]>;
   getBanners(): Promise<BannerDto[]>;
   getPlatformStats(): Promise<PlatformStatsDto>;
 }
