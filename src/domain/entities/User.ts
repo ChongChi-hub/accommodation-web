@@ -2,6 +2,21 @@ export type UserRole = 'TENANT' | 'LANDLORD' | 'MODERATOR' | 'ADMIN';
 
 export type UserStatus = 'ACTIVE' | 'LOCKED' | 'PENDING';
 
+export type LandlordApplicationStatus =
+  | 'NOT_APPLIED'
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'APPROVED'
+  | 'REJECTED'
+  | string;
+
+export interface LandlordApplicationSummary {
+  status: LandlordApplicationStatus;
+  rejectReasonCode?: string | null;
+  rejectReasonNote?: string | null;
+  canResubmit?: boolean;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -12,6 +27,10 @@ export interface User {
   dateOfBirth: string | null;
   status: UserStatus;
   roles: UserRole[];
+  permissions?: string[];
+  emailVerified?: boolean;
+  phoneMissing?: boolean;
+  landlordApplication?: LandlordApplicationSummary | null;
+  workspaceHint?: UserRole;
   createdAt: string;
 }
-

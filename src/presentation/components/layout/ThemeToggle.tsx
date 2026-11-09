@@ -1,45 +1,45 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Moon, Sun } from 'lucide-react';
+import { applyThemePreference, getStoredThemePreference } from '@/presentation/utils/theme-preference';
+import { cn } from '@/lib/cn';
 
-export function ThemeToggle() {
+export interface ThemeToggleProps {
+  onHeroTop?: boolean;
+  className?: string;
+}
+
+export function ThemeToggle({ onHeroTop = false, className }: ThemeToggleProps) {
+  const tAria = useTranslations('header.aria');
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const isDarkMode =
-      localStorage.getItem('cozynest_theme') === 'dark' ||
-      (!('cozynest_theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches);
-    setIsDark(isDarkMode);
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    setIsDark(applyThemePreference(getStoredThemePreference()));
   }, []);
 
   const toggleTheme = () => {
-    const nextDark = !isDark;
+    const nextPref = isDark ? 'light' : 'dark';
+    const nextDark = applyThemePreference(nextPref);
     setIsDark(nextDark);
-    if (nextDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('cozynest_theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('cozynest_theme', 'light');
-    }
   };
 
   return (
     <button
+      type="button"
       onClick={toggleTheme}
-      className="p-1.5 rounded-lg border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
-      aria-label="Chuyển chế độ sáng/tối"
-      title="Chế độ sáng / tối"
+      className={cn(
+        'p-2 rounded-xl border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+        onHeroTop
+          ? 'border-white/30 text-nav-on-hero hover:bg-white/15'
+          : 'border-border text-nav-muted hover:text-nav-ink hover:bg-surface-muted',
+        className
+      )}
+      aria-label={tAria('switchTheme')}
+      title={tAria('switchTheme')}
     >
-      {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-stone-600" />}
+      {isDark ? <Sun className="w-4 h-4 text-accent-400" /> : <Moon className="w-4 h-4" />}
     </button>
   );
 }
-

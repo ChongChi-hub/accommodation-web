@@ -1,7 +1,22 @@
 import { AuthRepository, AuthSession } from '@/domain/repositories/AuthRepository';
-import { User } from '@/domain/entities/User';
+import { LandlordApplicationSummary, User } from '@/domain/entities/User';
 import { UserProfile, UpdateUserProfileDto } from '@/domain/entities/UserProfile';
 import { ApiClient } from '../http/api-client';
+
+function resolveCookieRole(user: User | undefined | null): string {
+  const roles = user?.roles || [];
+  if (roles.includes('ADMIN')) return 'ADMIN';
+  if (roles.includes('MODERATOR')) return 'MODERATOR';
+  if (typeof document !== 'undefined') {
+    const match = document.cookie.match(/(?:^|;\s*)cozynest_role=([^;]+)/);
+    const preferred = match ? decodeURIComponent(match[1]) : '';
+    if (preferred && roles.includes(preferred as any)) {
+      return preferred;
+    }
+  }
+  if (roles.includes('LANDLORD')) return 'LANDLORD';
+  return roles[0] || 'TENANT';
+}
 
 function setAuthCookies(token?: string, role?: string) {
   if (typeof document !== 'undefined') {
@@ -24,7 +39,7 @@ export class HttpAuthRepository implements AuthRepository {
   async login(email: string, password: string): Promise<AuthSession> {
     const data = await ApiClient.post<any>('/auth/login', { email, password });
     ApiClient.setToken(data.token);
-    const primaryRole = data.user?.roles?.[0] || 'TENANT';
+    const primaryRole = resolveCookieRole(data.user);
     setAuthCookies(data.token, primaryRole);
 
     if (typeof window !== 'undefined') {
@@ -40,7 +55,7 @@ export class HttpAuthRepository implements AuthRepository {
   async register(data: { email: string; phone: string; password: string; fullName: string; role: string }): Promise<AuthSession> {
     const res = await ApiClient.post<any>('/auth/register', data);
     ApiClient.setToken(res.token);
-    const primaryRole = res.user?.roles?.[0] || 'TENANT';
+    const primaryRole = resolveCookieRole(res.user);
     setAuthCookies(res.token, primaryRole);
 
     if (typeof window !== 'undefined') {
@@ -64,7 +79,7 @@ export class HttpAuthRepository implements AuthRepository {
   async loginWithGoogle(data: { credential: string; nonce: string; intendedRole?: string }): Promise<AuthSession> {
     const res = await ApiClient.post<any>('/auth/google', data);
     ApiClient.setToken(res.token);
-    const primaryRole = res.user?.roles?.[0] || 'TENANT';
+    const primaryRole = resolveCookieRole(res.user);
     setAuthCookies(res.token, primaryRole);
 
     if (typeof window !== 'undefined') {
@@ -74,13 +89,14 @@ export class HttpAuthRepository implements AuthRepository {
     return {
       tokens: { token: res.token, refreshToken: res.refreshToken },
       user: res.user,
+      isNewUser: Boolean(res.isNewUser ?? res.newUser ?? false),
     };
   }
 
   async refreshToken(refreshToken: string): Promise<AuthSession> {
     const data = await ApiClient.post<any>('/auth/refresh-token', { refreshToken });
     ApiClient.setToken(data.token);
-    const primaryRole = data.user?.roles?.[0] || 'TENANT';
+    const primaryRole = resolveCookieRole(data.user);
     setAuthCookies(data.token, primaryRole);
 
     if (typeof window !== 'undefined') {
@@ -91,6 +107,18 @@ export class HttpAuthRepository implements AuthRepository {
       tokens: { token: data.token, refreshToken: data.refreshToken },
       user: data.user,
     };
+  }
+
+  async getMe(): Promise<User> {
+    const me = await ApiClient.get<User>('/me');
+    if (typeof window !== 'undefined' && me) {
+      localStorage.setItem('cozynest_user', JSON.stringify(me));
+    }
+    return me;
+  }
+
+  async applyLandlord(): Promise<LandlordApplicationSummary> {
+    return ApiClient.post<LandlordApplicationSummary>('/me/landlord-application');
   }
 
   async getProfile(): Promise<User> {
@@ -187,6 +215,14 @@ export class HttpAuthRepository implements AuthRepository {
 
   async resetPassword(email: string, otp: string, newPassword: string): Promise<void> {
     await ApiClient.post('/auth/reset-password', { email, otp, newPassword });
+  }
+
+  async verifyEmail(email: string, otp: string): Promise<void> {
+    await ApiClient.post('/auth/verify-email', { email, otp });
+  }
+
+  async resendVerifyEmail(email: string): Promise<void> {
+    await ApiClient.post('/auth/verify-email/resend', { email });
   }
 
   async logout(): Promise<void> {

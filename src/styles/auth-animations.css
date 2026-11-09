@@ -1,0 +1,177 @@
+/* Auth UI Animations, Reduced Motion & Autofill Overrides */
+
+@keyframes auth-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes auth-shake {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40% {
+    transform: translate3d(4px, 0, 0);
+  }
+  60% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  80% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes auth-tick-draw {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes auth-step-in-right {
+  from {
+    opacity: 0;
+    transform: translate3d(20px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes auth-step-in-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-20px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes auth-otp-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes auth-envelope-float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+@keyframes auth-window-glow {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes auth-ambient-drift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(8px, -6px, 0) scale(1.03);
+  }
+}
+
+.auth-stagger {
+  animation: auth-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--stagger, 0) * 28ms);
+}
+
+.auth-shake {
+  animation: auth-shake 280ms ease-in-out 1;
+}
+
+.auth-tick-path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: auth-tick-draw 260ms ease-out forwards;
+}
+
+.auth-step-right {
+  animation: auth-step-in-right 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.auth-step-left {
+  animation: auth-step-in-left 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.auth-otp-filled {
+  animation: auth-otp-pop 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.auth-envelope {
+  animation: auth-envelope-float 2.6s ease-in-out infinite;
+}
+
+.auth-window-pulse {
+  animation: auth-window-glow 5s ease-in-out infinite;
+}
+
+.auth-ambient-float {
+  animation: auth-ambient-drift 12s ease-in-out infinite;
+}
+
+[data-paused='true'] .auth-window-pulse,
+[data-paused='true'] .auth-ambient-float,
+[data-paused='true'] .auth-envelope {
+  animation-play-state: paused !important;
+}
+
+/* Browser Autofill Overrides matching Design Tokens */
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus,
+.auth-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-surface) inset !important;
+  -webkit-text-fill-color: var(--text-foreground) !important;
+  caret-color: var(--text-foreground);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-stagger,
+  .auth-shake,
+  .auth-tick-path,
+  .auth-step-right,
+  .auth-step-left,
+  .auth-otp-filled,
+  .auth-envelope,
+  .auth-window-pulse,
+  .auth-ambient-float {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .auth-tick-path {
+    stroke-dashoffset: 0 !important;
+  }
+}
+

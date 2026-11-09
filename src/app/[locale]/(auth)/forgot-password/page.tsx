@@ -1,95 +1,226 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
-import { Mail, ArrowLeft, Send } from 'lucide-react';
-import { Button } from '@/presentation/components/ui/Button';
-import { Input } from '@/presentation/components/ui/Input';
-import { toast } from '@/presentation/stores/toast.store';
 import { useAuthStore } from '@/presentation/stores/auth.store';
-import Image from 'next/image';
+import { toast } from '@/presentation/stores/toast.store';
+import type { SubmitStatus } from '@/presentation/components/auth/SubmitButton';
+import { ForgotStepOne } from '@/presentation/components/auth/ForgotStepOne';
+import { ForgotStepTwo } from '@/presentation/components/auth/ForgotStepTwo';
+import { resolveAuthErrorKey } from '@/presentation/validation/auth-errors';
+import {
+  createResetPasswordSchema,
+  forgotPasswordStep1Schema,
+} from '@/presentation/validation/auth.validation';
+import { ArrowLeft } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
   const t = useTranslations('auth');
   const router = useRouter();
-  const { forgotPassword, isLoading, error } = useAuthStore();
+  const { forgotPassword, resetPassword, clearError } = useAuthStore();
 
+  const [step, setStep] = useState<1 | 2>(1);
+  const [slideDir, setSlideDir] = useState<'right' | 'left'>('right');
   const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   const [cooldown, setCooldown] = useState(0);
+  const [stepStatus, setStepStatus] = useState<SubmitStatus>('idle');
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [isNetworkError, setIsNetworkError] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string;
+    otp?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+  }>({});
+
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmRef = useRef<HTMLInputElement>(null);
+  const errorSummaryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (cooldown <= 0) return;
-    const timer = setInterval(() => {
-      setCooldown((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
+    const timer = setInterval(() => setCooldown((s) => (s > 0 ? s - 1 : 0)), 1000);
     return () => clearInterval(timer);
   }, [cooldown]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (cooldown > 0) return;
+  const applyStoreError = () => {
+    const st = useAuthStore.getState();
+    const mapped = resolveAuthErrorKey(st.errorCode);
+    const network = st.errorCode === 'ERR_NETWORK';
+    setIsNetworkError(network);
 
-    const success = await forgotPassword(email);
-    if (success) {
-      toast.success(t('otpSentSuccess'));
+    if (st.errorStatus === 429 || st.errorCode?.includes('RATE_LIMIT')) {
+      setCooldown(st.retryAfterSeconds && st.retryAfterSeconds > 0 ? st.retryAfterSeconds : 60);
+    }
+
+    const fallbackKey =
+      st.errorStatus === 503
+        ? 'errors.serviceUnavailable'
+        : st.errorStatus === 429
+          ? 'errors.tooManyRequests'
+          : network
+            ? 'errors.networkError'
+            : 'errors.otpInvalid';
+
+    const msg = mapped ? t(mapped) : t(fallbackKey);
+    if (
+      st.errorCode === 'ERR_AUTH_INVALID_OTP' ||
+      st.errorCode === 'ERR_AUTH_OTP_EXPIRED' ||
+      st.errorCode === 'ERR_AUTH_OTP_LOCKED'
+    ) {
+      setFieldErrors((p) => ({ ...p, otp: msg }));
+    } else if (st.errorCode === 'ERR_AUTH_OLD_PASSWORD_REUSE' || st.errorCode?.startsWith('ERR_AUTH_PASSWORD')) {
+      setFieldErrors((p) => ({ ...p, newPassword: msg }));
+    }
+
+    setSummaryError(msg);
+    requestAnimationFrame(() => errorSummaryRef.current?.focus());
+  };
+
+  const sendOtpRequest = async () => {
+    if (cooldown > 0) return;
+    setSummaryError(null);
+    setIsNetworkError(false);
+    clearError();
+
+    const parsed = forgotPasswordStep1Schema.safeParse({ email });
+    if (!parsed.success) {
+      setFieldErrors({ email: t(parsed.error.issues[0].message) });
+      emailRef.current?.focus();
+      return;
+    }
+
+    setEmail(parsed.data.email);
+    setFieldErrors({});
+    setStepStatus('loading');
+
+    const ok = await forgotPassword(parsed.data.email);
+    setStepStatus('idle');
+
+    if (ok) {
+      if (step === 2) {
+        toast.info(t('otpSentSuccess'));
+      }
       setCooldown(60);
-      router.push(`/reset-password?email=${encodeURIComponent(email)}`);
+      setSlideDir('right');
+      setStep(2);
     } else {
-      toast.error(error || t('error'));
+      applyStoreError();
     }
   };
 
+  const submitResetPassword = async () => {
+    setSummaryError(null);
+    setIsNetworkError(false);
+    clearError();
+
+    const parsed = createResetPasswordSchema(email).safeParse({
+      otp,
+      newPassword,
+      confirmPassword,
+    });
+
+    if (!parsed.success) {
+      const nextErr: { otp?: string; newPassword?: string; confirmPassword?: string } = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0] as 'otp' | 'newPassword' | 'confirmPassword';
+        if (!nextErr[key]) nextErr[key] = t(issue.message);
+      }
+      setFieldErrors(nextErr);
+      if (nextErr.newPassword && !nextErr.otp) passwordRef.current?.focus();
+      else if (nextErr.confirmPassword && !nextErr.otp && !nextErr.newPassword) {
+        confirmRef.current?.focus();
+      }
+      return;
+    }
+
+    setFieldErrors({});
+    setStepStatus('loading');
+    const ok = await resetPassword(email, parsed.data.otp, parsed.data.newPassword);
+
+    if (ok) {
+      setStepStatus('success');
+      toast.success(t('passwordResetSuccess'));
+      setTimeout(() => router.push('/login'), 260);
+      return;
+    }
+
+    setStepStatus('idle');
+    applyStoreError();
+  };
+
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6 rounded-2xl bg-white dark:bg-stone-900 p-8 shadow-xl border border-stone-200/80 dark:border-stone-800">
-        <div className="text-center space-y-2">
-          <Link href="/" className="inline-block mb-2">
-            <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} style={{ width: 'auto', height: 'auto' }} priority />
-          </Link>
-          <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
-            {t('forgotPasswordTitle')}
-          </h1>
-          <p className="text-xs text-stone-500 max-w-xs mx-auto">
-            {t('forgotPasswordSubtitle')}
-          </p>
-        </div>
+    <div className="space-y-6">
+      {step === 1 ? (
+        <ForgotStepOne
+          email={email}
+          onEmailChange={setEmail}
+          emailError={fieldErrors.email}
+          onClearEmailError={() => setFieldErrors({})}
+          summaryError={summaryError}
+          cooldown={cooldown}
+          isNetworkError={isNetworkError}
+          status={stepStatus}
+          slideLeft={slideDir === 'left'}
+          emailRef={emailRef}
+          errorSummaryRef={errorSummaryRef}
+          onSubmit={sendOtpRequest}
+        />
+      ) : (
+        <ForgotStepTwo
+          email={email}
+          otp={otp}
+          onOtpChange={(val) => {
+            setOtp(val);
+            if (fieldErrors.otp) setFieldErrors((p) => ({ ...p, otp: undefined }));
+          }}
+          newPassword={newPassword}
+          onNewPasswordChange={(val) => {
+            setNewPassword(val);
+            if (fieldErrors.newPassword) setFieldErrors((p) => ({ ...p, newPassword: undefined }));
+          }}
+          confirmPassword={confirmPassword}
+          onConfirmPasswordChange={(val) => {
+            setConfirmPassword(val);
+            if (fieldErrors.confirmPassword) {
+              setFieldErrors((p) => ({ ...p, confirmPassword: undefined }));
+            }
+          }}
+          fieldErrors={fieldErrors}
+          summaryError={summaryError}
+          cooldown={cooldown}
+          isNetworkError={isNetworkError}
+          status={stepStatus}
+          passwordRef={passwordRef}
+          confirmRef={confirmRef}
+          errorSummaryRef={errorSummaryRef}
+          onEditEmail={() => {
+            setSlideDir('left');
+            setStep(1);
+            setOtp('');
+            setSummaryError(null);
+            setFieldErrors({});
+            clearError();
+          }}
+          onResendOtp={sendOtpRequest}
+          onSubmit={submitResetPassword}
+        />
+      )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label={t('email')}
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@example.com"
-            leftIcon={<Mail className="w-4 h-4" />}
-          />
-
-          <Button
-            type="submit"
-            variant="primary"
-            size="md"
-            className="w-full"
-            isLoading={isLoading}
-            disabled={cooldown > 0}
-            leftIcon={<Send className="w-4 h-4" />}
-          >
-            {cooldown > 0
-              ? t('resendOtpCooldown', { seconds: cooldown })
-              : t('sendOtpBtn')}
-          </Button>
-        </form>
-
-        <div className="text-center pt-2 border-t border-stone-100 dark:border-stone-800">
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>{t('backToLogin')}</span>
-          </Link>
-        </div>
+      <div className="text-center pt-1 border-t border-border">
+        <Link
+          href="/login"
+          className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-2 text-xs font-semibold text-primary dark:text-primary-400 hover:underline rounded"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+          <span>{t('backToLogin')}</span>
+        </Link>
       </div>
     </div>
   );

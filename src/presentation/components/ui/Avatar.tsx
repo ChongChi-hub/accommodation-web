@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { User } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
@@ -12,6 +12,12 @@ export interface AvatarProps {
 }
 
 export function Avatar({ src, name, size = 'md', className }: AvatarProps) {
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [src]);
+
   const sizeStyles = {
     sm: 'w-7 h-7 text-xs',
     md: 'w-9 h-9 text-sm',
@@ -35,10 +41,11 @@ export function Avatar({ src, name, size = 'md', className }: AvatarProps) {
         className
       )}
     >
-      {src ? (
+      {src && !imgError ? (
         <img
           src={src}
           alt={name || 'Avatar'}
+          onError={() => setImgError(true)}
           className="w-full h-full object-cover"
         />
       ) : name ? (

@@ -41,6 +41,12 @@ export default async function RootLayout({
     <html lang={locale} className={plusJakartaSans.variable} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('cozynest_theme');var d=t==='dark'||((!t||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}",
+          }}
+        />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased transition-colors" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>

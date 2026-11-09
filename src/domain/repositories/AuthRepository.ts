@@ -1,4 +1,4 @@
-import { User } from '../entities/User';
+import { LandlordApplicationSummary, User } from '../entities/User';
 import { UserProfile, UpdateUserProfileDto } from '../entities/UserProfile';
 
 export interface AuthTokens {
@@ -9,12 +9,15 @@ export interface AuthTokens {
 export interface AuthSession {
   tokens: AuthTokens;
   user: User;
+  isNewUser?: boolean;
 }
 
 export interface AuthRepository {
   login(email: string, password: string): Promise<AuthSession>;
   register(data: { email: string; phone: string; password: string; fullName: string; role: string }): Promise<AuthSession>;
   refreshToken(refreshToken: string): Promise<AuthSession>;
+  getMe?(): Promise<User>;
+  applyLandlord?(): Promise<LandlordApplicationSummary>;
   getProfile(): Promise<User>;
   updateProfile(data: { fullName: string; phone: string }): Promise<User>;
   getUserProfile(): Promise<UserProfile>;
@@ -24,6 +27,8 @@ export interface AuthRepository {
   changePassword(currentPassword: string, newPassword: string): Promise<void>;
   forgotPassword(email: string): Promise<void>;
   resetPassword(email: string, otp: string, newPassword: string): Promise<void>;
+  verifyEmail?(email: string, otp: string): Promise<void>;
+  resendVerifyEmail?(email: string): Promise<void>;
   getGoogleStatus(): Promise<{ enabled: boolean; clientIdFingerprint: string }>;
   getGoogleNonce(): Promise<{ nonce: string }>;
   loginWithGoogle(data: { credential: string; nonce: string; intendedRole?: string }): Promise<AuthSession>;

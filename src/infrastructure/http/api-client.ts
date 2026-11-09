@@ -25,7 +25,8 @@ export class ApiError extends Error {
     message: string,
     public errorCode: string = 'ERR_UNKNOWN',
     public statusCode: number = 500,
-    public errors?: string[]
+    public errors?: string[],
+    public retryAfter?: number
   ) {
     super(message);
     this.name = 'ApiError';
@@ -136,16 +137,25 @@ export class ApiClient {
       }));
 
       if (!response.ok) {
+        const retryHeader = response.headers.get('Retry-After');
+        const parsedRetry = retryHeader ? parseInt(retryHeader, 10) : NaN;
         throw new ApiError(
           json.message || 'Lỗi xử lý yêu cầu',
           json.errorCode || 'ERR_HTTP_' + response.status,
           response.status,
-          json.errors
+          json.errors,
+          Number.isFinite(parsedRetry) && parsedRetry > 0 ? parsedRetry : undefined
         );
       }
 
       return json;
     } catch (error) {
+      if (
+        (typeof DOMException !== 'undefined' && error instanceof DOMException && error.name === 'AbortError') ||
+        (error instanceof Error && error.name === 'AbortError')
+      ) {
+        throw error;
+      }
       if (error instanceof ApiError) throw error;
       throw new ApiError(
         error instanceof Error ? error.message : 'Lỗi kết nối mạng',

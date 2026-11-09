@@ -17,23 +17,22 @@ export interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, allowedRoles }: DashboardLayoutProps) {
-  const { user, isAuthenticated, initSession } = useAuthStore();
+  const { user, isAuthenticated, hasHydrated, initSession } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
-  const [isChecking, setIsChecking] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
-    initSession();
-    const token = typeof window !== 'undefined' ? localStorage.getItem('cozynest_access_token') : null;
-    if (!token && !isAuthenticated) {
-      router.replace('/login');
-    } else {
-      setIsChecking(false);
-    }
-  }, [isAuthenticated, initSession, router]);
+    void initSession();
+  }, [initSession]);
 
-  if (isChecking) {
+  useEffect(() => {
+    if (hasHydrated && !isAuthenticated) {
+      router.replace('/login');
+    }
+  }, [hasHydrated, isAuthenticated, router]);
+
+  if (!hasHydrated || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col">
         <header className="h-16 border-b border-border bg-surface flex items-center px-6">

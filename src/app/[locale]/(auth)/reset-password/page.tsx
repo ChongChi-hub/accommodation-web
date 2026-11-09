@@ -1,155 +1,222 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
-import { KeyRound, Lock, CheckCircle2 } from 'lucide-react';
-import { Button } from '@/presentation/components/ui/Button';
-import { Input } from '@/presentation/components/ui/Input';
-import { toast } from '@/presentation/stores/toast.store';
 import { useAuthStore } from '@/presentation/stores/auth.store';
-import Image from 'next/image';
+import { toast } from '@/presentation/stores/toast.store';
+import { TextField } from '@/presentation/components/auth/TextField';
+import { OtpInput } from '@/presentation/components/auth/OtpInput';
+import { PasswordField } from '@/presentation/components/auth/PasswordField';
+import { SubmitButton, type SubmitStatus } from '@/presentation/components/auth/SubmitButton';
+import { FormErrorSummary } from '@/presentation/components/auth/FormErrorSummary';
+import { evaluatePasswordStrength } from '@/presentation/validation/password-strength';
+import { resolveAuthErrorKey } from '@/presentation/validation/auth-errors';
+import { createResetPasswordSchema, emailSchema } from '@/presentation/validation/auth.validation';
+import { ArrowLeft, CheckCircle2, Mail } from 'lucide-react';
 
-function calculatePasswordStrength(pass: string): { score: number; labelKey: 'passwordWeak' | 'passwordMedium' | 'passwordStrong'; color: string } {
-  if (!pass) return { score: 0, labelKey: 'passwordWeak', color: 'bg-stone-200' };
-  let score = 0;
-  if (pass.length >= 6) score++;
-  if (pass.length >= 10) score++;
-  if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score++;
-  if (/[0-9]/.test(pass)) score++;
-  if (/[^A-Za-z0-9]/.test(pass)) score++;
-
-  if (score <= 2) return { score: 1, labelKey: 'passwordWeak', color: 'bg-red-500' };
-  if (score <= 4) return { score: 2, labelKey: 'passwordMedium', color: 'bg-amber-500' };
-  return { score: 3, labelKey: 'passwordStrong', color: 'bg-teal-600' };
-}
-
-function ResetPasswordForm() {
+export default function ResetPasswordPage() {
   const t = useTranslations('auth');
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const emailParam = searchParams.get('email') || '';
-  const { resetPassword, isLoading, error } = useAuthStore();
+  const { resetPassword, clearError } = useAuthStore();
 
+  const [initialEmail, setInitialEmail] = useState('');
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    const paramEmail = new URLSearchParams(window.location.search).get('email') || '';
+    if (paramEmail) {
+      setInitialEmail(paramEmail);
+      setEmail((prev) => prev || paramEmail);
+    }
+  }, []);
   const [otp, setOtp] = useState('');
-  const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [localError, setLocalError] = useState('');
+  const [status, setStatus] = useState<SubmitStatus>('idle');
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [isNetworkError, setIsNetworkError] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string;
+    otp?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+  }>({});
 
-  const strength = calculatePasswordStrength(password);
+  const errorSummaryRef = useRef<HTMLDivElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const confirmRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setLocalError(t('passwordMismatch'));
+  const strength = evaluatePasswordStrength(newPassword, email);
+  const matchState =
+    confirmPassword.length > 0 ? (confirmPassword === newPassword ? 'match' : 'mismatch') : null;
+
+  const performSubmit = async () => {
+    setSummaryError(null);
+    setIsNetworkError(false);
+    clearError();
+
+    const parsedEmail = emailSchema.safeParse(email);
+    const parsedReset = createResetPasswordSchema(email).safeParse({
+      otp,
+      newPassword,
+      confirmPassword,
+    });
+
+    if (!parsedEmail.success || !parsedReset.success) {
+      const nextErr: { email?: string; otp?: string; newPassword?: string; confirmPassword?: string } = {};
+      if (!parsedEmail.success) nextErr.email = t(parsedEmail.error.issues[0].message);
+      if (!parsedReset.success) {
+        for (const issue of parsedReset.error.issues) {
+          const key = issue.path[0] as 'otp' | 'newPassword' | 'confirmPassword';
+          if (!nextErr[key]) nextErr[key] = t(issue.message);
+        }
+      }
+      setFieldErrors(nextErr);
+      if (nextErr.newPassword && !nextErr.email && !nextErr.otp) passwordRef.current?.focus();
+      else if (nextErr.confirmPassword && !nextErr.email && !nextErr.otp && !nextErr.newPassword) {
+        confirmRef.current?.focus();
+      }
       return;
     }
-    setLocalError('');
 
-    const success = await resetPassword(emailParam, otp, password);
-    if (success) {
+    setFieldErrors({});
+    setStatus('loading');
+    const ok = await resetPassword(parsedEmail.data, parsedReset.data.otp, parsedReset.data.newPassword);
+
+    if (ok) {
+      setStatus('success');
       toast.success(t('passwordResetSuccess'));
-      router.push('/login');
-    } else {
-      const activeError = useAuthStore.getState().error;
-      toast.error(activeError || t('resetPasswordError'));
+      setTimeout(() => router.push('/login'), 260);
+      return;
     }
+
+    setStatus('idle');
+    const st = useAuthStore.getState();
+    const mapped = resolveAuthErrorKey(st.errorCode);
+    const network = st.errorCode === 'ERR_NETWORK';
+    setIsNetworkError(network);
+    const msg = mapped ? t(mapped) : t(network ? 'errors.networkError' : 'errors.otpInvalid');
+    if (
+      st.errorCode === 'ERR_AUTH_INVALID_OTP' ||
+      st.errorCode === 'ERR_AUTH_OTP_EXPIRED' ||
+      st.errorCode === 'ERR_AUTH_OTP_LOCKED'
+    ) {
+      setFieldErrors((p) => ({ ...p, otp: msg }));
+    } else if (st.errorCode === 'ERR_AUTH_OLD_PASSWORD_REUSE' || st.errorCode?.startsWith('ERR_AUTH_PASSWORD')) {
+      setFieldErrors((p) => ({ ...p, newPassword: msg }));
+    }
+    setSummaryError(msg);
+    requestAnimationFrame(() => errorSummaryRef.current?.focus());
   };
 
   return (
-    <div className="w-full max-w-md space-y-6 rounded-2xl bg-white dark:bg-stone-900 p-8 shadow-xl border border-stone-200/80 dark:border-stone-800">
-      <div className="text-center space-y-2">
-        <Link href="/" className="inline-block mb-2">
-          <Image src="/logo.svg" alt="Tổ Ấm" width={130} height={30} style={{ width: 'auto', height: 'auto' }} priority />
-        </Link>
-        <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
-          {t('resetPasswordTitle')}
-        </h1>
-        <p className="text-xs text-stone-500">
-          {t('resetPasswordSubtitle', { email: emailParam || 'email' })}
+    <div className="space-y-5">
+      <div className="space-y-1.5 auth-stagger" style={{ '--stagger': 0 } as React.CSSProperties}>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('resetPasswordTitle')}</h1>
+        <p className="text-sm text-foreground-muted">
+          {t('resetPasswordSubtitle', { email: email || t('emailPlaceholder') })}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label={t('otpLabel')}
-          required
-          maxLength={6}
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          placeholder="123456"
-          leftIcon={<KeyRound className="w-4 h-4" />}
-        />
+      <FormErrorSummary
+        ref={errorSummaryRef}
+        message={summaryError}
+        isNetworkError={isNetworkError}
+        onRetry={performSubmit}
+      />
 
-        <div>
-          <Input
-            name="newPassword"
-            label={t('newPassword')}
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="******"
-            leftIcon={<Lock className="w-4 h-4" />}
+      <form
+        className="space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          performSubmit();
+        }}
+        noValidate
+      >
+        {!initialEmail && (
+          <TextField
+            id="reset-email"
+            name="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            label={t('email')}
+            placeholder={t('emailPlaceholder')}
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (fieldErrors.email) setFieldErrors((p) => ({ ...p, email: undefined }));
+            }}
+            error={fieldErrors.email}
+            leftIcon={<Mail className="w-4 h-4" />}
           />
-          {password.length > 0 && (
-            <div className="mt-1.5 flex items-center gap-2">
-              <div className="flex-1 h-1.5 bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
-                <div
-                  className={`h-full transition-all duration-300 ${strength.color}`}
-                  style={{ width: `${(strength.score / 3) * 100}%` }}
-                />
-              </div>
-              <span className="text-[11px] font-medium text-stone-500">
-                {t(strength.labelKey)}
-              </span>
-            </div>
-          )}
-        </div>
+        )}
 
-        <Input
-          name="confirmPassword"
-          label={t('confirmNewPassword')}
-          type="password"
-          required
-          error={localError}
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="******"
-          leftIcon={<Lock className="w-4 h-4" />}
+        <OtpInput
+          label={t('otpLabel')}
+          value={otp}
+          onChange={(val) => {
+            setOtp(val);
+            if (fieldErrors.otp) setFieldErrors((p) => ({ ...p, otp: undefined }));
+          }}
+          error={fieldErrors.otp}
+          staggerIndex={1}
         />
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="md"
-          className="w-full"
-          isLoading={isLoading}
-          leftIcon={<CheckCircle2 className="w-4 h-4" />}
-        >
-          {t('saveNewPasswordBtn')}
-        </Button>
+        <PasswordField
+          ref={passwordRef}
+          id="reset-new-password"
+          name="newPassword"
+          autoComplete="new-password"
+          label={t('newPassword')}
+          placeholder={t('passwordPlaceholder')}
+          value={newPassword}
+          onChange={(e) => {
+            setNewPassword(e.target.value);
+            if (fieldErrors.newPassword) setFieldErrors((p) => ({ ...p, newPassword: undefined }));
+          }}
+          error={fieldErrors.newPassword}
+          showStrength
+          strength={strength}
+          staggerIndex={2}
+        />
+
+        <PasswordField
+          ref={confirmRef}
+          id="reset-confirm-password"
+          name="confirmPassword"
+          autoComplete="new-password"
+          label={t('confirmNewPassword')}
+          placeholder={t('confirmPasswordPlaceholder')}
+          value={confirmPassword}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value);
+            if (fieldErrors.confirmPassword) setFieldErrors((p) => ({ ...p, confirmPassword: undefined }));
+          }}
+          error={fieldErrors.confirmPassword}
+          matchState={matchState}
+          staggerIndex={3}
+        />
+
+        <SubmitButton
+          status={status}
+          idleLabel={t('saveNewPasswordBtn')}
+          loadingLabel={t('saveNewPasswordLoading')}
+          idleIcon={<CheckCircle2 className="w-4 h-4" />}
+          staggerIndex={4}
+        />
       </form>
 
-      <div className="text-center pt-2 border-t border-stone-100 dark:border-stone-800">
+      <div className="text-center pt-1 border-t border-border">
         <Link
           href="/login"
-          className="text-xs text-teal-700 dark:text-teal-400 font-semibold hover:underline"
+          className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-2 text-xs font-semibold text-primary dark:text-primary-400 hover:underline rounded"
         >
-          {t('backToLogin')}
+          <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+          <span>{t('backToLogin')}</span>
         </Link>
       </div>
-    </div>
-  );
-}
-
-export default function ResetPasswordPage() {
-  return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-      <Suspense fallback={<div className="text-sm text-stone-500">...</div>}>
-        <ResetPasswordForm />
-      </Suspense>
     </div>
   );
 }

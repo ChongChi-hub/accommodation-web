@@ -45,7 +45,7 @@ export default [
         },
         {
           type: 'shared',
-          pattern: 'src/{lib,i18n,styles}/**/*',
+          pattern: 'src/{lib,i18n,styles,shared}/**/*',
         },
       ],
     },
