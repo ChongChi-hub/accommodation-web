@@ -7,8 +7,9 @@ import { LandlordKycStatus } from '@/domain/entities/LandlordKyc';
 import { LandlordKycStatusCard } from '@/presentation/components/kyc/LandlordKycStatusCard';
 import { LandlordKycForm } from '@/presentation/components/kyc/LandlordKycForm';
 import { toast } from '@/presentation/stores/toast.store';
-import { ShieldCheck, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, ArrowLeft, UserCheck, FileCheck } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/Button';
+import { PropertyOwnershipKycSection } from '@/presentation/components/kyc/PropertyOwnershipKycSection';
 
 export default function LandlordKycPage() {
   const t = useTranslations('kyc');
@@ -16,6 +17,7 @@ export default function LandlordKycPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [forceShowForm, setForceShowForm] = useState(false);
+  const [activeTab, setActiveTab] = useState<'identity' | 'property'>('identity');
 
   const fetchStatus = async () => {
     setIsLoading(true);
@@ -86,17 +88,48 @@ export default function LandlordKycPage() {
         )}
       </div>
 
-      {!isLoading && (
-        <>
-          {showForm ? (
-            <LandlordKycForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
-          ) : (
-            <LandlordKycStatusCard
-              status={kycStatus!}
-              onResubmitClick={() => setForceShowForm(true)}
-            />
-          )}
-        </>
+      <div className="flex border-b border-border gap-4 text-xs font-semibold">
+        <button
+          type="button"
+          onClick={() => setActiveTab('identity')}
+          className={`pb-2.5 flex items-center gap-1.5 border-b-2 transition-colors ${
+            activeTab === 'identity'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-foreground-muted hover:text-foreground'
+          }`}
+        >
+          <UserCheck className="w-4 h-4" />
+          1. Định danh cá nhân (CCCD)
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('property')}
+          className={`pb-2.5 flex items-center gap-1.5 border-b-2 transition-colors ${
+            activeTab === 'property'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-foreground-muted hover:text-foreground'
+          }`}
+        >
+          <FileCheck className="w-4 h-4" />
+          2. Xác minh quyền cho thuê (Sổ đỏ / KYC-03)
+        </button>
+      </div>
+
+      {activeTab === 'property' ? (
+        <PropertyOwnershipKycSection />
+      ) : (
+        !isLoading && (
+          <>
+            {showForm ? (
+              <LandlordKycForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+            ) : (
+              <LandlordKycStatusCard
+                status={kycStatus!}
+                onResubmitClick={() => setForceShowForm(true)}
+              />
+            )}
+          </>
+        )
       )}
     </div>
   );

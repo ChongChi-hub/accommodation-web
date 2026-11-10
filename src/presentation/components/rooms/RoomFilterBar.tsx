@@ -121,6 +121,15 @@ export function RoomFilterBar({
           <label className="flex items-center gap-1.5 cursor-pointer">
             <input
               type="checkbox"
+              checked={params.verifiedOnly || false}
+              onChange={(e) => onChange({ verifiedOnly: e.target.checked || undefined })}
+              className="rounded text-primary focus:ring-primary"
+            />
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400">Tin đã xác thực</span>
+          </label>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input
+              type="checkbox"
               checked={params.allowPets || false}
               onChange={(e) => onChange({ allowPets: e.target.checked || undefined })}
               className="rounded text-primary focus:ring-primary"

@@ -235,6 +235,8 @@ export interface RoomFilterParams {
   minArea?: number;
   maxArea?: number;
   occupants?: number;
+  availableFrom?: string;
+  verifiedOnly?: boolean;
   allowPets?: boolean;
   allowCooking?: boolean;
   sortBy?: string;
