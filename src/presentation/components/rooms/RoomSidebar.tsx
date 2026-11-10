@@ -74,7 +74,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
             <span className="text-3xl font-black text-teal-700 dark:text-teal-400">
               {formatPrice(room.price)}
             </span>
-            <span className="text-xs text-stone-500 font-medium">đ/tháng</span>
+            <span className="text-xs text-stone-500 font-medium">/{room.priceUnit === 'BED' ? 'giường/tháng' : 'tháng'}</span>
           </div>
           <p className="text-xs text-stone-500 mt-1">
             Tiền đặt cọc: <strong className="text-stone-800 dark:text-stone-200">{formatPrice(room.deposit)} đ</strong>

@@ -58,9 +58,18 @@ export default function AboutPage() {
         <div className="flex items-center gap-2 text-teal-300 text-xs font-semibold uppercase tracking-wider">
           <Award className="w-4 h-4" /> Cam kết chất lượng
         </div>
-        <h2 className="text-2xl font-bold">Bảo vệ quyền lợi tối đa cho người đi thuê</h2>
+        <h2 className="text-2xl font-bold">Bảo vệ quyền lợi cho người đi thuê</h2>
         <p className="text-xs text-teal-100 leading-relaxed max-w-2xl">
-          Nếu phòng nhận bàn giao không đúng với thông tin xác thực trên hệ thống Tổ Ấm, bạn sẽ được hoàn tiền cọc giữ phòng 100% kèm chính sách hỗ trợ tìm phòng khẩn cấp trong vòng 48 giờ.
+          Nếu phòng nhận bàn giao không đúng với thông tin xác thực trên hệ thống CozyNest, bạn sẽ được hỗ trợ hoàn tiền cọc giữ phòng theo quy chế và được tư vấn tìm phòng thay thế kịp thời.
+        </p>
+      </div>
+
+      <div id="licenses" className="p-6 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/60 space-y-2">
+        <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
+          Bản quyền hình ảnh & Tư liệu truyền thông
+        </h3>
+        <p className="text-xs text-stone-500 leading-relaxed">
+          Tất cả hình ảnh kiến trúc, phong cảnh và minh họa phòng trọ trên website CozyNest được cấp phép theo giấy phép Unsplash License, Pexels License hoặc CC0. Danh mục chi tiết tác giả, ngày tải và tệp nguồn được lưu trữ minh bạch tại sổ cấp phép hình ảnh của dự án.
         </p>
       </div>
     </div>
