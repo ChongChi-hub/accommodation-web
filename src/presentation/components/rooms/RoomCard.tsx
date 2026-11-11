@@ -109,7 +109,7 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
   return (
     <div
       className={cn(
-        'group relative overflow-hidden rounded-2xl bg-stone-900 transition-all duration-500 hover:shadow-2xl hover:scale-[1.01] border border-stone-200/60 dark:border-stone-800 flex flex-col justify-between min-h-[460px] sm:min-h-[490px] select-none',
+        'group relative overflow-hidden rounded-2xl bg-stone-900 transition-all duration-500 hover:shadow-2xl hover:scale-[1.01] border border-stone-200/60 dark:border-stone-800 flex flex-col justify-end min-h-[460px] sm:min-h-[490px] select-none',
         className
       )}
     >
@@ -117,12 +117,12 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
       <RoomCardCarousel
         images={images}
         title={room.title}
-        aspectClassName="absolute inset-0 h-full w-full z-20 pointer-events-none"
-        dotsClassName="bottom-auto top-3.5 left-1/2 -translate-x-1/2 pointer-events-none"
+        aspectClassName="absolute inset-0 h-full w-full z-0 pointer-events-none"
+        dotsClassName="bottom-auto top-3.5 left-1/2 -translate-x-1/2 pointer-events-none z-20"
       />
 
       {/* 2. Top Scrim for badge contrast */}
-      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/75 via-black/30 to-transparent pointer-events-none z-10" />
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none z-10" />
 
       {/* 3. Deep Bottom Scrim for text readability */}
       <div className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-stone-950 via-stone-950/85 via-50% to-transparent pointer-events-none z-10" />
@@ -149,7 +149,7 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
       </div>
 
       {/* 6. Bottom Information Panel Overlay */}
-      <div className="relative z-20 p-4 sm:p-5 flex flex-col justify-end gap-2 text-white pointer-events-none">
+      <div className="relative z-20 mt-auto p-4 sm:p-5 flex flex-col justify-end gap-2 text-white pointer-events-none">
         {/* Price & Rating */}
         <div className="flex items-center justify-between gap-2">
           <div className="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-sm">
