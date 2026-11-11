@@ -60,7 +60,6 @@ export class ApiClient {
   private static async tryAutoRefresh(): Promise<boolean> {
     if (typeof window === 'undefined') return false;
     const refreshToken = localStorage.getItem('cozynest_refresh_token');
-    if (!refreshToken) return false;
 
     if (this.refreshPromise) {
       return this.refreshPromise;
@@ -68,11 +67,16 @@ export class ApiClient {
 
     this.refreshPromise = (async () => {
       try {
-        const res = await fetch(`${BASE_URL}/auth/refresh-token`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refreshToken }),
-        });
+        const res = refreshToken
+          ? await fetch(`${BASE_URL}/auth/refresh-token`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refreshToken }),
+            })
+          : await fetch('/api/auth/refresh', {
+              method: 'POST',
+              credentials: 'include',
+            });
         if (!res.ok) {
           this.clearSession();
           return false;
@@ -81,9 +85,17 @@ export class ApiClient {
         const data = json.data;
         if (data?.token) {
           this.setToken(data.token);
-          const isProduction = process.env.NODE_ENV === 'production';
-          const secureFlag = isProduction ? '; Secure' : '';
-          document.cookie = `cozynest_token=${encodeURIComponent(data.token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
+          if (refreshToken) {
+            const isProduction = process.env.NODE_ENV === 'production';
+            const secureFlag = isProduction ? '; Secure' : '';
+            document.cookie = `cozynest_token=${encodeURIComponent(data.token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
+            fetch('/api/auth/session', {
+              method: 'POST',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ token: data.token, refreshToken: data.refreshToken }),
+            }).catch(() => undefined);
+          }
           if (data.refreshToken) {
             localStorage.setItem('cozynest_refresh_token', data.refreshToken);
           }

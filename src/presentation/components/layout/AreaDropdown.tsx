@@ -214,14 +214,16 @@ export function AreaDropdown({ onHeroTop }: AreaDropdownProps) {
 
           {/* Footer Bar */}
           <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs">
-            <span className="text-stone-400">Đầy đủ 8 tỉnh / thành phố trọng điểm</span>
+            <span className="text-stone-400">
+              {areas.length > 0 ? `${areas.length} khu vực nổi bật` : 'Đang cập nhật khu vực'}
+            </span>
             <Link
               href="/khu-vuc"
               role="menuitem"
               onClick={() => setIsOpen(false)}
               className="inline-flex items-center gap-1.5 font-semibold text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors"
             >
-              <span>Xem tất cả khu vực ({areas.length} tỉnh/thành)</span>
+              <span>Xem tất cả khu vực ({allProvinces.length || areas.length} tỉnh/thành)</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

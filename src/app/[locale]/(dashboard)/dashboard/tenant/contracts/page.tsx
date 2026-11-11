@@ -1,86 +1,89 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
+import { Skeleton } from '@/presentation/components/ui/Skeleton';
+import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { Link } from '@/i18n/routing';
-import { FileText, Calendar, CheckCircle2, ArrowRight } from 'lucide-react';
+import { container } from '@/infrastructure/di/container';
+import { Contract } from '@/domain/entities/Contract';
+import { toast } from '@/presentation/stores/toast.store';
+import { formatIsoDate, formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
+import { ArrowRight, Calendar, FileText } from 'lucide-react';
 
 export default function TenantContractsPage() {
-  const contracts = [
-    {
-      id: 1,
-      contractNumber: 'HĐ-2026-0042',
-      roomTitle: 'Phòng 302, Chung cư mini Dịch Vọng Hậu',
-      landlordName: 'Trần Minh Tuấn',
-      price: '4.800.000 đ/tháng',
-      startDate: '01/11/2026',
-      endDate: '31/10/2027',
-      status: 'ACTIVE',
-      statusText: 'Đang có hiệu lực',
-      signedAt: '30/10/2026',
-    },
-    {
-      id: 2,
-      contractNumber: 'HĐ-2025-0189',
-      roomTitle: 'Phòng 401, Nhà trọ ngõ 118 Nguyễn Khánh Toàn',
-      landlordName: 'Lê Văn Hoàng',
-      price: '3.600.000 đ/tháng',
-      startDate: '01/10/2025',
-      endDate: '30/09/2026',
-      status: 'EXPIRED',
-      statusText: 'Đã hoàn thành',
-      signedAt: '28/09/2025',
-    },
-  ];
+  const t = useTranslations('sprint3.contract');
+  const tc = useTranslations('sprint3.common');
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const list = await container.contract.contractRepository.getTenantContracts();
+      setContracts(list);
+    } catch {
+      toast.error(tc('loadError'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [tc]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Hợp đồng thuê phòng ({contracts.length})
+          {t('tenantTitle')} ({contracts.length})
         </h1>
-        <p className="text-xs text-stone-500 mt-0.5">
-          Danh sách hợp đồng điện tử có giá trị pháp lý và chữ ký số xác thực.
-        </p>
+        <p className="text-xs text-stone-500 mt-0.5">{t('tenantSubtitle')}</p>
       </div>
 
-      <div className="space-y-4">
-        {contracts.map((c) => (
-          <Card key={c.id} className="p-5 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100 dark:border-stone-800">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-stone-900 dark:text-stone-100">{c.contractNumber}</span>
-                <Badge variant={c.status === 'ACTIVE' ? 'success' : 'neutral'} size="sm">
-                  {c.statusText}
-                </Badge>
+      {isLoading ? (
+        <Skeleton className="h-44 w-full rounded-xl" />
+      ) : contracts.length === 0 ? (
+        <EmptyState icon={<FileText className="w-8 h-8" />} title={t('empty')} />
+      ) : (
+        <div className="space-y-4">
+          {contracts.map((c) => (
+            <Card key={c.id} className="p-5 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-stone-100 dark:border-stone-800">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-sm font-bold">{c.contractCode}</span>
+                  <Badge variant={c.status === 'ACTIVE' ? 'success' : 'warning'} size="sm">
+                    {c.status}
+                  </Badge>
+                </div>
+                <span className="text-xs text-stone-400">{formatIsoDateTime(c.createdAt)}</span>
               </div>
-              <span className="text-xs text-stone-400">Ký ngày: {c.signedAt}</span>
-            </div>
 
-            <div>
-              <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">{c.roomTitle}</h3>
-              <p className="text-xs text-stone-500 mt-1">
-                Chủ nhà: <span className="font-semibold text-stone-700 dark:text-stone-300">{c.landlordName}</span> • Giá thuê: <span className="font-bold text-teal-700">{c.price}</span>
-              </p>
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-stone-600 dark:text-stone-300">
+                <span>{t('roomIdLabel')}: <strong>#{c.roomId}</strong></span>
+                <span>{t('monthlyRent')}: <strong className="text-teal-700">{formatVnd(c.monthlyRent)}</strong></span>
+                <span>{t('depositAmount')}: <strong className="text-teal-700">{formatVnd(c.depositAmount)}</strong></span>
+              </div>
 
-            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-stone-500">
-              <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-stone-400" />
-                Thời hạn: {c.startDate} đến {c.endDate}
-              </span>
-              <Link href={`/dashboard/tenant/contracts/${c.id}`}>
-                <Button variant="outline" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                  Xem chi tiết hợp đồng
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        ))}
-      </div>
+              <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs text-stone-500">
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-stone-400" />
+                  {formatIsoDate(c.startDate)} - {formatIsoDate(c.endDate)}
+                </span>
+                <Link href={`/dashboard/tenant/contracts/${c.id}`}>
+                  <Button variant="outline" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
+                    {tc('viewDetail')}
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-

@@ -24,8 +24,15 @@ function setAuthCookies(token?: string, role?: string) {
     const secureFlag = isProduction ? '; Secure' : '';
     if (token) {
       document.cookie = `cozynest_token=${encodeURIComponent(token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
+      fetch('/api/auth/session', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, role }),
+      }).catch(() => undefined);
     } else {
       document.cookie = `cozynest_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
+      fetch('/api/auth/session', { method: 'DELETE', credentials: 'include' }).catch(() => undefined);
     }
     if (role) {
       document.cookie = `cozynest_role=${encodeURIComponent(role)}; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
@@ -227,6 +234,7 @@ export class HttpAuthRepository implements AuthRepository {
 
   async logout(): Promise<void> {
     try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => undefined);
       await ApiClient.post('/auth/logout');
     } catch {
       // Ignore network errors on logout

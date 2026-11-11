@@ -1,73 +1,88 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { Select } from '@/presentation/components/ui/Select';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
+import { container } from '@/infrastructure/di/container';
+import { PropertyOwnershipDoc } from '@/domain/entities/Billing';
+import { LandlordRoomItem } from '@/domain/entities/LandlordRoom';
 import { toast } from '@/presentation/stores/toast.store';
-import { ShieldCheck, Upload, FileCheck, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
-
-interface OwnershipDoc {
-  id: string;
-  roomTitle: string;
-  docType: string;
-  maskedNumber: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  rejectReason?: string;
-  submittedAt: string;
-}
+import { formatIsoDateTime } from '@/shared/utils/format-vnd';
+import { ShieldCheck, Upload } from 'lucide-react';
 
 export function PropertyOwnershipKycSection() {
-  const [docs, setDocs] = useState<OwnershipDoc[]>([
-    {
-      id: 'DOC-01',
-      roomTitle: 'Phòng 302, Chung cư mini Dịch Vọng Hậu',
-      docType: 'Giấy chứng nhận QSDĐ (Sổ đỏ)',
-      maskedNumber: 'GCN***789',
-      status: 'APPROVED',
-      submittedAt: '25/10/2026',
-    },
-    {
-      id: 'DOC-02',
-      roomTitle: 'Phòng 401, Nhà trọ Quan Hoa',
-      docType: 'Hợp đồng ủy quyền cho thuê',
-      maskedNumber: 'UQ***112',
-      status: 'PENDING',
-      submittedAt: '08/11/2026',
-    },
-  ]);
-
-  const [roomId, setRoomId] = useState('1');
-  const [docType, setDocType] = useState('SO_DO');
+  const t = useTranslations('sprint3.ownershipKyc');
+  const tc = useTranslations('sprint3.common');
+  const [rooms, setRooms] = useState<LandlordRoomItem[]>([]);
+  const [roomId, setRoomId] = useState('');
+  const [docs, setDocs] = useState<PropertyOwnershipDoc[]>([]);
+  const [docType, setDocType] = useState('LAND_USE_RIGHT_CERT');
   const [rawNumber, setRawNumber] = useState('');
+  const [expiresAt, setExpiresAt] = useState('');
+  const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const loadRooms = useCallback(async () => {
+    try {
+      const res = await container.landlord.landlordRoomRepository.getRooms({ page: 0, size: 50 });
+      const items = res.data || [];
+      setRooms(items);
+      if (items.length > 0 && !roomId) {
+        setRoomId(String(items[0].id));
+      }
+    } catch {
+      toast.error(tc('loadError'));
+    }
+  }, [roomId, tc]);
+
+  const loadDocs = useCallback(async (selectedRoomId: string) => {
+    if (!selectedRoomId) return;
+    try {
+      const list = await container.ownershipKyc.ownershipKycRepository.getDocsByRoom(selectedRoomId);
+      setDocs(list);
+    } catch {
+      setDocs([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadRooms();
+  }, [loadRooms]);
+
+  useEffect(() => {
+    if (roomId) loadDocs(roomId);
+  }, [roomId, loadDocs]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rawNumber.trim()) {
-      toast.error('Vui lòng nhập số hiệu giấy tờ');
+    if (!roomId || !file) {
+      toast.error(tc('actionError'));
       return;
     }
-
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      const masked = rawNumber.length > 5 ? rawNumber.substring(0, 3) + '***' + rawNumber.substring(rawNumber.length - 3) : '***';
-      const newDoc: OwnershipDoc = {
-        id: `DOC-0${docs.length + 1}`,
-        roomTitle: 'Phòng trọ mới đăng ký',
-        docType: docType === 'SO_DO' ? 'Sổ đỏ / Sổ hồng' : docType === 'UY_QUYEN' ? 'Hợp đồng ủy quyền' : 'Hợp đồng thuê lại',
-        maskedNumber: masked,
-        status: 'PENDING',
-        submittedAt: 'Hôm nay',
-      };
-      setDocs((prev) => [newDoc, ...prev]);
+    try {
+      const uploaded = await container.ownershipKyc.ownershipKycRepository.uploadPrivateFile(file);
+      const created = await container.ownershipKyc.ownershipKycRepository.uploadOwnershipDoc(roomId, {
+        docType,
+        fileUrl: uploaded.objectKey,
+        rawNumber: rawNumber.trim() || undefined,
+        expiresAt: expiresAt ? `${expiresAt}T23:59:59` : undefined,
+      });
+      setDocs((prev) => [created, ...prev]);
       setRawNumber('');
-      toast.success('Đã tải lên giấy tờ xác minh quyền cho thuê! Kiểm duyệt viên sẽ xét duyệt trong 24h.');
-    }, 600);
+      setExpiresAt('');
+      setFile(null);
+      toast.success(tc('actionSuccess'));
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : tc('actionError'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -76,101 +91,114 @@ export function PropertyOwnershipKycSection() {
         <div className="flex items-start gap-3">
           <ShieldCheck className="w-5 h-5 text-teal-600 mt-0.5 flex-shrink-0" />
           <div className="space-y-1 text-xs">
-            <p className="font-bold text-stone-900 dark:text-stone-100">
-              Quy chuẩn KYC-03: Xác minh quyền cho thuê và huy hiệu Tin đã xác thực
-            </p>
-            <p className="text-stone-600 dark:text-stone-300">
-              Chặn rủi ro lừa đảo cho thuê nhà không chính chủ. Tin đăng sau khi được duyệt giấy tờ sẽ nhận được huy hiệu
-              <strong className="text-emerald-700 dark:text-emerald-400"> "Tin đã xác thực" </strong>
-              và được ưu tiên hiển thị ở vị trí hàng đầu trên trang tìm kiếm. Giấy tờ được lưu trữ mã hóa an toàn và số liệu luôn được che bảo mật.
-            </p>
+            <p className="font-bold text-stone-900 dark:text-stone-100">{t('bannerTitle')}</p>
+            <p className="text-stone-600 dark:text-stone-300">{t('bannerDesc')}</p>
           </div>
         </div>
       </Card>
 
       <Card className="p-5 space-y-4">
-        <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">Gửi giấy tờ xác minh cho phòng trọ</h3>
+        <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">{t('uploadTitle')}</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Select
-              label="Chọn phòng trọ cần xác minh"
+              label={t('selectRoom')}
               value={roomId}
               onChange={(e) => setRoomId(e.target.value)}
-              options={[
-                { value: '1', label: 'Phòng 302, Dịch Vọng Hậu' },
-                { value: '2', label: 'Studio Quan Hoa view sông' },
-                { value: '3', label: 'Căn hộ mini Láng Hạ' },
-              ]}
+              options={
+                rooms.length > 0
+                  ? rooms.map((r) => ({ value: String(r.id), label: `#${r.id} - ${r.title}` }))
+                  : [{ value: '', label: tc('empty') }]
+              }
             />
             <Select
-              label="Loại giấy tờ sở hữu / ủy quyền"
+              label={t('docType')}
               value={docType}
               onChange={(e) => setDocType(e.target.value)}
               options={[
-                { value: 'SO_DO', label: 'Sổ đỏ / Sổ hồng (Giấy chứng nhận QSDĐ)' },
-                { value: 'UY_QUYEN', label: 'Hợp đồng ủy quyền cho thuê công chứng' },
-                { value: 'THUE_LAI', label: 'Hợp đồng thuê lại từ chủ nhà' },
+                { value: 'LAND_USE_RIGHT_CERT', label: 'GCN QSDD / Sổ hồng' },
+                { value: 'AUTHORIZATION_CONTRACT', label: 'Hợp đồng ủy quyền cho thuê' },
+                { value: 'SUBLEASE_AGREEMENT', label: 'Hợp đồng thuê lại hợp pháp' },
               ]}
             />
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
-              label="Số hiệu văn bản / Giấy chứng nhận"
-              required
-              placeholder="VD: GCN 8492019"
+              label={t('rawNumber')}
               value={rawNumber}
               onChange={(e) => setRawNumber(e.target.value)}
-              helperText="Hệ thống sẽ tự động che số liệu (VD: GCN***019) để bảo mật thông tin."
             />
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300">
-                Tập tin chứng minh (Ảnh hoặc PDF)
-              </label>
-              <div className="border border-dashed border-stone-300 dark:border-stone-700 rounded-xl p-3 text-center cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-800/40">
-                <Upload className="w-4 h-4 mx-auto text-stone-400" />
-                <span className="text-[11px] text-stone-500 mt-1 block">Nhấp để tải ảnh chụp hoặc file scan</span>
-              </div>
-            </div>
+            <Input
+              label={t('expiresAt')}
+              type="date"
+              value={expiresAt}
+              onChange={(e) => setExpiresAt(e.target.value)}
+            />
           </div>
-
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300">
+              {t('fileLabel')}
+            </label>
+            <input
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="block w-full text-xs text-stone-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-teal-50 file:text-teal-700"
+            />
+          </div>
           <div className="flex justify-end">
-            <Button variant="primary" size="sm" type="submit" isLoading={isSubmitting} leftIcon={<FileCheck className="w-4 h-4" />}>
-              Gửi kiểm duyệt giấy tờ
+            <Button
+              type="submit"
+              variant="primary"
+              size="sm"
+              isLoading={isSubmitting}
+              leftIcon={<Upload className="w-3.5 h-3.5" />}
+            >
+              {t('submitBtn')}
             </Button>
           </div>
         </form>
       </Card>
 
       <Card className="p-0 overflow-hidden">
+        <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-800 text-xs font-bold">
+          {t('docsTableTitle')}
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Phòng trọ</TableHead>
-              <TableHead>Loại văn bản</TableHead>
-              <TableHead>Số hiệu (đã che)</TableHead>
-              <TableHead>Ngày gửi</TableHead>
-              <TableHead>Trạng thái</TableHead>
+              <TableHead>ID</TableHead>
+              <TableHead>{t('docType')}</TableHead>
+              <TableHead>{t('rawNumber')}</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {docs.map((doc) => (
-              <TableRow key={doc.id}>
-                <TableCell className="font-semibold text-xs text-stone-900 dark:text-stone-100">{doc.roomTitle}</TableCell>
-                <TableCell className="text-xs text-stone-600 dark:text-stone-300">{doc.docType}</TableCell>
-                <TableCell className="font-mono text-xs text-stone-500">{doc.maskedNumber}</TableCell>
-                <TableCell className="text-xs text-stone-400">{doc.submittedAt}</TableCell>
-                <TableCell>
-                  <Badge variant={doc.status === 'APPROVED' ? 'success' : doc.status === 'PENDING' ? 'warning' : 'danger'} size="sm">
-                    {doc.status === 'APPROVED' ? 'Tin đã xác thực' : doc.status === 'PENDING' ? 'Đang xét duyệt' : 'Bị từ chối'}
-                  </Badge>
+            {docs.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-xs text-stone-500 py-6">
+                  {t('empty')}
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              docs.map((d) => (
+                <TableRow key={d.id}>
+                  <TableCell className="font-mono text-xs">{d.id.slice(0, 8)}</TableCell>
+                  <TableCell className="text-xs">{d.docType}</TableCell>
+                  <TableCell className="font-mono text-xs">{d.maskedNumber || '-'}</TableCell>
+                  <TableCell>
+                    <Badge variant={d.status === 'APPROVED' ? 'success' : d.status === 'REJECTED' ? 'danger' : 'warning'} size="sm">
+                      {d.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-xs text-stone-500">{formatIsoDateTime(d.createdAt)}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Card>
     </div>
   );
 }
-

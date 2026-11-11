@@ -1,91 +1,92 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
+import { Skeleton } from '@/presentation/components/ui/Skeleton';
+import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { Link } from '@/i18n/routing';
-import { CreditCard, Calendar, ArrowRight } from 'lucide-react';
+import { container } from '@/infrastructure/di/container';
+import { Invoice } from '@/domain/entities/Billing';
+import { toast } from '@/presentation/stores/toast.store';
+import { formatIsoDate, formatVnd } from '@/shared/utils/format-vnd';
+import { ArrowRight, Receipt } from 'lucide-react';
 
 export default function TenantInvoicesPage() {
-  const invoices = [
-    {
-      id: 1,
-      invoiceCode: 'INV-2026-11',
-      month: 'Tháng 11/2026',
-      totalAmount: '5.280.000 đ',
-      roomAmount: '4.800.000 đ',
-      utilityAmount: '480.000 đ',
-      dueDate: '15/11/2026',
-      status: 'UNPAID',
-      statusText: 'Chưa thanh toán',
-    },
-    {
-      id: 2,
-      invoiceCode: 'INV-2026-10',
-      month: 'Tháng 10/2026',
-      totalAmount: '5.210.000 đ',
-      roomAmount: '4.800.000 đ',
-      utilityAmount: '410.000 đ',
-      dueDate: '15/10/2026',
-      status: 'PAID',
-      statusText: 'Đã thanh toán',
-    },
-  ];
+  const t = useTranslations('sprint3.invoice');
+  const tc = useTranslations('sprint3.common');
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const list = await container.billing.billingRepository.getTenantInvoices();
+      setInvoices(list);
+    } catch {
+      toast.error(tc('loadError'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [tc]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Hóa đơn & Tiền phòng ({invoices.length})
+          {t('tenantTitle')} ({invoices.length})
         </h1>
-        <p className="text-xs text-stone-500 mt-0.5">
-          Theo dõi tiền thuê nhà, chỉ số điện nước và thanh toán trực tuyến.
-        </p>
+        <p className="text-xs text-stone-500 mt-0.5">{t('tenantSubtitle')}</p>
       </div>
 
-      <div className="space-y-4">
-        {invoices.map((inv) => (
-          <Card key={inv.id} className="p-5 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100 dark:border-stone-800">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-stone-900 dark:text-stone-100">{inv.invoiceCode}</span>
-                <Badge variant={inv.status === 'PAID' ? 'success' : 'warning'} size="sm">
-                  {inv.statusText}
-                </Badge>
-              </div>
-              <span className="text-xs text-stone-400">Hạn chót: {inv.dueDate}</span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-bold text-stone-900 dark:text-stone-100">{inv.month}</p>
-                <p className="text-xs text-stone-500 mt-0.5">
-                  Tiền phòng: {inv.roomAmount} • Điện nước & dịch vụ: {inv.utilityAmount}
-                </p>
+      {isLoading ? (
+        <Skeleton className="h-44 w-full rounded-xl" />
+      ) : invoices.length === 0 ? (
+        <EmptyState icon={<Receipt className="w-8 h-8" />} title={t('empty')} />
+      ) : (
+        <div className="space-y-4">
+          {invoices.map((inv) => (
+            <Card key={inv.id} className="p-5 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-stone-100 dark:border-stone-800">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-sm font-bold">{inv.invoiceCode}</span>
+                  <Badge variant={inv.status === 'PAID' ? 'success' : inv.status === 'OVERDUE' ? 'danger' : 'warning'} size="sm">
+                    {inv.status}
+                  </Badge>
+                </div>
+                <span className="text-xs text-stone-500">{t('dueDate')}: {formatIsoDate(inv.dueDate)}</span>
               </div>
 
-              <div className="text-left sm:text-right">
-                <p className="text-xs text-stone-400">Tổng cộng</p>
-                <p className="text-xl font-black text-teal-800 dark:text-teal-400">{inv.totalAmount}</p>
+              <div className="flex flex-wrap items-center justify-between gap-4 text-xs">
+                <div className="space-y-1 text-stone-600 dark:text-stone-300">
+                  <p>{t('periodMonth')}: <strong>{formatIsoDate(inv.periodMonth)}</strong></p>
+                  <p>
+                    {t('baseRent')}: {formatVnd(inv.baseRent)} • {t('electricAmount')}: {formatVnd(inv.electricityAmount)} • {t('waterAmount')}: {formatVnd(inv.waterAmount)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-stone-400">{t('totalAmount')}</p>
+                  <p className="text-lg font-black text-teal-700">{formatVnd(inv.totalAmount)}</p>
+                </div>
               </div>
-            </div>
 
-            <div className="pt-2 flex justify-end">
-              <Link href={`/dashboard/tenant/invoices/${inv.id}`}>
-                <Button
-                  variant={inv.status === 'UNPAID' ? 'secondary' : 'outline'}
-                  size="sm"
-                  rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
-                >
-                  {inv.status === 'UNPAID' ? 'Thanh toán ngay' : 'Xem chi tiết'}
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        ))}
-      </div>
+              <div className="flex justify-end">
+                <Link href={`/dashboard/tenant/invoices/${inv.id}`}>
+                  <Button variant={inv.status !== 'PAID' ? 'secondary' : 'outline'} size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
+                    {inv.status !== 'PAID' ? t('payOnline') : tc('viewDetail')}
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-
