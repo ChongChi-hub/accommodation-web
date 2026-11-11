@@ -43,7 +43,7 @@ export default function LandlordFaceKycPage() {
   const handleRevokeConsent = async () => {
     if (confirm('Bạn có chắc chắn muốn rút lại đồng ý và xóa toàn bộ ảnh khuôn mặt đã chụp không?')) {
       await revokeConsent();
-      setFeedbackMsg('Đã rút lại đồng ý và xóa toàn bộ dữ liệu khuôn mặt theo Nghị định 13/2023/NĐ-CP.');
+      setFeedbackMsg('Đã rút lại đồng ý và xóa toàn bộ dữ liệu khuôn mặt theo Luật BVDLCN 91/2025/QH15 và NĐ 356/2025/NĐ-CP.');
     }
   };
 
@@ -61,7 +61,7 @@ export default function LandlordFaceKycPage() {
         <Link href="/dashboard/landlord/kyc" className="flex items-center text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="w-4 h-4 mr-1.5" /> Quay lại hồ sơ KYC
         </Link>
-        <span className="text-xs text-muted-foreground">Bảo vệ dữ liệu theo Nghị định 13/2023/NĐ-CP</span>
+        <span className="text-xs text-muted-foreground">Bảo vệ dữ liệu theo Luật BVDLCN 91/2025/QH15 và NĐ 356/2025/NĐ-CP</span>
       </div>
 
       <div className="space-y-2">

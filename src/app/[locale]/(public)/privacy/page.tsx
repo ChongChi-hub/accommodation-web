@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         <section className="space-y-2">
           <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">1. Thu thập thông tin cá nhân</h2>
           <p>
-            Tổ Ấm chỉ thu thập các thông tin cần thiết phục vụ việc xác định danh tính (họ tên, số điện thoại, email, ảnh CCCD hai mặt khi thực hiện KYC) theo Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân.
+            Tổ Ấm chỉ thu thập các thông tin cần thiết phục vụ việc xác định danh tính (họ tên, số điện thoại, email, ảnh CCCD hai mặt khi thực hiện KYC) theo Luật BVDLCN 91/2025/QH15 và NĐ 356/2025/NĐ-CP về bảo vệ dữ liệu cá nhân.
           </p>
         </section>
 
