@@ -29,9 +29,25 @@ export interface ILandlordAppointmentRepository {
   ): Promise<ViewingAppointmentDetail>;
 }
 
+export interface CreateAppointmentPayload {
+  roomId: string;
+  landlordId: string;
+  scheduledStart: string;
+  scheduledEnd?: string;
+  tenantNote?: string;
+  roomTitle?: string;
+  roomAddress?: string;
+  roomCoverThumbKey?: string;
+  contactName?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+}
+
 export interface ITenantAppointmentRepository {
   getTenantAppointments(
     page?: number,
     size?: number
   ): Promise<{ data: ViewingAppointmentItem[]; pagination: Pagination }>;
+  createAppointment(payload: CreateAppointmentPayload): Promise<ViewingAppointmentItem>;
+  cancelTenantAppointment(id: string, payload?: CancelAppointmentPayload): Promise<ViewingAppointmentItem>;
 }

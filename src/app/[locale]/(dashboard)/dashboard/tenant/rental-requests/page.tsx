@@ -92,7 +92,7 @@ export default function TenantRentalRequestsPage() {
                     href={`/rooms/${r.roomId}`}
                     className="text-sm font-bold text-stone-900 dark:text-stone-100 hover:text-teal-700"
                   >
-                    {t('roomLabel')}: #{r.roomId}
+                    {`${t('roomLabel')}: #${r.roomId}`}
                   </Link>
                   <p className="text-stone-500">
                     {t('occupants')}: {r.numOccupants}

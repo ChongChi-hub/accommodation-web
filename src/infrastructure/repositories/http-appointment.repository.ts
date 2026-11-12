@@ -1,6 +1,7 @@
 import {
   ILandlordAppointmentRepository,
   ITenantAppointmentRepository,
+  CreateAppointmentPayload,
 } from '@/domain/repositories/AppointmentRepository';
 import {
   ViewingAppointmentItem,
@@ -122,5 +123,19 @@ export class HttpAppointmentRepository
       data: envelope.data || [],
       pagination,
     };
+  }
+
+  async createAppointment(payload: CreateAppointmentPayload): Promise<ViewingAppointmentItem> {
+    return ApiClient.post<ViewingAppointmentItem>('/tenant/appointments', payload);
+  }
+
+  async cancelTenantAppointment(
+    id: string,
+    payload?: CancelAppointmentPayload
+  ): Promise<ViewingAppointmentItem> {
+    return ApiClient.post<ViewingAppointmentItem>(
+      `/tenant/appointments/${encodeURIComponent(id)}/cancel`,
+      payload ?? { reasonCode: 'BUSY' }
+    );
   }
 }

@@ -45,10 +45,10 @@ export function RoomBookingModal({
     }
     setIsSubmitting(true);
     try {
+      if (!roomId || !landlordId) {
+        throw new Error('Thiếu thông tin phòng hoặc chủ nhà.');
+      }
       if (!isAppointment) {
-        if (!roomId || !landlordId) {
-          throw new Error('Thiếu thông tin phòng hoặc chủ nhà.');
-        }
         await container.rentalRequest.rentalRequestRepository.createRequest({
           roomId: String(roomId),
           landlordId: String(landlordId),
@@ -59,7 +59,15 @@ export function RoomBookingModal({
         });
         toast.success('Đã gửi yêu cầu thuê phòng thành công! Chủ trọ sẽ xét duyệt trong 24 giờ.');
       } else {
-        toast.success('Đã ghi nhận yêu cầu hẹn xem phòng.');
+        const scheduledStart = new Date(`${date}T${time || '09:00'}:00+07:00`).toISOString();
+        await container.appointment.appointmentRepository.createAppointment({
+          roomId: String(roomId),
+          landlordId: String(landlordId),
+          scheduledStart,
+          roomTitle,
+          tenantNote: note.trim() || undefined,
+        });
+        toast.success('Đã đặt lịch hẹn xem phòng thành công!');
       }
       onClose();
     } catch (err: unknown) {

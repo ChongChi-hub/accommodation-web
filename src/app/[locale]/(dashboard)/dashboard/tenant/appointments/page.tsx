@@ -7,13 +7,16 @@ import { ViewingAppointmentItem } from '@/domain/entities/ViewingAppointment';
 import { container } from '@/infrastructure/di/container';
 import { toast } from '@/presentation/stores/toast.store';
 import { AppointmentStatusBadge } from '@/presentation/components/landlord/appointments/AppointmentStatusBadge';
-import { Calendar, Phone, Clock, MapPin, X, Plus } from 'lucide-react';
+import { downloadAppointmentIcs } from '@/shared/utils/appointment-ics';
+import { Calendar, Phone, Clock, MapPin, Plus, Download, XCircle } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
 export default function TenantAppointmentsPage() {
   const tAuto = useTranslations('autoI18n');
   const t = useTranslations('tenant.appointments');
+  const tLedger = useTranslations('sprint3.ledger');
+  const tc = useTranslations('sprint3.common');
   const [appointments, setAppointments] = useState<ViewingAppointmentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -154,6 +157,47 @@ export default function TenantAppointmentsPage() {
                   </p>
                 </div>
               )}
+
+              <div className="flex flex-wrap items-center justify-end gap-2 pt-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  leftIcon={<Download className="w-3.5 h-3.5" />}
+                  onClick={() =>
+                    downloadAppointmentIcs({
+                      id: a.id,
+                      title: `CozyNest: ${a.roomTitle}`,
+                      description: a.tenantNote || a.landlordNote,
+                      location: a.roomAddress,
+                      startIso: a.scheduledStart,
+                      endIso: a.scheduledEnd,
+                    })
+                  }
+                >
+                  {tLedger('downloadIcs')}
+                </Button>
+                {(a.status === 'PENDING' || a.status === 'CONFIRMED') && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    leftIcon={<XCircle className="w-3.5 h-3.5" />}
+                    onClick={async () => {
+                      try {
+                        await container.appointment.appointmentRepository.cancelTenantAppointment(a.id, {
+                          reasonCode: 'BUSY',
+                          version: a.version,
+                        });
+                        toast.success(tc('actionSuccess'));
+                        fetchAppointments(true);
+                      } catch (err: unknown) {
+                        toast.error(err instanceof Error ? err.message : tc('actionError'));
+                      }
+                    }}
+                  >
+                    {tc('cancel')}
+                  </Button>
+                )}
+              </div>
             </Card>
           ))}
         </div>

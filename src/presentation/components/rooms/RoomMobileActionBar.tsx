@@ -27,8 +27,8 @@ export function RoomMobileActionBar({ room, onOpenAppointment }: RoomMobileActio
 
   const checkAuthAndExecute = (action: () => void) => {
     if (typeof document !== 'undefined') {
-      const hasToken = document.cookie.includes('cozynest_token=');
-      if (!hasToken) {
+      const hasSession = document.cookie.includes('cozynest_role=');
+      if (!hasSession) {
         const returnUrl = encodeURIComponent(window.location.pathname);
         router.push(`/login?returnUrl=${returnUrl}`);
         return;
