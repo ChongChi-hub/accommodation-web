@@ -99,12 +99,12 @@ export default function LandlordContractsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Code</TableHead>
+              <TableHead>{tc('codeCol')}</TableHead>
               <TableHead>{t('roomIdLabel')}</TableHead>
               <TableHead>{t('tenantIdLabel')}</TableHead>
               <TableHead>{t('monthlyRent')}</TableHead>
               <TableHead>{t('startDate')}</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{tc('statusCol')}</TableHead>
               <TableHead className="text-right">{tc('viewDetail')}</TableHead>
             </TableRow>
           </TableHeader>
