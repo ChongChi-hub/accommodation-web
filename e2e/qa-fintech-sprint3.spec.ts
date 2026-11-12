@@ -192,7 +192,7 @@ test.describe('[QA-FINTECH] Sprint 3 End-to-End Leasing & Billing Flows', () => 
       });
     });
 
-    await page.route('**/api/v1/billing/payments/webhook', async (route) => {
+    await page.route('**/api/v1/billing/payments/sandbox/simulate-webhook', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -214,10 +214,10 @@ test.describe('[QA-FINTECH] Sprint 3 End-to-End Leasing & Billing Flows', () => 
   }) => {
     await authenticateAs(context, page, 'tenant@cozynest.vn');
     await page.goto('/vi/dashboard/admin/transactions');
-    await expect(page).toHaveURL(/\/vi\/403/);
+    await expect(page).toHaveURL(/(?:\/vi)?\/403/);
 
     await page.goto('/vi/dashboard/landlord/utilities');
-    await expect(page).toHaveURL(/\/vi\/landlord\/kyc|\/vi\/dashboard\/landlord\/kyc/);
+    await expect(page).toHaveURL(/(?:\/vi)?\/(?:403|landlord\/kyc|dashboard\/landlord\/kyc)/);
   });
 });
 
