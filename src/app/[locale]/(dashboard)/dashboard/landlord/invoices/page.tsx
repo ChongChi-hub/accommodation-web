@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -13,6 +14,7 @@ import { PlusCircle, BellRing, Eye, CheckCircle2 } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 
 export default function LandlordInvoicesPage() {
+  const tAuto = useTranslations('autoI18n');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [invoices, setInvoices] = useState([
     {
@@ -52,10 +54,10 @@ export default function LandlordInvoicesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-            Hóa đơn & Thu tiền phòng ({invoices.length})
+            {tAuto('k0143')}{invoices.length})
           </h1>
           <p className="text-xs text-stone-500 mt-0.5">
-            Lập hóa đơn hàng tháng, theo dõi công nợ và gửi nhắc nhở thanh toán tự động.
+            {tAuto('k0144')}
           </p>
         </div>
         <Button
@@ -64,7 +66,7 @@ export default function LandlordInvoicesPage() {
           leftIcon={<PlusCircle className="w-3.5 h-3.5" />}
           onClick={() => setIsCreateModalOpen(true)}
         >
-          Lập hóa đơn mới
+          {tAuto('k0145')}
         </Button>
       </div>
 
@@ -72,12 +74,12 @@ export default function LandlordInvoicesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Mã HĐ</TableHead>
-              <TableHead>Phòng trọ / Khách</TableHead>
-              <TableHead>Tổng tiền</TableHead>
-              <TableHead>Hạn thanh toán</TableHead>
-              <TableHead>Trạng thái</TableHead>
-              <TableHead className="text-right">Thao tác</TableHead>
+              <TableHead>{tAuto('k0121')}</TableHead>
+              <TableHead>{tAuto('k0146')}</TableHead>
+              <TableHead>{tAuto('k0147')}</TableHead>
+              <TableHead>{tAuto('k0148')}</TableHead>
+              <TableHead>{tAuto('k0048')}</TableHead>
+              <TableHead className="text-right">{tAuto('k0078')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -142,10 +144,10 @@ export default function LandlordInvoicesPage() {
           </div>
           <div className="flex justify-end gap-2 pt-2 border-t border-stone-100 dark:border-stone-800">
             <Button variant="outline" size="sm" type="button" onClick={() => setIsCreateModalOpen(false)}>
-              Hủy
+              {tAuto('k0126')}
             </Button>
             <Button variant="primary" size="sm" type="submit">
-              Phát hành hóa đơn
+              {tAuto('k0149')}
             </Button>
           </div>
         </form>

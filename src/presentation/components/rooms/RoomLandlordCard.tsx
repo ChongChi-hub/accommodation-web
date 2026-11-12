@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { ShieldCheck, Star, Clock, Home, ArrowUpRight } from 'lucide-react';
@@ -11,6 +12,7 @@ interface RoomLandlordCardProps {
 }
 
 export function RoomLandlordCard({ landlord }: RoomLandlordCardProps) {
+  const tAuto = useTranslations('autoI18n');
   if (!landlord) return null;
 
   const landlordId = landlord.landlordId || landlord.id || 1;
@@ -45,13 +47,13 @@ export function RoomLandlordCard({ landlord }: RoomLandlordCardProps) {
           href={`/hosts/${landlordId}`}
           className="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline inline-flex items-center gap-0.5 shrink-0 px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200/60 dark:border-teal-800/60"
         >
-          Xem hồ sơ <ArrowUpRight className="w-3.5 h-3.5" />
+          {tAuto('k0604')}{' '}<ArrowUpRight className="w-3.5 h-3.5" />
         </Link>
       </div>
 
       <div className="grid grid-cols-3 gap-2.5 pt-3 border-t border-stone-100 dark:border-stone-800/80 text-center text-xs">
         <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
-          <span className="text-stone-400 block text-[11px] font-medium">Đánh giá</span>
+          <span className="text-stone-400 block text-[11px] font-medium">{tAuto('k0605')}</span>
           <span className="font-bold text-stone-900 dark:text-stone-100 flex items-center justify-center gap-1 mt-0.5">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
             {(landlord.ratingAvg || 5.0).toFixed(1)}
@@ -59,14 +61,14 @@ export function RoomLandlordCard({ landlord }: RoomLandlordCardProps) {
         </div>
 
         <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
-          <span className="text-stone-400 block text-[11px] font-medium">Tỷ lệ phản hồi</span>
+          <span className="text-stone-400 block text-[11px] font-medium">{tAuto('k0606')}</span>
           <span className="font-bold text-stone-900 dark:text-stone-100 block mt-0.5">
             {responseRate}%
           </span>
         </div>
 
         <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
-          <span className="text-stone-400 block text-[11px] font-medium">Thời gian đáp</span>
+          <span className="text-stone-400 block text-[11px] font-medium">{tAuto('k0607')}</span>
           <span className="font-bold text-stone-900 dark:text-stone-100 flex items-center justify-center gap-1 mt-0.5">
             <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
             ~{responseTime}

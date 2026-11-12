@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -8,6 +9,7 @@ import { Link } from '@/i18n/routing';
 import { CreditCard, Calendar, ArrowRight } from 'lucide-react';
 
 export default function TenantInvoicesPage() {
+  const tAuto = useTranslations('autoI18n');
   const invoices = [
     {
       id: 1,
@@ -37,10 +39,10 @@ export default function TenantInvoicesPage() {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Hóa đơn & Tiền phòng ({invoices.length})
+          {tAuto('k0334')}{invoices.length})
         </h1>
         <p className="text-xs text-stone-500 mt-0.5">
-          Theo dõi tiền thuê nhà, chỉ số điện nước và thanh toán trực tuyến.
+          {tAuto('k0335')}
         </p>
       </div>
 
@@ -54,19 +56,19 @@ export default function TenantInvoicesPage() {
                   {inv.statusText}
                 </Badge>
               </div>
-              <span className="text-xs text-stone-400">Hạn chót: {inv.dueDate}</span>
+              <span className="text-xs text-stone-400">{tAuto('k0336')}{' '}{inv.dueDate}</span>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-bold text-stone-900 dark:text-stone-100">{inv.month}</p>
                 <p className="text-xs text-stone-500 mt-0.5">
-                  Tiền phòng: {inv.roomAmount} • Điện nước & dịch vụ: {inv.utilityAmount}
+                  {tAuto('k0337')}{' '}{inv.roomAmount}{' '}{tAuto('k0338')}{' '}{inv.utilityAmount}
                 </p>
               </div>
 
               <div className="text-left sm:text-right">
-                <p className="text-xs text-stone-400">Tổng cộng</p>
+                <p className="text-xs text-stone-400">{tAuto('k0339')}</p>
                 <p className="text-xl font-black text-teal-800 dark:text-teal-400">{inv.totalAmount}</p>
               </div>
             </div>

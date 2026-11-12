@@ -23,6 +23,7 @@ export function LandlordRoomCard({
   onOpenDelete,
   isTogglingId,
 }: Props) {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('landlord.rooms');
 
   const formatPrice = (val: number) => {
@@ -77,15 +78,15 @@ export function LandlordRoomCard({
           </p>
           <div className="flex items-center gap-3 mt-1.5 text-xs">
             <span className="font-bold text-teal-800 dark:text-teal-400">
-              {formatPrice(room.price)}/th
+              {formatPrice(room.price)}{tAuto('k0516')}
             </span>
             <span className="text-stone-400">•</span>
             <span className="text-stone-600 dark:text-stone-400">
-              {room.area} m²
+              {room.area}{' '}{tAuto('k0517')}
             </span>
             <span className="text-stone-400">•</span>
             <span className="text-stone-500">
-              {room.viewCount} lượt xem
+              {room.viewCount}{' '}{tAuto('k0518')}
             </span>
           </div>
         </div>
@@ -93,19 +94,19 @@ export function LandlordRoomCard({
 
       {room.rejectedReason && (
         <div className="p-2 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-[11px] text-rose-700 dark:text-rose-300">
-          Lý do từ chối: {room.rejectedReason}
+          {tAuto('k0501')}{' '}{room.rejectedReason}
         </div>
       )}
 
       {isModHidden && room.hiddenReason && (
         <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-[11px] text-amber-700 dark:text-amber-300">
-          Lý do bị ẩn: {room.hiddenReason}
+          {tAuto('k0519')}{' '}{room.hiddenReason}
         </div>
       )}
 
       <div className="flex items-center justify-between pt-2 border-t border-stone-100 dark:border-stone-800">
         <span className="text-[11px] text-stone-400">
-          Ngày đăng: {formatDate(room.publishedAt || room.createdAt)}
+          {tAuto('k0520')}{' '}{formatDate(room.publishedAt || room.createdAt)}
         </span>
         <div className="flex items-center gap-1">
           <Link href={`/rooms/${room.id}`}>

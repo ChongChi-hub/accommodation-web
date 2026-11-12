@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import {
@@ -22,6 +23,7 @@ interface RoomDescriptionAndRulesProps {
 }
 
 export function RoomDescriptionAndRules({ room }: RoomDescriptionAndRulesProps) {
+  const tAuto = useTranslations('autoI18n');
   const [isExpanded, setIsExpanded] = useState(false);
 
   const formatGender = (val?: string) => {
@@ -85,7 +87,7 @@ export function RoomDescriptionAndRules({ room }: RoomDescriptionAndRulesProps) 
       {/* 1. Description with Read More */}
       <div className="space-y-3">
         <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">
-          Mô tả chi tiết phòng trọ
+          {tAuto('k0580')}
         </h2>
         <div className="relative">
           <div
@@ -104,11 +106,11 @@ export function RoomDescriptionAndRules({ room }: RoomDescriptionAndRulesProps) 
             >
               {isExpanded ? (
                 <>
-                  Thu gọn <ChevronUp className="w-3.5 h-3.5" />
+                  {tAuto('k0581')}{' '}<ChevronUp className="w-3.5 h-3.5" />
                 </>
               ) : (
                 <>
-                  Xem thêm mô tả <ChevronDown className="w-3.5 h-3.5" />
+                  {tAuto('k0582')}{' '}<ChevronDown className="w-3.5 h-3.5" />
                 </>
               )}
             </button>
@@ -121,10 +123,10 @@ export function RoomDescriptionAndRules({ room }: RoomDescriptionAndRulesProps) 
         <div>
           <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-teal-700 dark:text-teal-400" />
-            Nội quy & Quy định phòng trọ
+            {tAuto('k0583')}
           </h2>
           <p className="text-xs text-stone-500 mt-0.5">
-            Các quy định minh bạch nhằm xây dựng không gian sống an toàn, tôn trọng và văn minh.
+            {tAuto('k0584')}
           </p>
         </div>
 

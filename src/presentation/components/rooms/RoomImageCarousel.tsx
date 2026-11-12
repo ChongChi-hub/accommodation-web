@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
@@ -11,6 +12,7 @@ interface RoomImageCarouselProps {
 }
 
 export function RoomImageCarousel({ images, title }: RoomImageCarouselProps) {
+  const tAuto = useTranslations('autoI18n');
   const normalizedImages: { url: string; alt: string; width: number; height: number }[] =
     images.length > 0
       ? images.map((img, idx) => {
@@ -78,7 +80,7 @@ export function RoomImageCarousel({ images, title }: RoomImageCarouselProps) {
     return (
       <div className="aspect-16/9 w-full rounded-2xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex flex-col items-center justify-center text-stone-400">
         <HomeIcon className="w-12 h-12 stroke-1 mb-2 text-teal-600 dark:text-teal-400" />
-        <span className="text-xs font-medium">Tổ Ấm - Chưa có hình ảnh hiển thị</span>
+        <span className="text-xs font-medium">{tAuto('k0603')}</span>
       </div>
     );
   }

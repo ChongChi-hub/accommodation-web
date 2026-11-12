@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Input } from '@/presentation/components/ui/Input';
@@ -20,10 +21,11 @@ export function NewRoomFormSteps({
   provinces,
   wards,
 }: NewRoomFormStepsProps) {
+  const tAuto = useTranslations('autoI18n');
   if (currentStep === 0) {
     return (
       <div className="space-y-4">
-        <h2 className="text-sm font-bold text-foreground">Bước 1: Địa chỉ và loại hình</h2>
+        <h2 className="text-sm font-bold text-foreground">{tAuto('k0554')}</h2>
         <Input
           label="Tiêu đề bài đăng"
           required
@@ -82,7 +84,7 @@ export function NewRoomFormSteps({
   if (currentStep === 1) {
     return (
       <div className="space-y-4">
-        <h2 className="text-sm font-bold text-foreground">Bước 2: Diện tích & Chi phí</h2>
+        <h2 className="text-sm font-bold text-foreground">{tAuto('k0555')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="Diện tích sử dụng (m²)"
@@ -124,7 +126,7 @@ export function NewRoomFormSteps({
   if (currentStep === 2) {
     return (
       <div className="space-y-4">
-        <h2 className="text-sm font-bold text-foreground">Bước 3: Tiện ích & Quy định</h2>
+        <h2 className="text-sm font-bold text-foreground">{tAuto('k0556')}</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
           {['Điều hòa 2 chiều', 'Bình nóng lạnh', 'Máy giặt riêng', 'Tủ lạnh Inverter', 'Thang máy thẻ từ', 'Ban công thoáng'].map((item) => (
             <label key={item} className="flex items-center gap-2 p-3 rounded-xl border border-border cursor-pointer">
@@ -141,7 +143,7 @@ export function NewRoomFormSteps({
               onChange={(e) => setFormData({ ...formData, allowPets: e.target.checked })}
               className="rounded text-primary focus:ring-primary"
             />
-            <span>Cho phép nuôi thú cưng</span>
+            <span>{tAuto('k0545')}</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -150,7 +152,7 @@ export function NewRoomFormSteps({
               onChange={(e) => setFormData({ ...formData, allowCooking: e.target.checked })}
               className="rounded text-primary focus:ring-primary"
             />
-            <span>Cho phép nấu ăn trong phòng</span>
+            <span>{tAuto('k0557')}</span>
           </label>
         </div>
       </div>

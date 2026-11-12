@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/cn';
@@ -33,6 +34,7 @@ export function DualPriceSlider({
   step = 500000,
   className,
 }: DualPriceSliderProps) {
+  const tAuto = useTranslations('autoI18n');
   const [localMin, setLocalMin] = useState<number>(minPrice ?? minLimit);
   const [localMax, setLocalMax] = useState<number>(maxPrice ?? maxLimit);
   const [inputMin, setInputMin] = useState<string>(formatVnd(minPrice));
@@ -111,13 +113,13 @@ export function DualPriceSlider({
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center justify-between text-xs font-medium text-stone-700 dark:text-stone-300">
-        <span>Khoảng giá (VNĐ)</span>
+        <span>{tAuto('k0551')}</span>
         <button
           type="button"
           onClick={() => applyPreset(undefined, undefined)}
           className="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 text-[11px]"
         >
-          Mặc định
+          {tAuto('k0552')}
         </button>
       </div>
 
@@ -132,7 +134,7 @@ export function DualPriceSlider({
             aria-label="Giá tối thiểu"
             className="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-xs font-semibold text-stone-900 dark:text-stone-100 outline-none focus:border-teal-500"
           />
-          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-stone-400 pointer-events-none">đ</span>
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-stone-400 pointer-events-none">{tAuto('k0257')}</span>
         </div>
         <span className="text-stone-400 text-xs">-</span>
         <div className="relative flex-1">
@@ -144,7 +146,7 @@ export function DualPriceSlider({
             aria-label="Giá tối đa"
             className="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-xs font-semibold text-stone-900 dark:text-stone-100 outline-none focus:border-teal-500"
           />
-          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-stone-400 pointer-events-none">đ</span>
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-stone-400 pointer-events-none">{tAuto('k0257')}</span>
         </div>
       </div>
 

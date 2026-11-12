@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -8,6 +9,7 @@ import { Send, Phone, Info } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 export default function TenantMessagesPage() {
+  const tAuto = useTranslations('autoI18n');
   const [activeChat, setActiveChat] = useState(1);
   const [inputMsg, setInputMsg] = useState('');
 
@@ -55,15 +57,15 @@ export default function TenantMessagesPage() {
     <div className="space-y-4 max-w-5xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Tin nhắn trao đổi
+          {tAuto('k0347')}
         </h1>
-        <p className="text-xs text-stone-500">Trao đổi trực tiếp và tức thì với các chủ trọ.</p>
+        <p className="text-xs text-stone-500">{tAuto('k0348')}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[600px]">
         <Card className="p-0 overflow-hidden flex flex-col">
           <div className="p-3.5 border-b border-stone-100 dark:border-stone-800 font-bold text-xs uppercase tracking-wider text-stone-400">
-            Hội thoại gần đây
+            {tAuto('k0349')}
           </div>
           <div className="divide-y divide-stone-100 dark:divide-stone-800 overflow-y-auto flex-1">
             {conversations.map((c) => (
@@ -95,12 +97,12 @@ export default function TenantMessagesPage() {
             <div className="flex items-center gap-2.5">
               <Avatar name="Trần Minh Tuấn" size="sm" />
               <div>
-                <p className="text-xs font-bold text-stone-900 dark:text-stone-100">Trần Minh Tuấn</p>
-                <p className="text-[10px] text-emerald-600">Đang hoạt động</p>
+                <p className="text-xs font-bold text-stone-900 dark:text-stone-100">{tAuto('k0350')}</p>
+                <p className="text-[10px] text-emerald-600">{tAuto('k0351')}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-stone-500 font-mono">0912 345 678</span>
+              <span className="text-xs text-stone-500 font-mono">{tAuto('k0352')}</span>
             </div>
           </div>
 
@@ -134,7 +136,7 @@ export default function TenantMessagesPage() {
               className="flex-1 bg-stone-50 dark:bg-stone-800 rounded-xl px-3.5 py-2 text-xs text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-teal-700"
             />
             <Button type="submit" variant="primary" size="sm" leftIcon={<Send className="w-3.5 h-3.5" />}>
-              Gửi
+              {tAuto('k0188')}
             </Button>
           </form>
         </Card>

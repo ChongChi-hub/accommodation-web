@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -9,6 +10,7 @@ import { Button } from '@/presentation/components/ui/Button';
 import { toast } from '@/presentation/stores/toast.store';
 
 export default function TenantPaymentsPage() {
+  const tAuto = useTranslations('autoI18n');
   const transactions = [
     {
       id: 'TX-20261014-089',
@@ -43,10 +45,10 @@ export default function TenantPaymentsPage() {
     <div className="space-y-6 max-w-5xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Lịch sử thanh toán ({transactions.length})
+          {tAuto('k0378')}{transactions.length})
         </h1>
         <p className="text-xs text-stone-500 mt-0.5">
-          Danh sách các biên lai điện tử đã thanh toán thành công qua hệ thống Tổ Ấm.
+          {tAuto('k0379')}
         </p>
       </div>
 
@@ -54,12 +56,12 @@ export default function TenantPaymentsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Mã giao dịch</TableHead>
-              <TableHead>Hóa đơn / Nội dung</TableHead>
-              <TableHead>Phương thức</TableHead>
-              <TableHead>Thời gian</TableHead>
-              <TableHead>Số tiền</TableHead>
-              <TableHead>Biên lai</TableHead>
+              <TableHead>{tAuto('k0380')}</TableHead>
+              <TableHead>{tAuto('k0381')}</TableHead>
+              <TableHead>{tAuto('k0382')}</TableHead>
+              <TableHead>{tAuto('k0383')}</TableHead>
+              <TableHead>{tAuto('k0076')}</TableHead>
+              <TableHead>{tAuto('k0384')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -80,7 +82,7 @@ export default function TenantPaymentsPage() {
                     leftIcon={<Download className="w-3.5 h-3.5" />}
                     onClick={() => toast.info(`Đang tải biên lai cho giao dịch ${tx.id}...`)}
                   >
-                    Tải
+                    {tAuto('k0385')}
                   </Button>
                 </TableCell>
               </TableRow>

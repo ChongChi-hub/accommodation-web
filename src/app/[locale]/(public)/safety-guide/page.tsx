@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
@@ -6,6 +7,7 @@ import { Card } from '@/presentation/components/ui/Card';
 import { ShieldAlert, CheckCircle2, FileCheck, Eye, CreditCard } from 'lucide-react';
 
 export default function SafetyGuidePage() {
+  const tAuto = useTranslations('autoI18n');
   const tips = [
     {
       icon: <Eye className="w-5 h-5 text-teal-700" />,
@@ -35,17 +37,17 @@ export default function SafetyGuidePage() {
 
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Cẩm nang thuê phòng an toàn & phòng tránh lừa đảo
+          {tAuto('k0440')}
         </h1>
         <p className="text-xs text-stone-500 max-w-2xl">
-          Bộ quy tắc 4 bước giúp người thuê bảo vệ quyền lợi và tài chính khi tìm kiếm không gian sống.
+          {tAuto('k0441')}
         </p>
       </div>
 
       <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 flex items-start gap-3">
         <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
         <p className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
-          <strong>Cảnh báo khẩn cấp:</strong> Tuyệt đối không quét mã QR lạ, không nhấn vào đường link thanh toán ngoài hệ thống Tổ Ấm do các số điện thoại lạ tự xưng là chủ nhà gửi đến.
+          <strong>{tAuto('k0442')}</strong>{' '}{tAuto('k0443')}
         </p>
       </div>
 

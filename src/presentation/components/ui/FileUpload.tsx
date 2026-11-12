@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useRef, useState } from 'react';
 import { UploadCloud, CheckCircle2, FileText, X } from 'lucide-react';
@@ -21,6 +22,7 @@ export function FileUpload({
   onFilesSelected,
   className,
 }: FileUploadProps) {
+  const tAuto = useTranslations('autoI18n');
   const [fileNames, setFileNames] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -61,7 +63,7 @@ export function FileUpload({
           <div className="flex flex-col items-center gap-2">
             <CheckCircle2 className="w-8 h-8 text-emerald-600" />
             <p className="text-xs font-semibold text-stone-800 dark:text-stone-200">
-              Đã chọn {fileNames.length} tệp
+              {tAuto('k0630')}{' '}{fileNames.length}{' '}{tAuto('k0631')}
             </p>
             <div className="flex flex-wrap gap-1 max-w-xs justify-center">
               {fileNames.map((name, i) => (
@@ -78,17 +80,17 @@ export function FileUpload({
               onClick={handleClear}
               className="mt-2 text-xs text-rose-600 hover:underline inline-flex items-center gap-1"
             >
-              <X className="w-3 h-3" /> Chọn lại
+              <X className="w-3 h-3" />{' '}{tAuto('k0632')}
             </button>
           </div>
         ) : (
           <>
             <UploadCloud className="w-8 h-8 text-stone-400 mb-2" />
             <p className="text-xs font-medium text-stone-800 dark:text-stone-200">
-              Nhấp hoặc kéo thả tệp vào đây
+              {tAuto('k0633')}
             </p>
             <p className="text-[11px] text-stone-400 mt-0.5">
-              Tối đa {maxSizeMB}MB mỗi tệp ({accept})
+              {tAuto('k0634')}{' '}{maxSizeMB}{tAuto('k0635')}{accept})
             </p>
           </>
         )}

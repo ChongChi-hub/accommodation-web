@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -16,6 +17,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Save, ShieldAlert } from 'lucide-r
 import Link from 'next/link';
 
 export default function NewRoomPage() {
+  const tAuto = useTranslations('autoI18n');
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,32 +116,32 @@ export default function NewRoomPage() {
     <div className="space-y-6 max-w-3xl pb-10">
       <Breadcrumb items={[{ label: 'Quản lý phòng', href: '/dashboard/landlord/rooms' }, { label: 'Đăng phòng mới' }]} />
       <div>
-        <h1 className="text-xl font-bold tracking-tight text-foreground">Đăng tin cho thuê phòng trọ</h1>
-        <p className="text-xs text-foreground-muted mt-0.5">Điền đầy đủ các thông tin minh bạch để tin đăng được duyệt nhanh nhất.</p>
+        <h1 className="text-xl font-bold tracking-tight text-foreground">{tAuto('k0234')}</h1>
+        <p className="text-xs text-foreground-muted mt-0.5">{tAuto('k0235')}</p>
       </div>
       <Stepper steps={steps} currentStep={currentStep} />
       <Card className="p-6">
         <NewRoomFormSteps currentStep={currentStep} formData={formData} setFormData={setFormData} provinces={provinces} wards={wards} />
         {currentStep === 3 && (
           <div className="space-y-4">
-            <h2 className="text-sm font-bold text-foreground">Bước 4: Hình ảnh thực tế phòng trọ</h2>
+            <h2 className="text-sm font-bold text-foreground">{tAuto('k0236')}</h2>
             {!kycApproved && (
               <div className="p-3.5 rounded-xl bg-warning/10 border border-warning/20 text-xs text-warning-foreground flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <ShieldAlert className="w-4 h-4 text-warning" />
-                  <span>Bạn chưa xác minh danh tính chủ trọ. Bài đăng chỉ có thể lưu ở dạng bản nháp (DRAFT).</span>
+                  <span>{tAuto('k0237')}</span>
                 </div>
-                <Link href="/dashboard/landlord/kyc" className="font-semibold underline ml-2">Xác minh</Link>
+                <Link href="/dashboard/landlord/kyc" className="font-semibold underline ml-2">{tAuto('k0238')}</Link>
               </div>
             )}
             <ImageManager initialImages={images} onChange={setImages} disabled={isSubmitting} />
           </div>
         )}
         <div className="pt-6 border-t border-border flex items-center justify-between gap-3">
-          <Button type="button" variant="outline" size="sm" onClick={() => setCurrentStep((s) => Math.max(0, s - 1))} disabled={currentStep === 0 || isSubmitting} leftIcon={<ArrowLeft className="w-3.5 h-3.5" />}>Quay lại</Button>
+          <Button type="button" variant="outline" size="sm" onClick={() => setCurrentStep((s) => Math.max(0, s - 1))} disabled={currentStep === 0 || isSubmitting} leftIcon={<ArrowLeft className="w-3.5 h-3.5" />}>{tAuto('k0228')}</Button>
           <div className="flex items-center gap-2">
             {currentStep === 3 && (
-              <Button type="button" variant="outline" size="sm" onClick={() => handleCreateRoom(false)} disabled={isSubmitting} leftIcon={<Save className="w-3.5 h-3.5" />}>Lưu nháp</Button>
+              <Button type="button" variant="outline" size="sm" onClick={() => handleCreateRoom(false)} disabled={isSubmitting} leftIcon={<Save className="w-3.5 h-3.5" />}>{tAuto('k0239')}</Button>
             )}
             <Button type="button" variant="primary" size="sm" onClick={() => (currentStep < 3 ? setCurrentStep((s) => s + 1) : handleCreateRoom(true))} isLoading={isSubmitting} rightIcon={currentStep === 3 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}>
               {currentStep === 3 ? 'Gửi duyệt tin đăng' : 'Tiếp tục'}

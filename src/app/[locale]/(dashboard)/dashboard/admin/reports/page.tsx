@@ -16,6 +16,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { AlertTriangle, CheckCircle, Eye, Search, ShieldAlert, FileText, User } from 'lucide-react';
 
 function AdminReportsContent() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('admin.reports');
   const tCommon = useTranslations('common');
   const {
@@ -175,18 +176,18 @@ function AdminReportsContent() {
             <div className="p-4 rounded-xl bg-surface-muted border border-border space-y-3 text-xs">
               <div className="flex items-center gap-2 text-foreground">
                 <User className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>Người gửi báo cáo: <strong className="font-semibold">{selectedReport.reporterName}</strong></span>
+                <span>{tAuto('k0009')}{' '}<strong className="font-semibold">{selectedReport.reporterName}</strong></span>
               </div>
               <div className="flex items-center gap-2 text-foreground-muted">
                 <ShieldAlert className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>Thời gian: {selectedReport.createdAt}</span>
+                <span>{tAuto('k0010')}{' '}{selectedReport.createdAt}</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wider text-foreground-muted flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5" />
-                <span>Nội dung phản ánh chi tiết</span>
+                <span>{tAuto('k0011')}</span>
               </h4>
               <div className="p-4 rounded-xl border border-border bg-surface text-xs leading-relaxed text-foreground">
                 {selectedReport.reason}

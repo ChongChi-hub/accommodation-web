@@ -23,6 +23,7 @@ export function LandlordRoomTable({
   onOpenDelete,
   isTogglingId,
 }: Props) {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('landlord.rooms');
 
   const formatPrice = (val: number) => {
@@ -85,7 +86,7 @@ export function LandlordRoomTable({
                         {r.shortAddress || r.address}
                       </p>
                       <span className="inline-block text-[11px] text-teal-700 dark:text-teal-400 font-medium mt-0.5">
-                        {r.area} m²
+                        {r.area}{' '}{tAuto('k0517')}
                       </span>
                     </div>
                   </div>
@@ -94,11 +95,11 @@ export function LandlordRoomTable({
                 <TableCell>
                   <p className="font-bold text-stone-900 dark:text-stone-100 text-sm">
                     {formatPrice(r.price)}
-                    <span className="text-xs font-normal text-stone-500">/th</span>
+                    <span className="text-xs font-normal text-stone-500">{tAuto('k0516')}</span>
                   </p>
                   {r.deposit > 0 && (
                     <p className="text-[11px] text-stone-500 mt-0.5">
-                      Cọc: {formatPrice(r.deposit)}
+                      {tAuto('k0521')}{' '}{formatPrice(r.deposit)}
                     </p>
                   )}
                 </TableCell>
@@ -112,19 +113,19 @@ export function LandlordRoomTable({
                   />
                   {r.rejectedReason && (
                     <p className="text-[11px] text-rose-600 dark:text-rose-400 mt-1 max-w-[180px] line-clamp-1" title={r.rejectedReason}>
-                      Lý do: {r.rejectedReason}
+                      {tAuto('k0163')}{' '}{r.rejectedReason}
                     </p>
                   )}
                   {isModHidden && r.hiddenReason && (
                     <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-1 max-w-[180px] line-clamp-1" title={r.hiddenReason}>
-                      Lý do: {r.hiddenReason}
+                      {tAuto('k0163')}{' '}{r.hiddenReason}
                     </p>
                   )}
                 </TableCell>
 
                 <TableCell>
                   <p className="text-xs text-stone-800 dark:text-stone-200">
-                    <span className="font-semibold">{r.viewCount}</span> lượt xem
+                    <span className="font-semibold">{r.viewCount}</span>{' '}{tAuto('k0518')}
                   </p>
                   <p className="text-[11px] text-stone-500 mt-0.5">
                     {formatDate(r.publishedAt || r.createdAt)}

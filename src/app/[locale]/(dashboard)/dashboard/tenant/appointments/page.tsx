@@ -12,6 +12,7 @@ import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
 export default function TenantAppointmentsPage() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('tenant.appointments');
   const [appointments, setAppointments] = useState<ViewingAppointmentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -141,7 +142,7 @@ export default function TenantAppointmentsPage() {
 
               {a.tenantNote && (
                 <p className="text-xs text-stone-600 dark:text-stone-400 italic bg-stone-50 dark:bg-stone-800/40 p-2 rounded">
-                  {t('myNote')}: &ldquo;{a.tenantNote}&rdquo;
+                  {t('myNote')}{tAuto('k0266')}{a.tenantNote}&rdquo;
                 </p>
               )}
 

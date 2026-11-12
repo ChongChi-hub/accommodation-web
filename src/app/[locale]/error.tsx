@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useEffect } from 'react';
 import { AlertCircle, RefreshCw, Home } from 'lucide-react';
@@ -12,6 +13,7 @@ export default function ErrorPage({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const tAuto = useTranslations('autoI18n');
   useEffect(() => {
     console.error('Unhandled app error:', error);
   }, [error]);
@@ -22,10 +24,10 @@ export default function ErrorPage({
         <AlertCircle className="w-8 h-8" />
       </div>
       <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">
-        Đã xảy ra sự cố ngoài ý muốn
+        {tAuto('k0455')}
       </h1>
       <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 max-w-sm">
-        Hệ thống ghi nhận lỗi khi xử lý trang này. Vui lòng thử tải lại hoặc liên hệ hỗ trợ.
+        {tAuto('k0456')}
       </p>
       <div className="flex items-center gap-3 mt-6">
         <Button
@@ -34,11 +36,11 @@ export default function ErrorPage({
           onClick={() => reset()}
           leftIcon={<RefreshCw className="w-4 h-4" />}
         >
-          Thử tải lại
+          {tAuto('k0457')}
         </Button>
         <Link href="/">
           <Button size="sm" variant="outline" leftIcon={<Home className="w-4 h-4" />}>
-            Về trang chủ
+            {tAuto('k0458')}
           </Button>
         </Link>
       </div>

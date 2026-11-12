@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import {
@@ -54,10 +55,11 @@ const CATEGORY_NAMES: Record<string, string> = {
 };
 
 export function RoomAmenities({ amenities }: RoomAmenitiesProps) {
+  const tAuto = useTranslations('autoI18n');
   if (!amenities || amenities.length === 0) {
     return (
       <div className="p-4 rounded-xl border border-stone-200 dark:border-stone-800 text-xs text-stone-500">
-        Chưa có thông tin tiện nghi cụ thể.
+        {tAuto('k0562')}
       </div>
     );
   }
@@ -80,7 +82,7 @@ export function RoomAmenities({ amenities }: RoomAmenitiesProps) {
   return (
     <div id="amenities" className="space-y-6">
       <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">
-        Tiện nghi & Dịch vụ có sẵn ({amenities.length})
+        {tAuto('k0563')}{amenities.length})
       </h2>
 
       <div className="space-y-5">

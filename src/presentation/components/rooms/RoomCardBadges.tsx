@@ -21,6 +21,7 @@ export function RoomCardBadges({
   publishedAt,
   availableSpots,
 }: RoomCardBadgesProps) {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations();
   const dateStr = publishedAt || createdAt;
   const isNew = Boolean(
@@ -44,7 +45,7 @@ export function RoomCardBadges({
           className="bg-emerald-600 text-white border-transparent backdrop-blur-xs flex items-center gap-1 shadow-xs font-medium"
         >
           <ShieldCheck className="w-3 h-3 shrink-0" />
-          <span>Chủ trọ xác minh</span>
+          <span>{tAuto('k0567')}</span>
         </Badge>
       )}
 
@@ -55,7 +56,7 @@ export function RoomCardBadges({
           className="bg-amber-500/95 text-white border-transparent backdrop-blur-xs flex items-center gap-1 shadow-xs font-medium"
         >
           <Sparkles className="w-3.5 h-3.5 shrink-0" />
-          <span>Mới đăng</span>
+          <span>{tAuto('k0568')}</span>
         </Badge>
       )}
 
@@ -66,7 +67,7 @@ export function RoomCardBadges({
           className="bg-sky-600 text-white border-transparent backdrop-blur-xs flex items-center gap-1 shadow-xs font-medium"
         >
           <UserCheck className="w-3 h-3 shrink-0" />
-          <span>Còn {availableSpots} chỗ</span>
+          <span>{tAuto('k0569')}{' '}{availableSpots}{' '}{tAuto('k0570')}</span>
         </Badge>
       )}
     </div>

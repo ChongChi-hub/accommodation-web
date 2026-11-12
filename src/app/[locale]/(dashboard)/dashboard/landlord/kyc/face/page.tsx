@@ -9,6 +9,7 @@ import { FaceVerificationScanner } from '@/presentation/components/kyc/FaceVerif
 import { Button } from '@/presentation/components/ui/Button';
 
 export default function LandlordFaceKycPage() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('kyc');
   const { faceStatus, challenge, isLoading, error, requestChallenge, submitFrames, revokeConsent } = useFaceVerification();
 
@@ -59,22 +60,22 @@ export default function LandlordFaceKycPage() {
     <div className="container mx-auto px-4 py-8 max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <Link href="/dashboard/landlord/kyc" className="flex items-center text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-4 h-4 mr-1.5" /> Quay lại hồ sơ KYC
+          <ArrowLeft className="w-4 h-4 mr-1.5" />{' '}{tAuto('k0150')}
         </Link>
-        <span className="text-xs text-muted-foreground">Bảo vệ dữ liệu theo Luật BVDLCN 91/2025/QH15 và NĐ 356/2025/NĐ-CP</span>
+        <span className="text-xs text-muted-foreground">{tAuto('k0151')}</span>
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-foreground">Xác thực khuôn mặt (Face Verification)</h1>
+        <h1 className="text-2xl font-bold text-foreground">{tAuto('k0152')}</h1>
         <p className="text-sm text-muted-foreground">
-          Bước 2 trong quy trình định danh chủ trọ: Đối chiếu khuôn mặt trực tuyến với ảnh chân dung trên CCCD để kích hoạt quyền đăng tin.
+          {tAuto('k0153')}
         </p>
       </div>
 
       {feedbackMsg && (
         <div className="p-4 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 rounded-lg text-sm flex items-center justify-between">
           <span>{feedbackMsg}</span>
-          <button onClick={() => setFeedbackMsg(null)} className="text-xs underline ml-2">Đóng</button>
+          <button onClick={() => setFeedbackMsg(null)} className="text-xs underline ml-2">{tAuto('k0154')}</button>
         </div>
       )}
 
@@ -100,17 +101,17 @@ export default function LandlordFaceKycPage() {
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-emerald-900 dark:text-emerald-100">Khuôn mặt đã được xác thực thành công</h3>
+                <h3 className="text-lg font-bold text-emerald-900 dark:text-emerald-100">{tAuto('k0155')}</h3>
                 <p className="text-sm text-emerald-700 dark:text-emerald-300 mt-1 max-w-md mx-auto">
-                  Danh tính của bạn đã khớp với ảnh CCCD. Bạn đã đủ điều kiện đăng tin và mở hiển thị phòng cho thuê trên Tổ Ấm.
+                  {tAuto('k0156')}
                 </p>
               </div>
               <div className="pt-2 flex justify-center gap-3">
                 <Link href="/dashboard/landlord/rooms">
-                  <Button>Quản lý phòng trọ</Button>
+                  <Button>{tAuto('k0157')}</Button>
                 </Link>
                 <Button variant="outline" onClick={handleRevokeConsent} className="text-red-600 hover:text-red-700">
-                  <Trash2 className="w-4 h-4 mr-1.5" /> Xóa dữ liệu ảnh sinh trắc học
+                  <Trash2 className="w-4 h-4 mr-1.5" />{' '}{tAuto('k0158')}
                 </Button>
               </div>
             </div>
@@ -122,12 +123,12 @@ export default function LandlordFaceKycPage() {
                 <Clock className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-amber-900 dark:text-amber-100">Đang chờ kiểm duyệt viên đối chiếu</h3>
+                <h3 className="text-lg font-bold text-amber-900 dark:text-amber-100">{tAuto('k0159')}</h3>
                 <p className="text-sm text-amber-700 dark:text-amber-300 mt-1 max-w-md mx-auto">
-                  Hệ thống đã nhận các khung hình thử thách. Kiểm duyệt viên sẽ đối chiếu ảnh với CCCD của bạn trong vòng 2-4 giờ làm việc.
+                  {tAuto('k0160')}
                 </p>
               </div>
-              <p className="text-xs text-muted-foreground">Ảnh được mã hóa AES-256 an toàn và tự động tiêu hủy sau 30 ngày.</p>
+              <p className="text-xs text-muted-foreground">{tAuto('k0161')}</p>
             </div>
           )}
 
@@ -137,17 +138,17 @@ export default function LandlordFaceKycPage() {
                 <AlertCircle className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-red-900 dark:text-red-100">Xác thực khuôn mặt chưa đạt</h3>
+                <h3 className="text-lg font-bold text-red-900 dark:text-red-100">{tAuto('k0162')}</h3>
                 <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                  Lý do: {faceStatus.rejectReasonNote || faceStatus.rejectReasonCode || 'Ảnh không khớp với giấy tờ'}
+                  {tAuto('k0163')}{' '}{faceStatus.rejectReasonNote || faceStatus.rejectReasonCode || 'Ảnh không khớp với giấy tờ'}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Bạn còn {faceStatus.remainingAttempts} lượt thử trong 24 giờ.
+                  {tAuto('k0164')}{' '}{faceStatus.remainingAttempts}{' '}{tAuto('k0165')}
                 </p>
               </div>
               {faceStatus.canSubmit && (
                 <Button onClick={() => setShowScanner(false)} variant="outline">
-                  Thử lại xác thực khuôn mặt
+                  {tAuto('k0166')}
                 </Button>
               )}
             </div>
@@ -156,11 +157,11 @@ export default function LandlordFaceKycPage() {
           {(!faceStatus || faceStatus.status === 'NONE' || (faceStatus.status === 'FAILED' && !showScanner)) && (
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-6">
               <div className="space-y-4">
-                <h3 className="font-semibold text-foreground text-base">Điều khoản đồng ý thu thập dữ liệu sinh trắc học</h3>
+                <h3 className="font-semibold text-foreground text-base">{tAuto('k0167')}</h3>
                 <div className="p-4 bg-muted/50 rounded-lg text-xs leading-relaxed text-muted-foreground space-y-2">
-                  <p><strong>1. Mục đích thu thập:</strong> Đối chiếu khuôn mặt trực tuyến với ảnh chụp CCCD nhằm ngăn chặn mạo danh chủ trọ, bảo vệ an toàn cho người thuê và minh bạch nền tảng.</p>
-                  <p><strong>2. Thời hạn lưu trữ:</strong> Khung hình ảnh khuôn mặt được lưu trữ mã hóa chuẩn AES-GCM 256-bit trong thời hạn tối đa 30 ngày kể từ khi có kết quả duyệt, sau đó hệ thống sẽ tự động tiêu hủy hoàn toàn.</p>
-                  <p><strong>3. Quyền của chủ trọ:</strong> Bạn có quyền rút lại đồng ý và yêu cầu xóa ngay lập tức mọi khung hình đã lưu thông qua tính năng "Xóa dữ liệu khuôn mặt" bất cứ lúc nào.</p>
+                  <p><strong>{tAuto('k0168')}</strong>{' '}{tAuto('k0169')}</p>
+                  <p><strong>{tAuto('k0170')}</strong>{' '}{tAuto('k0171')}</p>
+                  <p><strong>{tAuto('k0172')}</strong>{' '}{tAuto('k0173')}</p>
                 </div>
 
                 <div className="flex items-start gap-3 pt-2">
@@ -172,14 +173,14 @@ export default function LandlordFaceKycPage() {
                     className="mt-1 h-4 w-4 rounded border-border text-brand-600 focus:ring-brand-500 cursor-pointer"
                   />
                   <label htmlFor="face-consent" className="text-xs text-foreground cursor-pointer leading-relaxed">
-                    Tôi đã đọc, hiểu rõ và <strong>đồng ý riêng</strong> cho phép nền tảng Tổ Ấm thu nhận và xử lý ảnh khuôn mặt theo các điều khoản bảo mật dữ liệu cá nhân nêu trên.
+                    {tAuto('k0174')}{' '}<strong>{tAuto('k0175')}</strong>{' '}{tAuto('k0176')}
                   </label>
                 </div>
               </div>
 
               <div className="flex justify-end pt-2">
                 <Button onClick={handleStartChallenge} disabled={!consentChecked}>
-                  <Camera className="w-4 h-4 mr-1.5" /> Bắt đầu xác thực khuôn mặt
+                  <Camera className="w-4 h-4 mr-1.5" />{' '}{tAuto('k0177')}
                 </Button>
               </div>
             </div>

@@ -12,6 +12,7 @@ import { Button } from '@/presentation/components/ui/Button';
 import { PropertyOwnershipKycSection } from '@/presentation/components/kyc/PropertyOwnershipKycSection';
 
 export default function LandlordKycPage() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('kyc');
   const [kycStatus, setKycStatus] = useState<LandlordKycStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -99,7 +100,7 @@ export default function LandlordKycPage() {
           }`}
         >
           <UserCheck className="w-4 h-4" />
-          1. Định danh cá nhân (CCCD)
+          {tAuto('k0178')}
         </button>
         <button
           type="button"
@@ -111,7 +112,7 @@ export default function LandlordKycPage() {
           }`}
         >
           <FileCheck className="w-4 h-4" />
-          2. Xác minh quyền cho thuê (Sổ đỏ / KYC-03)
+          {tAuto('k0179')}
         </button>
       </div>
 

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -8,6 +9,7 @@ import { Link } from '@/i18n/routing';
 import { FileText, Calendar, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function TenantContractsPage() {
+  const tAuto = useTranslations('autoI18n');
   const contracts = [
     {
       id: 1,
@@ -39,10 +41,10 @@ export default function TenantContractsPage() {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Hợp đồng thuê phòng ({contracts.length})
+          {tAuto('k0297')}{contracts.length})
         </h1>
         <p className="text-xs text-stone-500 mt-0.5">
-          Danh sách hợp đồng điện tử có giá trị pháp lý và chữ ký số xác thực.
+          {tAuto('k0298')}
         </p>
       </div>
 
@@ -56,24 +58,24 @@ export default function TenantContractsPage() {
                   {c.statusText}
                 </Badge>
               </div>
-              <span className="text-xs text-stone-400">Ký ngày: {c.signedAt}</span>
+              <span className="text-xs text-stone-400">{tAuto('k0299')}{' '}{c.signedAt}</span>
             </div>
 
             <div>
               <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">{c.roomTitle}</h3>
               <p className="text-xs text-stone-500 mt-1">
-                Chủ nhà: <span className="font-semibold text-stone-700 dark:text-stone-300">{c.landlordName}</span> • Giá thuê: <span className="font-bold text-teal-700">{c.price}</span>
+                {tAuto('k0300')}{' '}<span className="font-semibold text-stone-700 dark:text-stone-300">{c.landlordName}</span>{' '}{tAuto('k0301')}{' '}<span className="font-bold text-teal-700">{c.price}</span>
               </p>
             </div>
 
             <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-stone-500">
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-stone-400" />
-                Thời hạn: {c.startDate} đến {c.endDate}
+                {tAuto('k0215')}{' '}{c.startDate}{' '}{tAuto('k0302')}{' '}{c.endDate}
               </span>
               <Link href={`/dashboard/tenant/contracts/${c.id}`}>
                 <Button variant="outline" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                  Xem chi tiết hợp đồng
+                  {tAuto('k0303')}
                 </Button>
               </Link>
             </div>

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
@@ -9,6 +10,7 @@ import { toast } from '@/presentation/stores/toast.store';
 import { MapPin, Phone, Mail, Send, Clock } from 'lucide-react';
 
 export default function ContactPage() {
+  const tAuto = useTranslations('autoI18n');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
 
@@ -28,33 +30,33 @@ export default function ContactPage() {
 
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Liên hệ với chúng tôi
+          {tAuto('k0412')}
         </h1>
         <p className="text-xs text-stone-500 max-w-xl">
-          Đội ngũ chăm sóc khách hàng luôn sẵn sàng lắng nghe và hỗ trợ bạn mọi lúc.
+          {tAuto('k0413')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="space-y-4">
           <Card className="p-5 space-y-3">
-            <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">Thông tin liên lạc</h3>
+            <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">{tAuto('k0414')}</h3>
             <ul className="space-y-3 text-xs text-stone-600 dark:text-stone-300">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-teal-700 shrink-0 mt-0.5" />
-                <span>Số 18 Trần Thái Tông, Dịch Vọng Hậu, Cầu Giấy, Hà Nội</span>
+                <span>{tAuto('k0415')}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>1900 8866 (Tổng đài miễn phí)</span>
+                <span>{tAuto('k0416')}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>hotro@cozynest.vn</span>
+                <span>{tAuto('k0417')}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Clock className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>Thứ 2 - Chủ Nhật: 8h00 - 21h00</span>
+                <span>{tAuto('k0418')}</span>
               </li>
             </ul>
           </Card>
@@ -63,7 +65,7 @@ export default function ContactPage() {
         <div className="md:col-span-2">
           <Card className="p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">Gửi lời nhắn cho Tổ Ấm</h3>
+              <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">{tAuto('k0419')}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                   label="Họ và tên của bạn"
@@ -91,7 +93,7 @@ export default function ContactPage() {
               />
               <div className="space-y-1.5 text-left">
                 <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider">
-                  Nội dung cần hỗ trợ
+                  {tAuto('k0420')}
                 </label>
                 <textarea
                   rows={4}
@@ -109,7 +111,7 @@ export default function ContactPage() {
                 isLoading={isSubmitting}
                 leftIcon={<Send className="w-4 h-4" />}
               >
-                Gửi phản hồi
+                {tAuto('k0421')}
               </Button>
             </form>
           </Card>

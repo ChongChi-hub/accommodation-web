@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -8,6 +9,7 @@ import { Link } from '@/i18n/routing';
 import { Send, FileText, ArrowRight } from 'lucide-react';
 
 export default function TenantRentalRequestsPage() {
+  const tAuto = useTranslations('autoI18n');
   const requests = [
     {
       id: 1,
@@ -37,10 +39,10 @@ export default function TenantRentalRequestsPage() {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Yêu cầu thuê phòng ({requests.length})
+          {tAuto('k0212')}{requests.length})
         </h1>
         <p className="text-xs text-stone-500 mt-0.5">
-          Theo dõi tiến độ xét duyệt đơn xin thuê phòng của bạn từ phía chủ nhà.
+          {tAuto('k0386')}
         </p>
       </div>
 
@@ -51,7 +53,7 @@ export default function TenantRentalRequestsPage() {
               <Badge variant={r.status === 'APPROVED' ? 'success' : 'warning'} size="md">
                 {r.statusText}
               </Badge>
-              <span className="text-xs text-stone-400">Dự kiến vào ở: {r.startDate}</span>
+              <span className="text-xs text-stone-400">{tAuto('k0387')}{' '}{r.startDate}</span>
             </div>
 
             <div>
@@ -59,7 +61,7 @@ export default function TenantRentalRequestsPage() {
                 {r.roomTitle}
               </Link>
               <p className="text-xs text-stone-500 mt-1">
-                Giá thuê: <span className="font-semibold text-teal-700">{r.price}</span> • Thời hạn: {r.duration}
+                {tAuto('k0388')}{' '}<span className="font-semibold text-teal-700">{r.price}</span>{' '}{tAuto('k0389')}{' '}{r.duration}
               </p>
             </div>
 
@@ -68,7 +70,7 @@ export default function TenantRentalRequestsPage() {
               {r.status === 'APPROVED' && (
                 <Link href="/dashboard/tenant/contracts">
                   <Button variant="primary" size="sm" leftIcon={<FileText className="w-3.5 h-3.5" />}>
-                    Xem hợp đồng
+                    {tAuto('k0312')}
                   </Button>
                 </Link>
               )}

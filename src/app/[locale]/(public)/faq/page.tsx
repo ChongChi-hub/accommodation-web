@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
@@ -7,6 +8,7 @@ import { ChevronDown, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 export default function FaqPage() {
+  const tAuto = useTranslations('autoI18n');
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   const faqs = [
@@ -34,10 +36,10 @@ export default function FaqPage() {
 
       <div className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Câu hỏi thường gặp (FAQ)
+          {tAuto('k0422')}
         </h1>
         <p className="text-xs text-stone-500">
-          Giải đáp các thắc mắc phổ biến nhất của người thuê và chủ nhà khi tham gia nền tảng.
+          {tAuto('k0423')}
         </p>
       </div>
 

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -9,6 +10,7 @@ import { toast } from '@/presentation/stores/toast.store';
 import { ShieldCheck, ArrowDownLeft, CheckCircle2, Clock, Landmark } from 'lucide-react';
 
 export default function LandlordDepositsPage() {
+  const tAuto = useTranslations('autoI18n');
   const [deposits, setDeposits] = useState([
     {
       id: 'DEP-2026-0081',
@@ -42,28 +44,28 @@ export default function LandlordDepositsPage() {
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100 flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-teal-600" />
-          Quản lý tiền cọc giữ chỗ (Escrow)
+          {tAuto('k0128')}
         </h1>
         <p className="text-xs text-stone-500 mt-0.5">
-          Tiền đặt cọc của khách thuê được bảo vệ trong tài khoản ký quỹ trung gian theo Nghị định 52/2024/NĐ-CP.
+          {tAuto('k0129')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-4 space-y-1">
-          <p className="text-xs text-stone-400">Đang giữ trong Escrow</p>
-          <p className="text-xl font-black text-amber-600">2.000.000 đ</p>
-          <p className="text-[10px] text-stone-400">1 khoản cọc chờ kích hoạt hợp đồng</p>
+          <p className="text-xs text-stone-400">{tAuto('k0130')}</p>
+          <p className="text-xl font-black text-amber-600">{tAuto('k0131')}</p>
+          <p className="text-[10px] text-stone-400">{tAuto('k0132')}</p>
         </Card>
         <Card className="p-4 space-y-1">
-          <p className="text-xs text-stone-400">Đã giải ngân vào ví</p>
-          <p className="text-xl font-black text-teal-800 dark:text-teal-400">1.500.000 đ</p>
-          <p className="text-[10px] text-stone-400">Có thể yêu cầu rút tiền về ngân hàng</p>
+          <p className="text-xs text-stone-400">{tAuto('k0133')}</p>
+          <p className="text-xl font-black text-teal-800 dark:text-teal-400">{tAuto('k0134')}</p>
+          <p className="text-[10px] text-stone-400">{tAuto('k0135')}</p>
         </Card>
         <Card className="p-4 space-y-1">
-          <p className="text-xs text-stone-400">Đã hoàn trả khách</p>
-          <p className="text-xl font-black text-stone-700 dark:text-stone-300">0 đ</p>
-          <p className="text-[10px] text-stone-400">Khi từ chối yêu cầu thuê hoặc quá hạn</p>
+          <p className="text-xs text-stone-400">{tAuto('k0136')}</p>
+          <p className="text-xl font-black text-stone-700 dark:text-stone-300">{tAuto('k0137')}</p>
+          <p className="text-[10px] text-stone-400">{tAuto('k0138')}</p>
         </Card>
       </div>
 
@@ -71,13 +73,13 @@ export default function LandlordDepositsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Mã cọc</TableHead>
-              <TableHead>Phòng trọ</TableHead>
-              <TableHead>Khách thuê</TableHead>
-              <TableHead>Số tiền</TableHead>
-              <TableHead>Ngày ghi nhận</TableHead>
-              <TableHead>Trạng thái</TableHead>
-              <TableHead className="text-right">Hành động</TableHead>
+              <TableHead>{tAuto('k0139')}</TableHead>
+              <TableHead>{tAuto('k0122')}</TableHead>
+              <TableHead>{tAuto('k0123')}</TableHead>
+              <TableHead>{tAuto('k0076')}</TableHead>
+              <TableHead>{tAuto('k0140')}</TableHead>
+              <TableHead>{tAuto('k0048')}</TableHead>
+              <TableHead className="text-right">{tAuto('k0141')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -101,7 +103,7 @@ export default function LandlordDepositsPage() {
                       leftIcon={<ArrowDownLeft className="w-3.5 h-3.5" />}
                       onClick={() => handleClaim(d.id)}
                     >
-                      Giải ngân
+                      {tAuto('k0142')}
                     </Button>
                   )}
                 </TableCell>

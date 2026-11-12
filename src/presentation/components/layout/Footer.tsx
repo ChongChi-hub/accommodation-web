@@ -6,6 +6,7 @@ import { ShieldCheck, MapPin, Mail, Phone, ExternalLink } from 'lucide-react';
 import Image from 'next/image';
 
 export function Footer() {
+  const tAuto = useTranslations('autoI18n');
   const tNav = useTranslations('nav');
   const t = useTranslations('footer');
 
@@ -89,7 +90,7 @@ export function Footer() {
               <li className="flex items-center gap-2">
                 <Mail size={14} className="text-teal-700 dark:text-teal-400 shrink-0" />
                 <Link href="/contact" className="hover:text-teal-700 dark:hover:text-teal-400">
-                  lienhe@cozynest.vn
+                  {tAuto('k0538')}
                 </Link>
               </li>
               <li className="flex items-center gap-2">
@@ -101,7 +102,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-stone-200 dark:border-stone-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-400">
-          <p>&copy; {new Date().getFullYear()} CozyNest. {t('allRightsReserved')}</p>
+          <p>&copy; {new Date().getFullYear()}{' '}{tAuto('k0539')}{' '}{t('allRightsReserved')}</p>
           <div className="flex items-center gap-4">
             <Link
               href="/about#licenses"

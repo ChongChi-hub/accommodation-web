@@ -18,6 +18,7 @@ export interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ onToggleMobileSidebar }: DashboardHeaderProps) {
+  const tAuto = useTranslations('autoI18n');
   const tNav = useTranslations('header.nav');
   const tSearch = useTranslations('search');
   const { user, activeRole, isAuthenticated, hasHydrated } = useAuthStore();
@@ -67,7 +68,7 @@ export function DashboardHeader({ onToggleMobileSidebar }: DashboardHeaderProps)
                 <span className="truncate">{tSearch('placeholder')}</span>
               </span>
               <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono font-medium rounded bg-surface border border-border text-foreground-muted">
-                Ctrl K
+                {tAuto('k0533')}
               </kbd>
             </button>
           </div>

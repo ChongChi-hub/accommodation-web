@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -6,6 +7,7 @@ import { Star, MessageSquare } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 
 export default function TenantReviewsPage() {
+  const tAuto = useTranslations('autoI18n');
   const reviews = [
     {
       id: 1,
@@ -31,10 +33,10 @@ export default function TenantReviewsPage() {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Đánh giá của tôi ({reviews.length})
+          {tAuto('k0392')}{reviews.length})
         </h1>
         <p className="text-xs text-stone-500 mt-0.5">
-          Lịch sử các phản hồi thực tế bạn đã gửi cho các phòng trọ từng thuê.
+          {tAuto('k0393')}
         </p>
       </div>
 
@@ -57,7 +59,7 @@ export default function TenantReviewsPage() {
 
             {r.landlordReply && (
               <div className="p-3 bg-teal-50 dark:bg-teal-950/40 rounded-xl text-xs text-teal-900 dark:text-teal-300 border-l-2 border-teal-700">
-                <span className="font-bold">Phản hồi của chủ nhà: </span>
+                <span className="font-bold">{tAuto('k0394')}{' '}</span>
                 <span>{r.landlordReply}</span>
               </div>
             )}

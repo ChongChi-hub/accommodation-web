@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
@@ -30,6 +31,7 @@ const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80';
 
 export function RoomHeroGallery({ images, title }: RoomHeroGalleryProps) {
+  const tAuto = useTranslations('autoI18n');
   const normalizedImages: NormalizedImage[] =
     images && images.length > 0
       ? images.map((img, idx) => {
@@ -122,10 +124,10 @@ export function RoomHeroGallery({ images, title }: RoomHeroGalleryProps) {
       <div className="relative aspect-16/10 max-h-[500px] w-full rounded-2xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex flex-col items-center justify-center text-stone-400 p-8 select-none">
         <HomeIcon className="w-14 h-14 stroke-1 mb-3 text-teal-700 dark:text-teal-400" />
         <span className="text-sm font-semibold text-stone-700 dark:text-stone-300">
-          Tổ Ấm - Phòng trọ đang cập nhật ảnh thực tế
+          {tAuto('k0600')}
         </span>
         <span className="text-xs text-stone-500 mt-1">
-          Chủ trọ sẽ tải lên hình ảnh phòng trong thời gian sớm nhất
+          {tAuto('k0601')}
         </span>
       </div>
     );
@@ -267,7 +269,7 @@ export function RoomHeroGallery({ images, title }: RoomHeroGalleryProps) {
           aria-label="Xem tất cả ảnh phòng trọ"
         >
           <Grid className="w-3.5 h-3.5 text-teal-700 dark:text-teal-400" />
-          <span>Xem tất cả {total} ảnh</span>
+          <span>{tAuto('k0602')}{' '}{total}{' '}{tAuto('k0553')}</span>
         </button>
       </div>
 

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -86,6 +87,7 @@ interface AccountItem {
 }
 
 export default function AdminTransactionsAndLedgerPage() {
+  const tAuto = useTranslations('autoI18n');
   const currentUser = useAuthStore((state) => state.user);
 
   const [activeTab, setActiveTab] = useState<'RECON' | 'MAKER_CHECKER' | 'EXPORT'>('RECON');
@@ -318,10 +320,10 @@ export default function AdminTransactionsAndLedgerPage() {
             <span className="p-2 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400">
               <Scale className="w-5 h-5" />
             </span>
-            <span>Giao dịch & Sổ cái Đối soát Kế toán</span>
+            <span>{tAuto('k0023')}</span>
           </h1>
           <p className="text-xs sm:text-sm text-foreground-muted mt-1">
-            Quy chuẩn [LEDGER-02]: Toàn vẹn sổ cái đối soát mỗi đêm, phê duyệt 2 người và xuất báo cáo tài chính.
+            {tAuto('k0024')}
           </p>
         </div>
 
@@ -333,7 +335,7 @@ export default function AdminTransactionsAndLedgerPage() {
             isLoading={isReconciling}
             leftIcon={<RefreshCw className={`w-4 h-4 ${isReconciling ? 'animate-spin' : ''}`} />}
           >
-            Chạy đối soát ngay
+            {tAuto('k0025')}
           </Button>
         </div>
       </div>
@@ -343,14 +345,14 @@ export default function AdminTransactionsAndLedgerPage() {
         {/* Card 1: Toàn vẹn Nợ = Có */}
         <Card className="p-4.5 space-y-2">
           <div className="flex items-center justify-between text-xs text-foreground-muted">
-            <span className="font-medium">Toàn vẹn Sổ cái Kép</span>
+            <span className="font-medium">{tAuto('k0026')}</span>
             {isBalanced ? (
               <Badge variant="success" size="sm">
-                <CheckCircle2 className="w-3 h-3" /> CÂN ĐỐI 100%
+                <CheckCircle2 className="w-3 h-3" />{' '}{tAuto('k0027')}
               </Badge>
             ) : (
               <Badge variant="danger" size="sm">
-                <AlertTriangle className="w-3 h-3" /> CẢNH BÁO LỆCH
+                <AlertTriangle className="w-3 h-3" />{' '}{tAuto('k0028')}
               </Badge>
             )}
           </div>
@@ -358,15 +360,15 @@ export default function AdminTransactionsAndLedgerPage() {
             {formatVnd(reconData?.totalDebit || 0)}
           </div>
           <div className="text-[11px] text-foreground-muted flex justify-between">
-            <span>Tổng Nợ: {formatVnd(reconData?.totalDebit || 0)}</span>
-            <span>Tổng Có: {formatVnd(reconData?.totalCredit || 0)}</span>
+            <span>{tAuto('k0029')}{' '}{formatVnd(reconData?.totalDebit || 0)}</span>
+            <span>{tAuto('k0030')}{' '}{formatVnd(reconData?.totalCredit || 0)}</span>
           </div>
         </Card>
 
         {/* Card 2: Đối soát ví */}
         <Card className="p-4.5 space-y-2">
           <div className="flex items-center justify-between text-xs text-foreground-muted">
-            <span className="font-medium">Khớp số dư ví & bút toán</span>
+            <span className="font-medium">{tAuto('k0031')}</span>
             <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="text-xl font-bold text-foreground">
@@ -382,32 +384,32 @@ export default function AdminTransactionsAndLedgerPage() {
         {/* Card 3: Maker-Checker pending */}
         <Card className="p-4.5 space-y-2">
           <div className="flex items-center justify-between text-xs text-foreground-muted">
-            <span className="font-medium">Duyệt 2 người (Maker-Checker)</span>
+            <span className="font-medium">{tAuto('k0032')}</span>
             {pendingCount > 0 ? (
-              <Badge variant="warning" size="sm">{pendingCount} Chờ duyệt</Badge>
+              <Badge variant="warning" size="sm">{pendingCount}{' '}{tAuto('k0033')}</Badge>
             ) : (
-              <Badge variant="neutral" size="sm">Đã giải quyết</Badge>
+              <Badge variant="neutral" size="sm">{tAuto('k0034')}</Badge>
             )}
           </div>
           <div className="text-xl font-bold text-foreground">
-            {pendingCount} <span className="text-xs font-normal text-foreground-muted">yêu cầu</span>
+            {pendingCount} <span className="text-xs font-normal text-foreground-muted">{tAuto('k0035')}</span>
           </div>
           <p className="text-[11px] text-foreground-muted">
-            Yêu cầu điều chỉnh thủ công cần 2 Admin độc lập
+            {tAuto('k0036')}
           </p>
         </Card>
 
         {/* Card 4: DB Immutability */}
         <Card className="p-4.5 space-y-2">
           <div className="flex items-center justify-between text-xs text-foreground-muted">
-            <span className="font-medium">Tính bất biến Database</span>
+            <span className="font-medium">{tAuto('k0037')}</span>
             <Lock className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           </div>
           <div className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 pt-1">
-            <CheckCircle2 className="w-4 h-4" /> Trigger Chặn Sửa/Xóa
+            <CheckCircle2 className="w-4 h-4" />{' '}{tAuto('k0038')}
           </div>
           <p className="text-[11px] text-foreground-muted">
-            DB chặn UPDATE & DELETE trên bảng sổ cái cho ứng dụng
+            {tAuto('k0039')}
           </p>
         </Card>
       </div>
@@ -439,7 +441,7 @@ export default function AdminTransactionsAndLedgerPage() {
             <div className="text-xs sm:text-sm space-y-1">
               <p className="font-semibold">{reconData?.message}</p>
               <p className="text-foreground-muted text-xs">
-                Job tự động chạy vào lúc 01:00 AM hằng đêm (cron). Nếu phát hiện mất cân đối, hệ thống tự động bắn cảnh báo tức thì tới Telegram / Slack Webhook.
+                {tAuto('k0040')}
               </p>
             </div>
           </div>
@@ -449,22 +451,22 @@ export default function AdminTransactionsAndLedgerPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-teal-600" />
-                <span>1. Đối soát Sổ cái kép theo từng ngày</span>
+                <span>{tAuto('k0041')}</span>
               </h2>
               <span className="text-xs text-foreground-muted">
-                {reconData?.dailyBreakdowns?.length || 0} ngày có phát sinh bút toán
+                {reconData?.dailyBreakdowns?.length || 0}{' '}{tAuto('k0042')}
               </span>
             </div>
 
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Ngày hạch toán</TableHead>
-                  <TableHead className="text-right">Tổng Nợ (Debit)</TableHead>
-                  <TableHead className="text-right">Tổng Có (Credit)</TableHead>
-                  <TableHead className="text-right">Chênh lệch</TableHead>
-                  <TableHead className="text-center">Số bút toán</TableHead>
-                  <TableHead className="text-center">Trạng thái</TableHead>
+                  <TableHead>{tAuto('k0043')}</TableHead>
+                  <TableHead className="text-right">{tAuto('k0044')}</TableHead>
+                  <TableHead className="text-right">{tAuto('k0045')}</TableHead>
+                  <TableHead className="text-right">{tAuto('k0046')}</TableHead>
+                  <TableHead className="text-center">{tAuto('k0047')}</TableHead>
+                  <TableHead className="text-center">{tAuto('k0048')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -479,9 +481,9 @@ export default function AdminTransactionsAndLedgerPage() {
                     <TableCell className="text-center">{day.entryCount}</TableCell>
                     <TableCell className="text-center">
                       {day.isBalanced ? (
-                        <Badge variant="success" size="sm">Cân đối</Badge>
+                        <Badge variant="success" size="sm">{tAuto('k0049')}</Badge>
                       ) : (
-                        <Badge variant="danger" size="sm">Lệch</Badge>
+                        <Badge variant="danger" size="sm">{tAuto('k0050')}</Badge>
                       )}
                     </TableCell>
                   </TableRow>
@@ -495,23 +497,23 @@ export default function AdminTransactionsAndLedgerPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-teal-600" />
-                <span>2. Đối soát số dư ví & tài khoản khớp tổng các bút toán</span>
+                <span>{tAuto('k0051')}</span>
               </h2>
               <span className="text-xs text-foreground-muted">
-                {reconData?.walletBreakdowns?.length || 0} tài khoản đang theo dõi
+                {reconData?.walletBreakdowns?.length || 0}{' '}{tAuto('k0052')}
               </span>
             </div>
 
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Mã tài khoản</TableHead>
-                  <TableHead>Tên tài khoản</TableHead>
-                  <TableHead>Loại</TableHead>
-                  <TableHead className="text-right">Số dư DB (Stored)</TableHead>
-                  <TableHead className="text-right">Tổng bút toán (Calculated)</TableHead>
-                  <TableHead className="text-right">Chênh lệch</TableHead>
-                  <TableHead className="text-center">Kiểm toán</TableHead>
+                  <TableHead>{tAuto('k0053')}</TableHead>
+                  <TableHead>{tAuto('k0054')}</TableHead>
+                  <TableHead>{tAuto('k0055')}</TableHead>
+                  <TableHead className="text-right">{tAuto('k0056')}</TableHead>
+                  <TableHead className="text-right">{tAuto('k0057')}</TableHead>
+                  <TableHead className="text-right">{tAuto('k0046')}</TableHead>
+                  <TableHead className="text-center">{tAuto('k0058')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -531,9 +533,9 @@ export default function AdminTransactionsAndLedgerPage() {
                     </TableCell>
                     <TableCell className="text-center">
                       {w.isMatched ? (
-                        <Badge variant="success" size="sm">Khớp 100%</Badge>
+                        <Badge variant="success" size="sm">{tAuto('k0059')}</Badge>
                       ) : (
-                        <Badge variant="danger" size="sm">Sai lệch</Badge>
+                        <Badge variant="danger" size="sm">{tAuto('k0060')}</Badge>
                       )}
                     </TableCell>
                   </TableRow>
@@ -552,17 +554,17 @@ export default function AdminTransactionsAndLedgerPage() {
             <div className="border-b border-border pb-3">
               <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <PlusCircle className="w-4 h-4 text-teal-600" />
-                <span>Tạo đề xuất điều chỉnh Sổ cái (Maker)</span>
+                <span>{tAuto('k0061')}</span>
               </h2>
               <p className="text-xs text-foreground-muted mt-0.5">
-                Bút toán điều chỉnh số dư chỉ có thể thực hiện qua API này, có đầy đủ lý do, người tạo và bắt buộc có người duyệt thứ hai (Maker != Checker).
+                {tAuto('k0062')}
               </p>
             </div>
 
             <form onSubmit={handleCreateAdjustment} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <label className="block text-xs font-medium text-foreground mb-1.5">
-                  Tài khoản điều chỉnh *
+                  {tAuto('k0063')}
                 </label>
                 <select
                   value={formAccount}
@@ -579,21 +581,21 @@ export default function AdminTransactionsAndLedgerPage() {
 
               <div>
                 <label className="block text-xs font-medium text-foreground mb-1.5">
-                  Chiều hạch toán *
+                  {tAuto('k0064')}
                 </label>
                 <select
                   value={formDirection}
                   onChange={(e) => setFormDirection(e.target.value as any)}
                   className="w-full text-xs rounded-xl border border-border bg-surface px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-teal-700/30"
                 >
-                  <option value="CREDIT">Ghi CÓ (CREDIT - Tăng số dư Ví/Doanh thu)</option>
-                  <option value="DEBIT">Ghi NỢ (DEBIT - Tăng Tiền mặt/Chi phí)</option>
+                  <option value="CREDIT">{tAuto('k0065')}</option>
+                  <option value="DEBIT">{tAuto('k0066')}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-foreground mb-1.5">
-                  Số tiền điều chỉnh (VND) *
+                  {tAuto('k0067')}
                 </label>
                 <Input
                   placeholder="Ví dụ: 500,000"
@@ -605,7 +607,7 @@ export default function AdminTransactionsAndLedgerPage() {
 
               <div>
                 <label className="block text-xs font-medium text-foreground mb-1.5">
-                  Lý do điều chỉnh (Bắt buộc) *
+                  {tAuto('k0068')}
                 </label>
                 <Input
                   placeholder="Ví dụ: Bồi hoàn sự cố ticket #123"
@@ -622,7 +624,7 @@ export default function AdminTransactionsAndLedgerPage() {
                   isLoading={isSubmittingAdjustment}
                   leftIcon={<PlusCircle className="w-4 h-4" />}
                 >
-                  Gửi yêu cầu phê duyệt
+                  {tAuto('k0069')}
                 </Button>
               </div>
             </form>
@@ -633,31 +635,31 @@ export default function AdminTransactionsAndLedgerPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-teal-600" />
-                <span>Danh sách yêu cầu điều chỉnh số cái (Maker - Checker)</span>
+                <span>{tAuto('k0070')}</span>
               </h2>
               <span className="text-xs text-foreground-muted">
-                Đang đăng nhập: <strong className="text-foreground">{currentUser?.fullName || currentUser?.email || 'Admin'}</strong> ({currentUser?.id})
+                {tAuto('k0071')}{' '}<strong className="text-foreground">{currentUser?.fullName || currentUser?.email || 'Admin'}</strong> ({currentUser?.id})
               </span>
             </div>
 
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Mã yêu cầu</TableHead>
-                  <TableHead>Người tạo (Maker)</TableHead>
-                  <TableHead>Người duyệt (Checker)</TableHead>
-                  <TableHead>Tài khoản</TableHead>
-                  <TableHead className="text-right">Số tiền</TableHead>
-                  <TableHead>Lý do giải trình</TableHead>
-                  <TableHead className="text-center">Trạng thái</TableHead>
-                  <TableHead className="text-center">Thao tác</TableHead>
+                  <TableHead>{tAuto('k0072')}</TableHead>
+                  <TableHead>{tAuto('k0073')}</TableHead>
+                  <TableHead>{tAuto('k0074')}</TableHead>
+                  <TableHead>{tAuto('k0075')}</TableHead>
+                  <TableHead className="text-right">{tAuto('k0076')}</TableHead>
+                  <TableHead>{tAuto('k0077')}</TableHead>
+                  <TableHead className="text-center">{tAuto('k0048')}</TableHead>
+                  <TableHead className="text-center">{tAuto('k0078')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {requests.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8 text-foreground-muted">
-                      Chưa có yêu cầu điều chỉnh nào trong hệ thống.
+                      {tAuto('k0079')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -672,7 +674,7 @@ export default function AdminTransactionsAndLedgerPage() {
                           <span className="font-medium text-xs">{req.makerId}</span>
                           {isMaker && (
                             <span className="block text-[10px] text-teal-700 dark:text-teal-400 font-semibold">
-                              (Chính bạn tạo)
+                              {tAuto('k0080')}
                             </span>
                           )}
                         </TableCell>
@@ -688,9 +690,9 @@ export default function AdminTransactionsAndLedgerPage() {
                           {req.reason}
                         </TableCell>
                         <TableCell className="text-center">
-                          {req.status === 'PENDING' && <Badge variant="warning" size="sm">Chờ duyệt</Badge>}
-                          {req.status === 'APPROVED' && <Badge variant="success" size="sm">Đã duyệt</Badge>}
-                          {req.status === 'REJECTED' && <Badge variant="danger" size="sm">Từ chối</Badge>}
+                          {req.status === 'PENDING' && <Badge variant="warning" size="sm">{tAuto('k0033')}</Badge>}
+                          {req.status === 'APPROVED' && <Badge variant="success" size="sm">{tAuto('k0081')}</Badge>}
+                          {req.status === 'REJECTED' && <Badge variant="danger" size="sm">{tAuto('k0082')}</Badge>}
                         </TableCell>
                         <TableCell className="text-center">
                           {req.status === 'PENDING' ? (
@@ -702,7 +704,7 @@ export default function AdminTransactionsAndLedgerPage() {
                                 onClick={() => handleApprove(req)}
                                 title={isMaker ? 'Bạn không thể tự duyệt yêu cầu do chính mình tạo' : 'Phê duyệt'}
                               >
-                                Duyệt
+                                {tAuto('k0083')}
                               </Button>
                               <Button
                                 size="sm"
@@ -711,11 +713,11 @@ export default function AdminTransactionsAndLedgerPage() {
                                 onClick={() => handleReject(req)}
                                 title={isMaker ? 'Bạn không thể xử lý yêu cầu do chính mình tạo' : 'Từ chối'}
                               >
-                                Từ chối
+                                {tAuto('k0082')}
                               </Button>
                             </div>
                           ) : (
-                            <span className="text-[11px] text-foreground-muted">Đã xử lý</span>
+                            <span className="text-[11px] text-foreground-muted">{tAuto('k0084')}</span>
                           )}
                         </TableCell>
                       </TableRow>
@@ -735,12 +737,12 @@ export default function AdminTransactionsAndLedgerPage() {
           <Card className="p-4.5 space-y-3">
             <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
               <Calendar className="w-4 h-4 text-teal-600" />
-              <span>Khoảng thời gian xuất báo cáo (Tùy chọn)</span>
+              <span>{tAuto('k0085')}</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs text-foreground-muted mb-1">Từ ngày</label>
+                <label className="block text-xs text-foreground-muted mb-1">{tAuto('k0086')}</label>
                 <Input
                   type="date"
                   value={exportFromDate}
@@ -748,7 +750,7 @@ export default function AdminTransactionsAndLedgerPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-foreground-muted mb-1">Đến ngày</label>
+                <label className="block text-xs text-foreground-muted mb-1">{tAuto('k0087')}</label>
                 <Input
                   type="date"
                   value={exportToDate}
@@ -756,7 +758,7 @@ export default function AdminTransactionsAndLedgerPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-foreground-muted mb-1">Tài khoản sao kê (Dành cho Sao kê)</label>
+                <label className="block text-xs text-foreground-muted mb-1">{tAuto('k0088')}</label>
                 <select
                   value={exportAccount}
                   onChange={(e) => setExportAccount(e.target.value)}
@@ -780,9 +782,9 @@ export default function AdminTransactionsAndLedgerPage() {
                 <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center">
                   <FileSpreadsheet className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-bold text-foreground">Sổ Cái Chi Tiết (General Ledger)</h3>
+                <h3 className="text-sm font-bold text-foreground">{tAuto('k0089')}</h3>
                 <p className="text-xs text-foreground-muted">
-                  Báo cáo toàn bộ các bút toán Nợ / Có phát sinh trong kỳ, chi tiết mã chứng từ, tài khoản đối ứng và người lập.
+                  {tAuto('k0090')}
                 </p>
               </div>
 
@@ -794,7 +796,7 @@ export default function AdminTransactionsAndLedgerPage() {
                 leftIcon={<FileDown className="w-4 h-4" />}
                 className="w-full"
               >
-                Tải Sổ Cái (CSV UTF-8)
+                {tAuto('k0091')}
               </Button>
             </Card>
 
@@ -804,9 +806,9 @@ export default function AdminTransactionsAndLedgerPage() {
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <Scale className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-bold text-foreground">Bảng Cân Đối Thử (Trial Balance)</h3>
+                <h3 className="text-sm font-bold text-foreground">{tAuto('k0092')}</h3>
                 <p className="text-xs text-foreground-muted">
-                  Báo cáo số dư đầu kỳ, phát sinh Nợ/Có trong kỳ và số dư cuối kỳ của tất cả tài khoản kế toán. Hàng tổng kết cân đối tuyệt đối.
+                  {tAuto('k0093')}
                 </p>
               </div>
 
@@ -818,7 +820,7 @@ export default function AdminTransactionsAndLedgerPage() {
                 leftIcon={<FileDown className="w-4 h-4" />}
                 className="w-full"
               >
-                Tải Bảng Cân Đối Thử (CSV UTF-8)
+                {tAuto('k0094')}
               </Button>
             </Card>
 
@@ -828,9 +830,9 @@ export default function AdminTransactionsAndLedgerPage() {
                 <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center">
                   <FileDown className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-bold text-foreground">Sao Kê Tài Khoản / Ví (Statement)</h3>
+                <h3 className="text-sm font-bold text-foreground">{tAuto('k0095')}</h3>
                 <p className="text-xs text-foreground-muted">
-                  Chi tiết từng giao dịch phát sinh và số dư lũy kế theo thời gian của tài khoản/ví được chọn ở bộ lọc trên.
+                  {tAuto('k0096')}
                 </p>
               </div>
 
@@ -842,7 +844,7 @@ export default function AdminTransactionsAndLedgerPage() {
                 leftIcon={<FileDown className="w-4 h-4" />}
                 className="w-full"
               >
-                Tải Sao Kê Ví (CSV UTF-8)
+                {tAuto('k0097')}
               </Button>
             </Card>
           </div>
@@ -850,7 +852,7 @@ export default function AdminTransactionsAndLedgerPage() {
           <div className="p-4 rounded-xl bg-surface-muted border border-border text-xs text-foreground-muted flex items-center gap-2">
             <Info className="w-4 h-4 text-teal-600 shrink-0" />
             <span>
-              Mọi tệp tin CSV đều được chèn tiền tố UTF-8 BOM (<code className="text-foreground">\uFEFF</code>) giúp mở trực tiếp bằng Microsoft Excel và Google Sheets tiếng Việt hoàn hảo không bị vỡ font chữ.
+              {tAuto('k0098')}<code className="text-foreground">{tAuto('k0099')}</code>{tAuto('k0100')}
             </span>
           </div>
         </div>

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { RoomFilterParams } from '@/application/dto/listing.dto';
@@ -139,13 +140,14 @@ export function CategoryQuickChips({
   onChange,
   className,
 }: CategoryQuickChipsProps) {
+  const tAuto = useTranslations('autoI18n');
   const chips = categoryKey ? CATEGORY_CHIPS_MAP[categoryKey] : undefined;
   if (!chips || chips.length === 0) return null;
 
   return (
     <div className={cn('flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none', className)}>
       <span className="text-[11px] font-semibold text-stone-400 dark:text-stone-500 uppercase tracking-wider shrink-0">
-        Gợi ý:
+        {tAuto('k0550')}
       </span>
       {chips.map((chip) => {
         const active = chip.isActive(params);

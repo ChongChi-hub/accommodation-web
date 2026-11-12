@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Dialog } from '@/presentation/components/ui/Dialog';
@@ -21,6 +22,7 @@ export function RoomBookingModal({
   roomTitle,
   type,
 }: RoomBookingModalProps) {
+  const tAuto = useTranslations('autoI18n');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('09:00');
   const [note, setNote] = useState('');
@@ -70,7 +72,7 @@ export function RoomBookingModal({
 
         <div className="space-y-1.5 text-left">
           <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 uppercase tracking-wider">
-            Lời nhắn gửi chủ trọ
+            {tAuto('k0564')}
           </label>
           <textarea
             rows={3}
@@ -83,7 +85,7 @@ export function RoomBookingModal({
 
         <div className="flex justify-end gap-2 pt-2 border-t border-stone-100 dark:border-stone-800">
           <Button variant="outline" size="sm" type="button" onClick={onClose}>
-            Hủy bỏ
+            {tAuto('k0469')}
           </Button>
           <Button
             variant="primary"

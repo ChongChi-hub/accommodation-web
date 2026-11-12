@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -9,6 +10,7 @@ import { Link } from '@/i18n/routing';
 import { UserCheck, Check, X, FileText, ShieldCheck } from 'lucide-react';
 
 export default function LandlordRentalRequestsPage() {
+  const tAuto = useTranslations('autoI18n');
   const [requests, setRequests] = useState([
     {
       id: 1,
@@ -40,10 +42,10 @@ export default function LandlordRentalRequestsPage() {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Yêu cầu thuê phòng ({requests.length})
+          {tAuto('k0212')}{requests.length})
         </h1>
         <p className="text-xs text-stone-500 mt-0.5">
-          Duyệt hồ sơ khách đăng ký dọn vào ở và tiến hành khởi tạo hợp đồng thuê.
+          {tAuto('k0213')}
         </p>
       </div>
 
@@ -55,23 +57,23 @@ export default function LandlordRentalRequestsPage() {
                 <Badge variant={r.status === 'APPROVED' ? 'success' : 'warning'} size="md">
                   {r.statusText}
                 </Badge>
-                <span className="text-xs text-stone-400">Dự kiến dọn vào: {r.startDate}</span>
+                <span className="text-xs text-stone-400">{tAuto('k0214')}{' '}{r.startDate}</span>
               </div>
-              <span className="text-xs text-stone-500">Thời hạn: {r.duration}</span>
+              <span className="text-xs text-stone-500">{tAuto('k0215')}{' '}{r.duration}</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <p className="text-stone-400">Phòng đăng ký</p>
+                <p className="text-stone-400">{tAuto('k0216')}</p>
                 <p className="font-bold text-stone-900 dark:text-stone-100 mt-0.5">{r.roomTitle}</p>
                 <p className="font-semibold text-teal-700 mt-0.5">{r.price}</p>
               </div>
               <div>
-                <p className="text-stone-400">Thông tin người thuê</p>
+                <p className="text-stone-400">{tAuto('k0217')}</p>
                 <p className="font-bold text-stone-900 dark:text-stone-100 mt-0.5">{r.tenantName}</p>
                 <p className="text-stone-500 mt-0.5 flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>CCCD: {r.idNumber} • SĐT: {r.tenantPhone}</span>
+                  <span>{tAuto('k0218')}{' '}{r.idNumber}{' '}{tAuto('k0219')}{' '}{r.tenantPhone}</span>
                 </p>
               </div>
             </div>
@@ -85,7 +87,7 @@ export default function LandlordRentalRequestsPage() {
                     leftIcon={<X className="w-3.5 h-3.5" />}
                     onClick={() => handleReject(r.id)}
                   >
-                    Từ chối
+                    {tAuto('k0082')}
                   </Button>
                   <Button
                     variant="primary"
@@ -93,13 +95,13 @@ export default function LandlordRentalRequestsPage() {
                     leftIcon={<Check className="w-3.5 h-3.5" />}
                     onClick={() => handleApprove(r.id)}
                   >
-                    Chấp thuận & Tạo hợp đồng
+                    {tAuto('k0220')}
                   </Button>
                 </>
               ) : (
                 <Link href="/dashboard/landlord/contracts">
                   <Button variant="primary" size="sm" leftIcon={<FileText className="w-3.5 h-3.5" />}>
-                    Xem danh sách hợp đồng
+                    {tAuto('k0221')}
                   </Button>
                 </Link>
               )}

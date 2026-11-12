@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -9,6 +10,7 @@ import { toast } from '@/presentation/stores/toast.store';
 import { Gauge, Zap, Droplets, Save } from 'lucide-react';
 
 export default function LandlordUtilitiesPage() {
+  const tAuto = useTranslations('autoI18n');
   const [readings, setReadings] = useState([
     {
       roomId: 1,
@@ -57,10 +59,10 @@ export default function LandlordUtilitiesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-            Ghi chỉ số điện nước (Kỳ tháng 11/2026)
+            {tAuto('k0245')}
           </h1>
           <p className="text-xs text-stone-500 mt-0.5">
-            Nhập số công tơ điện và đồng hồ nước cuối tháng để chốt tiền dịch vụ minh bạch.
+            {tAuto('k0246')}
           </p>
         </div>
         <Button
@@ -70,7 +72,7 @@ export default function LandlordUtilitiesPage() {
           leftIcon={<Save className="w-3.5 h-3.5" />}
           onClick={handleSave}
         >
-          Lưu tất cả chỉ số
+          {tAuto('k0247')}
         </Button>
       </div>
 
@@ -78,12 +80,12 @@ export default function LandlordUtilitiesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Phòng / Khách</TableHead>
-              <TableHead>Điện cũ - mới (kWh)</TableHead>
-              <TableHead>Tiêu thụ điện</TableHead>
-              <TableHead>Nước cũ - mới (khối)</TableHead>
-              <TableHead>Tiêu thụ nước</TableHead>
-              <TableHead className="text-right">Tổng tiền điện nước</TableHead>
+              <TableHead>{tAuto('k0248')}</TableHead>
+              <TableHead>{tAuto('k0249')}</TableHead>
+              <TableHead>{tAuto('k0250')}</TableHead>
+              <TableHead>{tAuto('k0251')}</TableHead>
+              <TableHead>{tAuto('k0252')}</TableHead>
+              <TableHead className="text-right">{tAuto('k0253')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -110,7 +112,7 @@ export default function LandlordUtilitiesPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-xs font-semibold text-amber-600">
-                    {elecUsed} kWh ({new Intl.NumberFormat('vi-VN').format(elecUsed * r.elecPrice)} đ)
+                    {elecUsed}{' '}{tAuto('k0254')}{new Intl.NumberFormat('vi-VN').format(elecUsed * r.elecPrice)}{' '}{tAuto('k0255')}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1.5 text-xs">
@@ -124,10 +126,10 @@ export default function LandlordUtilitiesPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-xs font-semibold text-cyan-600">
-                    {waterUsed} khối ({new Intl.NumberFormat('vi-VN').format(waterUsed * r.waterPrice)} đ)
+                    {waterUsed}{' '}{tAuto('k0256')}{new Intl.NumberFormat('vi-VN').format(waterUsed * r.waterPrice)}{' '}{tAuto('k0255')}
                   </TableCell>
                   <TableCell className="text-right font-bold text-teal-800 dark:text-teal-400">
-                    {new Intl.NumberFormat('vi-VN').format(totalCost)} đ
+                    {new Intl.NumberFormat('vi-VN').format(totalCost)}{' '}{tAuto('k0257')}
                   </TableCell>
                 </TableRow>
               );

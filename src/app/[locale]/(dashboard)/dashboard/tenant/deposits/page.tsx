@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -19,6 +20,7 @@ interface HoldingDeposit {
 }
 
 export default function TenantDepositsPage() {
+  const tAuto = useTranslations('autoI18n');
   const [deposits, setDeposits] = useState<HoldingDeposit[]>([
     {
       id: 'DEP-2026-0081',
@@ -68,10 +70,10 @@ export default function TenantDepositsPage() {
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100 flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-teal-600" />
-          Tiền cọc giữ chỗ & Hợp đồng ({deposits.length})
+          {tAuto('k0304')}{deposits.length})
         </h1>
         <p className="text-xs text-stone-500 mt-0.5">
-          Tuân thủ Nghị định 52/2024/NĐ-CP: Tiền đặt cọc được giữ an toàn trong tài khoản bảo đảm (Escrow) cho đến khi ký hợp đồng.
+          {tAuto('k0305')}
         </p>
       </div>
 
@@ -91,28 +93,28 @@ export default function TenantDepositsPage() {
               {dep.status === 'HELD_IN_ESCROW' && (
                 <div className="flex items-center gap-1.5 text-xs text-amber-600 font-semibold bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>Thời hạn giữ chỗ: {timeLeft}</span>
+                  <span>{tAuto('k0306')}{' '}{timeLeft}</span>
                 </div>
               )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <p className="text-stone-400">Phòng đăng ký giữ chỗ</p>
+                <p className="text-stone-400">{tAuto('k0307')}</p>
                 <p className="font-bold text-stone-900 dark:text-stone-100 mt-0.5">{dep.roomTitle}</p>
-                <p className="text-stone-500 mt-0.5">Chủ nhà: {dep.landlordName}</p>
+                <p className="text-stone-500 mt-0.5">{tAuto('k0300')}{' '}{dep.landlordName}</p>
               </div>
               <div>
-                <p className="text-stone-400">Số tiền bảo đảm</p>
+                <p className="text-stone-400">{tAuto('k0308')}</p>
                 <p className="text-lg font-black text-teal-800 dark:text-teal-400 mt-0.5">{dep.amount}</p>
-                <p className="text-[11px] text-stone-400 mt-0.5">Cơ chế tài khoản trung gian phong tỏa</p>
+                <p className="text-[11px] text-stone-400 mt-0.5">{tAuto('k0309')}</p>
               </div>
             </div>
 
             <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-stone-100 dark:border-stone-800 text-xs">
               <div className="flex items-center gap-1 text-[11px] text-stone-500">
                 <AlertCircle className="w-3.5 h-3.5 text-teal-600" />
-                <span>Tiền cọc sẽ tự động trừ vào tiền phòng tháng đầu khi hợp đồng được kích hoạt.</span>
+                <span>{tAuto('k0310')}</span>
               </div>
               <div className="flex items-center gap-2">
                 {dep.status === 'HELD_IN_ESCROW' && (
@@ -122,13 +124,13 @@ export default function TenantDepositsPage() {
                     leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
                     onClick={() => handleRefund(dep.id)}
                   >
-                    Hủy & Hoàn cọc
+                    {tAuto('k0311')}
                   </Button>
                 )}
                 {dep.contractId && (
                   <Link href={`/dashboard/tenant/contracts/${dep.contractId}`}>
                     <Button variant="primary" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                      Xem hợp đồng
+                      {tAuto('k0312')}
                     </Button>
                   </Link>
                 )}

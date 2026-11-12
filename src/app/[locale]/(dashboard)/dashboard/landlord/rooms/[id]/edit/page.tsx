@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { use, useState, useEffect } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -13,6 +14,7 @@ import { useRouter } from '@/i18n/routing';
 import { Save, ArrowLeft } from 'lucide-react';
 
 export default function EditRoomPage({ params }: { params: Promise<{ id: string }> }) {
+  const tAuto = useTranslations('autoI18n');
   const { id } = use(params);
   const router = useRouter();
   const {
@@ -120,10 +122,10 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-            Chỉnh sửa thông tin phòng
+            {tAuto('k0226')}
           </h1>
           <p className="text-xs text-stone-500 mt-0.5">
-            Cập nhật thông tin chi tiết, giá thuê và hình ảnh của bài đăng.
+            {tAuto('k0227')}
           </p>
         </div>
         <Button
@@ -133,7 +135,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
           onClick={() => router.push('/dashboard/landlord/rooms')}
           leftIcon={<ArrowLeft className="w-3.5 h-3.5" />}
         >
-          Quay lại
+          {tAuto('k0228')}
         </Button>
       </div>
 
@@ -141,7 +143,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
         {/* Basic Information */}
         <Card className="p-6 space-y-4">
           <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">
-            Thông tin bài đăng
+            {tAuto('k0229')}
           </h2>
           <Input
             label="Tiêu đề hiển thị"
@@ -185,7 +187,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
                 onChange={(e) => setFormData({ ...formData, allowPets: e.target.checked })}
                 className="rounded text-teal-600 focus:ring-teal-500"
               />
-              <span>Cho phép thú cưng</span>
+              <span>{tAuto('k0230')}</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -194,7 +196,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
                 onChange={(e) => setFormData({ ...formData, allowCooking: e.target.checked })}
                 className="rounded text-teal-600 focus:ring-teal-500"
               />
-              <span>Cho phép nấu ăn</span>
+              <span>{tAuto('k0231')}</span>
             </label>
           </div>
         </Card>
@@ -202,7 +204,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
         {/* Real-time Image Management */}
         <Card className="p-6 space-y-4">
           <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">
-            Quản lý hình ảnh ({managedImages.length}/10)
+            {tAuto('k0232')}{managedImages.length}/10)
           </h2>
           <ImageManager
             initialImages={managedImages}
@@ -234,7 +236,7 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
             isLoading={isSaving}
             leftIcon={<Save className="w-3.5 h-3.5" />}
           >
-            Lưu thay đổi
+            {tAuto('k0233')}
           </Button>
         </div>
       </form>

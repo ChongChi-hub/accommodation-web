@@ -14,6 +14,7 @@ interface RoomDetailHeaderProps {
 }
 
 export function RoomDetailHeader({ room }: RoomDetailHeaderProps) {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations();
 
   const scrollToReviews = (e: React.MouseEvent) => {
@@ -48,7 +49,7 @@ export function RoomDetailHeader({ room }: RoomDetailHeaderProps) {
               className="gap-1.5 font-semibold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span>Chủ trọ đã xác minh danh tính</span>
+              <span>{tAuto('k0585')}</span>
             </Badge>
           )}
         </div>
@@ -87,7 +88,7 @@ export function RoomDetailHeader({ room }: RoomDetailHeaderProps) {
           <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500 shrink-0" />
           <span>{(room.ratingAvg || 5.0).toFixed(1)}</span>
           <span className="text-stone-500 dark:text-stone-400 font-normal">
-            ({room.reviewCount || 0} đánh giá)
+            ({room.reviewCount || 0}{' '}{tAuto('k0586')}
           </span>
         </a>
       </div>

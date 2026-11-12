@@ -17,6 +17,7 @@ interface LandlordKycStatusCardProps {
 }
 
 export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycStatusCardProps) {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('kyc');
   const frontImage = useAuthenticatedKycImage(status.hasFrontImage ? '/landlord/kyc/images/front' : null);
   const backImage = useAuthenticatedKycImage(status.hasBackImage ? '/landlord/kyc/images/back' : null);
@@ -61,7 +62,7 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
         <div>
           <h2 className="text-base font-bold text-foreground">{status.fullNameOnId || 'Chủ trọ'}</h2>
           <p className="text-xs text-foreground-muted mt-0.5">
-            CCCD: <span className="font-mono font-medium text-foreground">{status.idNumberMasked || 'Chưa cung cấp'}</span>
+            {tAuto('k0218')}{' '}<span className="font-mono font-medium text-foreground">{status.idNumberMasked || 'Chưa cung cấp'}</span>
           </p>
         </div>
         {renderBadge()}
@@ -73,7 +74,7 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
               <span className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">1</span>
-              Giấy tờ tùy thân (CCCD)
+              {tAuto('k0504')}
             </span>
             <Badge variant={status.status === 'APPROVED' ? 'success' : status.status === 'REJECTED' ? 'danger' : status.status === 'PENDING' ? 'warning' : 'neutral'} size="sm">
               {status.status}
@@ -88,7 +89,7 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
               <span className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">2</span>
-              Xác thực khuôn mặt
+              {tAuto('k0482')}
             </span>
             <Badge variant={faceStatus?.status === 'PASSED' ? 'success' : faceStatus?.status === 'FAILED' ? 'danger' : faceStatus?.status === 'PENDING' ? 'warning' : 'neutral'} size="sm">
               {faceStatus?.status || 'NONE'}

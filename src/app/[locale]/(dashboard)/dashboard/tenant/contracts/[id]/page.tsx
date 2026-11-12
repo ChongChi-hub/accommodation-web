@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { use, useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -15,6 +16,7 @@ export default function TenantContractDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const tAuto = useTranslations('autoI18n');
   const { id } = use(params);
   const [isSignModalOpen, setIsSignModalOpen] = useState(false);
   const [otp, setOtp] = useState('');
@@ -45,13 +47,13 @@ export default function TenantContractDetailPage({
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-              Hợp đồng thuê phòng số HĐ-2026-0042
+              {tAuto('k0267')}
             </h1>
             <Badge variant="success" size="md">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Đã ký số
+              <CheckCircle2 className="w-3.5 h-3.5" />{' '}{tAuto('k0268')}
             </Badge>
           </div>
-          <p className="text-xs text-stone-500 mt-0.5">Giá trị pháp lý theo Bộ luật Dân sự 2015</p>
+          <p className="text-xs text-stone-500 mt-0.5">{tAuto('k0269')}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -61,7 +63,7 @@ export default function TenantContractDetailPage({
             leftIcon={<Download className="w-3.5 h-3.5" />}
             onClick={() => toast.info('Đang tải file PDF hợp đồng có chữ ký số...')}
           >
-            Tải PDF
+            {tAuto('k0270')}
           </Button>
           {!isSigned && (
             <Button
@@ -70,7 +72,7 @@ export default function TenantContractDetailPage({
               leftIcon={<PenTool className="w-3.5 h-3.5" />}
               onClick={() => setIsSignModalOpen(true)}
             >
-              Ký điện tử
+              {tAuto('k0271')}
             </Button>
           )}
         </div>
@@ -79,58 +81,58 @@ export default function TenantContractDetailPage({
       <Card className="p-8 space-y-6 text-xs text-stone-700 dark:text-stone-300 leading-relaxed font-serif bg-stone-50/30">
         <div className="text-center space-y-1 pb-4 border-b border-stone-200 dark:border-stone-800">
           <p className="font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100">
-            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+            {tAuto('k0272')}
           </p>
-          <p className="italic">Độc lập - Tự do - Hạnh phúc</p>
+          <p className="italic">{tAuto('k0273')}</p>
           <h2 className="text-base font-bold uppercase tracking-wide text-stone-900 dark:text-stone-100 pt-3">
-            HỢP ĐỒNG THUÊ PHÒNG TRỌ
+            {tAuto('k0274')}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-4 border-b border-stone-200 dark:border-stone-800 font-sans">
           <div className="space-y-1">
-            <p className="font-bold text-stone-900 dark:text-stone-100">BÊN CHO THUÊ (BÊN A):</p>
-            <p>Họ tên: Trần Minh Tuấn</p>
-            <p>CCCD: 001085004321</p>
-            <p>SĐT: 0912 345 678</p>
+            <p className="font-bold text-stone-900 dark:text-stone-100">{tAuto('k0275')}</p>
+            <p>{tAuto('k0276')}</p>
+            <p>{tAuto('k0277')}</p>
+            <p>{tAuto('k0278')}</p>
           </div>
           <div className="space-y-1">
-            <p className="font-bold text-stone-900 dark:text-stone-100">BÊN THUÊ (BÊN B):</p>
-            <p>Họ tên: Nguyễn Văn Thuê</p>
-            <p>CCCD: 001202012345</p>
-            <p>SĐT: 0987 654 321</p>
+            <p className="font-bold text-stone-900 dark:text-stone-100">{tAuto('k0279')}</p>
+            <p>{tAuto('k0280')}</p>
+            <p>{tAuto('k0281')}</p>
+            <p>{tAuto('k0282')}</p>
           </div>
         </div>
 
         <div className="space-y-3 font-sans text-xs">
           <p>
-            <strong>Điều 1. Đối tượng hợp đồng:</strong> Phòng 302, diện tích 32m², địa chỉ Số 15 ngõ 92 Trần Thái Tông, Dịch Vọng Hậu, Cầu Giấy, Hà Nội.
+            <strong>{tAuto('k0283')}</strong>{' '}{tAuto('k0284')}
           </p>
           <p>
-            <strong>Điều 2. Giá thuê & Thanh toán:</strong> Giá thuê 4.800.000 đ/tháng. Tiền cọc: 4.800.000 đ. Tiền thuê thanh toán định kỳ từ ngày 1 đến ngày 5 hàng tháng.
+            <strong>{tAuto('k0285')}</strong>{' '}{tAuto('k0286')}
           </p>
           <p>
-            <strong>Điều 3. Chi phí dịch vụ:</strong> Điện 3.800 đ/kWh theo chỉ số công tơ; Nước sinh hoạt 30.000 đ/khối; Internet 100.000 đ/phòng; Phí vệ sinh 50.000 đ/người.
+            <strong>{tAuto('k0287')}</strong>{' '}{tAuto('k0288')}
           </p>
           <p>
-            <strong>Điều 4. Thời hạn hợp đồng:</strong> 12 tháng, kể từ ngày 01/11/2026 đến hết ngày 31/10/2027.
+            <strong>{tAuto('k0289')}</strong>{' '}{tAuto('k0290')}
           </p>
         </div>
 
         <div className="pt-6 border-t border-stone-200 dark:border-stone-800 flex justify-around text-center font-sans">
           <div>
-            <p className="font-bold text-stone-900 dark:text-stone-100">Đại diện Bên A</p>
+            <p className="font-bold text-stone-900 dark:text-stone-100">{tAuto('k0291')}</p>
             <p className="text-emerald-600 font-semibold text-[11px] mt-2 flex items-center justify-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> Đã ký số điện tử
+              <ShieldCheck className="w-3.5 h-3.5" />{' '}{tAuto('k0292')}
             </p>
-            <p className="text-[10px] text-stone-400">Trần Minh Tuấn (30/10/2026)</p>
+            <p className="text-[10px] text-stone-400">{tAuto('k0293')}</p>
           </div>
           <div>
-            <p className="font-bold text-stone-900 dark:text-stone-100">Đại diện Bên B</p>
+            <p className="font-bold text-stone-900 dark:text-stone-100">{tAuto('k0294')}</p>
             <p className="text-emerald-600 font-semibold text-[11px] mt-2 flex items-center justify-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> Đã ký số điện tử
+              <ShieldCheck className="w-3.5 h-3.5" />{' '}{tAuto('k0292')}
             </p>
-            <p className="text-[10px] text-stone-400">Nguyễn Văn Thuê (30/10/2026)</p>
+            <p className="text-[10px] text-stone-400">{tAuto('k0295')}</p>
           </div>
         </div>
       </Card>
@@ -152,10 +154,10 @@ export default function TenantContractDetailPage({
           />
           <div className="flex justify-end gap-2">
             <Button variant="outline" size="sm" type="button" onClick={() => setIsSignModalOpen(false)}>
-              Hủy
+              {tAuto('k0126')}
             </Button>
             <Button variant="primary" size="sm" type="submit" isLoading={isSigning}>
-              Ký số ngay
+              {tAuto('k0296')}
             </Button>
           </div>
         </form>

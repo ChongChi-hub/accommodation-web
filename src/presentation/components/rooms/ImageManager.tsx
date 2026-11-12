@@ -24,6 +24,7 @@ interface Props {
 export function ImageManager({
   initialImages = [], onChange, onUploadAsync, onSetCoverAsync, onDeleteAsync, onReorderAsync, disabled = false,
 }: Props) {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('landlord.images');
   const [images, setImages] = useState<ManagedImage[]>(initialImages);
   const [isDragging, setIsDragging] = useState(false);
@@ -220,7 +221,7 @@ export function ImageManager({
       <div className="flex items-center justify-between text-xs text-stone-500 px-1">
         <span>{t('minImagesNotice')}</span>
         <span>
-          {images.length}/{MAX_IMAGES} ảnh
+          {images.length}/{MAX_IMAGES}{' '}{tAuto('k0553')}
         </span>
       </div>
 

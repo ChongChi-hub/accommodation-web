@@ -16,6 +16,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Users, Lock, Unlock, Eye, Search, Mail, Phone, Calendar, ShieldCheck, Clock } from 'lucide-react';
 
 function AdminUsersContent() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('admin.users');
   const tCommon = useTranslations('common');
   const {
@@ -218,22 +219,22 @@ function AdminUsersContent() {
               </div>
               <div className="flex items-center gap-2 text-foreground-muted">
                 <Calendar className="w-4 h-4 shrink-0" />
-                <span>Ngày tham gia: {selectedUser.joinedAt}</span>
+                <span>{tAuto('k0101')}{' '}{selectedUser.joinedAt}</span>
               </div>
               <div className="flex items-center gap-2 text-foreground-muted">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Trạng thái KYC: Đã xác thực CCCD</span>
+                <span>{tAuto('k0102')}</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wider text-foreground-muted flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" />
-                <span>Lịch sử hoạt động gần nhất</span>
+                <span>{tAuto('k0103')}</span>
               </h4>
               <div className="p-3 rounded-xl border border-border bg-surface text-xs space-y-2">
-                <p className="text-foreground">Đăng nhập từ IP 118.69.182.42 (TP. Hồ Chí Minh)</p>
-                <p className="text-[11px] text-foreground-muted">Hôm nay lúc 09:15 SA</p>
+                <p className="text-foreground">{tAuto('k0104')}</p>
+                <p className="text-[11px] text-foreground-muted">{tAuto('k0105')}</p>
               </div>
             </div>
 

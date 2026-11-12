@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useMemo } from 'react';
 import { Calculator, Zap, Droplets, Users, CheckCircle2, Info } from 'lucide-react';
@@ -11,6 +12,7 @@ interface RoomFeeEstimatorProps {
 }
 
 export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
+  const tAuto = useTranslations('autoI18n');
   const [electricityKwh, setElectricityKwh] = useState<number>(100);
   const [waterM3, setWaterM3] = useState<number>(4);
   const [occupants, setOccupants] = useState<number>(1);
@@ -45,10 +47,10 @@ export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
       <div className="space-y-1">
         <h2 className="text-base font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
           <Calculator className="w-4 h-4 text-teal-700 dark:text-teal-400" />
-          Biểu phí dịch vụ & Ước tính chi phí mỗi tháng
+          {tAuto('k0587')}
         </h2>
         <p className="text-xs text-stone-500">
-          Minh bạch từng đơn giá, không có chi phí ẩn. Sử dụng công cụ bên dưới để dự toán ngân sách.
+          {tAuto('k0588')}
         </p>
       </div>
 
@@ -57,9 +59,9 @@ export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
         <table className="w-full text-left text-xs border-collapse">
           <thead>
             <tr className="border-b border-stone-200 dark:border-stone-800 text-stone-500 font-semibold">
-              <th className="py-2.5 px-3">Hạng mục dịch vụ</th>
-              <th className="py-2.5 px-3">Hình thức tính</th>
-              <th className="py-2.5 px-3 text-right">Đơn giá niêm yết</th>
+              <th className="py-2.5 px-3">{tAuto('k0589')}</th>
+              <th className="py-2.5 px-3">{tAuto('k0590')}</th>
+              <th className="py-2.5 px-3 text-right">{tAuto('k0591')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100 dark:divide-stone-800/60">
@@ -76,10 +78,10 @@ export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
                 </td>
                 <td className="py-2.5 px-3 text-right font-bold text-stone-900 dark:text-stone-100">
                   {fee.billingMode === 'INCLUDED' ? (
-                    <span className="text-emerald-600 dark:text-emerald-400">0 đ (Miễn phí)</span>
+                    <span className="text-emerald-600 dark:text-emerald-400">{tAuto('k0592')}</span>
                   ) : (
                     <span>
-                      {formatVnd(fee.price)} đ / {fee.unit}
+                      {formatVnd(fee.price)}{' '}{tAuto('k0593')}{' '}{fee.unit}
                     </span>
                   )}
                 </td>
@@ -92,14 +94,14 @@ export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
       {/* Interactive Estimator Controls */}
       <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 space-y-4 border border-stone-200/60 dark:border-stone-800">
         <h3 className="text-xs font-bold text-stone-800 dark:text-stone-200 uppercase tracking-wider">
-          Công cụ ước tính theo thói quen sử dụng
+          {tAuto('k0594')}
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
             <label className="text-xs text-stone-600 dark:text-stone-400 font-medium flex items-center justify-between">
               <span className="flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-amber-500" /> Điện (kWh/tháng)
+                <Zap className="w-3.5 h-3.5 text-amber-500" />{' '}{tAuto('k0595')}
               </span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{electricityKwh}</span>
             </label>
@@ -117,7 +119,7 @@ export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
           <div className="space-y-1.5">
             <label className="text-xs text-stone-600 dark:text-stone-400 font-medium flex items-center justify-between">
               <span className="flex items-center gap-1">
-                <Droplets className="w-3.5 h-3.5 text-blue-500" /> Nước (m³/tháng)
+                <Droplets className="w-3.5 h-3.5 text-blue-500" />{' '}{tAuto('k0596')}
               </span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{waterM3}</span>
             </label>
@@ -135,7 +137,7 @@ export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
           <div className="space-y-1.5">
             <label className="text-xs text-stone-600 dark:text-stone-400 font-medium flex items-center justify-between">
               <span className="flex items-center gap-1">
-                <Users className="w-3.5 h-3.5 text-teal-600" /> Số người ở
+                <Users className="w-3.5 h-3.5 text-teal-600" />{' '}{tAuto('k0597')}
               </span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{occupants}</span>
             </label>
@@ -154,14 +156,14 @@ export function RoomFeeEstimator({ rentPrice, fees }: RoomFeeEstimatorProps) {
         {/* Calculation Result */}
         <div className="pt-3 border-t border-stone-200 dark:border-stone-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="text-xs text-stone-500 space-y-0.5">
-            <span>Tiền phòng: {formatVnd(estimate.rentPrice)} đ</span>
+            <span>{tAuto('k0337')}{' '}{formatVnd(estimate.rentPrice)}{' '}{tAuto('k0257')}</span>
             <span className="mx-2">•</span>
-            <span>Tổng dịch vụ: ~{formatVnd(estimate.utilityTotal)} đ</span>
+            <span>{tAuto('k0598')}{formatVnd(estimate.utilityTotal)}{' '}{tAuto('k0257')}</span>
           </div>
           <div className="text-right">
-            <span className="text-xs text-stone-500 block">Dự toán tổng chi phí / tháng:</span>
+            <span className="text-xs text-stone-500 block">{tAuto('k0599')}</span>
             <span className="text-xl font-extrabold text-teal-700 dark:text-teal-400">
-              ~{formatVnd(estimate.grandTotal)} đ
+              ~{formatVnd(estimate.grandTotal)}{' '}{tAuto('k0257')}
             </span>
           </div>
         </div>

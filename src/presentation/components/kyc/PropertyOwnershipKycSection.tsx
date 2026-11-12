@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -21,6 +22,7 @@ interface OwnershipDoc {
 }
 
 export function PropertyOwnershipKycSection() {
+  const tAuto = useTranslations('autoI18n');
   const [docs, setDocs] = useState<OwnershipDoc[]>([
     {
       id: 'DOC-01',
@@ -77,19 +79,19 @@ export function PropertyOwnershipKycSection() {
           <ShieldCheck className="w-5 h-5 text-teal-600 mt-0.5 flex-shrink-0" />
           <div className="space-y-1 text-xs">
             <p className="font-bold text-stone-900 dark:text-stone-100">
-              Quy chuẩn KYC-03: Xác minh quyền cho thuê và huy hiệu Tin đã xác thực
+              {tAuto('k0505')}
             </p>
             <p className="text-stone-600 dark:text-stone-300">
-              Chặn rủi ro lừa đảo cho thuê nhà không chính chủ. Tin đăng sau khi được duyệt giấy tờ sẽ nhận được huy hiệu
-              <strong className="text-emerald-700 dark:text-emerald-400"> "Tin đã xác thực" </strong>
-              và được ưu tiên hiển thị ở vị trí hàng đầu trên trang tìm kiếm. Giấy tờ được lưu trữ mã hóa an toàn và số liệu luôn được che bảo mật.
+              {tAuto('k0506')}
+              <strong className="text-emerald-700 dark:text-emerald-400">{' '}{tAuto('k0507')}{' '}</strong>
+              {tAuto('k0508')}
             </p>
           </div>
         </div>
       </Card>
 
       <Card className="p-5 space-y-4">
-        <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">Gửi giấy tờ xác minh cho phòng trọ</h3>
+        <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">{tAuto('k0509')}</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Select
@@ -125,18 +127,18 @@ export function PropertyOwnershipKycSection() {
             />
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300">
-                Tập tin chứng minh (Ảnh hoặc PDF)
+                {tAuto('k0510')}
               </label>
               <div className="border border-dashed border-stone-300 dark:border-stone-700 rounded-xl p-3 text-center cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-800/40">
                 <Upload className="w-4 h-4 mx-auto text-stone-400" />
-                <span className="text-[11px] text-stone-500 mt-1 block">Nhấp để tải ảnh chụp hoặc file scan</span>
+                <span className="text-[11px] text-stone-500 mt-1 block">{tAuto('k0511')}</span>
               </div>
             </div>
           </div>
 
           <div className="flex justify-end">
             <Button variant="primary" size="sm" type="submit" isLoading={isSubmitting} leftIcon={<FileCheck className="w-4 h-4" />}>
-              Gửi kiểm duyệt giấy tờ
+              {tAuto('k0512')}
             </Button>
           </div>
         </form>
@@ -146,11 +148,11 @@ export function PropertyOwnershipKycSection() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Phòng trọ</TableHead>
-              <TableHead>Loại văn bản</TableHead>
-              <TableHead>Số hiệu (đã che)</TableHead>
-              <TableHead>Ngày gửi</TableHead>
-              <TableHead>Trạng thái</TableHead>
+              <TableHead>{tAuto('k0122')}</TableHead>
+              <TableHead>{tAuto('k0513')}</TableHead>
+              <TableHead>{tAuto('k0514')}</TableHead>
+              <TableHead>{tAuto('k0515')}</TableHead>
+              <TableHead>{tAuto('k0048')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
