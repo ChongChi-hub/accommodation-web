@@ -139,8 +139,11 @@ export default async function middleware(req: NextRequest) {
     }
 
     if (cleanPath.startsWith('/dashboard/landlord') && !hasRole('LANDLORD')) {
-      if (!cleanPath.startsWith('/dashboard/landlord/kyc')) {
+      if (hasRole('TENANT') && !cleanPath.startsWith('/dashboard/landlord/kyc')) {
         return NextResponse.redirect(new URL(`${localePrefix}${APP_ROUTES.landlordKyc}`, req.url));
+      }
+      if (!hasRole('TENANT')) {
+        return NextResponse.redirect(new URL(`${localePrefix}/403`, req.url));
       }
     }
 
