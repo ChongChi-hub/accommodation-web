@@ -31,7 +31,7 @@ export class HttpBillingRepository {
     status: 'PAID' | 'FAILED';
     timestamp?: number;
   }): Promise<Record<string, unknown>> {
-    return ApiClient.post<Record<string, unknown>>('/billing/payments/webhook', {
+    return ApiClient.post<Record<string, unknown>>('/billing/payments/sandbox/simulate-webhook', {
       ...payload,
       timestamp: payload.timestamp ?? Date.now(),
     });
@@ -145,6 +145,16 @@ export class HttpBillingRepository {
 
   async getLandlordDashboardStats(): Promise<LandlordFinancialStats> {
     return ApiClient.get<LandlordFinancialStats>('/billing/dashboard/landlord');
+  }
+
+  async getLandlordAnalytics(): Promise<import('@/domain/entities/Billing').LandlordAnalyticsResponse> {
+    return ApiClient.get<import('@/domain/entities/Billing').LandlordAnalyticsResponse>(
+      '/billing/dashboard/landlord/analytics'
+    );
+  }
+
+  async downloadInvoiceReceiptPdfBlob(invoiceId: string): Promise<Blob> {
+    return ApiClient.getBlob(`/billing/invoices/${encodeURIComponent(invoiceId)}/receipt/pdf`);
   }
 
   async getTenantDashboardStats(): Promise<TenantFinancialStats> {

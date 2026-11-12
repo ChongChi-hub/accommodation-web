@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { formatVnd, generateIdempotencyKey } from '@/shared/utils/format-vnd';
+import { buildAppointmentIcs } from '@/shared/utils/appointment-ics';
 import { HttpRentalRequestRepository } from '../http-rental-request.repository';
 import { HttpContractRepository } from '../http-contract.repository';
 import { HttpBillingRepository } from '../http-billing.repository';
@@ -46,6 +47,21 @@ describe('Sprint 3 Frontend Utilities & Repositories', () => {
       otpCode: '123456',
       signatureText: 'Nguyen Van A',
     });
+
+    await repo.signAmendmentTenant('amd-1', '654321', 'Nguyen Van A');
+    expect(postSpy).toHaveBeenCalledWith('/booking/contracts/amendments/amd-1/sign-tenant', {
+      otpCode: '654321',
+      signatureText: 'Nguyen Van A',
+    });
+
+    const ics = buildAppointmentIcs({
+      id: 'appt-1',
+      title: 'CozyNest: Phong 101',
+      location: 'Q1, HCMC',
+      startIso: '2026-12-01T09:00:00Z',
+    });
+    expect(ics).toContain('BEGIN:VCALENDAR');
+    expect(ics).toContain('SUMMARY:CozyNest: Phong 101');
   });
 
   it('routes billing payment intent, refund, and stats to exact billing endpoints', async () => {
@@ -62,6 +78,14 @@ describe('Sprint 3 Frontend Utilities & Repositories', () => {
       amount: 2000000,
     });
     expect(getSpy).toHaveBeenCalledWith('/billing/dashboard/tenant');
+
+    await repo.simulateSandboxWebhook({ paymentCode: 'PAY-1', amount: 2000000, status: 'PAID', timestamp: 1700000000 });
+    expect(postSpy).toHaveBeenCalledWith('/billing/payments/sandbox/simulate-webhook', {
+      paymentCode: 'PAY-1',
+      amount: 2000000,
+      status: 'PAID',
+      timestamp: 1700000000,
+    });
   });
 });
 

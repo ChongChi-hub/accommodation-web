@@ -157,6 +157,19 @@ export interface AdminFinancialStats {
   totalTransactionsCount: number;
 }
 
+export interface MonthlyRevenuePoint {
+  period: string;
+  invoicedAmount: number;
+  collectedAmount: number;
+  overdueAmount: number;
+}
+
+export interface LandlordAnalyticsResponse {
+  summary: LandlordFinancialStats;
+  occupancyRatePercent: number;
+  revenueSeries: MonthlyRevenuePoint[];
+}
+
 export interface PropertyOwnershipDoc {
   id: string;
   roomId: number;

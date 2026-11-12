@@ -1,98 +1,128 @@
 'use client';
-import { useTranslations } from 'next-intl';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { ChartCard } from '@/presentation/components/ui/ChartCard';
-import { BarChart3, TrendingUp, DollarSign, Users } from 'lucide-react';
+import { Skeleton } from '@/presentation/components/ui/Skeleton';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
+import { container } from '@/infrastructure/di/container';
+import { LandlordAnalyticsResponse } from '@/domain/entities/Billing';
+import { toast } from '@/presentation/stores/toast.store';
+import { formatVnd } from '@/shared/utils/format-vnd';
+import { BarChart3 } from 'lucide-react';
 
 export default function LandlordAnalyticsPage() {
-  const tAuto = useTranslations('autoI18n');
+  const t = useTranslations('sprint3.analytics');
+  const tc = useTranslations('sprint3.common');
+  const [analytics, setAnalytics] = useState<LandlordAnalyticsResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadAnalytics = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await container.billing.billingRepository.getLandlordAnalytics();
+      setAnalytics(data);
+    } catch {
+      toast.error(tc('loadError'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [tc]);
+
+  useEffect(() => {
+    loadAnalytics();
+  }, [loadAnalytics]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 max-w-5xl">
+        <Skeleton className="h-12 w-72 rounded-xl" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Skeleton className="h-32 w-full rounded-xl" />
+          <Skeleton className="h-32 w-full rounded-xl" />
+          <Skeleton className="h-32 w-full rounded-xl" />
+        </div>
+        <Skeleton className="h-64 w-full rounded-xl" />
+      </div>
+    );
+  }
+
+  const summary = analytics?.summary;
+  const series = analytics?.revenueSeries ?? [];
+  const collectedPoints = series.length > 0 ? series.map((p) => p.collectedAmount) : [0];
+  const invoicedPoints = series.length > 0 ? series.map((p) => p.invoicedAmount) : [0];
+
   return (
     <div className="space-y-6 max-w-5xl">
       <div>
-        <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          {tAuto('k0106')}
+        <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100 flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-teal-600" />
+          {t('title')}
         </h1>
-        <p className="text-xs text-stone-500 mt-0.5">
-          {tAuto('k0107')}
-        </p>
+        <p className="text-xs text-stone-500 mt-0.5">{t('subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <ChartCard
-          title="Tổng doanh thu năm 2026"
-          value="268.400.000 đ"
-          change="+18.4%"
+          title={t('totalRevenue')}
+          value={formatVnd(summary?.totalRevenue ?? 0)}
+          change={`${summary?.paidInvoicesCount ?? 0}/${summary?.totalInvoicesCount ?? 0}`}
           isPositive={true}
-          description="Tăng so với cùng kỳ năm 2025"
-          dataPoints={[20, 22, 23, 24, 25, 26, 28]}
+          description={t('collectedCol')}
+          dataPoints={collectedPoints}
         />
         <ChartCard
-          title="Tỉ lệ thanh toán đúng hạn"
-          value="96.2%"
-          change="+3.1%"
-          isPositive={true}
-          description="Khách thanh toán trước ngày 15"
-          dataPoints={[90, 92, 94, 91, 95, 96, 96]}
+          title={t('occupancyRate')}
+          value={`${(analytics?.occupancyRatePercent ?? 0).toFixed(1)}%`}
+          change={`${summary?.overdueInvoicesCount ?? 0} ${t('overdueCount')}`}
+          isPositive={(summary?.overdueInvoicesCount ?? 0) === 0}
+          description={t('unpaidInvoices') + ': ' + formatVnd(summary?.unpaidInvoicesTotal ?? 0)}
+          dataPoints={invoicedPoints}
         />
         <ChartCard
-          title="Doanh thu dịch vụ (điện nước)"
-          value="32.800.000 đ"
-          change="+5.0%"
+          title={t('pendingEscrow')}
+          value={formatVnd(summary?.pendingEscrowBalance ?? 0)}
+          change={formatVnd(summary?.availableBalance ?? 0)}
           isPositive={true}
-          description="Thu đúng biểu phí niêm yết"
-          dataPoints={[10, 12, 11, 13, 14, 15, 16]}
+          description={t('unpaidInvoices')}
+          dataPoints={collectedPoints}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6 space-y-4">
-          <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">{tAuto('k0108')}</h2>
-          <div className="space-y-3 text-xs">
-            <div>
-              <div className="flex justify-between py-1">
-                <span className="text-stone-600 dark:text-stone-300">{tAuto('k0109')}</span>
-                <span className="font-bold text-teal-800 dark:text-teal-400">{tAuto('k0110')}</span>
-              </div>
-              <div className="w-full bg-stone-100 dark:bg-stone-800 h-2 rounded-full overflow-hidden">
-                <div className="bg-teal-700 h-full rounded-full" style={{ width: '82%' }} />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between py-1">
-                <span className="text-stone-600 dark:text-stone-300">{tAuto('k0111')}</span>
-                <span className="font-bold text-amber-600">{tAuto('k0112')}</span>
-              </div>
-              <div className="w-full bg-stone-100 dark:bg-stone-800 h-2 rounded-full overflow-hidden">
-                <div className="bg-amber-500 h-full rounded-full" style={{ width: '11%' }} />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between py-1">
-                <span className="text-stone-600 dark:text-stone-300">{tAuto('k0113')}</span>
-                <span className="font-bold text-cyan-600">{tAuto('k0114')}</span>
-              </div>
-              <div className="w-full bg-stone-100 dark:bg-stone-800 h-2 rounded-full overflow-hidden">
-                <div className="bg-cyan-500 h-full rounded-full" style={{ width: '7%' }} />
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-6 space-y-4">
-          <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">{tAuto('k0115')}</h2>
-          <div className="p-4 bg-teal-50 dark:bg-teal-950/40 rounded-2xl space-y-2 text-xs text-teal-900 dark:text-teal-300">
-            <p className="font-bold text-sm">{tAuto('k0116')}</p>
-            <p className="leading-relaxed">
-              {tAuto('k0117')}
-            </p>
-          </div>
-        </Card>
-      </div>
+      <Card className="p-0 overflow-hidden">
+        <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-800 text-sm font-bold">
+          {t('monthlySeries')}
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('periodCol')}</TableHead>
+              <TableHead>{t('invoicedCol')}</TableHead>
+              <TableHead>{t('collectedCol')}</TableHead>
+              <TableHead>{t('overdueCol')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {series.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center text-xs py-6 text-stone-500">
+                  {t('emptySeries')}
+                </TableCell>
+              </TableRow>
+            ) : (
+              series.map((row) => (
+                <TableRow key={row.period}>
+                  <TableCell className="font-mono text-xs font-semibold">{row.period}</TableCell>
+                  <TableCell className="text-xs">{formatVnd(row.invoicedAmount)}</TableCell>
+                  <TableCell className="font-bold text-teal-700">{formatVnd(row.collectedAmount)}</TableCell>
+                  <TableCell className="text-xs text-rose-600">{formatVnd(row.overdueAmount)}</TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </Card>
     </div>
   );
 }
-

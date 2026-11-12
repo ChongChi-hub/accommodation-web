@@ -11,7 +11,7 @@ import { container } from '@/infrastructure/di/container';
 import { Invoice, PaymentIntent } from '@/domain/entities/Billing';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDate, formatVnd } from '@/shared/utils/format-vnd';
-import { AlertTriangle, CheckCircle2, CreditCard } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, CreditCard, Download } from 'lucide-react';
 
 export default function TenantInvoiceDetailPage({
   params,
@@ -92,11 +92,35 @@ export default function TenantInvoiceDetailPage({
           </div>
           <p className="text-xs text-stone-500 mt-0.5">{t('periodMonth')}: {formatIsoDate(invoice.periodMonth)} • {t('dueDate')}: {formatIsoDate(invoice.dueDate)}</p>
         </div>
-        {invoice.status !== 'PAID' && invoice.status !== 'CANCELLED' && (
-          <Button variant="secondary" size="md" isLoading={busy} leftIcon={<CreditCard className="w-4 h-4" />} onClick={handleCreateIntent}>
-            {t('payOnline')}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="md"
+            leftIcon={<Download className="w-4 h-4" />}
+            onClick={async () => {
+              try {
+                const blob = await container.billing.billingRepository.downloadInvoiceReceiptPdfBlob(invoice.id);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `receipt-${invoice.invoiceCode}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+              } catch (err: unknown) {
+                toast.error(err instanceof Error ? err.message : tc('actionError'));
+              }
+            }}
+          >
+            PDF
           </Button>
-        )}
+          {invoice.status !== 'PAID' && invoice.status !== 'CANCELLED' && (
+            <Button variant="secondary" size="md" isLoading={busy} leftIcon={<CreditCard className="w-4 h-4" />} onClick={handleCreateIntent}>
+              {t('payOnline')}
+            </Button>
+          )}
+        </div>
       </div>
 
       <Card className="p-4 border-amber-300 bg-amber-50/70 dark:bg-amber-950/30 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200">
