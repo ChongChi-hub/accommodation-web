@@ -167,11 +167,11 @@ export function PropertyOwnershipKycSection() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
+              <TableHead>{tc('codeCol')}</TableHead>
               <TableHead>{t('docType')}</TableHead>
               <TableHead>{t('rawNumber')}</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>{tc('statusCol')}</TableHead>
+              <TableHead>{tc('dateCol')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

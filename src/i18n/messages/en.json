@@ -1966,7 +1966,16 @@
       "sandboxNotice": "SANDBOX_ONLY ENVIRONMENT [LEGAL-02]: Simulated payment/refund for ledger reconciliation testing; no real-money disbursement until legal review completes.",
       "loadError": "Unable to load data from server",
       "actionSuccess": "Action completed successfully",
-      "actionError": "Action failed"
+      "actionError": "Action failed",
+      "codeCol": "Code",
+      "statusCol": "Status",
+      "dateCol": "Date",
+      "actionCol": "Action",
+      "retryLabel": "Retry",
+      "compensationLabel": "Compensation",
+      "approve": "Approve",
+      "reject": "Reject",
+      "create": "Create"
     },
     "rental": {
       "tenantTitle": "Rental Requests",
@@ -2130,6 +2139,48 @@
       "submitBtn": "Upload & Submit",
       "docsTableTitle": "Submitted Documents for Selected Room",
       "empty": "No ownership documents submitted for this room."
+    },
+    "ledger": {
+      "title": "Double-Entry Ledger & Financial Oversight",
+      "reconTab": "Reconciliation",
+      "makerTab": "Maker-Checker & Refunds",
+      "exportTab": "Export CSV",
+      "gmv": "GMV",
+      "platformFee": "Platform Fee",
+      "escrow": "Escrow",
+      "gatewayCash": "Gateway Cash",
+      "reconcileNow": "Reconcile",
+      "account": "Account",
+      "type": "Type",
+      "stored": "Stored",
+      "calculated": "Calculated",
+      "direction": "Direction",
+      "refundCode": "Refund Code",
+      "contract": "Contract",
+      "fromDate": "From Date",
+      "toDate": "To Date",
+      "generalLedgerCsv": "General Ledger CSV",
+      "trialBalanceCsv": "Trial Balance CSV",
+      "accountStatementCsv": "Account Statement CSV",
+      "usageCol": "Electric / Water Usage",
+      "amountCol": "Amount (VND)",
+      "receiptPdf": "Receipt PDF",
+      "downloadIcs": "Export Calendar (.ics)"
+    },
+    "analytics": {
+      "title": "Financial & Occupancy Analytics",
+      "subtitle": "Live billing ledger, escrow balance, overdue invoices and monthly revenue series.",
+      "totalRevenue": "Collected Revenue",
+      "occupancyRate": "Room Occupancy Rate",
+      "pendingEscrow": "Pending Escrow",
+      "unpaidInvoices": "Unpaid Invoices",
+      "overdueCount": "Overdue Count",
+      "monthlySeries": "Monthly Revenue Series",
+      "periodCol": "Period",
+      "invoicedCol": "Invoiced",
+      "collectedCol": "Collected",
+      "overdueCol": "Overdue",
+      "emptySeries": "No billing analytics recorded yet."
     }
   }
 }

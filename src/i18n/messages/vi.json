@@ -1966,7 +1966,16 @@
       "sandboxNotice": "MÔI TRƯỜNG SANDBOX_ONLY [LEGAL-02]: Thanh toán/hoàn tiền giả lập phục vụ kiểm thử đối soát, không kết nối tiền thật cho đến khi hoàn tất thẩm định pháp lý.",
       "loadError": "Không thể tải dữ liệu từ máy chủ",
       "actionSuccess": "Thực hiện thao tác thành công",
-      "actionError": "Thao tác thất bại"
+      "actionError": "Thao tác thất bại",
+      "codeCol": "Mã",
+      "statusCol": "Trạng thái",
+      "dateCol": "Ngày tạo",
+      "actionCol": "Thao tác",
+      "retryLabel": "Thử lại",
+      "compensationLabel": "Bước bù trừ",
+      "approve": "Chấp thuận",
+      "reject": "Từ chối",
+      "create": "Tạo mới"
     },
     "rental": {
       "tenantTitle": "Yêu cầu thuê phòng",
@@ -2130,6 +2139,48 @@
       "submitBtn": "Tải lên & Gửi duyệt",
       "docsTableTitle": "Hồ sơ giấy tờ của phòng đã chọn",
       "empty": "Chưa có giấy tờ xác minh nào cho phòng này."
+    },
+    "ledger": {
+      "title": "Sổ cái kép & Đối soát tài chính",
+      "reconTab": "Đối soát hệ thống",
+      "makerTab": "Maker-Checker & Hoàn cọc",
+      "exportTab": "Xuất báo cáo CSV",
+      "gmv": "Tổng GMV",
+      "platformFee": "Phí nền tảng",
+      "escrow": "Quỹ Escrow",
+      "gatewayCash": "Tiền qua cổng",
+      "reconcileNow": "Đối soát ngay",
+      "account": "Tài khoản",
+      "type": "Loại tài khoản",
+      "stored": "Số dư lưu trữ",
+      "calculated": "Số dư tính toán",
+      "direction": "Chiều hạch toán",
+      "refundCode": "Mã hoàn cọc",
+      "contract": "Hợp đồng",
+      "fromDate": "Từ ngày",
+      "toDate": "Đến ngày",
+      "generalLedgerCsv": "Sổ cái chung CSV",
+      "trialBalanceCsv": "Bảng cân đối thử CSV",
+      "accountStatementCsv": "Sao kê tài khoản CSV",
+      "usageCol": "Điện (kWh) / Nước (m3)",
+      "amountCol": "Thành tiền (VND)",
+      "receiptPdf": "Tải biên lai PDF",
+      "downloadIcs": "Xuất lịch (.ics)"
+    },
+    "analytics": {
+      "title": "Thống kê doanh thu & công suất phòng",
+      "subtitle": "Dữ liệu trực tiếp từ sổ cái thanh toán, ví Escrow và hóa đơn hàng tháng.",
+      "totalRevenue": "Doanh thu thực thu",
+      "occupancyRate": "Tỷ lệ lấp đầy phòng",
+      "pendingEscrow": "Đang giữ Escrow",
+      "unpaidInvoices": "Dư nợ chưa thu",
+      "overdueCount": "Hóa đơn quá hạn",
+      "monthlySeries": "Biểu đồ doanh thu theo tháng",
+      "periodCol": "Kỳ thanh toán",
+      "invoicedCol": "Đã phát hành",
+      "collectedCol": "Đã thu",
+      "overdueCol": "Quá hạn",
+      "emptySeries": "Chưa có dữ liệu doanh thu trong kỳ."
     }
   }
 }
