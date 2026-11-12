@@ -1,96 +1,99 @@
 'use client';
-import { useTranslations } from 'next-intl';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
-import { CheckCircle2, Download } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/Button';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
+import { container } from '@/infrastructure/di/container';
+import { Invoice } from '@/domain/entities/Billing';
 import { toast } from '@/presentation/stores/toast.store';
+import { formatIsoDate, formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
+import { Download } from 'lucide-react';
 
 export default function TenantPaymentsPage() {
-  const tAuto = useTranslations('autoI18n');
-  const transactions = [
-    {
-      id: 'TX-20261014-089',
-      invoiceCode: 'INV-2026-10',
-      description: 'Thanh toán tiền phòng & dịch vụ tháng 10/2026',
-      amount: '5.210.000 đ',
-      method: 'VietQR / Chuyển khoản',
-      date: '14/10/2026 10:24',
-      status: 'SUCCESS',
-    },
-    {
-      id: 'TX-20260912-045',
-      invoiceCode: 'INV-2026-09',
-      description: 'Thanh toán tiền phòng & dịch vụ tháng 09/2026',
-      amount: '5.180.000 đ',
-      method: 'VietQR / Chuyển khoản',
-      date: '12/09/2026 16:45',
-      status: 'SUCCESS',
-    },
-    {
-      id: 'TX-20260810-012',
-      invoiceCode: 'INV-2026-08',
-      description: 'Thanh toán tiền phòng & dịch vụ tháng 08/2026',
-      amount: '5.250.000 đ',
-      method: 'Thẻ ATM nội địa',
-      date: '10/08/2026 09:15',
-      status: 'SUCCESS',
-    },
-  ];
+  const t = useTranslations('sprint3.invoice');
+  const tc = useTranslations('sprint3.common');
+  const [items, setItems] = useState<Invoice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const invoices = await container.billing.billingRepository.getTenantInvoices();
+      setItems(invoices.filter((inv) => inv.paidAmount > 0 || inv.status === 'PAID' || inv.status === 'PARTIAL'));
+    } catch {
+      toast.error(tc('loadError'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [tc]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleExportCsv = async () => {
+    try {
+      const blob = await container.billing.billingRepository.exportDashboardCsvBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tenant-payments.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : tc('actionError'));
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-5xl">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          {tAuto('k0378')}{transactions.length})
-        </h1>
-        <p className="text-xs text-stone-500 mt-0.5">
-          {tAuto('k0379')}
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
+            {t('paymentsTitle')} ({items.length})
+          </h1>
+          <p className="text-xs text-stone-500 mt-0.5">{t('paymentsSubtitle')}</p>
+        </div>
+        <Button variant="outline" size="sm" leftIcon={<Download className="w-3.5 h-3.5" />} onClick={handleExportCsv}>
+          {t('exportCsv')}
+        </Button>
       </div>
 
       <Card className="p-0 overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{tAuto('k0380')}</TableHead>
-              <TableHead>{tAuto('k0381')}</TableHead>
-              <TableHead>{tAuto('k0382')}</TableHead>
-              <TableHead>{tAuto('k0383')}</TableHead>
-              <TableHead>{tAuto('k0076')}</TableHead>
-              <TableHead>{tAuto('k0384')}</TableHead>
+              <TableHead>Code</TableHead>
+              <TableHead>{t('periodMonth')}</TableHead>
+              <TableHead>{t('paidAmount')}</TableHead>
+              <TableHead>{t('totalAmount')}</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map((tx) => (
-              <TableRow key={tx.id}>
-                <TableCell className="font-mono text-xs font-semibold">{tx.id}</TableCell>
-                <TableCell>
-                  <p className="font-semibold text-stone-900 dark:text-stone-100">{tx.invoiceCode}</p>
-                  <p className="text-[11px] text-stone-400">{tx.description}</p>
-                </TableCell>
-                <TableCell className="text-xs">{tx.method}</TableCell>
-                <TableCell className="text-xs text-stone-500">{tx.date}</TableCell>
-                <TableCell className="font-bold text-teal-800 dark:text-teal-400">{tx.amount}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    leftIcon={<Download className="w-3.5 h-3.5" />}
-                    onClick={() => toast.info(`Đang tải biên lai cho giao dịch ${tx.id}...`)}
-                  >
-                    {tAuto('k0385')}
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {isLoading ? (
+              <TableRow><TableCell colSpan={6} className="text-center text-xs py-6">{tc('loading')}</TableCell></TableRow>
+            ) : items.length === 0 ? (
+              <TableRow><TableCell colSpan={6} className="text-center text-xs py-6 text-stone-500">{t('empty')}</TableCell></TableRow>
+            ) : (
+              items.map((inv) => (
+                <TableRow key={inv.id}>
+                  <TableCell className="font-mono text-xs font-semibold">{inv.invoiceCode}</TableCell>
+                  <TableCell className="text-xs">{formatIsoDate(inv.periodMonth)}</TableCell>
+                  <TableCell className="font-bold text-teal-700">{formatVnd(inv.paidAmount)}</TableCell>
+                  <TableCell className="text-xs">{formatVnd(inv.totalAmount)}</TableCell>
+                  <TableCell><Badge variant={inv.status === 'PAID' ? 'success' : 'warning'} size="sm">{inv.status}</Badge></TableCell>
+                  <TableCell className="text-xs text-stone-500">{formatIsoDateTime(inv.createdAt)}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Card>
     </div>
   );
 }
-

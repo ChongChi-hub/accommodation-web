@@ -13,7 +13,11 @@ import { StaticAdminRepository } from '../static/StaticAdminRepository';
 import { StaticSupportRepository } from '../static/StaticSupportRepository';
 import { StaticMaintenanceRepository } from '../static/StaticMaintenanceRepository';
 import { StaticDisputeRepository } from '../static/StaticDisputeRepository';
-import { StaticTransactionRepository } from '../static/StaticTransactionRepository';
+import { HttpTransactionRepository } from '../repositories/http-transaction.repository';
+import { HttpRentalRequestRepository } from '../repositories/http-rental-request.repository';
+import { HttpContractRepository } from '../repositories/http-contract.repository';
+import { HttpBillingRepository } from '../repositories/http-billing.repository';
+import { HttpOwnershipKycRepository } from '../repositories/http-ownership-kyc.repository';
 import { HttpNotificationRepository } from '../repositories/http-notification.repository';
 import { StaticBadgeRepository } from '../static/StaticBadgeRepository';
 import { LoginUseCase } from '@/application/use-cases/auth/login.use-case';
@@ -37,7 +41,11 @@ const adminRepository = new StaticAdminRepository();
 const supportRepository = new StaticSupportRepository();
 const maintenanceRepository = new StaticMaintenanceRepository();
 const disputeRepository = new StaticDisputeRepository();
-const transactionRepository = new StaticTransactionRepository();
+const transactionRepository = new HttpTransactionRepository();
+const rentalRequestRepository = new HttpRentalRequestRepository();
+const contractRepository = new HttpContractRepository();
+const billingRepository = new HttpBillingRepository();
+const ownershipKycRepository = new HttpOwnershipKycRepository();
 const notificationRepository = new HttpNotificationRepository();
 const badgeRepository = new StaticBadgeRepository(
   notificationRepository,
@@ -95,6 +103,18 @@ export const container = {
   },
   transaction: {
     transactionRepository,
+  },
+  rentalRequest: {
+    rentalRequestRepository,
+  },
+  contract: {
+    contractRepository,
+  },
+  billing: {
+    billingRepository,
+  },
+  ownershipKyc: {
+    ownershipKycRepository,
   },
   notification: {
     notificationRepository,

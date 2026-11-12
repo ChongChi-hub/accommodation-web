@@ -216,6 +216,8 @@ export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
           isOpen={true}
           onClose={() => setModalType(null)}
           roomTitle={room.title}
+          roomId={room.id}
+          landlordId={room.landlord?.landlordId ?? room.landlord?.id}
           type={modalType}
         />
       )}
