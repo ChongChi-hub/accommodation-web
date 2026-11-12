@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { RoomDto, RoomFilterParams, ProvinceDto, WardDto } from '@/application/dto/listing.dto';
+import { RoomDto, RoomFilterParams, ProvinceDto, WardDto, RoomPaginationMeta } from '@/application/dto/listing.dto';
 import { container } from '@/infrastructure/di/container';
 
 function parseUrlParams(
@@ -41,6 +41,14 @@ export function useRooms(initialParams: RoomFilterParams = {}, presetRoomTypeCod
     ...(presetRoomTypeCode ? { roomTypeCode: presetRoomTypeCode } : {}),
   }));
   const [rooms, setRooms] = useState<RoomDto[]>([]);
+  const [pagination, setPagination] = useState<RoomPaginationMeta>({
+    page: 1,
+    limit: 12,
+    total: 0,
+    totalPages: 0,
+    hasNext: false,
+    hasPrev: false,
+  });
   const [provinces, setProvinces] = useState<ProvinceDto[]>([]);
   const [wards, setWards] = useState<WardDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,10 +73,28 @@ export function useRooms(initialParams: RoomFilterParams = {}, presetRoomTypeCod
     setIsLoading(true);
     setError(null);
     try {
-      const data = await container.listing.listingRepository.getRooms(params, controller.signal);
-      if (!controller.signal.aborted) {
-        setRooms(data);
-        setIsLoading(false);
+      const repo = container.listing.listingRepository;
+      if (repo.searchRoomsPaginated) {
+        const res = await repo.searchRoomsPaginated(params, controller.signal);
+        if (!controller.signal.aborted) {
+          setRooms(res.rooms);
+          setPagination(res.pagination);
+          setIsLoading(false);
+        }
+      } else {
+        const data = await repo.getRooms(params, controller.signal);
+        if (!controller.signal.aborted) {
+          setRooms(data);
+          setPagination({
+            page: (params.page ?? 0) + 1,
+            limit: params.size ?? 12,
+            total: data.length,
+            totalPages: data.length > 0 ? 1 : 0,
+            hasNext: false,
+            hasPrev: false,
+          });
+          setIsLoading(false);
+        }
       }
     } catch (err) {
       if (controller.signal.aborted) return;
@@ -114,22 +140,36 @@ export function useRooms(initialParams: RoomFilterParams = {}, presetRoomTypeCod
     };
   }, [fetchRooms]);
 
-  const updateParams = (newParams: Partial<RoomFilterParams>) => {
-    setParams((prev) => ({ ...prev, ...newParams }));
-  };
+  const updateParams = useCallback((newParams: Partial<RoomFilterParams>) => {
+    setParams((prev) => ({
+      ...prev,
+      ...newParams,
+      page: newParams.page !== undefined ? newParams.page : 0,
+    }));
+  }, []);
 
-  const resetParams = () => {
-    setParams(presetRoomTypeCode ? { roomTypeCode: presetRoomTypeCode } : {});
-  };
+  const setPage = useCallback((oneBasedPage: number) => {
+    const zeroBased = Math.max(0, oneBasedPage - 1);
+    setParams((prev) => ({ ...prev, page: zeroBased }));
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, []);
+
+  const resetParams = useCallback(() => {
+    setParams(presetRoomTypeCode ? { roomTypeCode: presetRoomTypeCode, page: 0 } : { page: 0 });
+  }, [presetRoomTypeCode]);
 
   return {
     rooms,
+    pagination,
     provinces,
     wards,
     params,
     isLoading,
     error,
     updateParams,
+    setPage,
     resetParams,
     retry: fetchRooms,
   };

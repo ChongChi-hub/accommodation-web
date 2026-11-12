@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { MapPin, Maximize2, Users, Star, BedDouble, Layers } from 'lucide-react';
@@ -31,6 +32,7 @@ function formatRelativeTime(dateStr?: string): string {
 }
 
 export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
+  const tAuto = useTranslations('autoI18n');
   const roomLink = room.slug ? `/rooms/${room.slug}` : `/rooms/${room.id}`;
   const images = room.imageUrls && room.imageUrls.length > 0
     ? room.imageUrls
@@ -67,7 +69,7 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
           <div className="relative z-1 space-y-1.5 pointer-events-none">
             <div className="flex items-center justify-between gap-2">
               <span className="text-lg font-black text-teal-700 dark:text-teal-400">
-                {formatPrice(room.price)} <span className="text-xs font-normal text-stone-500">đ{priceUnitLabel}</span>
+                {formatPrice(room.price)} <span className="text-xs font-normal text-stone-500">{tAuto('k0257')}{priceUnitLabel}</span>
               </span>
               {room.ratingAvg !== undefined && room.ratingAvg > 0 && (
                 <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-500">
@@ -86,13 +88,13 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
           </div>
 
           <div className="relative z-1 pointer-events-none flex flex-wrap items-center gap-3 text-xs text-stone-600 dark:text-stone-400 pt-2 border-t border-stone-100 dark:border-stone-800">
-            <span className="flex items-center gap-1 font-medium"><Maximize2 className="w-3.5 h-3.5 text-stone-400" />{room.area} m²</span>
-            <span className="flex items-center gap-1 font-medium"><Users className="w-3.5 h-3.5 text-stone-400" />{room.maxOccupants} người</span>
+            <span className="flex items-center gap-1 font-medium"><Maximize2 className="w-3.5 h-3.5 text-stone-400" />{room.area}{' '}{tAuto('k0517')}</span>
+            <span className="flex items-center gap-1 font-medium"><Users className="w-3.5 h-3.5 text-stone-400" />{room.maxOccupants}{' '}{tAuto('k0565')}</span>
             {room.bedrooms !== undefined && room.bedrooms > 0 && (
               <span className="flex items-center gap-1 font-medium"><BedDouble className="w-3.5 h-3.5 text-stone-400" />{room.bedrooms} PN</span>
             )}
             {room.floor !== undefined && room.floor > 0 && (
-              <span className="flex items-center gap-1 font-medium"><Layers className="w-3.5 h-3.5 text-stone-400" />Tầng {room.floor}</span>
+              <span className="flex items-center gap-1 font-medium"><Layers className="w-3.5 h-3.5 text-stone-400" />{tAuto('k0566')}{' '}{room.floor}</span>
             )}
           </div>
 
@@ -117,7 +119,7 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
       <RoomCardCarousel
         images={images}
         title={room.title}
-        aspectClassName="absolute inset-0 h-full w-full z-0 pointer-events-none"
+        aspectClassName="absolute inset-0 h-full w-full pointer-events-none"
         dotsClassName="bottom-auto top-3.5 left-1/2 -translate-x-1/2 pointer-events-none z-20"
       />
 
@@ -154,7 +156,7 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
         <div className="flex items-center justify-between gap-2">
           <div className="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-sm">
             {formatPrice(room.price)}{' '}
-            <span className="text-xs font-normal text-stone-300">đ{priceUnitLabel}</span>
+            <span className="text-xs font-normal text-stone-300">{tAuto('k0257')}{priceUnitLabel}</span>
           </div>
 
           {room.ratingAvg !== undefined && room.ratingAvg > 0 && (
@@ -180,11 +182,11 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
         <div className="flex flex-wrap items-center gap-1.5 pt-1">
           <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-md px-2 py-0.5 rounded-md text-xs font-medium text-stone-100 border border-white/10">
             <Maximize2 className="w-3 h-3 text-stone-300" />
-            {room.area} m²
+            {room.area}{' '}{tAuto('k0517')}
           </span>
           <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-md px-2 py-0.5 rounded-md text-xs font-medium text-stone-100 border border-white/10">
             <Users className="w-3 h-3 text-stone-300" />
-            {room.maxOccupants} người
+            {room.maxOccupants}{' '}{tAuto('k0565')}
           </span>
           {room.bedrooms !== undefined && room.bedrooms > 0 && (
             <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-md px-2 py-0.5 rounded-md text-xs font-medium text-stone-100 border border-white/10">
@@ -195,7 +197,7 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
           {room.floor !== undefined && room.floor > 0 && (
             <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-md px-2 py-0.5 rounded-md text-xs font-medium text-stone-100 border border-white/10">
               <Layers className="w-3 h-3 text-stone-300" />
-              Tầng {room.floor}
+              {tAuto('k0566')}{' '}{room.floor}
             </span>
           )}
         </div>

@@ -1,45 +1,45 @@
 import { BadgeRepository, DashboardBadges } from '@/domain/repositories/BadgeRepository';
-import { AdminRepository } from '@/domain/repositories/AdminRepository';
-import { SupportRepository } from '@/domain/repositories/SupportRepository';
-import { MaintenanceRepository } from '@/domain/repositories/MaintenanceRepository';
-import { DisputeRepository } from '@/domain/repositories/DisputeRepository';
-import { Dispute } from '@/domain/entities/Dispute';
-import { MaintenanceRequest } from '@/domain/entities/MaintenanceRequest';
+import { KycRepository } from '@/domain/repositories/KycRepository';
+import { NotificationRepository } from '@/domain/repositories/NotificationRepository';
 
 export class StaticBadgeRepository implements BadgeRepository {
   constructor(
-    private adminRepo: AdminRepository,
-    private supportRepo: SupportRepository,
-    private maintenanceRepo: MaintenanceRepository,
-    private disputeRepo: DisputeRepository
+    private notificationRepo: NotificationRepository,
+    private kycRepo?: KycRepository
   ) {}
 
   async getBadges(role?: string, userId?: string): Promise<DashboardBadges> {
-    const [rooms, kycList, reports, tickets, maintenanceList, disputes] = await Promise.all([
-      this.adminRepo.getPendingRooms(),
-      this.adminRepo.getPendingKyc(),
-      this.adminRepo.getReports(),
-      this.supportRepo.getTickets({ status: 'OPEN' }),
-      this.maintenanceRepo.getRequests(),
-      this.disputeRepo.getDisputes(),
-    ]);
+    let unreadMessages = 0;
+    try {
+      unreadMessages = this.notificationRepo.getUnreadMessageCount
+        ? await this.notificationRepo.getUnreadMessageCount(userId)
+        : 0;
+    } catch {
+      unreadMessages = 0;
+    }
 
-    const pendingReports = reports.filter((r) => r.status === 'PENDING').length;
-    const pendingDisputes = disputes.filter((d: Dispute) => d.status === 'PENDING' || d.status === 'MEDIATING').length;
-    const pendingMaintenance = maintenanceList.filter((m: MaintenanceRequest) => m.status === 'PENDING' || m.status === 'IN_PROGRESS').length;
+    let adminPendingKyc = 0;
+    if ((role === 'admin' || role === 'moderator') && this.kycRepo) {
+      try {
+        const res = await this.kycRepo.getModerationKycList({ status: 'PENDING', page: 0, size: 1 });
+        adminPendingKyc = res.total || 0;
+      } catch {
+        adminPendingKyc = 0;
+      }
+    }
 
     return {
-      adminPendingRooms: rooms.length,
-      adminPendingKyc: kycList.length,
-      adminPendingReports: pendingReports,
-      adminPendingDisputes: pendingDisputes,
-      adminPendingSupport: tickets.length,
-      landlordRentalRequests: 2,
-      landlordUnpaidInvoices: 3,
-      landlordMaintenanceRequests: pendingMaintenance,
-      landlordUnreadMessages: 4,
-      tenantUnpaidInvoices: 1,
-      tenantUnreadMessages: 2,
+      adminPendingRooms: 0,
+      adminPendingKyc,
+      adminPendingReports: 0,
+      adminPendingDisputes: 0,
+      adminPendingSupport: 0,
+      landlordRentalRequests: 0,
+      landlordUnpaidInvoices: 0,
+      landlordMaintenanceRequests: 0,
+      landlordUnreadMessages: role === 'landlord' ? unreadMessages : 0,
+      tenantUnpaidInvoices: 0,
+      tenantUnreadMessages: role === 'tenant' ? unreadMessages : 0,
     };
   }
 }

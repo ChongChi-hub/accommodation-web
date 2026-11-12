@@ -13,12 +13,16 @@ import {
   RoomTypeDto,
   RoomFacetsDto,
   CmsArticleDto,
+  HostPublicProfileDto,
+  PaginatedRoomsResult,
 } from '../dto/listing.dto';
 
 export interface IListingRepository {
   getRooms(params: RoomFilterParams, signal?: AbortSignal): Promise<RoomDto[]>;
+  searchRoomsPaginated?(params: RoomFilterParams, signal?: AbortSignal): Promise<PaginatedRoomsResult>;
   getRoomById(id: number): Promise<RoomDto>;
   getRoomDetail(slugOrId: string): Promise<RoomDetailDto>;
+  getHostProfile?(id: string | number): Promise<HostPublicProfileDto>;
   getRecommendations(id: number): Promise<RoomDto[]>;
   getSimilarRooms(id: number): Promise<RoomDto[]>;
   getProvinces(): Promise<ProvinceDto[]>;

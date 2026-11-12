@@ -40,10 +40,8 @@ const disputeRepository = new StaticDisputeRepository();
 const transactionRepository = new StaticTransactionRepository();
 const notificationRepository = new HttpNotificationRepository();
 const badgeRepository = new StaticBadgeRepository(
-  adminRepository,
-  supportRepository,
-  maintenanceRepository,
-  disputeRepository
+  notificationRepository,
+  kycRepository
 );
 
 // Use Cases & Repositories Container
