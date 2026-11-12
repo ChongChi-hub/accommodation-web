@@ -56,34 +56,34 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   initSession: async () => {
     if (typeof window === 'undefined') return;
-    if (get().hasHydrated && get().isAuthenticated && ApiClient.getToken()) return;
+    if (get().hasHydrated && get().isAuthenticated && get().user) return;
     if (inFlightInit) return inFlightInit;
     inFlightInit = (async () => {
       try {
-        const refreshToken = localStorage.getItem('cozynest_refresh_token');
-        if (!refreshToken) {
-          const bffRes = await fetch('/api/auth/refresh', {
-            method: 'POST',
-            credentials: 'include',
-          }).catch(() => null);
-          if (bffRes && bffRes.ok) {
-            const json = await bffRes.json().catch(() => null);
-            const data = json?.data;
-            if (data?.token && data?.user) {
-              ApiClient.setToken(data.token);
-              const user = await enrichFromMe(data.user);
-              set({ user, activeRole: getEffectiveRole(user, readPreferredRoleCookie()), accessToken: data.token, isAuthenticated: true, hasHydrated: true });
-              return;
-            }
+        const bffRes = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}',
+        }).catch(() => null);
+        if (bffRes && bffRes.ok) {
+          const json = await bffRes.json().catch(() => null);
+          const data = json?.data;
+          if (data?.user) {
+            ApiClient.setToken(null);
+            const user = await enrichFromMe(data.user);
+            set({
+              user,
+              activeRole: getEffectiveRole(user, readPreferredRoleCookie()),
+              accessToken: null,
+              isAuthenticated: true,
+              hasHydrated: true,
+            });
+            return;
           }
-          localStorage.removeItem('cozynest_user');
-          set(CLEARED_AUTH_STATE);
-          return;
         }
-        const session = await container.auth.authRepository.refreshToken(refreshToken);
-        ApiClient.setToken(session.tokens.token);
-        const user = await enrichFromMe(session.user);
-        set({ user, activeRole: getEffectiveRole(user, readPreferredRoleCookie()), accessToken: session.tokens.token, isAuthenticated: true, hasHydrated: true });
+        localStorage.removeItem('cozynest_user');
+        set(CLEARED_AUTH_STATE);
       } catch (err) {
         const restored = tryOfflineSessionRestore(err);
         if (restored) {
@@ -91,7 +91,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           return;
         }
         ApiClient.setToken(null);
-        localStorage.removeItem('cozynest_refresh_token');
         localStorage.removeItem('cozynest_user');
         set(CLEARED_AUTH_STATE);
       } finally {

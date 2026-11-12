@@ -18,6 +18,7 @@ import { History, Pencil, Save, XCircle } from 'lucide-react';
 
 export default function LandlordUtilitiesPage() {
   const t = useTranslations('sprint3.utilities');
+  const tl = useTranslations('sprint3.ledger');
   const tc = useTranslations('sprint3.common');
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [contractId, setContractId] = useState('');
@@ -166,11 +167,11 @@ export default function LandlordUtilitiesPage() {
           <TableHeader>
             <TableRow>
               <TableHead>{t('periodMonth')}</TableHead>
-              <TableHead>kWh / m3</TableHead>
+              <TableHead>{tl('usageCol')}</TableHead>
               <TableHead>{t('pricingModel')}</TableHead>
-              <TableHead>VND</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>{tl('amountCol')}</TableHead>
+              <TableHead>{tc('statusCol')}</TableHead>
+              <TableHead className="text-right">{tc('actionCol')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -179,8 +180,8 @@ export default function LandlordUtilitiesPage() {
             ) : (
               readings.map((r) => (
                 <TableRow key={r.id}>
-                  <TableCell className="text-xs font-medium">{formatIsoDate(r.periodMonth)} (v{r.revision})</TableCell>
-                  <TableCell className="text-xs">{r.electricConsumption} kWh / {r.waterConsumption} m3</TableCell>
+                  <TableCell className="text-xs font-medium">{`${formatIsoDate(r.periodMonth)} (v${r.revision})`}</TableCell>
+                  <TableCell className="text-xs">{`${r.electricConsumption} kWh / ${r.waterConsumption} m3`}</TableCell>
                   <TableCell className="text-xs">{r.pricingModel}</TableCell>
                   <TableCell className="font-bold text-teal-700">{formatVnd(r.electricityCost + r.waterCost)}</TableCell>
                   <TableCell>
@@ -230,8 +231,8 @@ export default function LandlordUtilitiesPage() {
         <div className="space-y-2 text-xs pt-2">
           {audits?.map((a) => (
             <div key={a.id} className="p-2.5 rounded-lg bg-stone-50 dark:bg-stone-900">
-              <p className="font-bold">v{a.revision} • {a.action}</p>
-              <p className="text-stone-500">{a.reason} • {formatIsoDateTime(a.createdAt)}</p>
+              <p className="font-bold">{`v${a.revision} • ${a.action}`}</p>
+              <p className="text-stone-500">{`${a.reason} • ${formatIsoDateTime(a.createdAt)}`}</p>
             </div>
           ))}
         </div>

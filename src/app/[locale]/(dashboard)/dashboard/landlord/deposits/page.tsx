@@ -119,12 +119,12 @@ export default function LandlordDepositsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Code</TableHead>
+              <TableHead>{tc('codeCol')}</TableHead>
               <TableHead>{t('bankCode')}</TableHead>
               <TableHead>{t('accountNumber')}</TableHead>
               <TableHead>{t('amount')}</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>{tc('statusCol')}</TableHead>
+              <TableHead>{tc('dateCol')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

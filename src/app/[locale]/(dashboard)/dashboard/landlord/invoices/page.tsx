@@ -137,13 +137,13 @@ export default function LandlordInvoicesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Code</TableHead>
+              <TableHead>{tc('codeCol')}</TableHead>
               <TableHead>{t('periodMonth')}</TableHead>
               <TableHead>{t('totalAmount')}</TableHead>
               <TableHead>{t('paidAmount')}</TableHead>
               <TableHead>{t('dueDate')}</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>{tc('statusCol')}</TableHead>
+              <TableHead className="text-right">{tc('actionCol')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

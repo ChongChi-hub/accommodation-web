@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
@@ -15,6 +16,7 @@ interface ExportTabProps {
 }
 
 export function ExportTab({ accounts }: ExportTabProps) {
+  const tl = useTranslations('sprint3.ledger');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [accountNumber, setAccountNumber] = useState(accounts[0]?.accountNumber || '');
@@ -49,10 +51,10 @@ export function ExportTab({ accounts }: ExportTabProps) {
   return (
     <Card className="p-5 space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Input label="From Date" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
-        <Input label="To Date" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+        <Input label={tl('fromDate')} type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+        <Input label={tl('toDate')} type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
         <Select
-          label="Account"
+          label={tl('account')}
           value={accountNumber || accounts[0]?.accountNumber || ''}
           onChange={(e) => setAccountNumber(e.target.value)}
           options={accounts.map((a) => ({ value: a.accountNumber, label: `${a.accountNumber} (${a.accountName})` }))}
@@ -60,13 +62,13 @@ export function ExportTab({ accounts }: ExportTabProps) {
       </div>
       <div className="flex flex-wrap gap-2">
         <Button variant="primary" size="sm" isLoading={isExporting === 'general-ledger'} leftIcon={<FileDown className="w-3.5 h-3.5" />} onClick={() => downloadReport('general-ledger', 'general-ledger.csv')}>
-          General Ledger CSV
+          {tl('generalLedgerCsv')}
         </Button>
         <Button variant="outline" size="sm" isLoading={isExporting === 'trial-balance'} leftIcon={<FileDown className="w-3.5 h-3.5" />} onClick={() => downloadReport('trial-balance', 'trial-balance.csv')}>
-          Trial Balance CSV
+          {tl('trialBalanceCsv')}
         </Button>
         <Button variant="outline" size="sm" isLoading={isExporting === 'statement'} leftIcon={<FileDown className="w-3.5 h-3.5" />} onClick={() => downloadReport('statement', 'account-statement.csv')}>
-          Account Statement CSV
+          {tl('accountStatementCsv')}
         </Button>
       </div>
     </Card>
