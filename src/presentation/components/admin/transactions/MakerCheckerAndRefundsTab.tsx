@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
@@ -33,6 +34,9 @@ export function MakerCheckerAndRefundsTab({
   onReject,
   onApproveRefund,
 }: MakerCheckerAndRefundsTabProps) {
+  const tl = useTranslations('sprint3.ledger');
+  const tc = useTranslations('sprint3.common');
+  const td = useTranslations('sprint3.deposit');
   const [accountNumber, setAccountNumber] = useState(accounts[0]?.accountNumber || '');
   const [direction, setDirection] = useState<'CREDIT' | 'DEBIT'>('CREDIT');
   const [amount, setAmount] = useState('');
@@ -75,7 +79,7 @@ export function MakerCheckerAndRefundsTab({
           <Input label="Amount (VND)" type="number" min={1} required value={amount} onChange={(e) => setAmount(e.target.value)} />
           <Input label="Reason" required value={reason} onChange={(e) => setReason(e.target.value)} />
           <Button type="submit" variant="primary" size="md" isLoading={busy} leftIcon={<PlusCircle className="w-4 h-4" />}>
-            Create
+            {tc('create')}
           </Button>
         </form>
       </Card>
@@ -84,12 +88,12 @@ export function MakerCheckerAndRefundsTab({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Account</TableHead>
-              <TableHead>Direction</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>{tc('codeCol')}</TableHead>
+              <TableHead>{tl('account')}</TableHead>
+              <TableHead>{tl('direction')}</TableHead>
+              <TableHead>{td('amount')}</TableHead>
+              <TableHead>{tc('statusCol')}</TableHead>
+              <TableHead className="text-right">{tc('actionCol')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -103,8 +107,8 @@ export function MakerCheckerAndRefundsTab({
                 <TableCell className="text-right">
                   {r.status === 'PENDING' && r.makerId !== currentUserId && (
                     <div className="flex justify-end gap-1">
-                      <Button variant="outline" size="sm" leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={() => onApprove(r)}>Approve</Button>
-                      <Button variant="ghost" size="sm" leftIcon={<XCircle className="w-3.5 h-3.5" />} onClick={() => onReject(r)}>Reject</Button>
+                      <Button variant="outline" size="sm" leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={() => onApprove(r)}>{tc('approve')}</Button>
+                      <Button variant="ghost" size="sm" leftIcon={<XCircle className="w-3.5 h-3.5" />} onClick={() => onReject(r)}>{tc('reject')}</Button>
                     </div>
                   )}
                 </TableCell>
@@ -118,12 +122,12 @@ export function MakerCheckerAndRefundsTab({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Refund Code</TableHead>
-              <TableHead>Contract</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>{tl('refundCode')}</TableHead>
+              <TableHead>{tl('contract')}</TableHead>
+              <TableHead>{td('amount')}</TableHead>
+              <TableHead>{tc('statusCol')}</TableHead>
+              <TableHead>{tc('dateCol')}</TableHead>
+              <TableHead className="text-right">{tc('actionCol')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -136,7 +140,7 @@ export function MakerCheckerAndRefundsTab({
                 <TableCell className="text-xs text-stone-500">{formatIsoDateTime(rf.createdAt)}</TableCell>
                 <TableCell className="text-right">
                   {rf.status === 'PENDING_APPROVAL' && (
-                    <Button variant="primary" size="sm" onClick={() => onApproveRefund(rf.id)}>Approve</Button>
+                    <Button variant="primary" size="sm" onClick={() => onApproveRefund(rf.id)}>{tc('approve')}</Button>
                   )}
                 </TableCell>
               </TableRow>

@@ -66,12 +66,12 @@ export default function TenantPaymentsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Code</TableHead>
+              <TableHead>{tc('codeCol')}</TableHead>
               <TableHead>{t('periodMonth')}</TableHead>
               <TableHead>{t('paidAmount')}</TableHead>
               <TableHead>{t('totalAmount')}</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>{tc('statusCol')}</TableHead>
+              <TableHead>{tc('dateCol')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

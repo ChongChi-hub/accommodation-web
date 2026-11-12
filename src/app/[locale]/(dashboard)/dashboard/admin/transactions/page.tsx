@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/presentation/components/ui/Button';
 import { Skeleton } from '@/presentation/components/ui/Skeleton';
 import { toast } from '@/presentation/stores/toast.store';
@@ -15,6 +16,7 @@ import { ExportTab } from '@/presentation/components/admin/transactions/ExportTa
 import { Scale } from 'lucide-react';
 
 export default function AdminTransactionsAndLedgerPage() {
+  const tl = useTranslations('sprint3.ledger');
   const currentUser = useAuthStore((state) => state.user);
   const [activeTab, setActiveTab] = useState<'RECON' | 'MAKER_CHECKER' | 'EXPORT'>('RECON');
   const [isLoading, setIsLoading] = useState(true);
@@ -70,14 +72,14 @@ export default function AdminTransactionsAndLedgerPage() {
       <div>
         <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
           <Scale className="w-5 h-5 text-teal-600" />
-          Double-Entry Ledger & Financial Oversight
+          {tl('title')}
         </h1>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Button variant={activeTab === 'RECON' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('RECON')}>Reconciliation</Button>
-        <Button variant={activeTab === 'MAKER_CHECKER' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('MAKER_CHECKER')}>Maker-Checker & Refunds</Button>
-        <Button variant={activeTab === 'EXPORT' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('EXPORT')}>Export CSV</Button>
+        <Button variant={activeTab === 'RECON' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('RECON')}>{tl('reconTab')}</Button>
+        <Button variant={activeTab === 'MAKER_CHECKER' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('MAKER_CHECKER')}>{tl('makerTab')}</Button>
+        <Button variant={activeTab === 'EXPORT' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('EXPORT')}>{tl('exportTab')}</Button>
       </div>
 
       {isLoading ? (
