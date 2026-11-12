@@ -10,12 +10,12 @@ test.describe('[AUTH-03] Cryptographic RBAC Route Guard & Next.js Middleware Pro
   test('1. Unauthenticated guest visiting /dashboard/admin is redirected to /login with returnUrl', async ({ page }) => {
     await page.goto('/dashboard/admin');
     await expect(page).toHaveURL(/.*\/login\?returnUrl=.*/);
-    await expect(page.locator('input[type="email"]')).toBeVisible();
+    await expect(page.locator('#login-identifier')).toBeVisible();
   });
 
   test('2. Real form login with Tenant account lands on /dashboard/tenant, cannot access /dashboard/admin (403)', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'tenant@cozynest.vn');
+    await page.fill('#login-identifier', 'tenant@cozynest.vn');
     await page.fill('input[type="password"]', 'password123');
     await page.click('button[type="submit"]');
 
@@ -31,7 +31,7 @@ test.describe('[AUTH-03] Cryptographic RBAC Route Guard & Next.js Middleware Pro
   test('3. Role spoofing attempt: Tenant modifying document.cookie cozynest_role=ADMIN is still blocked by signed JWT', async ({ page }) => {
     // Perform genuine tenant login
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'tenant@cozynest.vn');
+    await page.fill('#login-identifier', 'tenant@cozynest.vn');
     await page.fill('input[type="password"]', 'password123');
     await page.click('button[type="submit"]');
     await expect(page).toHaveURL(/.*\/dashboard\/tenant/);
@@ -51,7 +51,7 @@ test.describe('[AUTH-03] Cryptographic RBAC Route Guard & Next.js Middleware Pro
 
   test('4. Real form login with Landlord account lands on /dashboard/landlord, cannot access /dashboard/admin (403)', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'landlord@cozynest.vn');
+    await page.fill('#login-identifier', 'landlord@cozynest.vn');
     await page.fill('input[type="password"]', 'password123');
     await page.click('button[type="submit"]');
 
@@ -66,7 +66,7 @@ test.describe('[AUTH-03] Cryptographic RBAC Route Guard & Next.js Middleware Pro
 
   test('5. Real form login with Moderator account lands on /dashboard/moderator, cannot access /dashboard/admin (403)', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'moderator@cozynest.vn');
+    await page.fill('#login-identifier', 'moderator@cozynest.vn');
     await page.fill('input[type="password"]', 'password123');
     await page.click('button[type="submit"]');
 
@@ -81,12 +81,13 @@ test.describe('[AUTH-03] Cryptographic RBAC Route Guard & Next.js Middleware Pro
 
   test('6. Real form login with Admin account lands on /dashboard/admin and has full access', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[type="email"]', 'admin@cozynest.vn');
+    await page.fill('#login-identifier', 'admin@cozynest.vn');
     await page.fill('input[type="password"]', 'password123');
     await page.click('button[type="submit"]');
 
     // Successfully redirects to admin dashboard
     await expect(page).toHaveURL(/.*\/dashboard\/admin/);
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('main')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Cấu hình hệ thống' })).toBeVisible();
   });
 });

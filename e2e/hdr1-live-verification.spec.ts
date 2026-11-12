@@ -277,15 +277,16 @@ test.describe('[HDR-1] Live E2E, Contrast, Accessibility & Screenshot Suite', ()
     await page.locator('button', { hasText: 'Khu vực' }).click();
     const areaMenu = page.locator('[aria-label="Khu vực"][role="menu"]');
     await waitForPopoverSettled(page, areaMenu);
-    await expect(areaMenu.locator('a[href*="/rooms?provinceCode="]')).toHaveCount(8);
+    await expect(areaMenu.locator('a[href*="?provinceCode="]').filter({ has: page.locator('img') })).toHaveCount(8);
     await page.screenshot({ path: path.join(SHOT_DIR, '05-area-dropdown-1440-vi.png') });
     await page.keyboard.press('Escape');
     await expect(areaMenu).not.toBeVisible();
 
-    // Category alias empty state (/nha-nguyen-can)
+    // Category alias (/nha-nguyen-can) + filtered empty state
     await page.goto(`${WEB_URL}/vi/nha-nguyen-can`, { waitUntil: 'networkidle' });
     await expect(page.locator('h1')).toContainText('Nhà nguyên căn');
-    await expect(page.locator('body')).toContainText(/Chưa có tin đăng nào/i);
+    await page.goto(`${WEB_URL}/vi/nha-nguyen-can?q=__nonexistent_room_xyz__`, { waitUntil: 'networkidle' });
+    await expect(page.locator('body')).toContainText(/Không tìm thấy phòng phù hợp/i);
     await page.screenshot({ path: path.join(SHOT_DIR, '11-nha-nguyen-can-emptystate-1440-vi.png') });
 
     // 1024px tablet landscape -> "Khám phá" Explore dropdown replaces 4 inline category links
