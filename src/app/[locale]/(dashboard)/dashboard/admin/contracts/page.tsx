@@ -87,7 +87,7 @@ export default function AdminContractsPage() {
               </Badge>
             </div>
             <p className="text-stone-500">
-              Retry: {saga.retryCount} • Compensation: {saga.compensationStep || '-'} • {formatIsoDateTime(saga.updatedAt)}
+              {tc('retryLabel')}: {saga.retryCount} • {tc('compensationLabel')}: {saga.compensationStep || '-'} • {formatIsoDateTime(saga.updatedAt)}
             </p>
             <div className="flex flex-wrap gap-2 items-center pt-2">
               <Input value={reason} onChange={(e) => setReason(e.target.value)} />

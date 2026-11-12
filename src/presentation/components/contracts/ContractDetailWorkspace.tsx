@@ -7,14 +7,15 @@ import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
 import { Dialog } from '@/presentation/components/ui/Dialog';
 import { Input } from '@/presentation/components/ui/Input';
-import { Select } from '@/presentation/components/ui/Select';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
 import { Skeleton } from '@/presentation/components/ui/Skeleton';
 import { container } from '@/infrastructure/di/container';
 import { Contract, ContractAmendment, ContractOccupant } from '@/domain/entities/Contract';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDate, formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
-import { CheckCircle2, Download, PenTool, PlusCircle, Trash2, Users } from 'lucide-react';
+import { ContractOccupantsSection } from './ContractOccupantsSection';
+import { ContractAmendmentsSection } from './ContractAmendmentsSection';
+import { CheckCircle2, Download, PenTool } from 'lucide-react';
 
 interface ContractDetailWorkspaceProps {
   contractId: string;
@@ -33,9 +34,6 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
   const [otp, setOtp] = useState('');
   const [signatureText, setSignatureText] = useState('');
   const [busy, setBusy] = useState(false);
-
-  const [occForm, setOccForm] = useState({ fullName: '', phoneNumber: '', idCardNumber: '', relationship: 'BAN_CUNG_PHONG' });
-  const [amendForm, setAmendForm] = useState({ amendmentType: 'RENT_ADJUSTMENT', newRent: '', newEndDate: '', effectiveDate: '', reason: '' });
 
   const loadAll = useCallback(async () => {
     setIsLoading(true);
@@ -90,62 +88,6 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
       URL.revokeObjectURL(url);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : tc('actionError'));
-    }
-  };
-
-  const handleAddOccupant = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setBusy(true);
-    try {
-      const added = await container.contract.contractRepository.addOccupant(contractId, {
-        ...occForm,
-        primaryTenant: false,
-      });
-      setOccupants((prev) => [...prev, added]);
-      setOccForm({ fullName: '', phoneNumber: '', idCardNumber: '', relationship: 'BAN_CUNG_PHONG' });
-      toast.success(tc('actionSuccess'));
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : tc('actionError'));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const handleCreateAmendment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setBusy(true);
-    try {
-      const created = await container.contract.contractRepository.createAmendment(contractId, {
-        amendmentType: amendForm.amendmentType,
-        newRent: amendForm.newRent ? Number(amendForm.newRent) : undefined,
-        newEndDate: amendForm.newEndDate || undefined,
-        effectiveDate: amendForm.effectiveDate,
-        reason: amendForm.reason,
-      });
-      setAmendments((prev) => [created, ...prev]);
-      setAmendForm({ amendmentType: 'RENT_ADJUSTMENT', newRent: '', newEndDate: '', effectiveDate: '', reason: '' });
-      toast.success(tc('actionSuccess'));
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : tc('actionError'));
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const handleSignAmendment = async (amendmentId: string) => {
-    setBusy(true);
-    try {
-      const updated =
-        role === 'TENANT'
-          ? await container.contract.contractRepository.signAmendmentTenant(amendmentId)
-          : await container.contract.contractRepository.signAmendmentLandlord(amendmentId);
-      setAmendments((prev) => prev.map((a) => (a.id === amendmentId ? updated : a)));
-      await loadAll();
-      toast.success(tc('actionSuccess'));
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : tc('actionError'));
-    } finally {
-      setBusy(false);
     }
   };
 
@@ -209,56 +151,24 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
         )}
       </Card>
 
-      <Card className="p-5 space-y-4">
-        <h3 className="text-sm font-bold flex items-center gap-2"><Users className="w-4 h-4" />{t('occupantsTitle')} ({occupants.length})</h3>
-        <div className="space-y-2 text-xs">
-          {occupants.map((o) => (
-            <div key={o.id} className="flex items-center justify-between p-2.5 rounded-lg bg-stone-50 dark:bg-stone-900">
-              <span><strong>{o.fullName}</strong> • {o.phoneNumber} • CCCD: {o.idCardNumber}</span>
-              {role === 'LANDLORD' && !o.primaryTenant && (
-                <Button variant="ghost" size="sm" leftIcon={<Trash2 className="w-3.5 h-3.5" />} onClick={async () => {
-                  await container.contract.contractRepository.removeOccupant(contractId, o.id);
-                  setOccupants((prev) => prev.filter((item) => item.id !== o.id));
-                }}>{t('remove')}</Button>
-              )}
-            </div>
-          ))}
-        </div>
-        {role === 'LANDLORD' && (
-          <form onSubmit={handleAddOccupant} className="grid grid-cols-1 sm:grid-cols-4 gap-2 pt-2">
-            <Input placeholder={t('fullName')} required value={occForm.fullName} onChange={(e) => setOccForm((p) => ({ ...p, fullName: e.target.value }))} />
-            <Input placeholder={t('phone')} required value={occForm.phoneNumber} onChange={(e) => setOccForm((p) => ({ ...p, phoneNumber: e.target.value }))} />
-            <Input placeholder={t('idCard')} required value={occForm.idCardNumber} onChange={(e) => setOccForm((p) => ({ ...p, idCardNumber: e.target.value }))} />
-            <Button type="submit" variant="outline" size="sm" isLoading={busy} leftIcon={<PlusCircle className="w-3.5 h-3.5" />}>{t('addOccupant')}</Button>
-          </form>
-        )}
-      </Card>
+      <ContractOccupantsSection
+        contractId={contractId}
+        role={role}
+        occupants={occupants}
+        onOccupantAdded={(added) => setOccupants((prev) => [...prev, added])}
+        onOccupantRemoved={(id) => setOccupants((prev) => prev.filter((item) => item.id !== id))}
+      />
 
-      <Card className="p-5 space-y-4">
-        <h3 className="text-sm font-bold">{t('amendmentsTitle')} ({amendments.length})</h3>
-        <div className="space-y-2 text-xs">
-          {amendments.map((a) => (
-            <div key={a.id} className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-lg border border-stone-200 dark:border-stone-800">
-              <div>
-                <p className="font-bold">{a.amendmentCode} • {a.amendmentType} ({a.status})</p>
-                <p className="text-stone-500">{a.reason} • {t('effectiveDate')}: {formatIsoDate(a.effectiveDate)}</p>
-              </div>
-              {((role === 'TENANT' && !a.tenantSignedAt) || (role === 'LANDLORD' && !a.landlordSignedAt)) && (
-                <Button variant="primary" size="sm" isLoading={busy} onClick={() => handleSignAmendment(a.id)}>{t('signAmendment')}</Button>
-              )}
-            </div>
-          ))}
-        </div>
-        {role === 'LANDLORD' && contract.status === 'ACTIVE' && (
-          <form onSubmit={handleCreateAmendment} className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-2">
-            <Select value={amendForm.amendmentType} onChange={(e) => setAmendForm((p) => ({ ...p, amendmentType: e.target.value }))} options={[{ value: 'RENT_ADJUSTMENT', label: 'RENT_ADJUSTMENT' }, { value: 'TERM_EXTENSION', label: 'TERM_EXTENSION' }]} />
-            <Input type="number" placeholder={t('newRent')} value={amendForm.newRent} onChange={(e) => setAmendForm((p) => ({ ...p, newRent: e.target.value }))} />
-            <Input type="date" placeholder={t('effectiveDate')} required value={amendForm.effectiveDate} onChange={(e) => setAmendForm((p) => ({ ...p, effectiveDate: e.target.value }))} />
-            <Input placeholder={t('reason')} required value={amendForm.reason} onChange={(e) => setAmendForm((p) => ({ ...p, reason: e.target.value }))} />
-            <Button type="submit" variant="outline" size="sm" isLoading={busy}>{t('createAmendment')}</Button>
-          </form>
-        )}
-      </Card>
+      <ContractAmendmentsSection
+        contract={contract}
+        role={role}
+        amendments={amendments}
+        onAmendmentCreated={(created) => setAmendments((prev) => [created, ...prev])}
+        onAmendmentSigned={async (updated) => {
+          setAmendments((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+          await loadAll();
+        }}
+      />
 
       <Dialog isOpen={signOpen} onClose={() => setSignOpen(false)} title={t('signTitle')} size="sm">
         <form onSubmit={handleSign} className="space-y-4 pt-2">
@@ -273,4 +183,3 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
     </div>
   );
 }
-

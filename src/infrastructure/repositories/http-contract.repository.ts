@@ -87,15 +87,25 @@ export class HttpContractRepository {
     );
   }
 
-  async signAmendmentTenant(amendmentId: string): Promise<ContractAmendment> {
+  async signAmendmentTenant(
+    amendmentId: string,
+    otpCode: string,
+    signatureText?: string
+  ): Promise<ContractAmendment> {
     return ApiClient.post<ContractAmendment>(
-      `/booking/contracts/amendments/${encodeURIComponent(amendmentId)}/sign-tenant`
+      `/booking/contracts/amendments/${encodeURIComponent(amendmentId)}/sign-tenant`,
+      { otpCode, signatureText }
     );
   }
 
-  async signAmendmentLandlord(amendmentId: string): Promise<ContractAmendment> {
+  async signAmendmentLandlord(
+    amendmentId: string,
+    otpCode: string,
+    signatureText?: string
+  ): Promise<ContractAmendment> {
     return ApiClient.post<ContractAmendment>(
-      `/booking/contracts/amendments/${encodeURIComponent(amendmentId)}/sign-landlord`
+      `/booking/contracts/amendments/${encodeURIComponent(amendmentId)}/sign-landlord`,
+      { otpCode, signatureText }
     );
   }
 }
