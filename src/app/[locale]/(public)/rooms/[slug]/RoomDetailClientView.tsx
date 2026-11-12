@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { useRoomDetail } from '@/presentation/hooks/useRoomDetail';
@@ -27,6 +28,7 @@ interface RoomDetailClientViewProps {
 }
 
 export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
+  const tAuto = useTranslations('autoI18n');
   const { room, recommendations, reviews, isLoading, error, retry } = useRoomDetail(slug);
   const [modalType, setModalType] = useState<'appointment' | 'rental' | null>(null);
 
@@ -61,7 +63,7 @@ export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
             href="/rooms"
             className="inline-flex items-center gap-2 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
           >
-            <ArrowLeft className="w-4 h-4" /> Quay lại danh sách tìm phòng
+            <ArrowLeft className="w-4 h-4" />{' '}{tAuto('k0437')}
           </Link>
         </div>
       </div>
@@ -172,13 +174,13 @@ export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-teal-700 dark:text-teal-400" />
-                    Phòng trọ tương tự trong khu vực
+                    {tAuto('k0438')}
                   </h2>
                   <Link
                     href={`/rooms?provinceCode=${room.provinceCode}`}
                     className="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
                   >
-                    Xem thêm gợi ý
+                    {tAuto('k0439')}
                   </Link>
                 </div>
 
@@ -214,6 +216,8 @@ export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
           isOpen={true}
           onClose={() => setModalType(null)}
           roomTitle={room.title}
+          roomId={room.id}
+          landlordId={room.landlord?.landlordId ?? room.landlord?.id}
           type={modalType}
         />
       )}

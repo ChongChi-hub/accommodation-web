@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from '@/i18n/routing';
@@ -43,6 +44,7 @@ interface CommandItem {
 }
 
 export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
+  const tAuto = useTranslations('autoI18n');
   const router = useRouter();
   const { user, logout } = useAuthStore();
   const [query, setQuery] = useState('');
@@ -139,7 +141,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         <div className="max-h-72 overflow-y-auto divide-y divide-border/60 rounded-xl border border-border">
           {filteredCommands.length === 0 ? (
             <div className="p-6 text-center text-xs text-foreground-muted">
-              Không tìm thấy lệnh hoặc trang phù hợp với "{query}"
+              {tAuto('k0532')}{query}"
             </div>
           ) : (
             filteredCommands.map((item) => (

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
@@ -8,6 +9,7 @@ import { Check, Sparkles } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 
 export default function PricingPage() {
+  const tAuto = useTranslations('autoI18n');
   const plans = [
     {
       name: 'Khách thuê trọ',
@@ -65,10 +67,10 @@ export default function PricingPage() {
 
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-extrabold text-stone-900 dark:text-stone-100">
-          Minh bạch về chi phí, tối ưu giá trị
+          {tAuto('k0424')}
         </h1>
         <p className="text-xs text-stone-500 max-w-xl mx-auto">
-          Hoàn toàn miễn phí trọn đời cho người thuê phòng. Các gói dịch vụ linh hoạt cho chủ trọ.
+          {tAuto('k0425')}
         </p>
       </div>
 
@@ -84,7 +86,7 @@ export default function PricingPage() {
           >
             {p.isPopular && (
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-teal-700 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full flex items-center gap-1">
-                <Sparkles className="w-3 h-3" /> Phổ biến nhất
+                <Sparkles className="w-3 h-3" />{' '}{tAuto('k0426')}
               </span>
             )}
             <div className="space-y-4">

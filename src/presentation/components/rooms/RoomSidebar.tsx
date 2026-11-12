@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -28,6 +29,7 @@ interface RoomSidebarProps {
 }
 
 export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSidebarProps) {
+  const tAuto = useTranslations('autoI18n');
   const router = useRouter();
   const formatPrice = (p: number) => new Intl.NumberFormat('vi-VN').format(Math.round(p || 0));
 
@@ -46,8 +48,8 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
 
   const checkAuthAndExecute = (action: () => void) => {
     if (typeof document !== 'undefined') {
-      const hasToken = document.cookie.includes('cozynest_token=');
-      if (!hasToken) {
+      const hasSession = document.cookie.includes('cozynest_role=');
+      if (!hasSession) {
         const returnUrl = encodeURIComponent(window.location.pathname);
         router.push(`/login?returnUrl=${returnUrl}`);
         return;
@@ -58,7 +60,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
 
   const handleMessage = () => {
     checkAuthAndExecute(() => {
-      alert('Chức năng Trò chuyện với chủ trọ đang ở chế độ DEMO-STATIC.');
+      router.push('/dashboard/tenant/messages');
     });
   };
 
@@ -68,7 +70,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
       <div className="flex justify-between items-start gap-3">
         <div>
           <span className="text-xs text-stone-500 uppercase tracking-wider font-semibold block">
-            Giá thuê niêm yết
+            {tAuto('k0620')}
           </span>
           <div className="flex items-baseline gap-1 mt-1">
             <span className="text-3xl font-black text-teal-700 dark:text-teal-400">
@@ -77,7 +79,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
             <span className="text-xs text-stone-500 font-medium">/{room.priceUnit === 'BED' ? 'giường/tháng' : 'tháng'}</span>
           </div>
           <p className="text-xs text-stone-500 mt-1">
-            Tiền đặt cọc: <strong className="text-stone-800 dark:text-stone-200">{formatPrice(room.deposit)} đ</strong>
+            {tAuto('k0621')}{' '}<strong className="text-stone-800 dark:text-stone-200">{formatPrice(room.deposit)}{' '}{tAuto('k0257')}</strong>
           </p>
         </div>
 
@@ -100,7 +102,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
             {unavailableReason}
           </div>
           <p className="text-[11px] text-amber-800/90 dark:text-amber-300/90 leading-relaxed">
-            Tin đăng được giữ để tham khảo. Chủ trọ tạm khóa nhận lịch hẹn và yêu cầu thuê mới.
+            {tAuto('k0622')}
           </p>
         </div>
       )}
@@ -109,26 +111,26 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
       <div className="space-y-2 pt-2 border-t border-stone-200 dark:border-stone-800 text-xs">
         <div className="flex justify-between items-center text-stone-600 dark:text-stone-400">
           <span className="flex items-center gap-1.5">
-            <Zap className="w-3.5 h-3.5 text-amber-500" /> Tiền điện
+            <Zap className="w-3.5 h-3.5 text-amber-500" />{' '}{tAuto('k0319')}
           </span>
           <span className="font-semibold text-stone-900 dark:text-stone-100">
-            {formatPrice(room.electricityCost)} đ/kWh
+            {formatPrice(room.electricityCost)}{' '}{tAuto('k0623')}
           </span>
         </div>
         <div className="flex justify-between items-center text-stone-600 dark:text-stone-400">
           <span className="flex items-center gap-1.5">
-            <Droplets className="w-3.5 h-3.5 text-blue-500" /> Tiền nước
+            <Droplets className="w-3.5 h-3.5 text-blue-500" />{' '}{tAuto('k0322')}
           </span>
           <span className="font-semibold text-stone-900 dark:text-stone-100">
-            {formatPrice(room.waterCost)} đ/m³
+            {formatPrice(room.waterCost)}{' '}{tAuto('k0624')}
           </span>
         </div>
         <div className="flex justify-between items-center text-stone-600 dark:text-stone-400">
           <span className="flex items-center gap-1.5">
-            <Wifi className="w-3.5 h-3.5 text-teal-700 dark:text-teal-400" /> Internet
+            <Wifi className="w-3.5 h-3.5 text-teal-700 dark:text-teal-400" />{' '}{tAuto('k0625')}
           </span>
           <span className="font-semibold text-stone-900 dark:text-stone-100">
-            {formatPrice(room.internetCost)} đ/tháng
+            {formatPrice(room.internetCost)}{' '}{tAuto('k0626')}
           </span>
         </div>
       </div>
@@ -145,7 +147,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
             <ArrowUpRight className="w-3 h-3 text-stone-400" />
           </Link>
           <p className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3" /> Chủ trọ đã xác minh danh tính
+            <ShieldCheck className="w-3 h-3" />{' '}{tAuto('k0585')}
           </p>
         </div>
       </div>
@@ -173,7 +175,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
           onClick={() => checkAuthAndExecute(onOpenRental)}
           leftIcon={<Send className="w-4 h-4" />}
         >
-          Gửi yêu cầu thuê
+          {tAuto('k0627')}
         </Button>
 
         {/* 3. Outline: Nhắn tin cho chủ trọ */}
@@ -184,7 +186,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
           onClick={handleMessage}
           leftIcon={<MessageCircle className="w-4 h-4" />}
         >
-          Nhắn tin cho chủ trọ
+          {tAuto('k0628')}
         </Button>
       </div>
     </Card>

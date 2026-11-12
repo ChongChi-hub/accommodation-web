@@ -50,17 +50,14 @@ export class ApiClient {
     if (typeof document !== 'undefined') {
       const isProduction = process.env.NODE_ENV === 'production';
       const secureFlag = isProduction ? '; Secure' : '';
-      document.cookie = `cozynest_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
       document.cookie = `cozynest_role=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
-      localStorage.removeItem('cozynest_refresh_token');
       localStorage.removeItem('cozynest_user');
+      void fetch('/api/auth/session', { method: 'DELETE', credentials: 'include' }).catch(() => undefined);
     }
   }
 
   private static async tryAutoRefresh(): Promise<boolean> {
     if (typeof window === 'undefined') return false;
-    const refreshToken = localStorage.getItem('cozynest_refresh_token');
-    if (!refreshToken) return false;
 
     if (this.refreshPromise) {
       return this.refreshPromise;
@@ -68,28 +65,20 @@ export class ApiClient {
 
     this.refreshPromise = (async () => {
       try {
-        const res = await fetch(`${BASE_URL}/auth/refresh-token`, {
+        const res = await fetch('/api/auth/refresh', {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refreshToken }),
+          body: '{}',
         });
         if (!res.ok) {
           this.clearSession();
           return false;
         }
-        const json = await res.json();
-        const data = json.data;
-        if (data?.token) {
-          this.setToken(data.token);
-          const isProduction = process.env.NODE_ENV === 'production';
-          const secureFlag = isProduction ? '; Secure' : '';
-          document.cookie = `cozynest_token=${encodeURIComponent(data.token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
-          if (data.refreshToken) {
-            localStorage.setItem('cozynest_refresh_token', data.refreshToken);
-          }
-          if (data.user) {
-            localStorage.setItem('cozynest_user', JSON.stringify(data.user));
-          }
+        const json = await res.json().catch(() => null);
+        const data = json?.data;
+        if (data?.user) {
+          localStorage.setItem('cozynest_user', JSON.stringify(data.user));
           return true;
         }
         return false;
@@ -209,12 +198,18 @@ export class ApiClient {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
 
-  static async getBlob(endpoint: string): Promise<Blob> {
+  static async getBlob(endpoint: string, retryOn401 = true): Promise<Blob> {
     const token = this.getToken();
     const headers: Record<string, string> = {};
     if (token) headers['Authorization'] = `Bearer ${token}`;
     const url = endpoint.startsWith('http') ? endpoint : `${BASE_URL}${endpoint}`;
     const response = await fetch(url, { headers, credentials: 'include' });
+    if (response.status === 401 && retryOn401) {
+      const refreshed = await this.tryAutoRefresh();
+      if (refreshed) {
+        return this.getBlob(endpoint, false);
+      }
+    }
     if (!response.ok) {
       throw new ApiError('Loi tai tep tin', 'ERR_FETCH_BLOB', response.status);
     }

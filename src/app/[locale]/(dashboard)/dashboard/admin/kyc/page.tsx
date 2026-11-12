@@ -14,6 +14,7 @@ import { KycModerationModal } from '@/presentation/components/kyc/KycModerationM
 import { ShieldCheck, Eye, RefreshCw } from 'lucide-react';
 
 function AdminKycContent() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('kyc');
   const {
     kycList,
@@ -96,7 +97,7 @@ function AdminKycContent() {
               <TableRow>
                 <TableHead>{t('fullNameOnId')}</TableHead>
                 <TableHead>{t('idNumber')}</TableHead>
-                <TableHead>Email / Phone</TableHead>
+                <TableHead>{tAuto('k0007')}</TableHead>
                 <TableHead>{t('filterStatus')}</TableHead>
                 <TableHead className="text-right">{t('zoomImage')}</TableHead>
               </TableRow>
@@ -134,7 +135,7 @@ function AdminKycContent() {
                       isLoading={isLoadingDetail}
                       onClick={() => selectKyc(item.id)}
                     >
-                      Chi tiết
+                      {tAuto('k0008')}
                     </Button>
                   </TableCell>
                 </TableRow>

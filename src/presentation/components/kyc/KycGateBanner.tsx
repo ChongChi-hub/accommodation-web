@@ -10,6 +10,7 @@ import { Button } from '@/presentation/components/ui/Button';
 import { ShieldAlert, ArrowRight, Clock } from 'lucide-react';
 
 export function KycGateBanner() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('kyc');
   const [kycStatus, setKycStatus] = useState<LandlordKycStatus | null>(null);
   const { faceStatus } = useFaceVerification();
@@ -50,7 +51,7 @@ export function KycGateBanner() {
         {!isFacePending && (
           <Link href="/dashboard/landlord/kyc/face">
             <Button size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-              Xác thực khuôn mặt
+              {tAuto('k0482')}
             </Button>
           </Link>
         )}

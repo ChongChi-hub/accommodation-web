@@ -8,6 +8,7 @@ import { APP_ROUTES, ROOM_CATEGORY_ALIAS_MAP } from '@/shared/routes';
 import { useRooms } from '@/presentation/hooks/useRooms';
 import { RoomCard } from '@/presentation/components/rooms/RoomCard';
 import { RoomFilterBar } from '@/presentation/components/rooms/RoomFilterBar';
+import { RoomPaginationBar } from '@/presentation/components/rooms/RoomPaginationBar';
 import { RoomCardSkeleton } from '@/presentation/components/ui/Skeleton';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { ErrorState } from '@/presentation/components/ui/ErrorState';
@@ -31,12 +32,14 @@ export function RoomsCatalogClient({ categoryKey }: RoomsCatalogClientProps) {
 
   const {
     rooms,
+    pagination,
     provinces,
     wards,
     params,
     isLoading,
     error,
     updateParams,
+    setPage,
     resetParams,
     retry,
   } = useRooms({}, presetCodes);
@@ -68,7 +71,7 @@ export function RoomsCatalogClient({ categoryKey }: RoomsCatalogClientProps) {
       <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-xs text-foreground-muted font-medium">
-            {tCat('resultsCount', { count: rooms.length })}
+            {tCat('resultsCount', { count: pagination.total > 0 ? pagination.total : rooms.length })}
           </p>
           {params.q && (
             <button
@@ -151,16 +154,19 @@ export function RoomsCatalogClient({ categoryKey }: RoomsCatalogClientProps) {
           </div>
         </div>
       ) : (
-        <div
-          className={cn(
-            'grid gap-6',
-            viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'
-          )}
-        >
-          {rooms.map((room) => (
-            <RoomCard key={room.id} room={room} />
-          ))}
-        </div>
+        <>
+          <div
+            className={cn(
+              'grid gap-6',
+              viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'
+            )}
+          >
+            {rooms.map((room) => (
+              <RoomCard key={room.id} room={room} variant={viewMode} />
+            ))}
+          </div>
+          <RoomPaginationBar pagination={pagination} onPageChange={setPage} isLoading={isLoading} />
+        </>
       )}
     </div>
   );

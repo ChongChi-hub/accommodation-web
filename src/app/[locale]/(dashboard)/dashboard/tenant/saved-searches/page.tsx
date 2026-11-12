@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -9,6 +10,7 @@ import { Search, MapPin, Tag, ArrowRight, Trash2 } from 'lucide-react';
 import { toast } from '@/presentation/stores/toast.store';
 
 export default function TenantSavedSearchesPage() {
+  const tAuto = useTranslations('autoI18n');
   const savedSearches = [
     {
       id: 1,
@@ -39,10 +41,10 @@ export default function TenantSavedSearchesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-            Tìm kiếm đã lưu
+            {tAuto('k0395')}
           </h1>
           <p className="text-xs text-stone-500 mt-0.5">
-            Nhận thông báo tự động ngay khi có phòng mới đúng tiêu chí của bạn.
+            {tAuto('k0396')}
           </p>
         </div>
       </div>
@@ -68,7 +70,7 @@ export default function TenantSavedSearchesPage() {
             <div className="flex items-center gap-2 shrink-0">
               <Link href="/rooms">
                 <Button variant="outline" size="sm" leftIcon={<Search className="w-3.5 h-3.5" />}>
-                  Xem kết quả
+                  {tAuto('k0397')}
                 </Button>
               </Link>
               <button

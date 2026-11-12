@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -8,6 +9,7 @@ import { toast } from '@/presentation/stores/toast.store';
 import { Star, MessageSquare, Reply } from 'lucide-react';
 
 export default function LandlordReviewsPage() {
+  const tAuto = useTranslations('autoI18n');
   const [reviews, setReviews] = useState([
     {
       id: 1,
@@ -45,10 +47,10 @@ export default function LandlordReviewsPage() {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          Đánh giá nhận được ({reviews.length})
+          {tAuto('k0222')}{reviews.length})
         </h1>
         <p className="text-xs text-stone-500 mt-0.5">
-          Phản hồi của khách thuê giúp nâng cao điểm uy tín và thu hút người thuê mới.
+          {tAuto('k0223')}
         </p>
       </div>
 
@@ -75,7 +77,7 @@ export default function LandlordReviewsPage() {
 
             {r.reply ? (
               <div className="p-3 bg-teal-50 dark:bg-teal-950/40 rounded-xl text-xs text-teal-900 dark:text-teal-300 border-l-2 border-teal-700">
-                <span className="font-bold">Phản hồi của bạn: </span>
+                <span className="font-bold">{tAuto('k0224')}{' '}</span>
                 <span>{r.reply}</span>
               </div>
             ) : (
@@ -93,7 +95,7 @@ export default function LandlordReviewsPage() {
                   onClick={() => handleSendReply(r.id)}
                   leftIcon={<Reply className="w-3.5 h-3.5" />}
                 >
-                  Trả lời
+                  {tAuto('k0225')}
                 </Button>
               </div>
             )}

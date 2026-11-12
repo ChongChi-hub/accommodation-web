@@ -17,6 +17,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Check, X, ShieldAlert, Search, Eye, MapPin, User, Calendar, CreditCard } from 'lucide-react';
 
 function AdminRoomsContent() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('admin.rooms');
   const tCommon = useTranslations('common');
   const {
@@ -208,7 +209,7 @@ function AdminRoomsContent() {
                 >
                   {selectedRoom.status}
                 </Badge>
-                <span className="text-xs text-foreground-muted">Mã: #{selectedRoom.id}</span>
+                <span className="text-xs text-foreground-muted">{tAuto('k0015')}{selectedRoom.id}</span>
               </div>
               <h3 className="text-base font-bold text-foreground">{selectedRoom.title}</h3>
             </div>
@@ -220,17 +221,17 @@ function AdminRoomsContent() {
               </div>
               <div className="flex items-center gap-2 text-foreground">
                 <User className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>Chủ trọ: {selectedRoom.landlordName}</span>
+                <span>{tAuto('k0016')}{' '}{selectedRoom.landlordName}</span>
               </div>
               <div className="flex items-center gap-2 text-foreground">
                 <CreditCard className="w-4 h-4 text-teal-700 shrink-0" />
                 <span className="font-bold text-teal-700 dark:text-teal-400">
-                  {formatPrice(selectedRoom.price)} / tháng
+                  {formatPrice(selectedRoom.price)}{' '}{tAuto('k0017')}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-foreground-muted">
                 <Calendar className="w-4 h-4 shrink-0" />
-                <span>Ngày gửi duyệt: {selectedRoom.submittedAt}</span>
+                <span>{tAuto('k0018')}{' '}{selectedRoom.submittedAt}</span>
               </div>
             </div>
 

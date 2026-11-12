@@ -24,6 +24,7 @@ import { ThemeToggle } from '@/presentation/components/layout/ThemeToggle';
 import { CheckCircle, AlertCircle, Info, Send, Search } from 'lucide-react';
 
 export default function UiKitShowcasePage() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('uiKit');
   const tCommon = useTranslations('common');
   const [activeTab, setActiveTab] = useState('tab1');
@@ -176,7 +177,7 @@ export default function UiKitShowcasePage() {
               <TableBody>
                 <TableRow>
                   <TableCell className="font-semibold">01</TableCell>
-                  <TableCell>Phòng studio ban công Phường Bến Nghé, đầy đủ tiện nghi</TableCell>
+                  <TableCell>{tAuto('k0453')}</TableCell>
                   <TableCell>
                     <Badge variant="success">{tCommon('statusApproved')}</Badge>
                   </TableCell>
@@ -188,7 +189,7 @@ export default function UiKitShowcasePage() {
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">02</TableCell>
-                  <TableCell>Căn hộ dịch vụ Phường 15, giờ giấc tự do</TableCell>
+                  <TableCell>{tAuto('k0454')}</TableCell>
                   <TableCell>
                     <Badge variant="warning">{tCommon('statusPending')}</Badge>
                   </TableCell>

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { MapPin, Maximize2, Users, Star, BedDouble, Layers } from 'lucide-react';
@@ -31,6 +32,7 @@ function formatRelativeTime(dateStr?: string): string {
 }
 
 export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
+  const tAuto = useTranslations('autoI18n');
   const roomLink = room.slug ? `/rooms/${room.slug}` : `/rooms/${room.id}`;
   const images = room.imageUrls && room.imageUrls.length > 0
     ? room.imageUrls
@@ -67,7 +69,7 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
           <div className="relative z-1 space-y-1.5 pointer-events-none">
             <div className="flex items-center justify-between gap-2">
               <span className="text-lg font-black text-teal-700 dark:text-teal-400">
-                {formatPrice(room.price)} <span className="text-xs font-normal text-stone-500">đ{priceUnitLabel}</span>
+                {formatPrice(room.price)} <span className="text-xs font-normal text-stone-500">{tAuto('k0257')}{priceUnitLabel}</span>
               </span>
               {room.ratingAvg !== undefined && room.ratingAvg > 0 && (
                 <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-500">
@@ -86,13 +88,13 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
           </div>
 
           <div className="relative z-1 pointer-events-none flex flex-wrap items-center gap-3 text-xs text-stone-600 dark:text-stone-400 pt-2 border-t border-stone-100 dark:border-stone-800">
-            <span className="flex items-center gap-1 font-medium"><Maximize2 className="w-3.5 h-3.5 text-stone-400" />{room.area} m²</span>
-            <span className="flex items-center gap-1 font-medium"><Users className="w-3.5 h-3.5 text-stone-400" />{room.maxOccupants} người</span>
+            <span className="flex items-center gap-1 font-medium"><Maximize2 className="w-3.5 h-3.5 text-stone-400" />{room.area}{' '}{tAuto('k0517')}</span>
+            <span className="flex items-center gap-1 font-medium"><Users className="w-3.5 h-3.5 text-stone-400" />{room.maxOccupants}{' '}{tAuto('k0565')}</span>
             {room.bedrooms !== undefined && room.bedrooms > 0 && (
               <span className="flex items-center gap-1 font-medium"><BedDouble className="w-3.5 h-3.5 text-stone-400" />{room.bedrooms} PN</span>
             )}
             {room.floor !== undefined && room.floor > 0 && (
-              <span className="flex items-center gap-1 font-medium"><Layers className="w-3.5 h-3.5 text-stone-400" />Tầng {room.floor}</span>
+              <span className="flex items-center gap-1 font-medium"><Layers className="w-3.5 h-3.5 text-stone-400" />{tAuto('k0566')}{' '}{room.floor}</span>
             )}
           </div>
 
@@ -109,7 +111,7 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
   return (
     <div
       className={cn(
-        'group relative overflow-hidden rounded-2xl bg-stone-900 transition-all duration-500 hover:shadow-2xl hover:scale-[1.01] border border-stone-200/60 dark:border-stone-800 flex flex-col justify-between min-h-[460px] sm:min-h-[490px] select-none',
+        'group relative overflow-hidden rounded-2xl bg-stone-900 transition-all duration-500 hover:shadow-2xl hover:scale-[1.01] border border-stone-200/60 dark:border-stone-800 flex flex-col justify-end min-h-[460px] sm:min-h-[490px] select-none',
         className
       )}
     >
@@ -117,12 +119,12 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
       <RoomCardCarousel
         images={images}
         title={room.title}
-        aspectClassName="absolute inset-0 h-full w-full z-20 pointer-events-none"
-        dotsClassName="bottom-auto top-3.5 left-1/2 -translate-x-1/2 pointer-events-none"
+        aspectClassName="absolute inset-0 h-full w-full pointer-events-none"
+        dotsClassName="bottom-auto top-3.5 left-1/2 -translate-x-1/2 pointer-events-none z-20"
       />
 
       {/* 2. Top Scrim for badge contrast */}
-      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/75 via-black/30 to-transparent pointer-events-none z-10" />
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none z-10" />
 
       {/* 3. Deep Bottom Scrim for text readability */}
       <div className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-stone-950 via-stone-950/85 via-50% to-transparent pointer-events-none z-10" />
@@ -149,12 +151,12 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
       </div>
 
       {/* 6. Bottom Information Panel Overlay */}
-      <div className="relative z-20 p-4 sm:p-5 flex flex-col justify-end gap-2 text-white pointer-events-none">
+      <div className="relative z-20 mt-auto p-4 sm:p-5 flex flex-col justify-end gap-2 text-white pointer-events-none">
         {/* Price & Rating */}
         <div className="flex items-center justify-between gap-2">
           <div className="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-sm">
             {formatPrice(room.price)}{' '}
-            <span className="text-xs font-normal text-stone-300">đ{priceUnitLabel}</span>
+            <span className="text-xs font-normal text-stone-300">{tAuto('k0257')}{priceUnitLabel}</span>
           </div>
 
           {room.ratingAvg !== undefined && room.ratingAvg > 0 && (
@@ -180,11 +182,11 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
         <div className="flex flex-wrap items-center gap-1.5 pt-1">
           <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-md px-2 py-0.5 rounded-md text-xs font-medium text-stone-100 border border-white/10">
             <Maximize2 className="w-3 h-3 text-stone-300" />
-            {room.area} m²
+            {room.area}{' '}{tAuto('k0517')}
           </span>
           <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-md px-2 py-0.5 rounded-md text-xs font-medium text-stone-100 border border-white/10">
             <Users className="w-3 h-3 text-stone-300" />
-            {room.maxOccupants} người
+            {room.maxOccupants}{' '}{tAuto('k0565')}
           </span>
           {room.bedrooms !== undefined && room.bedrooms > 0 && (
             <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-md px-2 py-0.5 rounded-md text-xs font-medium text-stone-100 border border-white/10">
@@ -195,7 +197,7 @@ export function RoomCard({ room, className, variant = 'grid' }: RoomCardProps) {
           {room.floor !== undefined && room.floor > 0 && (
             <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-md px-2 py-0.5 rounded-md text-xs font-medium text-stone-100 border border-white/10">
               <Layers className="w-3 h-3 text-stone-300" />
-              Tầng {room.floor}
+              {tAuto('k0566')}{' '}{room.floor}
             </span>
           )}
         </div>

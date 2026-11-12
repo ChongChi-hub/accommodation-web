@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useRef, useEffect, useId, useMemo } from 'react';
 import { ChevronDown, Search, X, Check } from 'lucide-react';
@@ -38,6 +39,7 @@ export function Combobox({
   id: propId,
   ariaLabel,
 }: ComboboxProps) {
+  const tAuto = useTranslations('autoI18n');
   const generatedId = useId();
   const comboboxId = propId || generatedId;
   const listboxId = `${comboboxId}-listbox`;
@@ -185,7 +187,7 @@ export function Combobox({
 
           <ul ref={listRef} id={listboxId} role="listbox" className="max-h-60 overflow-y-auto p-1.5 space-y-0.5 text-xs sm:text-sm outline-none">
             {filteredOptions.length === 0 ? (
-              <li className="p-3 text-center text-xs text-stone-400">Không tìm thấy kết quả</li>
+              <li className="p-3 text-center text-xs text-stone-400">{tAuto('k0629')}</li>
             ) : (
               grouped.map(([groupTitle, items]) => (
                 <li key={groupTitle} className="space-y-0.5">

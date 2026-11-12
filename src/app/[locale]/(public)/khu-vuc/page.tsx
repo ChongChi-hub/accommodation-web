@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import { getTranslations } from 'next-intl/server';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
 import { Link } from '@/i18n/routing';
 import { container } from '@/infrastructure/di/container';
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function KhuVucPage() {
+  const tArea = await getTranslations('areasPage');
   const hotAreas = await container.listing.listingRepository.getHotAreas(20, false).catch(() => []);
 
   return (
@@ -20,20 +22,20 @@ export default async function KhuVucPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
         <Breadcrumb
           items={[
-            { label: 'Trang chủ', href: APP_ROUTES.home },
-            { label: 'Khu vực' },
+            { label: tArea('breadcrumbHome'), href: APP_ROUTES.home },
+            { label: tArea('breadcrumbAreas') },
           ]}
         />
 
         <div className="space-y-2 max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">
-            Điểm đến phổ biến
+            {tArea('eyebrow')}
           </span>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 dark:text-stone-100 tracking-tight">
-            Khu vực thuê phòng trọ trọng điểm
+            {tArea('title')}
           </h1>
           <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
-            Khám phá danh sách phòng trọ, căn hộ mini, nhà nguyên căn và ở ghép được xác minh minh bạch tại các đô thị lớn trên toàn quốc.
+            {tArea('subtitle')}
           </p>
         </div>
 
@@ -71,7 +73,7 @@ export default async function KhuVucPage() {
                       {area.code}
                     </span>
                     <span className="text-xs font-medium text-stone-200 drop-shadow-xs">
-                      {area.roomCount} tin đăng
+                      {area.roomCount} {tArea('listingsSuffix')}
                     </span>
                   </div>
 
@@ -86,25 +88,25 @@ export default async function KhuVucPage() {
                         href={`/phong-tro?provinceCode=${area.code}`}
                         className="text-[11px] px-2 py-0.5 rounded-md bg-white/20 hover:bg-white/30 backdrop-blur-xs transition-colors flex items-center gap-1"
                       >
-                        <Home className="w-3 h-3" /> Trọ
+                        <Home className="w-3 h-3" /> {tArea('quickRoom')}
                       </Link>
                       <Link
                         href={`/can-ho?provinceCode=${area.code}`}
                         className="text-[11px] px-2 py-0.5 rounded-md bg-white/20 hover:bg-white/30 backdrop-blur-xs transition-colors flex items-center gap-1"
                       >
-                        <Building className="w-3 h-3" /> Căn hộ
+                        <Building className="w-3 h-3" /> {tArea('quickApartment')}
                       </Link>
                       <Link
                         href={`/nha-nguyen-can?provinceCode=${area.code}`}
                         className="text-[11px] px-2 py-0.5 rounded-md bg-white/20 hover:bg-white/30 backdrop-blur-xs transition-colors flex items-center gap-1"
                       >
-                        <BedDouble className="w-3 h-3" /> Nhà
+                        <BedDouble className="w-3 h-3" /> {tArea('quickHouse')}
                       </Link>
                       <Link
                         href={`/o-ghep?provinceCode=${area.code}`}
                         className="text-[11px] px-2 py-0.5 rounded-md bg-white/20 hover:bg-white/30 backdrop-blur-xs transition-colors flex items-center gap-1"
                       >
-                        <Users className="w-3 h-3" /> Ở ghép
+                        <Users className="w-3 h-3" /> {tArea('quickShared')}
                       </Link>
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { RotateCcw, Search, DollarSign, ChevronDown } from 'lucide-react';
@@ -36,8 +37,24 @@ export function RoomFilterBar({
   wards = [],
   categoryKey,
 }: RoomFilterBarProps) {
+  const tAuto = useTranslations('autoI18n');
   const [isPriceOpen, setIsPriceOpen] = useState(false);
+  const [keyword, setKeyword] = useState(params.q || '');
   const pricePopoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setKeyword(params.q || '');
+  }, [params.q]);
+
+  useEffect(() => {
+    const normalizedInput = keyword.trim() || undefined;
+    const normalizedParam = params.q?.trim() || undefined;
+    if (normalizedInput === normalizedParam) return;
+    const timer = setTimeout(() => {
+      onChange({ q: normalizedInput });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [keyword, params.q, onChange]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -99,8 +116,16 @@ export function RoomFilterBar({
           <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
-            value={params.q || ''}
-            onChange={(e) => onChange({ q: e.target.value || undefined })}
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                const trimmed = keyword.trim() || undefined;
+                if (trimmed !== (params.q?.trim() || undefined)) {
+                  onChange({ q: trimmed });
+                }
+              }
+            }}
             placeholder="Tìm theo đường, trường học, tòa nhà..."
             aria-label="Tìm kiếm theo từ khóa"
             className="w-full h-10.5 pl-10 pr-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 text-xs sm:text-sm font-medium text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs"
@@ -177,7 +202,7 @@ export function RoomFilterBar({
               className="h-10 px-3 rounded-xl text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span>Đặt lại</span>
+              <span>{tAuto('k0549')}</span>
             </button>
           )}
         </div>

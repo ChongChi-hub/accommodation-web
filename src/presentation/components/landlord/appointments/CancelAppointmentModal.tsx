@@ -19,6 +19,7 @@ export function CancelAppointmentModal({
   onClose,
   onCancel,
 }: CancelAppointmentModalProps) {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('landlord.appointments.modals.cancel');
   const [reasonCode, setReasonCode] = useState<CancelReasonCode>('BUSY');
   const [reasonNote, setReasonNote] = useState('');
@@ -136,7 +137,7 @@ export function CancelAppointmentModal({
             className="w-full text-xs p-2.5 rounded-md border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-teal-700"
           />
           <div className="text-[10px] text-stone-400 dark:text-stone-500 text-right">
-            Esc để đóng, Ctrl + Enter để gửi
+            {tAuto('k0523')}
           </div>
         </div>
 

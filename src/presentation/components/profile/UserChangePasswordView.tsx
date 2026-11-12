@@ -11,6 +11,7 @@ import { container } from '@/infrastructure/di/container';
 import { KeyRound, ShieldAlert, Eye, EyeOff } from 'lucide-react';
 
 export function UserChangePasswordView() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('profile');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -65,9 +66,9 @@ export function UserChangePasswordView() {
         <div className="p-3.5 rounded-lg bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 text-xs text-teal-800 dark:text-teal-200 flex items-start gap-2.5">
           <KeyRound className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
           <div>
-            <span>Bạn đăng nhập bằng tài khoản Google và chưa có mật khẩu riêng? </span>
+            <span>{tAuto('k0540')}{' '}</span>
             <Link href="/forgot-password" className="font-semibold underline hover:text-teal-900 dark:hover:text-teal-100">
-              Dùng Quên mật khẩu để đặt mật khẩu
+              {tAuto('k0541')}
             </Link>
           </div>
         </div>

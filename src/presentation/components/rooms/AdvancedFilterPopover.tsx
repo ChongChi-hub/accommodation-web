@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
@@ -17,6 +18,7 @@ export function AdvancedFilterPopover({
   onChange,
   className,
 }: AdvancedFilterPopoverProps) {
+  const tAuto = useTranslations('autoI18n');
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -55,7 +57,7 @@ export function AdvancedFilterPopover({
         )}
       >
         <SlidersHorizontal className="w-3.5 h-3.5" />
-        <span>Bộ lọc khác</span>
+        <span>{tAuto('k0542')}</span>
         {activeCount > 0 && (
           <span className="w-5 h-5 rounded-full bg-teal-600 text-white text-[10px] font-bold flex items-center justify-center">
             {activeCount}
@@ -66,7 +68,7 @@ export function AdvancedFilterPopover({
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 z-50 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 shadow-2xl p-4 space-y-4">
           <div className="flex items-center justify-between pb-2 border-b border-stone-100 dark:border-stone-800">
-            <span className="text-sm font-bold text-stone-900 dark:text-stone-100">Bộ lọc nâng cao</span>
+            <span className="text-sm font-bold text-stone-900 dark:text-stone-100">{tAuto('k0543')}</span>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
@@ -79,7 +81,7 @@ export function AdvancedFilterPopover({
           {/* Preferences Checkboxes */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider">
-              Tiện ích sinh hoạt
+              {tAuto('k0544')}
             </label>
             <div className="space-y-2 pt-1">
               <label className="flex items-center gap-2 text-xs text-stone-800 dark:text-stone-200 cursor-pointer">
@@ -89,7 +91,7 @@ export function AdvancedFilterPopover({
                   onChange={(e) => onChange({ allowPets: e.target.checked || undefined })}
                   className="rounded text-teal-600 focus:ring-teal-500"
                 />
-                <span>Cho phép nuôi thú cưng</span>
+                <span>{tAuto('k0545')}</span>
               </label>
               <label className="flex items-center gap-2 text-xs text-stone-800 dark:text-stone-200 cursor-pointer">
                 <input
@@ -98,7 +100,7 @@ export function AdvancedFilterPopover({
                   onChange={(e) => onChange({ allowCooking: e.target.checked || undefined })}
                   className="rounded text-teal-600 focus:ring-teal-500"
                 />
-                <span>Cho phép tự do nấu ăn</span>
+                <span>{tAuto('k0546')}</span>
               </label>
             </div>
           </div>
@@ -106,7 +108,7 @@ export function AdvancedFilterPopover({
           {/* Furnishing */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider">
-              Nội thất
+              {tAuto('k0547')}
             </label>
             <div className="grid grid-cols-3 gap-1.5 pt-1">
               {[
@@ -134,7 +136,7 @@ export function AdvancedFilterPopover({
           {/* Gender for Shared */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wider">
-              Ưu tiên giới tính
+              {tAuto('k0548')}
             </label>
             <div className="grid grid-cols-3 gap-1.5 pt-1">
               {[
@@ -174,10 +176,10 @@ export function AdvancedFilterPopover({
               }
               className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
             >
-              Đặt lại
+              {tAuto('k0549')}
             </button>
             <Button size="sm" variant="primary" onClick={() => setIsOpen(false)}>
-              Xem kết quả
+              {tAuto('k0397')}
             </Button>
           </div>
         </div>

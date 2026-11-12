@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Calendar, AlertTriangle } from 'lucide-react';
@@ -12,6 +13,7 @@ interface RoomMobileActionBarProps {
 }
 
 export function RoomMobileActionBar({ room, onOpenAppointment }: RoomMobileActionBarProps) {
+  const tAuto = useTranslations('autoI18n');
   const router = useRouter();
   const formatPrice = (p: number) => new Intl.NumberFormat('vi-VN').format(Math.round(p || 0));
 
@@ -25,8 +27,8 @@ export function RoomMobileActionBar({ room, onOpenAppointment }: RoomMobileActio
 
   const checkAuthAndExecute = (action: () => void) => {
     if (typeof document !== 'undefined') {
-      const hasToken = document.cookie.includes('cozynest_token=');
-      if (!hasToken) {
+      const hasSession = document.cookie.includes('cozynest_role=');
+      if (!hasSession) {
         const returnUrl = encodeURIComponent(window.location.pathname);
         router.push(`/login?returnUrl=${returnUrl}`);
         return;
@@ -45,7 +47,7 @@ export function RoomMobileActionBar({ room, onOpenAppointment }: RoomMobileActio
           <span className="text-[11px] text-stone-500">/{room.priceUnit === 'BED' ? 'giường/tháng' : 'tháng'}</span>
         </div>
         <span className="text-[10px] text-stone-500 block truncate">
-          Cọc: {formatPrice(room.deposit)} đ
+          {tAuto('k0521')}{' '}{formatPrice(room.deposit)}{' '}{tAuto('k0257')}
         </span>
       </div>
 

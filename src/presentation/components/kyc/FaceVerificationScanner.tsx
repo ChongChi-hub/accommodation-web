@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Camera, AlertCircle, RotateCcw, ShieldCheck } from 'lucide-react';
@@ -14,6 +15,7 @@ interface Props {
 type Stage = 'CAMERA_PERM' | 'READY' | 'CAPTURING_NEUTRAL' | 'CAPTURING_ACTIONS' | 'REVIEW';
 
 export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmitting }: Props) {
+  const tAuto = useTranslations('autoI18n');
   const [stage, setStage] = useState<Stage>('CAMERA_PERM');
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [currentActionIndex, setCurrentActionIndex] = useState(0);
@@ -122,9 +124,9 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
       <div className="flex items-center justify-between border-b border-border pb-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-emerald-600" />
-          <h2 className="font-semibold text-lg text-foreground">Thu nhận ảnh thử thách sinh trắc học</h2>
+          <h2 className="font-semibold text-lg text-foreground">{tAuto('k0463')}</h2>
         </div>
-        <span className="text-xs font-mono bg-muted px-2 py-1 rounded text-muted-foreground">Lượt thử {challenge.attemptNo}/3</span>
+        <span className="text-xs font-mono bg-muted px-2 py-1 rounded text-muted-foreground">{tAuto('k0464')}{' '}{challenge.attemptNo}/3</span>
       </div>
 
       {stage === 'CAMERA_PERM' && (
@@ -133,24 +135,24 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
             <Camera className="w-8 h-8" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">Yêu cầu quyền truy cập Máy ảnh (Camera)</h3>
+            <h3 className="font-semibold text-foreground">{tAuto('k0465')}</h3>
             <p className="text-sm text-muted-foreground max-w-md mx-auto mt-1">
-              Trình duyệt sẽ yêu cầu quyền mở máy ảnh để chụp 1 ảnh chính diện và 2 động tác thử thách. Ảnh được mã hóa AES-256 ngay khi chụp.
+              {tAuto('k0466')}
             </p>
           </div>
           {cameraError && (
             <div className="p-3 bg-red-50 dark:bg-red-950/40 text-red-600 rounded-lg text-sm flex items-start gap-2 text-left">
               <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium">Lỗi kết nối máy ảnh:</p>
+                <p className="font-medium">{tAuto('k0467')}</p>
                 <p>{cameraError}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Liên hệ hỗ trợ kỹ thuật: 1900 8866 nếu bạn gặp sự cố phần cứng.</p>
+                <p className="mt-1 text-xs text-muted-foreground">{tAuto('k0468')}</p>
               </div>
             </div>
           )}
           <div className="flex gap-3 justify-center pt-2">
-            <Button variant="outline" onClick={onCancel}>Hủy bỏ</Button>
-            <Button onClick={startCamera}>Bật máy ảnh & Bắt đầu</Button>
+            <Button variant="outline" onClick={onCancel}>{tAuto('k0469')}</Button>
+            <Button onClick={startCamera}>{tAuto('k0470')}</Button>
           </div>
         </div>
       )}
@@ -174,29 +176,29 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
           <div className="min-h-16 flex flex-col items-center justify-center">
             {stage === 'READY' && (
               <p className="text-sm text-muted-foreground">
-                Hãy đưa khuôn mặt vào giữa khung tròn, tháo kính râm và đảm bảo đủ ánh sáng.
+                {tAuto('k0471')}
               </p>
             )}
             {stage === 'CAPTURING_NEUTRAL' && (
               <div className="space-y-1">
-                <p className="font-semibold text-foreground">Bước 1: Giữ khuôn mặt thẳng, nhìn thẳng vào ống kính</p>
-                <p className="text-xs text-muted-foreground">Chuẩn bị chụp ảnh chính diện...</p>
+                <p className="font-semibold text-foreground">{tAuto('k0472')}</p>
+                <p className="text-xs text-muted-foreground">{tAuto('k0473')}</p>
               </div>
             )}
             {stage === 'CAPTURING_ACTIONS' && (
               <div className="space-y-1">
                 <p className="font-semibold text-brand-600">
-                  Bước {currentActionIndex + 2}: {challenge.actions[currentActionIndex]?.description}
+                  {tAuto('k0474')}{' '}{currentActionIndex + 2}: {challenge.actions[currentActionIndex]?.description}
                 </p>
-                <p className="text-xs text-muted-foreground">Thực hiện động tác và giữ yên trong 2 giây...</p>
+                <p className="text-xs text-muted-foreground">{tAuto('k0475')}</p>
               </div>
             )}
           </div>
 
           {stage === 'READY' && (
             <div className="flex gap-3 justify-center">
-              <Button variant="outline" onClick={() => { stopCamera(); onCancel(); }}>Hủy</Button>
-              <Button onClick={startCaptureSequence}>Tôi đã sẵn sàng - Bắt đầu chụp</Button>
+              <Button variant="outline" onClick={() => { stopCamera(); onCancel(); }}>{tAuto('k0126')}</Button>
+              <Button onClick={startCaptureSequence}>{tAuto('k0476')}</Button>
             </div>
           )}
         </div>
@@ -205,9 +207,9 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
       {stage === 'REVIEW' && (
         <div className="space-y-4">
           <div className="text-center">
-            <h3 className="font-semibold text-foreground">Kiểm tra lại ảnh đã chụp</h3>
+            <h3 className="font-semibold text-foreground">{tAuto('k0477')}</h3>
             <p className="text-xs text-muted-foreground">
-              Đảm bảo các khung hình rõ nét, không bị lóa và ngũ quan hiển thị rõ ràng.
+              {tAuto('k0478')}
             </p>
           </div>
 
@@ -216,7 +218,7 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
               <div className="aspect-square rounded overflow-hidden mb-1.5 bg-black">
                 {neutralPreview && <img src={neutralPreview} alt="Chính diện" className="w-full h-full object-cover" />}
               </div>
-              <span className="text-xs font-medium text-foreground">1. Chính diện</span>
+              <span className="text-xs font-medium text-foreground">{tAuto('k0479')}</span>
             </div>
             {challenge.actions.map((act, idx) => (
               <div key={act.code} className="border border-border rounded-lg p-2 text-center bg-muted/40">
@@ -229,12 +231,12 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
           </div>
 
           <div className="p-3 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 rounded-lg text-xs leading-relaxed">
-            Lưu ý: Hướng dẫn trong trình duyệt chỉ hỗ trợ bạn thực hiện đúng động tác. Kết quả xác thực cuối cùng sẽ do kiểm duyệt viên đối chiếu với ảnh trên thẻ CCCD của bạn.
+            {tAuto('k0480')}
           </div>
 
           <div className="flex gap-3 justify-end pt-2">
             <Button variant="outline" onClick={handleRetake} disabled={isSubmitting} leftIcon={<RotateCcw className="w-4 h-4" />}>
-              Chụp lại
+              {tAuto('k0481')}
             </Button>
             <Button onClick={handleSubmit} disabled={isSubmitting}>
               {isSubmitting ? 'Đang mã hóa & gửi...' : 'Gửi xác thực'}

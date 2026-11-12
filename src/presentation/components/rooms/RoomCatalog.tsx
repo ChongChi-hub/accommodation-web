@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { LayoutGrid, List as ListIcon, X, ArrowUpDown } from 'lucide-react';
@@ -6,6 +7,7 @@ import { ROOM_CATEGORY_ALIAS_MAP } from '@/shared/routes';
 import { useRooms } from '@/presentation/hooks/useRooms';
 import { RoomCard } from '@/presentation/components/rooms/RoomCard';
 import { RoomFilterBar } from '@/presentation/components/rooms/RoomFilterBar';
+import { RoomPaginationBar } from '@/presentation/components/rooms/RoomPaginationBar';
 import { RoomCatalogHero } from '@/presentation/components/rooms/RoomCatalogHero';
 import { RoomCatalogSeo } from '@/presentation/components/rooms/RoomCatalogSeo';
 import { RoomCardSkeleton } from '@/presentation/components/ui/Skeleton';
@@ -43,6 +45,7 @@ const CATEGORY_TITLES_MAP: Record<CategoryKey, { title: string; desc: string }> 
 };
 
 export function RoomCatalog({ categoryKey = 'phongTro' }: { categoryKey?: CategoryKey }) {
+  const tAuto = useTranslations('autoI18n');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [facetCount, setFacetCount] = useState<number>(0);
 
@@ -52,12 +55,14 @@ export function RoomCatalog({ categoryKey = 'phongTro' }: { categoryKey?: Catego
 
   const {
     rooms,
+    pagination,
     provinces,
     wards,
     params,
     isLoading,
     error,
     updateParams,
+    setPage,
     resetParams,
     retry,
   } = useRooms({}, presetCode);
@@ -123,7 +128,7 @@ export function RoomCatalog({ categoryKey = 'phongTro' }: { categoryKey?: Catego
         {/* Active Filter Chips */}
         {activeFilters.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 pt-3">
-            <span className="text-xs text-stone-400">Đang lọc:</span>
+            <span className="text-xs text-stone-400">{tAuto('k0571')}</span>
             {activeFilters.map((f) => (
               <button
                 key={f.key}
@@ -136,7 +141,7 @@ export function RoomCatalog({ categoryKey = 'phongTro' }: { categoryKey?: Catego
               </button>
             ))}
             <button type="button" onClick={resetParams} className="text-xs text-stone-400 hover:text-stone-600 underline ml-1">
-              Xóa tất cả
+              {tAuto('k0572')}
             </button>
           </div>
         )}
@@ -144,7 +149,7 @@ export function RoomCatalog({ categoryKey = 'phongTro' }: { categoryKey?: Catego
         {/* Sticky Filter Bar / Sorter */}
         <div className="sticky top-16 z-10 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 py-3 px-4 rounded-xl my-6 flex flex-wrap items-center justify-between gap-3 shadow-xs">
           <div className="text-xs sm:text-sm font-semibold text-stone-700 dark:text-stone-300">
-            Tìm thấy <span className="text-teal-600 dark:text-teal-400 font-bold tabular-nums">{rooms.length}</span> phòng trọ
+            {tAuto('k0560')}{' '}<span className="text-teal-600 dark:text-teal-400 font-bold tabular-nums">{pagination.total > 0 ? pagination.total : rooms.length}</span>{' '}{tAuto('k0561')}
           </div>
 
           <div className="flex items-center gap-3">
@@ -157,10 +162,10 @@ export function RoomCatalog({ categoryKey = 'phongTro' }: { categoryKey?: Catego
                 className="bg-transparent border-none text-xs font-medium text-stone-700 dark:text-stone-300 outline-none cursor-pointer"
                 aria-label="Sắp xếp kết quả"
               >
-                <option value="newest">Mới nhất</option>
-                <option value="priceAsc">Giá tăng dần</option>
-                <option value="priceDesc">Giá giảm dần</option>
-                <option value="areaDesc">Diện tích lớn nhất</option>
+                <option value="newest">{tAuto('k0573')}</option>
+                <option value="priceAsc">{tAuto('k0574')}</option>
+                <option value="priceDesc">{tAuto('k0575')}</option>
+                <option value="areaDesc">{tAuto('k0576')}</option>
               </select>
             </div>
 
@@ -203,11 +208,14 @@ export function RoomCatalog({ categoryKey = 'phongTro' }: { categoryKey?: Catego
             onAction={resetParams}
           />
         ) : (
-          <div className={cn('grid gap-6', viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1')}>
-            {rooms.map((room) => (
-              <RoomCard key={room.id} room={room} variant={viewMode} />
-            ))}
-          </div>
+          <>
+            <div className={cn('grid gap-6', viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1')}>
+              {rooms.map((room) => (
+                <RoomCard key={room.id} room={room} variant={viewMode} />
+              ))}
+            </div>
+            <RoomPaginationBar pagination={pagination} onPageChange={setPage} isLoading={isLoading} />
+          </>
         )}
 
         {/* SEO Hand-crafted copy and FAQ */}

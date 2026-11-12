@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useEffect, useState } from 'react';
 import { DashboardHeader } from './DashboardHeader';
@@ -17,6 +18,7 @@ export interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, allowedRoles }: DashboardLayoutProps) {
+  const tAuto = useTranslations('autoI18n');
   const { user, isAuthenticated, hasHydrated, initSession } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
@@ -69,10 +71,10 @@ export function DashboardLayout({ children, allowedRoles }: DashboardLayoutProps
               <ShieldAlert className="w-6 h-6" />
             </div>
             <h2 className="text-lg font-bold text-rose-600 dark:text-rose-400">
-              Truy cập không được phép (403)
+              {tAuto('k0534')}
             </h2>
             <p className="text-xs text-foreground-muted leading-relaxed">
-              Tài khoản của bạn ({user?.roles.join(', ')}) không có quyền quản trị phân hệ này. Vui lòng quay lại khu vực được cấp quyền.
+              {tAuto('k0535')}{user?.roles.join(', ')}{tAuto('k0536')}
             </p>
             <div className="pt-2">
               <Button
@@ -80,7 +82,7 @@ export function DashboardLayout({ children, allowedRoles }: DashboardLayoutProps
                 size="md"
                 onClick={() => router.replace('/dashboard/admin')}
               >
-                Về bảng điều khiển
+                {tAuto('k0537')}
               </Button>
             </div>
           </div>

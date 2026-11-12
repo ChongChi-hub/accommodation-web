@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { MapPin, Navigation, ExternalLink } from 'lucide-react';
@@ -11,6 +12,7 @@ interface RoomMapProps {
 }
 
 export function RoomMap({ latitude, longitude, address }: RoomMapProps) {
+  const tAuto = useTranslations('autoI18n');
   const hasCoordinates =
     typeof latitude === 'number' &&
     typeof longitude === 'number' &&
@@ -34,7 +36,7 @@ export function RoomMap({ latitude, longitude, address }: RoomMapProps) {
         <div className="space-y-1">
           <h2 className="text-base font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-teal-700 dark:text-teal-400" />
-            Vị trí & Khu vực
+            {tAuto('k0608')}
           </h2>
           <p className="text-xs text-stone-600 dark:text-stone-400">{address}</p>
         </div>
@@ -47,7 +49,7 @@ export function RoomMap({ latitude, longitude, address }: RoomMapProps) {
         >
           <Button variant="outline" size="sm" className="gap-1.5 text-xs">
             <Navigation className="w-3.5 h-3.5" />
-            Chỉ đường
+            {tAuto('k0609')}
             <ExternalLink className="w-3 h-3 text-stone-400" />
           </Button>
         </a>
@@ -64,16 +66,16 @@ export function RoomMap({ latitude, longitude, address }: RoomMapProps) {
             />
           </div>
           <p className="text-[11px] text-stone-400 text-right">
-            Dữ liệu bản đồ &copy;{' '}
+            {tAuto('k0610')}{' '}
             <a
               href="https://www.openstreetmap.org/copyright"
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:text-stone-600"
             >
-              OpenStreetMap
+              {tAuto('k0611')}
             </a>{' '}
-            contributors. Môi trường production khuyến nghị dùng tile provider riêng.
+            {tAuto('k0612')}
           </p>
         </div>
       ) : null}

@@ -1,10 +1,12 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Share2, Check } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/Button';
 
 export function RoomShareButton() {
+  const tAuto = useTranslations('autoI18n');
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
@@ -34,7 +36,7 @@ export function RoomShareButton() {
         )
       }
     >
-      {copied ? <span className="text-emerald-600 font-semibold">Đã sao chép!</span> : 'Chia sẻ'}
+      {copied ? <span className="text-emerald-600 font-semibold">{tAuto('k0619')}</span> : 'Chia sẻ'}
     </Button>
   );
 }

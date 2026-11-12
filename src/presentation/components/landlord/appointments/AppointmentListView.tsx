@@ -30,6 +30,7 @@ export function AppointmentListView({
   onOpenCancel,
   onOpenComplete,
 }: AppointmentListViewProps) {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('landlord.appointments');
   const now = new Date().toISOString();
 
@@ -124,7 +125,7 @@ export function AppointmentListView({
                     </span>
                     {a.tenantNote && (
                       <span className="italic line-clamp-1 text-stone-500">
-                        • &ldquo;{a.tenantNote}&rdquo;
+                        {tAuto('k0522')}{a.tenantNote}&rdquo;
                       </span>
                     )}
                   </div>

@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
@@ -6,19 +7,20 @@ import { Card } from '@/presentation/components/ui/Card';
 import { ShieldCheck, Heart, Sparkles, Award } from 'lucide-react';
 
 export default function AboutPage() {
+  const tAuto = useTranslations('autoI18n');
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       <Breadcrumb items={[{ label: 'Về chúng tôi' }]} />
 
       <div className="text-center space-y-3">
         <span className="text-xs font-bold uppercase tracking-widest text-teal-700 dark:text-teal-400">
-          Câu chuyện của Tổ Ấm
+          {tAuto('k0398')}
         </span>
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 dark:text-stone-100">
-          Kiến tạo trải nghiệm thuê trọ tin cậy & văn minh
+          {tAuto('k0399')}
         </h1>
         <p className="text-sm text-stone-500 max-w-2xl mx-auto leading-relaxed">
-          Chúng tôi thành lập Tổ Ấm với khát vọng xóa bỏ nỗi lo phòng ảo, lừa tiền cọc và tranh chấp hợp đồng cho hàng triệu sinh viên, người đi làm trên khắp cả nước.
+          {tAuto('k0400')}
         </p>
       </div>
 
@@ -27,9 +29,9 @@ export default function AboutPage() {
           <div className="w-12 h-12 mx-auto rounded-2xl bg-teal-50 dark:bg-teal-950 flex items-center justify-center text-teal-700 dark:text-teal-400">
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">Minh bạch 100%</h3>
+          <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">{tAuto('k0401')}</h3>
           <p className="text-xs text-stone-500 leading-relaxed">
-            Mọi bài đăng đều được kiểm tra địa chỉ thực, giá thuê và giá dịch vụ niêm yết rõ ràng trước khi xuất bản.
+            {tAuto('k0402')}
           </p>
         </Card>
 
@@ -37,9 +39,9 @@ export default function AboutPage() {
           <div className="w-12 h-12 mx-auto rounded-2xl bg-amber-50 dark:bg-amber-950 flex items-center justify-center text-amber-600 dark:text-amber-400">
             <Heart className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">Đồng hành gắn kết</h3>
+          <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">{tAuto('k0403')}</h3>
           <p className="text-xs text-stone-500 leading-relaxed">
-            Hỗ trợ giải quyết tranh chấp công bằng giữa khách thuê và chủ trọ bằng quy chế hợp đồng điện tử chặt chẽ.
+            {tAuto('k0404')}
           </p>
         </Card>
 
@@ -47,29 +49,29 @@ export default function AboutPage() {
           <div className="w-12 h-12 mx-auto rounded-2xl bg-cyan-50 dark:bg-cyan-950 flex items-center justify-center text-cyan-700 dark:text-cyan-400">
             <Sparkles className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">Công nghệ hiện đại</h3>
+          <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">{tAuto('k0405')}</h3>
           <p className="text-xs text-stone-500 leading-relaxed">
-            Quản lý hợp đồng số, ghi điện nước tự động và thanh toán hóa đơn an toàn qua cổng ngân hàng nội địa.
+            {tAuto('k0406')}
           </p>
         </Card>
       </div>
 
       <div className="p-8 rounded-3xl bg-teal-900 text-white space-y-4">
         <div className="flex items-center gap-2 text-teal-300 text-xs font-semibold uppercase tracking-wider">
-          <Award className="w-4 h-4" /> Cam kết chất lượng
+          <Award className="w-4 h-4" />{' '}{tAuto('k0407')}
         </div>
-        <h2 className="text-2xl font-bold">Bảo vệ quyền lợi cho người đi thuê</h2>
+        <h2 className="text-2xl font-bold">{tAuto('k0408')}</h2>
         <p className="text-xs text-teal-100 leading-relaxed max-w-2xl">
-          Nếu phòng nhận bàn giao không đúng với thông tin xác thực trên hệ thống CozyNest, bạn sẽ được hỗ trợ hoàn tiền cọc giữ phòng theo quy chế và được tư vấn tìm phòng thay thế kịp thời.
+          {tAuto('k0409')}
         </p>
       </div>
 
       <div id="licenses" className="p-6 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/60 space-y-2">
         <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
-          Bản quyền hình ảnh & Tư liệu truyền thông
+          {tAuto('k0410')}
         </h3>
         <p className="text-xs text-stone-500 leading-relaxed">
-          Tất cả hình ảnh kiến trúc, phong cảnh và minh họa phòng trọ trên website CozyNest được cấp phép theo giấy phép Unsplash License, Pexels License hoặc CC0. Danh mục chi tiết tác giả, ngày tải và tệp nguồn được lưu trữ minh bạch tại sổ cấp phép hình ảnh của dự án.
+          {tAuto('k0411')}
         </p>
       </div>
     </div>

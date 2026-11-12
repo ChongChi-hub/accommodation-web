@@ -58,6 +58,35 @@ export interface LandlordSnapshotDto {
   joinedAt?: string;
 }
 
+export interface HostPublicProfileDto {
+  id?: number;
+  landlordId: number;
+  name: string;
+  avatarUrl?: string;
+  verified: boolean;
+  ratingAvg?: number;
+  reviewCount?: number;
+  responseRatePercent?: number;
+  responseTimeMinutes?: number;
+  roomCount?: number;
+  joinedAt?: string;
+  rooms: RoomDto[];
+}
+
+export interface RoomPaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
+export interface PaginatedRoomsResult {
+  rooms: RoomDto[];
+  pagination: RoomPaginationMeta;
+}
+
 export interface RoomFacetsDto {
   provinces: Array<{ code: string; name: string; count: number }>;
   priceRange: { min: number; max: number };

@@ -171,19 +171,19 @@ test.describe('[APPT-02] Landlord Appointments Visual Verification', () => {
     await page.waitForTimeout(300);
 
     // 6. By-Room View
-    const byRoomBtn = page.locator('button[aria-label*="phòng"], button[aria-label*="Room"]');
+    const byRoomBtn = page.getByRole('button', { name: /^(Theo phòng|By Room)$/i }).last();
     await byRoomBtn.click();
     await page.waitForTimeout(500);
     await page.screenshot({ path: path.join(screenshotsDir, 'appointments-by-room-desktop-1440.png'), fullPage: true });
 
     // 7. Calendar View
-    const calendarBtn = page.locator('button[aria-label*="tuần"], button[aria-label*="Calendar"]');
+    const calendarBtn = page.locator('button[aria-label*="tuần"], button[aria-label*="Calendar"]').last();
     await calendarBtn.click();
     await page.waitForTimeout(500);
     await page.screenshot({ path: path.join(screenshotsDir, 'appointments-calendar-desktop-1440.png'), fullPage: true });
 
     // Switch back to list to test drawer & modals
-    const listBtn = page.locator('button[aria-label*="sách"], button[aria-label*="List"]');
+    const listBtn = page.locator('button[aria-label*="sách"], button[aria-label*="List"]').last();
     await listBtn.click();
     await page.waitForTimeout(400);
 

@@ -16,6 +16,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { Star, EyeOff, Eye, MessageSquare, Search, Building, User, ThumbsUp } from 'lucide-react';
 
 function AdminReviewsContent() {
+  const tAuto = useTranslations('autoI18n');
   const t = useTranslations('admin.reviews');
   const tCommon = useTranslations('common');
   const {
@@ -206,17 +207,17 @@ function AdminReviewsContent() {
             <div className="p-4 rounded-xl bg-surface-muted border border-border space-y-3 text-xs">
               <div className="flex items-center gap-2 text-foreground">
                 <Building className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>Phòng được đánh giá: <strong className="font-semibold">{selectedReview.roomTitle}</strong></span>
+                <span>{tAuto('k0012')}{' '}<strong className="font-semibold">{selectedReview.roomTitle}</strong></span>
               </div>
               <div className="flex items-center gap-2 text-foreground-muted">
                 <ThumbsUp className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>Đánh giá từ khách thuê thực tế có hợp đồng</span>
+                <span>{tAuto('k0013')}</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wider text-foreground-muted">
-                Nội dung nhận xét
+                {tAuto('k0014')}
               </h4>
               <div className="p-4 rounded-xl border border-border bg-surface text-xs leading-relaxed text-foreground">
                 {selectedReview.comment}

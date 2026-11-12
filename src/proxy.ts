@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import * as jose from 'jose';
 import { routing } from './i18n/routing';
@@ -65,7 +65,7 @@ function resolveMiddlewareHome(roles: string[], preferredRole?: string): string 
   return APP_ROUTES.tenantHome;
 }
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const cleanPath = pathname.replace(/^\/(vi|en)(?=\/|$)/, '') || '/';
 
@@ -139,8 +139,11 @@ export default async function middleware(req: NextRequest) {
     }
 
     if (cleanPath.startsWith('/dashboard/landlord') && !hasRole('LANDLORD')) {
-      if (!cleanPath.startsWith('/dashboard/landlord/kyc')) {
+      if (hasRole('TENANT') && !cleanPath.startsWith('/dashboard/landlord/kyc')) {
         return NextResponse.redirect(new URL(`${localePrefix}${APP_ROUTES.landlordKyc}`, req.url));
+      }
+      if (!hasRole('TENANT')) {
+        return NextResponse.redirect(new URL(`${localePrefix}/403`, req.url));
       }
     }
 

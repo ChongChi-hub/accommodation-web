@@ -15,6 +15,7 @@ export interface AreaDropdownProps {
 }
 
 export function AreaDropdown({ onHeroTop }: AreaDropdownProps) {
+  const tAuto = useTranslations('autoI18n');
   const tNav = useTranslations('header.nav');
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -136,13 +137,13 @@ export function AreaDropdown({ onHeroTop }: AreaDropdownProps) {
         >
           {isLoading ? (
             <div className="grid grid-cols-2 gap-4 py-8 text-center text-xs text-stone-400">
-              Đang tải khu vực nổi bật...
+              {tAuto('k0524')}
             </div>
           ) : error ? (
             <div className="py-6 text-center text-xs space-y-2">
               <p className="text-rose-500">{error}</p>
               <button type="button" onClick={loadData} className="inline-flex items-center gap-1 text-teal-600 text-xs font-semibold">
-                <RotateCcw className="w-3 h-3" /> Thử lại
+                <RotateCcw className="w-3 h-3" />{' '}{tAuto('k0525')}
               </button>
             </div>
           ) : (
@@ -150,7 +151,7 @@ export function AreaDropdown({ onHeroTop }: AreaDropdownProps) {
               {/* Left Column: 6-8 Hot Area Image Tiles */}
               <div className="col-span-7 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
-                  Khu vực nổi bật
+                  {tAuto('k0526')}
                 </div>
                 <div className="grid grid-cols-2 gap-2.5">
                   {areas.map((area) => (
@@ -171,7 +172,7 @@ export function AreaDropdown({ onHeroTop }: AreaDropdownProps) {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                       <div className="relative z-1 text-white">
                         <p className="text-xs font-bold leading-tight drop-shadow-xs">{area.name}</p>
-                        <p className="text-[10px] text-stone-200 drop-shadow-xs">{area.roomCount} phòng</p>
+                        <p className="text-[10px] text-stone-200 drop-shadow-xs">{area.roomCount}{' '}{tAuto('k0527')}</p>
                       </div>
                     </Link>
                   ))}
@@ -181,7 +182,7 @@ export function AreaDropdown({ onHeroTop }: AreaDropdownProps) {
               {/* Right Column: Search Combobox + A-Z List */}
               <div className="col-span-5 border-l border-stone-100 dark:border-stone-800 pl-5 space-y-3 flex flex-col">
                 <div className="text-xs font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
-                  Tìm theo tỉnh/thành
+                  {tAuto('k0528')}
                 </div>
                 <div className="relative">
                   <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -214,14 +215,14 @@ export function AreaDropdown({ onHeroTop }: AreaDropdownProps) {
 
           {/* Footer Bar */}
           <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs">
-            <span className="text-stone-400">Đầy đủ 8 tỉnh / thành phố trọng điểm</span>
+            <span className="text-stone-400">{tAuto('k0529')}</span>
             <Link
               href="/khu-vuc"
               role="menuitem"
               onClick={() => setIsOpen(false)}
               className="inline-flex items-center gap-1.5 font-semibold text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors"
             >
-              <span>Xem tất cả khu vực ({areas.length} tỉnh/thành)</span>
+              <span>{tAuto('k0530')}{areas.length}{' '}{tAuto('k0531')}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

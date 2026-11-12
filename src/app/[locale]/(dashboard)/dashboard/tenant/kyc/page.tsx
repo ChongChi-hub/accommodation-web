@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
@@ -10,6 +11,7 @@ import { toast } from '@/presentation/stores/toast.store';
 import { ShieldCheck, CheckCircle2, AlertTriangle, Send } from 'lucide-react';
 
 export default function TenantKycPage() {
+  const tAuto = useTranslations('autoI18n');
   const [idNumber, setIdNumber] = useState('001202012345');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerified, setIsVerified] = useState(true);
@@ -29,15 +31,15 @@ export default function TenantKycPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-            Xác minh danh tính (eKYC)
+            {tAuto('k0340')}
           </h1>
           <p className="text-xs text-stone-500 mt-0.5">
-            Xác thực Căn cước công dân để được ký hợp đồng điện tử và nhận bảo hiểm tiền cọc.
+            {tAuto('k0341')}
           </p>
         </div>
         {isVerified && (
           <Badge variant="success" size="md">
-            <ShieldCheck className="w-4 h-4" /> Đã xác thực
+            <ShieldCheck className="w-4 h-4" />{' '}{tAuto('k0342')}
           </Badge>
         )}
       </div>
@@ -69,7 +71,7 @@ export default function TenantKycPage() {
           <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-xs text-teal-800 dark:text-teal-300 flex items-start gap-2.5">
             <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-teal-700" />
             <p className="leading-relaxed">
-              Thông tin CCCD của bạn được mã hóa an toàn theo tiêu chuẩn an ninh mạng quốc gia, chỉ dùng cho mục đích xác lập hợp đồng thuê trọ hợp pháp.
+              {tAuto('k0343')}
             </p>
           </div>
 
@@ -81,7 +83,7 @@ export default function TenantKycPage() {
               isLoading={isSubmitting}
               leftIcon={<Send className="w-3.5 h-3.5" />}
             >
-              Cập nhật hồ sơ xác minh
+              {tAuto('k0344')}
             </Button>
           </div>
         </form>

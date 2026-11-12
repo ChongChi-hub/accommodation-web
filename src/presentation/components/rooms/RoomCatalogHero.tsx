@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -19,6 +20,7 @@ export function RoomCatalogHero({
   heroImage,
   totalRooms,
 }: RoomCatalogHeroProps) {
+  const tAuto = useTranslations('autoI18n');
   const [displayCount, setDisplayCount] = useState(0);
 
   useEffect(() => {
@@ -66,7 +68,7 @@ export function RoomCatalogHero({
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-semibold shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>
-              {displayCount} tin đăng hoạt động
+              {displayCount}{' '}{tAuto('k0577')}
             </span>
           </div>
 

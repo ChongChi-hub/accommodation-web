@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, HelpCircle, MapPin } from 'lucide-react';
 import { Link } from '@/i18n/routing';
-import { useLocale } from 'next-intl';
+import { useLocale , useTranslations} from 'next-intl';
 import { cn } from '@/lib/cn';
 
 interface FaqItem {
@@ -126,6 +126,7 @@ export function RoomCatalogSeo({
   categoryKey?: string;
   categoryPath?: string;
 }) {
+  const tAuto = useTranslations('autoI18n');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const locale = useLocale();
   const data = SEO_DATA_VI[categoryKey] || SEO_DATA_VI.phongTro;
@@ -164,7 +165,7 @@ export function RoomCatalogSeo({
       {/* Popular Area Links */}
       <div className="space-y-3">
         <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500">
-          Khu vực tìm kiếm phổ biến
+          {tAuto('k0578')}
         </h3>
         <div className="flex flex-wrap gap-2">
           {POPULAR_PROVINCES.map((prov) => (
@@ -185,7 +186,7 @@ export function RoomCatalogSeo({
         <div className="flex items-center gap-2">
           <HelpCircle className="w-5 h-5 text-teal-600 dark:text-teal-400" />
           <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">
-            Câu hỏi thường gặp
+            {tAuto('k0579')}
           </h3>
         </div>
 

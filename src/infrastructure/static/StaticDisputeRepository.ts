@@ -1,43 +1,11 @@
 import { DisputeRepository } from '@/domain/repositories/DisputeRepository';
 import { Dispute } from '@/domain/entities/Dispute';
 
+/**
+ * Empty placeholder repository until Sprint 4 dispute endpoints are implemented.
+ */
 export class StaticDisputeRepository implements DisputeRepository {
-  private disputes: Dispute[] = [
-    {
-      id: 'DISP-501',
-      contractId: 'HD-2026-088',
-      roomTitle: 'Phòng Studio Ban Công Đẹp Phường Đa Kao',
-      complainantId: 'usr_tenant_1',
-      complainantName: 'Nguyễn Văn Thuê',
-      complainantRole: 'TENANT',
-      defendantId: 'usr_landlord_1',
-      defendantName: 'Trần Thị Chủ Trọ',
-      defendantRole: 'LANDLORD',
-      disputeType: 'DEPOSIT_RETURN',
-      amount: 4500000,
-      reason: 'Người thuê kết thúc hợp đồng đúng hạn và bàn giao chìa khóa nhưng chủ trọ chậm hoàn cọc quá 15 ngày làm việc theo cam kết hợp đồng.',
-      evidenceUrls: ['https://res.cloudinary.com/dfs07oaet/image/upload/v1794153192/cozynest/rooms/room-1.jpg'],
-      status: 'MEDIATING',
-      createdAt: '2026-11-04T14:00:00Z',
-    },
-    {
-      id: 'DISP-502',
-      contractId: 'HD-2026-052',
-      roomTitle: 'Căn Hộ Dịch Vụ 1PN Phường 15',
-      complainantId: 'usr_landlord_1',
-      complainantName: 'Trần Thị Chủ Trọ',
-      complainantRole: 'LANDLORD',
-      defendantId: 'usr_tenant_2',
-      defendantName: 'Lê Hoàng Minh',
-      defendantRole: 'TENANT',
-      disputeType: 'DAMAGE_COMPENSATION',
-      amount: 1200000,
-      reason: 'Khách thuê tự ý khoan tường làm vỡ gạch ốp tường phòng tắm và làm hỏng mặt kính bếp từ.',
-      evidenceUrls: ['https://res.cloudinary.com/dfs07oaet/image/upload/v1794153451/cozynest/rooms/room-2.jpg'],
-      status: 'PENDING',
-      createdAt: '2026-11-05T09:15:00Z',
-    },
-  ];
+  private disputes: Dispute[] = [];
 
   async getDisputes(filters?: { status?: string; contractId?: string }): Promise<Dispute[]> {
     let result = [...this.disputes];
@@ -50,23 +18,11 @@ export class StaticDisputeRepository implements DisputeRepository {
     return this.disputes.find((d) => d.id === id) || null;
   }
 
-  async createDispute(data: Omit<Dispute, 'id' | 'createdAt' | 'status'>): Promise<Dispute> {
-    const newDisp: Dispute = {
-      ...data,
-      id: `DISP-${Math.floor(100 + Math.random() * 900)}`,
-      status: 'PENDING',
-      createdAt: new Date().toISOString(),
-    };
-    this.disputes.unshift(newDisp);
-    return newDisp;
+  async createDispute(_data: Omit<Dispute, 'id' | 'createdAt' | 'status'>): Promise<Dispute> {
+    throw new Error('Tính năng tạo khiếu nại tranh chấp sẽ kết nối backend ở Sprint 4');
   }
 
-  async resolveDispute(id: string, verdict: string, status: Dispute['status']): Promise<void> {
-    const d = this.disputes.find((item) => item.id === id);
-    if (!d) throw new Error('Không tìm thấy vụ việc tranh chấp');
-    d.verdict = verdict;
-    d.status = status;
-    d.resolvedAt = new Date().toISOString();
+  async resolveDispute(_id: string, _verdict: string, _status: Dispute['status']): Promise<void> {
+    throw new Error('Tính năng xử lý tranh chấp sẽ kết nối backend ở Sprint 4');
   }
 }
-

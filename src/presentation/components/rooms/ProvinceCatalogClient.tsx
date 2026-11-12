@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React, { useState } from 'react';
 import Image from 'next/image';
@@ -27,6 +28,7 @@ const CATEGORY_TABS = [
 ];
 
 export function ProvinceCatalogClient({ area }: ProvinceCatalogClientProps) {
+  const tAuto = useTranslations('autoI18n');
   const [activeTab, setActiveTab] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -74,10 +76,10 @@ export function ProvinceCatalogClient({ area }: ProvinceCatalogClientProps) {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-semibold">
               <MapPin className="w-3.5 h-3.5 text-teal-300" />
-              <span>{area.roomCount} tin đăng tại {area.name}</span>
+              <span>{area.roomCount}{' '}{tAuto('k0558')}{' '}{area.name}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Phòng trọ tại {area.name}
+              {tAuto('k0559')}{' '}{area.name}
             </h1>
           </div>
         </div>
@@ -117,7 +119,7 @@ export function ProvinceCatalogClient({ area }: ProvinceCatalogClientProps) {
         {/* Results Header */}
         <div className="flex items-center justify-between gap-3 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-3 rounded-xl shadow-xs">
           <div className="text-xs sm:text-sm font-semibold text-stone-700 dark:text-stone-300">
-            Tìm thấy <span className="text-teal-600 font-bold tabular-nums">{rooms.length}</span> phòng trọ
+            {tAuto('k0560')}{' '}<span className="text-teal-600 font-bold tabular-nums">{rooms.length}</span>{' '}{tAuto('k0561')}
           </div>
 
           <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-800 p-1 rounded-lg">

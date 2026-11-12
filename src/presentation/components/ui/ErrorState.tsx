@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 
 import React from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
@@ -18,6 +19,7 @@ export function ErrorState({
   onRetry,
   className,
 }: ErrorStateProps) {
+  const tAuto = useTranslations('autoI18n');
   return (
     <div
       className={cn(
@@ -40,7 +42,7 @@ export function ErrorState({
           leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
           className="mt-4 border-rose-300 text-rose-800 dark:border-rose-800 dark:text-rose-200 hover:bg-rose-100/50"
         >
-          Thử lại
+          {tAuto('k0525')}
         </Button>
       )}
     </div>
