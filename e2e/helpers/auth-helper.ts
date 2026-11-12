@@ -121,6 +121,14 @@ export async function authenticateAs(context: any, page: any, email: keyof typeo
       value: token,
       domain: 'localhost',
       path: '/',
+      httpOnly: true,
+    },
+    {
+      name: 'cozynest_refresh_token',
+      value: 'mock_refresh_token',
+      domain: 'localhost',
+      path: '/',
+      httpOnly: true,
     },
     {
       name: 'cozynest_role',
@@ -130,13 +138,22 @@ export async function authenticateAs(context: any, page: any, email: keyof typeo
     },
   ]);
   await page.addInitScript(
-    ({ t, u }: { t: string; u: any }) => {
-      localStorage.setItem('cozynest_access_token', t);
-      localStorage.setItem('cozynest_refresh_token', 'mock_refresh_token');
+    ({ u }: { u: any }) => {
       localStorage.setItem('cozynest_user', JSON.stringify(u));
     },
-    { t: token, u: user }
+    { u: user }
   );
+  await page.route('**/api/auth/refresh', async (route: any) => {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        code: 200,
+        message: 'OK',
+        data: { user },
+      }),
+    });
+  });
   await page.route('**/api/v1/auth/refresh-token', async (route: any) => {
     let body: any = null;
     try {
@@ -191,6 +208,69 @@ const CORS_HEADERS = {
 };
 
 export async function setupAuthMockRoutes(page: Page) {
+  await page.route('**/api/auth/login', async (route) => {
+    let postData: any = null;
+    try {
+      postData = route.request().postDataJSON();
+    } catch {
+      postData = null;
+    }
+    const identifier = String(postData?.identifier || postData?.email || '');
+    const user = DEMO_USERS[identifier];
+    if (!user || postData?.password !== 'password123') {
+      return route.fulfill({
+        status: 401,
+        contentType: 'application/json',
+        json: { success: false, message: 'Sai email hoặc mật khẩu' },
+      });
+    }
+
+    const token = await createRealSignedToken(user);
+    await page.context().addCookies([
+      {
+        name: 'cozynest_token',
+        value: token,
+        domain: 'localhost',
+        path: '/',
+        httpOnly: true,
+      },
+      {
+        name: 'cozynest_refresh_token',
+        value: `mock-refresh-token:${user.email}`,
+        domain: 'localhost',
+        path: '/',
+        httpOnly: true,
+      },
+      {
+        name: 'cozynest_role',
+        value: user.roles[0],
+        domain: 'localhost',
+        path: '/',
+      },
+      {
+        name: 'cozynest_authenticated',
+        value: 'true',
+        domain: 'localhost',
+        path: '/',
+      },
+    ]);
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      json: {
+        success: true,
+        data: {
+          user: {
+            id: user.id,
+            email: user.email,
+            fullName: user.fullName,
+            roles: user.roles,
+          },
+        },
+      },
+    });
+  });
+
   await page.route('**/api/v1/auth/login', async (route) => {
     if (route.request().method() === 'OPTIONS') {
       return route.fulfill({ status: 204, headers: CORS_HEADERS });
@@ -201,7 +281,8 @@ export async function setupAuthMockRoutes(page: Page) {
     } catch {
       postData = null;
     }
-    const user = DEMO_USERS[postData?.email];
+    const identifier = String(postData?.identifier || postData?.email || '');
+    const user = DEMO_USERS[identifier];
     if (!user || postData?.password !== 'password123') {
       return route.fulfill({
         status: 401,
@@ -227,6 +308,37 @@ export async function setupAuthMockRoutes(page: Page) {
           },
         },
       },
+    });
+  });
+
+  await page.route('**/api/auth/refresh', async (route) => {
+    const cookies = await page.context().cookies();
+    const rtCookie = cookies.find((c) => c.name === 'cozynest_refresh_token')?.value || '';
+    if (rtCookie.startsWith('mock-refresh-token:')) {
+      const email = rtCookie.slice('mock-refresh-token:'.length);
+      const user = DEMO_USERS[email];
+      if (user) {
+        const token = await createRealSignedToken(user);
+        await page.context().addCookies([
+          { name: 'cozynest_token', value: token, domain: 'localhost', path: '/', httpOnly: true },
+          { name: 'cozynest_role', value: user.roles[0], domain: 'localhost', path: '/' },
+          { name: 'cozynest_authenticated', value: 'true', domain: 'localhost', path: '/' },
+        ]);
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          json: {
+            code: 200,
+            message: 'OK',
+            data: { user },
+          },
+        });
+      }
+    }
+    return route.fulfill({
+      status: 401,
+      contentType: 'application/json',
+      json: { success: false, message: 'Unauthorized' },
     });
   });
 
@@ -273,7 +385,10 @@ export async function setupAuthMockRoutes(page: Page) {
       return route.fulfill({ status: 204, headers: CORS_HEADERS });
     }
     const auth = route.request().headers()['authorization'] || '';
-    const jwt = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+    const cookies = await page.context().cookies();
+    const jwt = auth.startsWith('Bearer ')
+      ? auth.slice(7)
+      : (cookies.find((c) => c.name === 'cozynest_token')?.value || '');
     if (jwt) {
       try {
         const decoded = jose.decodeJwt(jwt);

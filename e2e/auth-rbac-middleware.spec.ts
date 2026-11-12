@@ -3,6 +3,13 @@ import { setupAuthMockRoutes } from './helpers/auth-helper';
 
 test.describe('[AUTH-03] Cryptographic RBAC Route Guard & Next.js Middleware Protection', () => {
   test.beforeEach(async ({ page }) => {
+    await page.route('**/api/v1/**', async (route) => {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        json: { success: true, data: [] },
+      });
+    });
     await setupAuthMockRoutes(page);
     await page.context().clearCookies();
   });

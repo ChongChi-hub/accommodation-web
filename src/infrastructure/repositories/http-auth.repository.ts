@@ -1,7 +1,7 @@
 import { AuthRepository, AuthSession } from '@/domain/repositories/AuthRepository';
 import { LandlordApplicationSummary, User } from '@/domain/entities/User';
 import { UserProfile, UpdateUserProfileDto } from '@/domain/entities/UserProfile';
-import { ApiClient } from '../http/api-client';
+import { ApiClient, ApiError } from '../http/api-client';
 
 function resolveCookieRole(user: User | undefined | null): string {
   const roles = user?.roles || [];
@@ -18,22 +18,10 @@ function resolveCookieRole(user: User | undefined | null): string {
   return roles[0] || 'TENANT';
 }
 
-function setAuthCookies(token?: string, role?: string) {
+function setUiRoleCookie(role?: string) {
   if (typeof document !== 'undefined') {
     const isProduction = process.env.NODE_ENV === 'production';
     const secureFlag = isProduction ? '; Secure' : '';
-    if (token) {
-      document.cookie = `cozynest_token=${encodeURIComponent(token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
-      fetch('/api/auth/session', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, role }),
-      }).catch(() => undefined);
-    } else {
-      document.cookie = `cozynest_token=; path=/; max-age=0; SameSite=Lax${secureFlag}`;
-      fetch('/api/auth/session', { method: 'DELETE', credentials: 'include' }).catch(() => undefined);
-    }
     if (role) {
       document.cookie = `cozynest_role=${encodeURIComponent(role)}; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
     } else {
@@ -42,35 +30,55 @@ function setAuthCookies(token?: string, role?: string) {
   }
 }
 
+async function postAuthBff<T = any>(path: string, payload: unknown): Promise<T> {
+  const response = await fetch(path, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload ?? {}),
+  });
+  const json = await response.json().catch(() => ({ message: 'Loi phan hoi tu may chu', data: null }));
+  if (!response.ok) {
+    const retryHeader = response.headers.get('Retry-After');
+    const parsedRetry = retryHeader ? parseInt(retryHeader, 10) : NaN;
+    throw new ApiError(
+      json.message || 'Loi xac thuc',
+      json.errorCode || 'ERR_HTTP_' + response.status,
+      response.status,
+      json.errors,
+      Number.isFinite(parsedRetry) && parsedRetry > 0 ? parsedRetry : undefined
+    );
+  }
+  return json.data as T;
+}
+
 export class HttpAuthRepository implements AuthRepository {
   async login(email: string, password: string): Promise<AuthSession> {
-    const data = await ApiClient.post<any>('/auth/login', { email, password });
-    ApiClient.setToken(data.token);
+    const data = await postAuthBff<any>('/api/auth/login', { email, password });
+    ApiClient.setToken(null);
     const primaryRole = resolveCookieRole(data.user);
-    setAuthCookies(data.token, primaryRole);
+    setUiRoleCookie(primaryRole);
 
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cozynest_refresh_token', data.refreshToken);
+    if (typeof window !== 'undefined' && data.user) {
       localStorage.setItem('cozynest_user', JSON.stringify(data.user));
     }
     return {
-      tokens: { token: data.token, refreshToken: data.refreshToken },
+      tokens: { token: '', refreshToken: '' },
       user: data.user,
     };
   }
 
   async register(data: { email: string; phone: string; password: string; fullName: string; role: string }): Promise<AuthSession> {
-    const res = await ApiClient.post<any>('/auth/register', data);
-    ApiClient.setToken(res.token);
+    const res = await postAuthBff<any>('/api/auth/register', data);
+    ApiClient.setToken(null);
     const primaryRole = resolveCookieRole(res.user);
-    setAuthCookies(res.token, primaryRole);
+    setUiRoleCookie(primaryRole);
 
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cozynest_refresh_token', res.refreshToken);
+    if (typeof window !== 'undefined' && res.user) {
       localStorage.setItem('cozynest_user', JSON.stringify(res.user));
     }
     return {
-      tokens: { token: res.token, refreshToken: res.refreshToken },
+      tokens: { token: '', refreshToken: '' },
       user: res.user,
     };
   }
@@ -84,34 +92,32 @@ export class HttpAuthRepository implements AuthRepository {
   }
 
   async loginWithGoogle(data: { credential: string; nonce: string; intendedRole?: string }): Promise<AuthSession> {
-    const res = await ApiClient.post<any>('/auth/google', data);
-    ApiClient.setToken(res.token);
+    const res = await postAuthBff<any>('/api/auth/google', data);
+    ApiClient.setToken(null);
     const primaryRole = resolveCookieRole(res.user);
-    setAuthCookies(res.token, primaryRole);
+    setUiRoleCookie(primaryRole);
 
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cozynest_refresh_token', res.refreshToken);
+    if (typeof window !== 'undefined' && res.user) {
       localStorage.setItem('cozynest_user', JSON.stringify(res.user));
     }
     return {
-      tokens: { token: res.token, refreshToken: res.refreshToken },
+      tokens: { token: '', refreshToken: '' },
       user: res.user,
       isNewUser: Boolean(res.isNewUser ?? res.newUser ?? false),
     };
   }
 
-  async refreshToken(refreshToken: string): Promise<AuthSession> {
-    const data = await ApiClient.post<any>('/auth/refresh-token', { refreshToken });
-    ApiClient.setToken(data.token);
+  async refreshToken(_refreshToken?: string): Promise<AuthSession> {
+    const data = await postAuthBff<any>('/api/auth/refresh', {});
+    ApiClient.setToken(null);
     const primaryRole = resolveCookieRole(data.user);
-    setAuthCookies(data.token, primaryRole);
+    setUiRoleCookie(primaryRole);
 
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cozynest_refresh_token', data.refreshToken);
+    if (typeof window !== 'undefined' && data.user) {
       localStorage.setItem('cozynest_user', JSON.stringify(data.user));
     }
     return {
-      tokens: { token: data.token, refreshToken: data.refreshToken },
+      tokens: { token: '', refreshToken: '' },
       user: data.user,
     };
   }
@@ -240,9 +246,8 @@ export class HttpAuthRepository implements AuthRepository {
       // Ignore network errors on logout
     } finally {
       ApiClient.setToken(null);
-      setAuthCookies();
+      setUiRoleCookie();
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('cozynest_refresh_token');
         localStorage.removeItem('cozynest_user');
       }
     }

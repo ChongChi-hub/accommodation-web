@@ -35,10 +35,26 @@ export async function POST(req: NextRequest) {
       return errRes;
     }
 
-    const res = NextResponse.json(json, { status: 200 });
-    const data = json?.data;
-    if (data?.token) {
-      attachAuthCookies(res, data.token, data.refreshToken, resolvePrimaryRole(data.user?.roles));
+    const rawData = json?.data as Record<string, unknown> | undefined;
+    const sanitizedJson = rawData
+      ? {
+          ...json,
+          data: {
+            user: rawData.user,
+            expiresIn: rawData.expiresIn,
+          },
+        }
+      : json;
+
+    const res = NextResponse.json(sanitizedJson, { status: 200 });
+    if (typeof rawData?.token === 'string' && rawData.token) {
+      const userObj = rawData.user as { roles?: string[] } | undefined;
+      attachAuthCookies(
+        res,
+        rawData.token,
+        typeof rawData.refreshToken === 'string' ? rawData.refreshToken : undefined,
+        resolvePrimaryRole(userObj?.roles)
+      );
     }
     res.headers.set('Cache-Control', 'no-store');
     return res;

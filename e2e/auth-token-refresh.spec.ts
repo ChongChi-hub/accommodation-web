@@ -51,6 +51,31 @@ test.describe('[AUTH-03/05] Silent Token Refresh Flow on Expired Session', () =>
       });
     });
 
+    let initialHydrateDone = false;
+    await page.route('**/api/auth/refresh', async (route) => {
+      if (initialHydrateDone) {
+        refreshCalled = true;
+      }
+      initialHydrateDone = true;
+      await route.fulfill({
+        status: 200,
+        headers: corsHeaders,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          code: 200,
+          message: 'Làm mới token thành công',
+          data: {
+            user: {
+              id: 'u-landlord-01',
+              email: 'landlord@cozynest.vn',
+              fullName: 'Chủ Trọ Demo',
+              roles: ['LANDLORD'],
+            },
+          },
+        }),
+      });
+    });
+
     await page.route('**/api/v1/auth/refresh-token', async (route) => {
       if (route.request().method() === 'OPTIONS') {
         return route.fulfill({ status: 204, headers: corsHeaders });
