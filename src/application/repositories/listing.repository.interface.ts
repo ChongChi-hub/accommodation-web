@@ -23,6 +23,7 @@ export interface IListingRepository {
   getRoomById(id: number): Promise<RoomDto>;
   getRoomDetail(slugOrId: string): Promise<RoomDetailDto>;
   getHostProfile?(id: string | number): Promise<HostPublicProfileDto>;
+  getTopHosts?(): Promise<HostPublicProfileDto[]>;
   getRecommendations(id: number): Promise<RoomDto[]>;
   getSimilarRooms(id: number): Promise<RoomDto[]>;
   getProvinces(): Promise<ProvinceDto[]>;

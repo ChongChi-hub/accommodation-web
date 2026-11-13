@@ -877,7 +877,26 @@
     "passwordSessionNotice": "Note: Changing password will terminate your active sessions on all other devices.",
     "changePasswordSuccess": "Password changed successfully. Please use your new password next time you sign in.",
     "memberSince": "Member since",
-    "identityStatus": "Identity Status"
+    "identityStatus": "Identity Status",
+    "linkedAccountsTitle": "Linked Accounts",
+    "linkedAccountsSubtitle": "Manage social accounts used for fast sign-in",
+    "loadingLinkedAccounts": "Loading linked accounts...",
+    "linkedStatus": "Linked",
+    "lastLoginMethodNotice": "Sole login method. Set a password before unlinking.",
+    "setPasswordBtn": "Set Password",
+    "unlinkBtn": "Unlink",
+    "notLinkedGoogleDesc": "Not linked. Linking Google allows fast, secure sign-in.",
+    "linkGoogleBtn": "Link Google",
+    "confirmUnlinkTitle": "Confirm Google Unlink",
+    "confirmUnlinkWarning": "After unlinking, you can no longer sign in with this Google account. You will need to use email and password.",
+    "confirmUnlinkBtn": "Unlink",
+    "cancel": "Cancel",
+    "googleLinkSuccess": "Google account linked successfully",
+    "googleLinkFailed": "Failed to link Google account",
+    "googleUnlinkSuccess": "Google account unlinked successfully",
+    "googleUnlinkFailed": "Failed to unlink Google account",
+    "googleServiceUnavailable": "Google service is temporarily unavailable. Please try again later.",
+    "googleBrand": "Google"
   },
   "kyc": {
     "landlordTitle": "Landlord Identity Verification",
@@ -2182,5 +2201,23 @@
       "overdueCol": "Overdue",
       "emptySeries": "No billing analytics recorded yet."
     }
+  },
+  "topHosts": {
+    "title": "Verified Landlords",
+    "subtitle": "Fully verified identity, high response rate, and positive reviews from tenants",
+    "viewProfile": "View Profile & Listings",
+    "verifiedBadge": "Verified",
+    "roomsCount": "{count} active listings",
+    "responseRate": "Response",
+    "rating": "{rating} / 5",
+    "viewAll": "View all verified landlords",
+    "rooms": "Rooms",
+    "speed": "Speed",
+    "reviewsCount": "({count} reviews)",
+    "roomCountItem": "{count} rooms",
+    "responsePercentItem": "{percent}% response",
+    "emptyTitle": "No landlords found",
+    "emptyDesc": "No landlords matched your search keyword.",
+    "searchPlaceholder": "Search landlord name..."
   }
 }

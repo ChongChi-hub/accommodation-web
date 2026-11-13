@@ -12,6 +12,7 @@ import { HomeHowItWorks } from '@/presentation/components/home/HomeHowItWorks';
 import { HomeLatestRooms } from '@/presentation/components/home/HomeLatestRooms';
 import { HomeBanners } from '@/presentation/components/home/HomeBanners';
 import { HomeLandlordSection } from '@/presentation/components/home/HomeLandlordSection';
+import { HomeTopLandlordsSection } from '@/presentation/components/home/HomeTopLandlordsSection';
 import { HomeGuidesSection } from '@/presentation/components/home/HomeGuidesSection';
 import { HomeStatsSection } from '@/presentation/components/home/HomeStatsSection';
 import { HomeFinalCta } from '@/presentation/components/home/HomeFinalCta';
@@ -86,6 +87,9 @@ export default function HomePage() {
 
         {/* 8. Landlord Partner Section (genuine photo + role-aware CTA) */}
         <HomeLandlordSection />
+
+        {/* 8.5. Top Verified Landlords */}
+        <HomeTopLandlordsSection />
 
         {/* 9. Guides & Safety Advice (3 CMS articles) */}
         <HomeGuidesSection

@@ -64,30 +64,30 @@ export function GoogleLoginButton({
     return () => obs.disconnect();
   }, []);
 
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
-  const isFlagEnabled = process.env.NEXT_PUBLIC_GOOGLE_LOGIN_ENABLED === 'true';
-  const isPlaceholder =
-    !clientId || clientId.includes('placeholder') || clientId.includes('your-google-client-id');
+  const PUBLIC_CLIENT_ID = '865044247606-e93b5l98l4mp66eqkfdlatvks5rsn8r4.apps.googleusercontent.com';
+  const rawId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+  const clientId =
+    rawId && !rawId.includes('placeholder') && !rawId.includes('your-google-client-id')
+      ? rawId
+      : PUBLIC_CLIENT_ID;
 
   useEffect(() => {
     let mounted = true;
     async function checkStatus() {
-      if (!isFlagEnabled || isPlaceholder) {
-        if (mounted) setIsConfigured(false);
-        return;
-      }
       try {
         const status = await container.auth.googleAuthUseCase.getStatus();
-        if (mounted) setIsConfigured(Boolean(status.enabled));
+        if (mounted && typeof status?.enabled === 'boolean') {
+          setIsConfigured(status.enabled);
+        }
       } catch {
-        if (mounted) setIsConfigured(false);
+        if (mounted) setIsConfigured(true);
       }
     }
     checkStatus();
     return () => {
       mounted = false;
     };
-  }, [isFlagEnabled, isPlaceholder]);
+  }, []);
 
   const handleCredentialResponse = useCallback(
     async (response: { credential?: string }) => {
@@ -189,7 +189,7 @@ export function GoogleLoginButton({
     }
   }, [gisLoaded, isConfigured, initGis]);
 
-  if (isConfigured === false) return null;
+  if (isConfigured === false && process.env.NODE_ENV === 'production') return null;
 
   const displayLabel = label || (isRegister ? tAuth('googleRegister') : tAuth('googleLogin'));
   const roleRuleNote = !isRegister

@@ -26,6 +26,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'placehold.co',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.vietqr.io',
+      },
     ],
   },
   async headers() {
@@ -45,7 +53,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "frame-src 'self' https://accounts.google.com https://*.google.com https://*.openstreetmap.org https://www.openstreetmap.org",
               "connect-src 'self' http://localhost:8080 http://localhost:3000 ws://localhost:3000 https://accounts.google.com https://*.googleapis.com",
-              "img-src 'self' data: blob: https://res.cloudinary.com https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co",
+              "img-src 'self' data: blob: https://res.cloudinary.com https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co https://img.vietqr.io https://*.vietqr.io",
               "font-src 'self' data:",
             ].join('; '),
           },
