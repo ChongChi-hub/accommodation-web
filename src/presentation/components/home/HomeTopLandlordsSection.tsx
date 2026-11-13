@@ -134,11 +134,11 @@ export function HomeTopLandlordsSection() {
                 <div className="w-full mt-4 pt-4 border-t border-border/60 grid grid-cols-2 gap-2 text-left">
                   <div className="flex items-center gap-1.5 text-xs text-foreground-muted">
                     <Home className="w-3.5 h-3.5 text-teal-700 shrink-0" />
-                    <span>{host.roomCount || 0} phòng</span>
+                    <span>{t('roomCountItem', { count: host.roomCount || 0 })}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-foreground-muted">
                     <MessageSquare className="w-3.5 h-3.5 text-teal-700 shrink-0" />
-                    <span>{host.responseRatePercent || 100}% hồi đáp</span>
+                    <span>{t('responsePercentItem', { percent: host.responseRatePercent || 100 })}</span>
                   </div>
                 </div>
 

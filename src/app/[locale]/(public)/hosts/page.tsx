@@ -80,7 +80,7 @@ export default function HostsListingPage() {
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm tên chủ trọ..."
+                placeholder={t('searchPlaceholder')}
                 className="pl-9 text-xs"
               />
             </div>
@@ -95,8 +95,8 @@ export default function HostsListingPage() {
           </div>
         ) : filteredHosts.length === 0 ? (
           <EmptyState
-            title="Không tìm thấy chủ trọ"
-            description="Không có chủ trọ nào phù hợp với từ khóa tìm kiếm."
+            title={t('emptyTitle')}
+            description={t('emptyDesc')}
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -136,7 +136,7 @@ export default function HostsListingPage() {
                       <Star className="w-4 h-4 fill-amber-400 stroke-amber-400" />
                       <span>{host.ratingAvg?.toFixed(1) || '5.0'}</span>
                       <span className="text-foreground-muted font-normal">
-                        ({host.reviewCount || 0} đánh giá)
+                        {t('reviewsCount', { count: host.reviewCount || 0 })}
                       </span>
                     </div>
                   </div>
@@ -145,7 +145,7 @@ export default function HostsListingPage() {
                     <div className="p-2 rounded-lg bg-surface-muted">
                       <div className="text-xs text-foreground-muted flex items-center justify-center gap-1">
                         <Home className="w-3.5 h-3.5 text-teal-700" />
-                        <span>Phòng</span>
+                        <span>{t('rooms')}</span>
                       </div>
                       <p className="text-sm font-bold text-foreground mt-1">
                         {host.roomCount || 0}
@@ -155,7 +155,7 @@ export default function HostsListingPage() {
                     <div className="p-2 rounded-lg bg-surface-muted">
                       <div className="text-xs text-foreground-muted flex items-center justify-center gap-1">
                         <MessageSquare className="w-3.5 h-3.5 text-teal-700" />
-                        <span>Hồi đáp</span>
+                        <span>{t('responseRate')}</span>
                       </div>
                       <p className="text-sm font-bold text-foreground mt-1">
                         {host.responseRatePercent || 100}%
@@ -165,7 +165,7 @@ export default function HostsListingPage() {
                     <div className="p-2 rounded-lg bg-surface-muted">
                       <div className="text-xs text-foreground-muted flex items-center justify-center gap-1">
                         <Clock className="w-3.5 h-3.5 text-teal-700" />
-                        <span>Tốc độ</span>
+                        <span>{t('speed')}</span>
                       </div>
                       <p className="text-sm font-bold text-foreground mt-1">
                         {host.responseTimeMinutes ? `${host.responseTimeMinutes}m` : '< 1h'}

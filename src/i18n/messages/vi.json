@@ -2208,8 +2208,16 @@
     "viewProfile": "Xem hồ sơ & phòng",
     "verifiedBadge": "Đã xác thực",
     "roomsCount": "{count} phòng đang cho thuê",
-    "responseRate": "Phản hồi {rate}%",
+    "responseRate": "Hồi đáp",
     "rating": "{rating} / 5",
-    "viewAll": "Xem tất cả chủ trọ uy tín"
+    "viewAll": "Xem tất cả chủ trọ uy tín",
+    "rooms": "Phòng",
+    "speed": "Tốc độ",
+    "reviewsCount": "({count} đánh giá)",
+    "roomCountItem": "{count} phòng",
+    "responsePercentItem": "{percent}% hồi đáp",
+    "emptyTitle": "Không tìm thấy chủ trọ",
+    "emptyDesc": "Không có chủ trọ nào phù hợp với từ khóa tìm kiếm.",
+    "searchPlaceholder": "Tìm tên chủ trọ..."
   }
 }

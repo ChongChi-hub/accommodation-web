@@ -2208,8 +2208,16 @@
     "viewProfile": "View Profile & Listings",
     "verifiedBadge": "Verified",
     "roomsCount": "{count} active listings",
-    "responseRate": "Response {rate}%",
+    "responseRate": "Response",
     "rating": "{rating} / 5",
-    "viewAll": "View all verified landlords"
+    "viewAll": "View all verified landlords",
+    "rooms": "Rooms",
+    "speed": "Speed",
+    "reviewsCount": "({count} reviews)",
+    "roomCountItem": "{count} rooms",
+    "responsePercentItem": "{percent}% response",
+    "emptyTitle": "No landlords found",
+    "emptyDesc": "No landlords matched your search keyword.",
+    "searchPlaceholder": "Search landlord name..."
   }
 }
