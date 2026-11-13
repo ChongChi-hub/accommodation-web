@@ -10,3 +10,4 @@ export interface UserIdentity {
   linkedAt: string;
   lastLoginAt: string | null;
 }
+

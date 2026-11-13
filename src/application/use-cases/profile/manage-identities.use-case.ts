@@ -16,3 +16,4 @@ export class ManageIdentitiesUseCase {
 }
 
 export const manageIdentitiesUseCase = new ManageIdentitiesUseCase();
+

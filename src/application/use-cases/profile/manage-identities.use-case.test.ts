@@ -63,3 +63,4 @@ describe('ManageIdentitiesUseCase', () => {
     expect(ApiClient.delete).toHaveBeenCalledWith('/me/identities/google');
   });
 });
+
