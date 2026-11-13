@@ -6,6 +6,7 @@ import { HttpKycRepository } from '../repositories/http-kyc.repository';
 import { HttpFaceVerificationRepository } from '../repositories/http-face-verification.repository';
 import { HttpBookmarkRepository } from '../repositories/http-bookmark.repository';
 import { ProfileUseCases } from '@/application/use-cases/profile/profile.use-cases';
+import { ManageIdentitiesUseCase } from '@/application/use-cases/profile/manage-identities.use-case';
 import { LandlordKycUseCases } from '@/application/use-cases/kyc/landlord-kyc.use-cases';
 import { KycModerationUseCases } from '@/application/use-cases/kyc/kyc-moderation.use-cases';
 import { FaceVerificationUseCases } from '@/application/use-cases/kyc/face-verification.use-cases';
@@ -63,6 +64,7 @@ export const container = {
   },
   profile: {
     profileUseCases: new ProfileUseCases(authRepository),
+    manageIdentitiesUseCase: new ManageIdentitiesUseCase(),
   },
   listing: {
     getRoomsUseCase: new GetRoomsUseCase(listingRepository),

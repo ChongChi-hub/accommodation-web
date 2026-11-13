@@ -29,6 +29,7 @@ export interface User {
   roles: UserRole[];
   permissions?: string[];
   emailVerified?: boolean;
+  hasPassword?: boolean;
   phoneMissing?: boolean;
   landlordApplication?: LandlordApplicationSummary | null;
   workspaceHint?: UserRole;
