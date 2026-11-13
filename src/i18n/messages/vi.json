@@ -2201,5 +2201,15 @@
       "overdueCol": "Quá hạn",
       "emptySeries": "Chưa có dữ liệu doanh thu trong kỳ."
     }
+  },
+  "topHosts": {
+    "title": "Chủ trọ uy tín",
+    "subtitle": "Được xác thực danh tính đầy đủ, tỷ lệ phản hồi cao và đánh giá tích cực từ người thuê",
+    "viewProfile": "Xem hồ sơ & phòng",
+    "verifiedBadge": "Đã xác thực",
+    "roomsCount": "{count} phòng đang cho thuê",
+    "responseRate": "Phản hồi {rate}%",
+    "rating": "{rating} / 5",
+    "viewAll": "Xem tất cả chủ trọ uy tín"
   }
 }

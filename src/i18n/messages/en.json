@@ -2201,5 +2201,15 @@
       "overdueCol": "Overdue",
       "emptySeries": "No billing analytics recorded yet."
     }
+  },
+  "topHosts": {
+    "title": "Verified Landlords",
+    "subtitle": "Fully verified identity, high response rate, and positive reviews from tenants",
+    "viewProfile": "View Profile & Listings",
+    "verifiedBadge": "Verified",
+    "roomsCount": "{count} active listings",
+    "responseRate": "Response {rate}%",
+    "rating": "{rating} / 5",
+    "viewAll": "View all verified landlords"
   }
 }

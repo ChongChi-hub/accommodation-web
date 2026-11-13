@@ -52,7 +52,7 @@ export function useAdminUsers() {
   }, [fetchUsers]);
 
   const toggleLock = useCallback(
-    async (id: number) => {
+    async (id: number | string) => {
       await container.admin.adminRepository.toggleUserLock(id);
       setUsers((prev) =>
         prev.map((u) => {

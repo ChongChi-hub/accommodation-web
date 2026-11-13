@@ -85,6 +85,10 @@ export class HttpListingRepository implements IListingRepository {
     return ApiClient.get<HostPublicProfileDto>(`/hosts/${encodeURIComponent(String(id))}`);
   }
 
+  async getTopHosts(): Promise<HostPublicProfileDto[]> {
+    return ApiClient.get<HostPublicProfileDto[]>('/hosts');
+  }
+
   async getRecommendations(id: number): Promise<RoomDto[]> {
     return ApiClient.get<RoomDto[]>(`/rooms/${id}/recommendations`);
   }

@@ -10,7 +10,7 @@ import { ManageIdentitiesUseCase } from '@/application/use-cases/profile/manage-
 import { LandlordKycUseCases } from '@/application/use-cases/kyc/landlord-kyc.use-cases';
 import { KycModerationUseCases } from '@/application/use-cases/kyc/kyc-moderation.use-cases';
 import { FaceVerificationUseCases } from '@/application/use-cases/kyc/face-verification.use-cases';
-import { StaticAdminRepository } from '../static/StaticAdminRepository';
+import { HttpAdminRepository } from '../repositories/http-admin.repository';
 import { StaticSupportRepository } from '../static/StaticSupportRepository';
 import { StaticMaintenanceRepository } from '../static/StaticMaintenanceRepository';
 import { StaticDisputeRepository } from '../static/StaticDisputeRepository';
@@ -38,7 +38,7 @@ const kycRepository = new HttpKycRepository();
 const faceVerificationRepository = new HttpFaceVerificationRepository();
 const faceVerificationUseCases = new FaceVerificationUseCases(faceVerificationRepository);
 const bookmarkRepository = new HttpBookmarkRepository();
-const adminRepository = new StaticAdminRepository();
+const adminRepository = new HttpAdminRepository();
 const supportRepository = new StaticSupportRepository();
 const maintenanceRepository = new StaticMaintenanceRepository();
 const disputeRepository = new StaticDisputeRepository();

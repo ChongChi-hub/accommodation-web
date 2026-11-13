@@ -36,7 +36,7 @@ export interface KycReviewItem {
 }
 
 export interface UserItem {
-  id: number;
+  id: number | string;
   name: string;
   email: string;
   phone: string;
@@ -83,7 +83,7 @@ export interface AdminRepository {
   approveKyc(id: number): Promise<void>;
   rejectKyc(id: number, reason: string): Promise<void>;
   getUsers(): Promise<UserItem[]>;
-  toggleUserLock(id: number): Promise<void>;
+  toggleUserLock(id: number | string): Promise<void>;
   getReports(): Promise<ReportItem[]>;
   resolveReport(id: number): Promise<void>;
   getReviews(): Promise<AdminReviewItem[]>;
