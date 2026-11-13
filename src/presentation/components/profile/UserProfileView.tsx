@@ -10,6 +10,7 @@ import { toast } from '@/presentation/stores/toast.store';
 import { AvatarManager } from './AvatarManager';
 import { UserProfileForm } from './UserProfileForm';
 import { UserChangePasswordView } from './UserChangePasswordView';
+import { LinkedAccountsSection } from './LinkedAccountsSection';
 import { UserProfile, UpdateUserProfileDto } from '@/domain/entities/UserProfile';
 import { ProvinceDto, WardDto } from '@/application/dto/listing.dto';
 import { RefreshCw, AlertCircle } from 'lucide-react';
@@ -125,7 +126,10 @@ export function UserProfileView({ role }: UserProfileViewProps) {
       </div>
 
       {activeTab === 'security' ? (
-        <UserChangePasswordView />
+        <div className="space-y-6">
+          <UserChangePasswordView />
+          <LinkedAccountsSection />
+        </div>
       ) : (
         <div className="space-y-6">
           <AvatarManager
