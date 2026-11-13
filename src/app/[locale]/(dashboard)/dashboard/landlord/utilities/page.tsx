@@ -70,6 +70,12 @@ export default function LandlordUtilitiesPage() {
     if (!contractId || !roomId) return;
     setBusy(true);
     try {
+      const elecDiff = Number(form.electricCurr) - Number(form.electricPrev);
+      const waterDiff = Number(form.waterCurr) - Number(form.waterPrev);
+      if (elecDiff > 300) {
+        toast.warning('Phát hiện chỉ số điện tăng đột biến so với kỳ trước!');
+      }
+
       const created = await container.billing.billingRepository.recordUtilityReading({
         contractId,
         roomId,
@@ -84,7 +90,31 @@ export default function LandlordUtilitiesPage() {
         occupantCount: Number(form.occupantCount),
       });
       setReadings((prev) => [created, ...prev]);
-      toast.success(tc('actionSuccess'));
+
+      // Auto generate invoice for this period if contract is present
+      const foundContract = contracts.find((c) => c.id === contractId);
+      if (foundContract) {
+        try {
+          await container.billing.billingRepository.generateInvoice({
+            contractId,
+            utilityReadingId: created.id,
+            tenantId: foundContract.tenantId,
+            landlordId: foundContract.landlordId,
+            periodMonth: form.periodMonth,
+            dueDate: new Date(Date.now() + 5 * 86400 * 1000).toISOString().slice(0, 10),
+            baseRent: Number(foundContract.monthlyRent || 0),
+            electricityAmount: Number(created.electricityCost || 0),
+            waterAmount: Number(created.waterCost || 0),
+            serviceAmount: 100000,
+            otherAmount: 0,
+          });
+          toast.success('Đã lưu chỉ số & tự động tạo hóa đơn kỳ này thành công!');
+        } catch {
+          toast.success(tc('actionSuccess'));
+        }
+      } else {
+        toast.success(tc('actionSuccess'));
+      }
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : tc('actionError'));
     } finally {
@@ -154,9 +184,17 @@ export default function LandlordUtilitiesPage() {
               <Input label={t('fixedWaterPrice')} type="number" value={form.fixedWaterUnitPrice} onChange={(e) => setForm((p) => ({ ...p, fixedWaterUnitPrice: e.target.value }))} />
             </>
           )}
+
+          {Number(form.electricCurr) - Number(form.electricPrev) >= 300 && (
+            <div className="sm:col-span-4 p-3 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 text-xs flex items-center gap-2">
+              <span className="font-bold">⚠️ Cảnh báo tăng đột biến:</span>
+              <span>Lượng điện tiêu thụ kỳ này ({Number(form.electricCurr) - Number(form.electricPrev)} kWh) vượt ngưỡng 300 kWh, vui lòng kiểm tra lại trước khi xuất hóa đơn!</span>
+            </div>
+          )}
+
           <div className="sm:col-span-4 flex justify-end">
             <Button type="submit" variant="primary" size="sm" isLoading={busy} leftIcon={<Save className="w-3.5 h-3.5" />}>
-              {t('recordBtn')}
+              Lưu chỉ số & Tạo hóa đơn kỳ này
             </Button>
           </div>
         </form>

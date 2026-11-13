@@ -15,7 +15,7 @@ import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDate, formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
 import { ContractOccupantsSection } from './ContractOccupantsSection';
 import { ContractAmendmentsSection } from './ContractAmendmentsSection';
-import { CheckCircle2, Download, PenTool } from 'lucide-react';
+import { CheckCircle2, Download, PenTool, ShieldCheck } from 'lucide-react';
 
 interface ContractDetailWorkspaceProps {
   contractId: string;
@@ -105,7 +105,9 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold text-stone-900 dark:text-stone-100">{contract.contractCode}</h1>
-            <Badge variant={contract.status === 'ACTIVE' ? 'success' : 'warning'} size="md">{contract.status}</Badge>
+            <Badge variant={contract.status === 'ACTIVE' ? 'success' : 'warning'} size="md">
+              {contract.status === 'PENDING_SIGN' ? 'PENDING_SIGNATURES' : contract.status}
+            </Badge>
           </div>
           <p className="text-xs text-stone-500 mt-0.5">{t('legalRef')}</p>
         </div>
@@ -146,7 +148,33 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
             <span>{t('tenantSigned')}: {contract.tenantSignedAt ? formatIsoDateTime(contract.tenantSignedAt) : t('unsigned')}</span>
           </div>
         </div>
-        {contract.documentHash && (
+
+        {/* Digital Signature Audit Stamp */}
+        {(contract.tenantSignedAt || contract.landlordSignedAt || contract.status === 'ACTIVE') && (
+          <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/20 space-y-2 mt-3">
+            <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold text-xs uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>Dấu mộc chữ ký điện tử CozyNest (Digital Signature Stamp)</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-stone-700 dark:text-stone-300">
+              <p>Phương thức xác thực: <strong className="font-semibold text-emerald-700 dark:text-emerald-400">OTP_SMS</strong></p>
+              <p>Trạng thái hợp đồng: <strong className="font-semibold text-emerald-700 dark:text-emerald-400">{contract.status === 'ACTIVE' ? 'ACTIVE (Đã ký đủ)' : 'PENDING_SIGNATURES'}</strong></p>
+              {contract.landlordSignedAt && (
+                <p>Chủ trọ ký lúc: <strong className="font-mono">{formatIsoDateTime(contract.landlordSignedAt)}</strong></p>
+              )}
+              {contract.tenantSignedAt && (
+                <p>Khách thuê ký lúc: <strong className="font-mono">{formatIsoDateTime(contract.tenantSignedAt)}</strong></p>
+              )}
+            </div>
+            {contract.documentHash && (
+              <p className="font-mono text-[11px] text-stone-500 break-all pt-1 border-t border-emerald-500/20">
+                Mã băm SHA-256 tài liệu: <strong className="text-stone-700 dark:text-stone-200">{contract.documentHash}</strong>
+              </p>
+            )}
+          </div>
+        )}
+
+        {contract.documentHash && !contract.tenantSignedAt && !contract.landlordSignedAt && (
           <p className="font-mono text-[11px] text-stone-400 break-all">{t('docHash')}: {contract.documentHash}</p>
         )}
       </Card>
@@ -176,7 +204,7 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
           <Input label={t('signatureLabel')} value={signatureText} onChange={(e) => setSignatureText(e.target.value)} />
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" size="sm" onClick={() => setSignOpen(false)}>{tc('cancel')}</Button>
-            <Button type="submit" variant="primary" size="sm" isLoading={busy}>{tc('confirm')}</Button>
+            <Button type="submit" variant="primary" size="sm" isLoading={busy}>Xác nhận ký</Button>
           </div>
         </form>
       </Dialog>

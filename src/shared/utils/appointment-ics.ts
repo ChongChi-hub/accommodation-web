@@ -56,7 +56,9 @@ export function downloadAppointmentIcs(event: CalendarEventInput): void {
   a.download = `cozynest-appointment-${event.id}.ics`;
   document.body.appendChild(a);
   a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  setTimeout(() => {
+    a.remove();
+    URL.revokeObjectURL(url);
+  }, 1000);
 }
 

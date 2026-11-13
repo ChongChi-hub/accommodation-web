@@ -172,15 +172,25 @@ export default function TenantDepositsPage() {
 
         {intent && (
           <div className="p-4 rounded-xl border border-teal-200 dark:border-teal-800 bg-teal-50/40 dark:bg-teal-950/20 flex flex-wrap items-center justify-between gap-4 text-xs">
-            <div className="space-y-1">
-              <p className="font-mono font-bold">{intent.paymentCode} ({intent.status})</p>
-              <p>{t('amount')}: <strong>{formatVnd(intent.amount)}</strong></p>
-              {intent.qrUrl && <img src={intent.qrUrl} alt={intent.paymentCode} className="w-28 h-28 rounded-lg border bg-white p-1" />}
+            <div className="space-y-1.5">
+              <p className="font-mono font-bold text-teal-800 dark:text-teal-300">
+                Mã thanh toán: {intent.paymentCode} <Badge variant={intent.status === 'PAID' ? 'success' : 'warning'} size="sm">{intent.status}</Badge>
+              </p>
+              <p className="font-mono text-xs text-stone-600 dark:text-stone-300">
+                Cú pháp chuyển khoản: <strong className="text-stone-800 dark:text-stone-100">TOAM-REF-{intent.paymentCode.replace(/^PAY-/, '').replace(/[^A-Za-z0-9]/g, '').slice(0, 8)}</strong>
+              </p>
+              <p>{t('amount')}: <strong className="text-stone-900 dark:text-stone-100">{formatVnd(intent.amount)}</strong></p>
+              {intent.qrUrl && (
+                <div className="pt-1">
+                  <img src={intent.qrUrl} alt={intent.paymentCode} className="w-32 h-32 rounded-lg border bg-white p-1 shadow-sm" />
+                  <span className="text-[10px] text-stone-500 block pt-0.5">Quét VietQR qua app ngân hàng</span>
+                </div>
+              )}
             </div>
             {intent.status === 'PENDING' && (
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2">
                 <Button variant="primary" size="sm" isLoading={busy} leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={handleSimulateWebhook}>
-                  {t('simulateSuccess')}
+                  Giả lập webhook thành công
                 </Button>
                 <Button variant="outline" size="sm" isLoading={busy} onClick={async () => {
                   await container.billing.billingRepository.cancelPaymentIntent(intent.paymentCode);
