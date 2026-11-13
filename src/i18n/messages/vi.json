@@ -2175,7 +2175,17 @@
       "reportFraud": "Báo cáo sai lệch / gian lận",
       "noReadings": "Chưa có bản ghi chỉ số điện nước nào từ chủ nhà.",
       "elecInitialHandover": "Chỉ số điện bàn giao ban đầu",
-      "waterInitialHandover": "Chỉ số nước bàn giao ban đầu"
+      "waterInitialHandover": "Chỉ số nước bàn giao ban đầu",
+      "electricPhoto": "Ảnh công tơ điện",
+      "waterPhoto": "Ảnh đồng hồ nước",
+      "proofPhotos": "Ảnh minh chứng",
+      "viewPhoto": "Xem ảnh công tơ",
+      "disputeBtn": "Yêu cầu đối soát lại",
+      "disputeTitle": "Yêu cầu chủ trọ đối soát lại chỉ số",
+      "disputePrompt": "Nêu rõ điểm bất thường hoặc sai lệch giữa ảnh chụp công tơ và số đo đã nhập để chủ trọ kiểm tra và điều chỉnh.",
+      "disputedBadge": "Đang đối soát",
+      "disputedNotice": "Khách thuê đã gửi yêu cầu đối soát lại bản ghi chỉ số này.",
+      "tenantConfirmedBadge": "Đã đối soát chuẩn"
     },
     "ownershipKyc": {
       "bannerTitle": "Quy chuẩn KYC-03: Xác minh quyền cho thuê & huy hiệu Tin đã xác thực",

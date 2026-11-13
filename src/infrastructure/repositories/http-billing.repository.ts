@@ -86,6 +86,13 @@ export class HttpBillingRepository {
     );
   }
 
+  async disputeUtilityReading(id: string, reason: string): Promise<UtilityReading> {
+    return ApiClient.post<UtilityReading>(
+      `/billing/utility-readings/${encodeURIComponent(id)}/dispute`,
+      { reason }
+    );
+  }
+
   async getContractReadings(contractId: string): Promise<UtilityReading[]> {
     const res = await ApiClient.get<UtilityReading[]>(
       `/billing/utility-readings/contract/${encodeURIComponent(contractId)}`

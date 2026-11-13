@@ -68,11 +68,15 @@ export interface UtilityReading {
   waterConsumption: number;
   hasSurgeAnomaly: boolean;
   recordedAt: string;
-  status: 'ACTIVE' | 'CANCELLED' | string;
+  status: 'ACTIVE' | 'CANCELLED' | 'DISPUTED' | string;
   pricingModel: PricingModel | string;
   electricityCost: number;
   waterCost: number;
   revision: number;
+  imageUrls?: string[];
+  fixedElectricUnitPrice?: number;
+  fixedWaterUnitPrice?: number;
+  editReason?: string;
 }
 
 export interface RecordUtilityReadingPayload {

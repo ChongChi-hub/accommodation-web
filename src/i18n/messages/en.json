@@ -2175,7 +2175,17 @@
       "reportFraud": "Report Inaccuracy / Fraud",
       "noReadings": "No utility readings recorded yet by landlord.",
       "elecInitialHandover": "Initial Handover Electricity Meter",
-      "waterInitialHandover": "Initial Handover Water Meter"
+      "waterInitialHandover": "Initial Handover Water Meter",
+      "electricPhoto": "Electricity Meter Photo",
+      "waterPhoto": "Water Meter Photo",
+      "proofPhotos": "Proof Photos",
+      "viewPhoto": "View Meter Photo",
+      "disputeBtn": "Request Re-check",
+      "disputeTitle": "Request Landlord to Re-check Reading",
+      "disputePrompt": "Specify anomalies or discrepancies between the meter photo and the entered reading for landlord review and adjustment.",
+      "disputedBadge": "Under Re-check",
+      "disputedNotice": "Tenant requested a re-check for this meter reading record.",
+      "tenantConfirmedBadge": "Verified Accurate"
     },
     "ownershipKyc": {
       "bannerTitle": "KYC-03 Standard: Property Ownership Verification & Verified Badge",
