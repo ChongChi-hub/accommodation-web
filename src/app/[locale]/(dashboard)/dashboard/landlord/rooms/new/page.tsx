@@ -29,6 +29,8 @@ export default function NewRoomPage() {
   const [formData, setFormData] = useState({
     title: '', roomType: 'MINI_APARTMENT', province: 'HN', ward: 'HN_DVH',
     address: '', area: '', price: '', deposit: '', maxOccupants: '2',
+    electricityCost: '3500', waterCost: '25000',
+    initialElectricityReading: '0', initialWaterReading: '0',
     allowPets: false, allowCooking: true,
   });
 
@@ -83,6 +85,10 @@ export default function NewRoomPage() {
         wardId: selectedWard?.id, roomTypeCode: formData.roomType,
         area: parseFloat(formData.area), maxOccupants: parseInt(formData.maxOccupants, 10) || 2,
         price: parseFloat(formData.price), deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
+        electricityCost: formData.electricityCost ? parseFloat(formData.electricityCost) : 3500,
+        waterCost: formData.waterCost ? parseFloat(formData.waterCost) : 25000,
+        initialElectricityReading: formData.initialElectricityReading ? parseFloat(formData.initialElectricityReading) : 0,
+        initialWaterReading: formData.initialWaterReading ? parseFloat(formData.initialWaterReading) : 0,
         allowPets: formData.allowPets, allowCooking: formData.allowCooking,
         submitForReview: false,
       });

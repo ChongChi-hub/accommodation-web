@@ -119,6 +119,55 @@ export function NewRoomFormSteps({
             onChange={(e) => setFormData({ ...formData, deposit: e.target.value })}
           />
         </div>
+
+        <div className="pt-2 border-t border-border space-y-3">
+          <div className="flex flex-col">
+            <span className="text-xs font-bold text-foreground">Đơn giá điện nước & Chỉ số bàn giao ban đầu (Bắt buộc)</span>
+            <span className="text-[11px] text-foreground-muted">
+              Chỉ số điện nước cũ sẽ được ghi nhận vào hợp đồng bàn giao để tính tiền minh bạch hàng tháng.
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Đơn giá điện (VNĐ/kWh)"
+              required
+              type="number"
+              placeholder="VD: 3500"
+              value={formData.electricityCost ?? '3500'}
+              onChange={(e) => setFormData({ ...formData, electricityCost: e.target.value })}
+            />
+            <Input
+              label="Chỉ số điện ban đầu (kWh)"
+              required
+              type="number"
+              step="0.1"
+              placeholder="VD: 1250.0"
+              value={formData.initialElectricityReading ?? '0'}
+              onChange={(e) => setFormData({ ...formData, initialElectricityReading: e.target.value })}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Đơn giá nước (VNĐ/m³ hoặc người)"
+              required
+              type="number"
+              placeholder="VD: 25000"
+              value={formData.waterCost ?? '25000'}
+              onChange={(e) => setFormData({ ...formData, waterCost: e.target.value })}
+            />
+            <Input
+              label="Chỉ số nước ban đầu (m³)"
+              required
+              type="number"
+              step="0.1"
+              placeholder="VD: 85.0"
+              value={formData.initialWaterReading ?? '0'}
+              onChange={(e) => setFormData({ ...formData, initialWaterReading: e.target.value })}
+            />
+          </div>
+        </div>
       </div>
     );
   }

@@ -143,6 +143,8 @@ export interface RoomDto {
   waterCost: number;
   internetCost: number;
   serviceCost: number;
+  initialElectricityReading?: number;
+  initialWaterReading?: number;
   status: string;
   publicationStatus?: string;
   occupancyStatus?: string;
@@ -192,6 +194,8 @@ export interface RoomDetailDto {
   waterCost: number;
   internetCost: number;
   serviceCost: number;
+  initialElectricityReading?: number;
+  initialWaterReading?: number;
   status: string;
   publicationStatus: string;
   occupancyStatus: string;

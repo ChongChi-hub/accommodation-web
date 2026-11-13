@@ -29,6 +29,20 @@ export interface Contract {
   holdingExpiresAt?: string | null;
   tenantSignedAt?: string | null;
   landlordSignedAt?: string | null;
+  initialElectricityReading?: number;
+  initialWaterReading?: number;
+  electricityRate?: number;
+  waterRate?: number;
+  physicalContractStatus?:
+    | 'PENDING_PHYSICAL_SIGN'
+    | 'WAITING_TENANT_CONFIRMATION'
+    | 'PHYSICAL_SIGNED'
+    | 'REJECTED_BY_TENANT'
+    | string;
+  physicalContractScanUrl?: string | null;
+  physicalSignedAt?: string | null;
+  tenantConfirmedAt?: string | null;
+  tenantRejectReason?: string | null;
   createdAt: string;
 }
 
@@ -42,6 +56,10 @@ export interface CreateContractPayload {
   monthlyRent: number;
   depositAmount: number;
   terms?: string;
+  initialElectricityReading?: number;
+  initialWaterReading?: number;
+  electricityRate?: number;
+  waterRate?: number;
 }
 
 export interface ContractOccupant {

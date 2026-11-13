@@ -167,6 +167,7 @@ export function buildSidebarSections(
       title: 'TÀI CHÍNH & TIỀN PHÒNG',
       items: [
         { label: 'Hóa đơn tiền phòng', href: '/dashboard/tenant/invoices', icon: <CreditCard className="w-4 h-4" />, badge: badges?.tenantUnpaidInvoices, badgeVariant: 'warning' },
+        { label: 'Chỉ số điện nước', href: '/dashboard/tenant/utilities', icon: <Gauge className="w-4 h-4" /> },
         { label: 'Tiền cọc thuê phòng', href: '/dashboard/tenant/deposits', icon: <PiggyBank className="w-4 h-4" /> },
         { label: 'Lịch sử thanh toán', href: '/dashboard/tenant/payments', icon: <History className="w-4 h-4" /> },
       ],

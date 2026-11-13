@@ -8,6 +8,8 @@ import {
   Bed,
   Sparkles,
   CalendarCheck,
+  Zap,
+  Droplets,
 } from 'lucide-react';
 import { RoomDetailDto } from '@/application/dto/listing.dto';
 
@@ -70,6 +72,16 @@ export function RoomSpecsGrid({ room }: RoomSpecsGridProps) {
       icon: CalendarCheck,
       label: 'Thời gian dọn vào',
       value: formatAvailableDate(room.availableDate),
+    },
+    {
+      icon: Zap,
+      label: 'Điện sinh hoạt',
+      value: `${new Intl.NumberFormat('vi-VN').format(room.electricityCost || 3500)} đ/kWh${room.initialElectricityReading ? ` (Gốc: ${room.initialElectricityReading} kWh)` : ''}`,
+    },
+    {
+      icon: Droplets,
+      label: 'Nước sinh hoạt',
+      value: `${new Intl.NumberFormat('vi-VN').format(room.waterCost || 25000)} đ/m³${room.initialWaterReading ? ` (Gốc: ${room.initialWaterReading} m³)` : ''}`,
     },
   ];
 

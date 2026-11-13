@@ -75,6 +75,8 @@ export interface LandlordRoomDetail {
   waterCost?: number;
   internetCost?: number;
   serviceCost?: number;
+  initialElectricityReading?: number;
+  initialWaterReading?: number;
   status: string;
   approved: boolean;
   allowPets: boolean;
@@ -130,6 +132,8 @@ export interface UpdateRoomPayload {
   waterCost?: number;
   internetCost?: number;
   serviceCost?: number;
+  initialElectricityReading?: number;
+  initialWaterReading?: number;
   allowPets?: boolean;
   allowCooking?: boolean;
   version?: number;

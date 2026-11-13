@@ -45,6 +45,26 @@ export class HttpContractRepository {
     return ApiClient.get<{ signedUrl: string }>(`/booking/contracts/${encodeURIComponent(id)}/pdf/signed-url`);
   }
 
+  async downloadDirectPdfBlob(id: string): Promise<Blob> {
+    return ApiClient.getBlob(`/booking/contracts/${encodeURIComponent(id)}/pdf/download`);
+  }
+
+  async uploadPhysicalScan(id: string, scanUrl: string): Promise<Contract> {
+    return ApiClient.post<Contract>(`/booking/contracts/${encodeURIComponent(id)}/upload-scan`, {
+      scanUrl,
+    });
+  }
+
+  async tenantConfirmPhysical(id: string): Promise<Contract> {
+    return ApiClient.post<Contract>(`/booking/contracts/${encodeURIComponent(id)}/tenant-confirm`, {});
+  }
+
+  async tenantRejectPhysical(id: string, reason?: string): Promise<Contract> {
+    return ApiClient.post<Contract>(`/booking/contracts/${encodeURIComponent(id)}/tenant-reject`, {
+      reason,
+    });
+  }
+
   async downloadPdfBlob(signedUrlOrPath: string): Promise<Blob> {
     if (signedUrlOrPath.startsWith('http://') || signedUrlOrPath.startsWith('https://')) {
       return ApiClient.getBlob(signedUrlOrPath);

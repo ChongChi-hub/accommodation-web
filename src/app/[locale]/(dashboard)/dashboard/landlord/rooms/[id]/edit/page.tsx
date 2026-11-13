@@ -32,7 +32,10 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
   } = useLandlordRoomDetail(id);
 
   const [formData, setFormData] = useState({
-    title: '', description: '', address: '', area: '', price: '', deposit: '', allowPets: false, allowCooking: true,
+    title: '', description: '', address: '', area: '', price: '', deposit: '',
+    electricityCost: '3500', waterCost: '25000',
+    initialElectricityReading: '0', initialWaterReading: '0',
+    allowPets: false, allowCooking: true,
   });
 
   useEffect(() => {
@@ -40,7 +43,12 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
       setFormData({
         title: room.title || '', description: room.description || '', address: room.address || '',
         area: room.area ? String(room.area) : '', price: room.price ? String(room.price) : '',
-        deposit: room.deposit ? String(room.deposit) : '', allowPets: room.allowPets ?? false, allowCooking: room.allowCooking ?? true,
+        deposit: room.deposit ? String(room.deposit) : '',
+        electricityCost: room.electricityCost ? String(room.electricityCost) : '3500',
+        waterCost: room.waterCost ? String(room.waterCost) : '25000',
+        initialElectricityReading: room.initialElectricityReading !== undefined ? String(room.initialElectricityReading) : '0',
+        initialWaterReading: room.initialWaterReading !== undefined ? String(room.initialWaterReading) : '0',
+        allowPets: room.allowPets ?? false, allowCooking: room.allowCooking ?? true,
       });
     }
   }, [room]);
@@ -69,6 +77,10 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
       area: parseFloat(formData.area),
       price: parseFloat(formData.price),
       deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
+      electricityCost: formData.electricityCost ? parseFloat(formData.electricityCost) : 3500,
+      waterCost: formData.waterCost ? parseFloat(formData.waterCost) : 25000,
+      initialElectricityReading: formData.initialElectricityReading ? parseFloat(formData.initialElectricityReading) : 0,
+      initialWaterReading: formData.initialWaterReading ? parseFloat(formData.initialWaterReading) : 0,
       allowPets: formData.allowPets,
       allowCooking: formData.allowCooking,
       version: room.version,
@@ -178,6 +190,51 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
               value={formData.deposit}
               onChange={(e) => setFormData({ ...formData, deposit: e.target.value })}
             />
+          </div>
+
+          <div className="pt-2 border-t border-border space-y-3">
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-stone-900 dark:text-stone-100">
+                Đơn giá điện nước & Chỉ số bàn giao ban đầu
+              </span>
+              <span className="text-[11px] text-stone-500">
+                Chỉ số điện nước cũ làm mốc tính tiêu thụ minh bạch cho hợp đồng thuê.
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="Đơn giá điện (VNĐ/kWh)"
+                required
+                type="number"
+                value={formData.electricityCost}
+                onChange={(e) => setFormData({ ...formData, electricityCost: e.target.value })}
+              />
+              <Input
+                label="Chỉ số điện ban đầu (kWh)"
+                required
+                type="number"
+                step="0.1"
+                value={formData.initialElectricityReading}
+                onChange={(e) => setFormData({ ...formData, initialElectricityReading: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="Đơn giá nước (VNĐ/m³ hoặc người)"
+                required
+                type="number"
+                value={formData.waterCost}
+                onChange={(e) => setFormData({ ...formData, waterCost: e.target.value })}
+              />
+              <Input
+                label="Chỉ số nước ban đầu (m³)"
+                required
+                type="number"
+                step="0.1"
+                value={formData.initialWaterReading}
+                onChange={(e) => setFormData({ ...formData, initialWaterReading: e.target.value })}
+              />
+            </div>
           </div>
           <div className="flex gap-6 text-xs text-stone-600 dark:text-stone-300 pt-1">
             <label className="flex items-center gap-2 cursor-pointer">
