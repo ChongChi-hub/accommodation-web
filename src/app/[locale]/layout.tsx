@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { ToastContainer } from '@/presentation/components/ui/Toast';
+import { ThemeInitializer } from '@/presentation/components/layout/ThemeInitializer';
 import '@/styles/globals.css';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -19,6 +20,9 @@ export function generateStaticParams() {
 export const metadata = {
   title: 'Tổ Ấm - Nền tảng thuê trọ minh bạch & an tâm',
   description: 'Tìm kiếm phòng trọ, căn hộ, nhà nguyên căn và ký hợp đồng điện tử an toàn tại Việt Nam.',
+  icons: {
+    icon: '/logo-mark.svg',
+  },
 };
 
 export default async function RootLayout({
@@ -39,16 +43,8 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={plusJakartaSans.variable} suppressHydrationWarning>
-      <head>
-        <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "try{var t=localStorage.getItem('cozynest_theme');var d=t==='dark'||((!t||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}",
-          }}
-        />
-      </head>
       <body className="min-h-screen bg-background text-foreground antialiased transition-colors" suppressHydrationWarning>
+        <ThemeInitializer />
         <NextIntlClientProvider messages={messages}>
           {children}
           <ToastContainer />

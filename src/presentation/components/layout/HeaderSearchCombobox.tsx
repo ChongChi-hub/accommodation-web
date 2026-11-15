@@ -177,11 +177,11 @@ export function HeaderSearchCombobox({
         className={cn(
           'flex items-center gap-2 rounded-full border px-3.5 h-10 text-xs transition-colors',
           onHeroTop
-            ? 'bg-white/15 border-white/30 text-white placeholder:text-white/75 focus-within:bg-surface focus-within:text-foreground focus-within:border-primary'
+            ? 'bg-white/90 dark:bg-white/15 border-stone-200/90 dark:border-white/30 text-stone-800 dark:text-white shadow-xs focus-within:bg-surface focus-within:text-foreground focus-within:border-primary'
             : 'bg-surface-muted/80 border-border text-foreground focus-within:bg-surface focus-within:border-primary'
         )}
       >
-        <Search className="w-4 h-4 shrink-0 text-current opacity-70" />
+        <Search className="w-4 h-4 shrink-0 text-stone-500 dark:text-current opacity-70" />
         <input
           ref={inputRef}
           type="text"
@@ -200,7 +200,7 @@ export function HeaderSearchCombobox({
           }}
           onKeyDown={handleKeyDown}
           placeholder={tSearch('placeholder')}
-          className="w-full bg-transparent text-xs outline-none placeholder:text-current/60 min-w-0"
+          className="w-full bg-transparent text-xs outline-none placeholder:text-stone-500/80 dark:placeholder:text-current/60 min-w-0"
         />
         {query ? (
           <button
@@ -220,7 +220,7 @@ export function HeaderSearchCombobox({
             className={cn(
               'hidden sm:inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-mono rounded border shrink-0',
               onHeroTop
-                ? 'border-white/35 text-white/90 bg-white/10'
+                ? 'border-stone-200 dark:border-white/35 text-stone-500 dark:text-white/90 bg-stone-100 dark:bg-white/10'
                 : 'border-border text-foreground-muted bg-surface'
             )}
           >

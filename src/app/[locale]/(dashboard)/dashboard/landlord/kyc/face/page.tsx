@@ -51,7 +51,7 @@ export default function LandlordFaceKycPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-600" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
@@ -73,7 +73,7 @@ export default function LandlordFaceKycPage() {
       </div>
 
       {feedbackMsg && (
-        <div className="p-4 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 rounded-lg text-sm flex items-center justify-between">
+        <div className="p-4 bg-primary/10 text-primary rounded-lg text-sm flex items-center justify-between">
           <span>{feedbackMsg}</span>
           <button onClick={() => setFeedbackMsg(null)} className="text-xs underline ml-2">{tAuto('k0154')}</button>
         </div>
@@ -170,7 +170,7 @@ export default function LandlordFaceKycPage() {
                     id="face-consent"
                     checked={consentChecked}
                     onChange={(e) => setConsentChecked(e.target.checked)}
-                    className="mt-1 h-4 w-4 rounded border-border text-brand-600 focus:ring-brand-500 cursor-pointer"
+                    className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
                   />
                   <label htmlFor="face-consent" className="text-xs text-foreground cursor-pointer leading-relaxed">
                     {tAuto('k0174')}{' '}<strong>{tAuto('k0175')}</strong>{' '}{tAuto('k0176')}

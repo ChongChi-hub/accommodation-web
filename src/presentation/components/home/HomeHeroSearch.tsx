@@ -17,14 +17,13 @@ const ROOM_CATEGORIES = [
 ];
 
 const DEFAULT_PROVINCES = [
-  { code: 'HN', name: 'Hà Nội' },
-  { code: 'HCM', name: 'TP. Hồ Chí Minh' },
-  { code: 'DNG', name: 'Đà Nẵng' },
-  { code: 'HP', name: 'Hải Phòng' },
-  { code: 'HUE', name: 'Thừa Thiên Huế' },
-  { code: 'BDG', name: 'Bình Dương' },
-  { code: 'BN', name: 'Bắc Ninh' },
-  { code: 'CT', name: 'Cần Thơ' },
+  { code: '01', name: 'Hà Nội' },
+  { code: '79', name: 'TP. Hồ Chí Minh' },
+  { code: '48', name: 'Đà Nẵng' },
+  { code: '31', name: 'Hải Phòng' },
+  { code: '46', name: 'Huế' },
+  { code: '24', name: 'Bắc Ninh' },
+  { code: '92', name: 'Cần Thơ' },
 ];
 
 const QUICK_CHIPS = [

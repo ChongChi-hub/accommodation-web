@@ -21,7 +21,7 @@ export interface RoomFilterBarProps {
   hideRoomTypeFilter?: boolean;
 }
 
-const POPULAR_PROVINCE_CODES = new Set(['HN', 'HCM', 'DN', 'BD', 'VT', 'CT']);
+const POPULAR_PROVINCE_CODES = new Set(['01', '79', '48', '31', '92', '46', '24', 'HN', 'HCM', 'DN', 'BD', 'VT', 'CT']);
 
 function formatPriceShort(val?: number): string {
   if (!val) return '';

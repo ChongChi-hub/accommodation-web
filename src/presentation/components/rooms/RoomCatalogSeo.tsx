@@ -113,10 +113,10 @@ const SEO_DATA_VI: Record<string, SeoContent> = {
 };
 
 const POPULAR_PROVINCES = [
-  { code: 'HN', name: 'Hà Nội' },
-  { code: 'HCM', name: 'TP. Hồ Chí Minh' },
-  { code: 'DN', name: 'Đà Nẵng' },
-  { code: 'BD', name: 'Bình Dương' },
+  { code: '01', name: 'Hà Nội' },
+  { code: '79', name: 'TP. Hồ Chí Minh' },
+  { code: '48', name: 'Đà Nẵng' },
+  { code: '31', name: 'Hải Phòng' },
 ];
 
 export function RoomCatalogSeo({

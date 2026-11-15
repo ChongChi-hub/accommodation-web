@@ -8,7 +8,7 @@ import { container } from '@/infrastructure/di/container';
 import { useAuthenticatedKycImage } from '@/presentation/hooks/useAuthenticatedKycImage';
 import { Button } from '@/presentation/components/ui/Button';
 import { Badge } from '@/presentation/components/ui/Badge';
-import { ShieldCheck, Check, X, AlertTriangle, ZoomIn, Eye, EyeOff } from 'lucide-react';
+import { ShieldCheck, Check, X, AlertTriangle, ZoomIn, Eye, Image as ImageIcon } from 'lucide-react';
 
 interface KycModerationModalProps {
   kyc: KycModerationDetail;
@@ -20,8 +20,15 @@ interface KycModerationModalProps {
 export function KycModerationModal({ kyc, onClose, onApprove, onReject }: KycModerationModalProps) {
   const tAuto = useTranslations('autoI18n');
   const t = useTranslations('kyc');
-  const frontImg = useAuthenticatedKycImage(kyc.hasFrontImage ? `/moderation/kyc/${kyc.id}/images/front` : null);
-  const backImg = useAuthenticatedKycImage(kyc.hasBackImage ? `/moderation/kyc/${kyc.id}/images/back` : null);
+  const frontImg = useAuthenticatedKycImage(
+    kyc.frontImageUrl ? null : kyc.hasFrontImage !== false ? `/moderation/kyc/${kyc.id}/images/front` : null
+  );
+  const backImg = useAuthenticatedKycImage(
+    kyc.backImageUrl ? null : kyc.hasBackImage !== false ? `/moderation/kyc/${kyc.id}/images/back` : null
+  );
+
+  const effectiveFrontUrl = kyc.frontImageUrl || frontImg.imageUrl;
+  const effectiveBackUrl = kyc.backImageUrl || backImg.imageUrl;
 
   const [faceDetail, setFaceDetail] = useState<FaceModerationDetail | null>(null);
   const [frameUrls, setFrameUrls] = useState<Record<string, string>>({});
@@ -32,7 +39,7 @@ export function KycModerationModal({ kyc, onClose, onApprove, onReject }: KycMod
   const [faceReasonCode, setFaceReasonCode] = useState('KHONG_KHOP_GIAY_TO');
   const [reasonNote, setReasonNote] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const [zoomedImage, setZoomedImage] = useState<{ url: string; title: string } | null>(null);
 
   useEffect(() => {
     container.kyc.faceVerificationUseCases.getModerationFaceDetail(kyc.id).then(setFaceDetail).catch(() => {});
@@ -71,130 +78,277 @@ export function KycModerationModal({ kyc, onClose, onApprove, onReject }: KycMod
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
-      <div className="bg-card border border-border rounded-2xl max-w-4xl w-full p-5 space-y-4 shadow-2xl my-6">
-        <div className="flex items-center justify-between pb-2 border-b border-border">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4 overflow-y-auto">
+      <div className="relative bg-surface dark:bg-stone-900 border border-border rounded-2xl max-w-4xl w-full p-6 space-y-5 shadow-2xl my-6 max-h-[92vh] flex flex-col text-foreground">
+        
+        {/* Header Modal */}
+        <div className="flex items-center justify-between pb-3 border-b border-border shrink-0">
           <div>
-            <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-primary" /> {kyc.fullNameOnId}
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-primary" /> {kyc.fullNameOnId || kyc.userFullName || 'Hồ sơ chủ trọ'}
             </h2>
-            <p className="text-xs text-foreground-muted">{tAuto('k0483')}{' '}{kyc.userEmail}{' '}{tAuto('k0484')}{' '}<span className="font-mono">{kyc.idNumberMasked}</span></p>
+            <p className="text-xs text-foreground-muted mt-0.5">
+              Email: <span className="font-medium text-foreground">{kyc.userEmail}</span> • Số CCCD:{' '}
+              <span className="font-mono font-semibold text-primary">{kyc.idNumberPlain || kyc.idNumberMasked}</span>
+            </p>
           </div>
-          <div className="flex gap-2">
-            <Badge variant={kyc.status === 'APPROVED' ? 'success' : kyc.status === 'REJECTED' ? 'danger' : 'warning'}>{kyc.status}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant={kyc.status === 'APPROVED' ? 'success' : kyc.status === 'REJECTED' ? 'danger' : 'warning'}>
+              {kyc.status}
+            </Badge>
             {faceDetail && (
-              <Badge variant={faceDetail.status === 'PASSED' ? 'success' : faceDetail.status === 'FAILED' ? 'danger' : 'warning'}>{tAuto('k0485')}{' '}{faceDetail.status}</Badge>
+              <Badge variant={faceDetail.status === 'PASSED' ? 'success' : faceDetail.status === 'FAILED' ? 'danger' : 'warning'}>
+                {tAuto('k0485')}{' '}{faceDetail.status}
+              </Badge>
             )}
+            <button
+              onClick={onClose}
+              className="p-1 rounded-lg text-foreground-muted hover:text-foreground hover:bg-muted transition-colors cursor-pointer ml-2"
+              aria-label="Đóng"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
-        <div className="p-2.5 rounded-lg bg-warning/10 border border-warning/20 flex gap-2 text-xs text-warning-foreground">
-          <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0 mt-0.5" />
-          <p>{tAuto('k0486')}</p>
-        </div>
+        {/* Body Modal (Scrollable) */}
+        <div className="overflow-y-auto space-y-4 pr-1 flex-1">
+          {/* Cảnh báo kiểm toán */}
+          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex gap-2.5 text-xs text-amber-900 dark:text-amber-300">
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong>Cảnh báo an ninh & bảo mật:</strong> Mọi thao tác xem ảnh CCCD, xem số định danh và quyết định phê duyệt đều được ghi vết vĩnh viễn vào nhật ký kiểm toán hệ thống (Audit Log).
+            </p>
+          </div>
 
-        {/* CCCD & Face Frames side by side */}
-        <div className="space-y-2">
-          <p className="text-xs font-semibold text-foreground">{tAuto('k0487')}</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            {/* CCCD Mặt trước */}
-            <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/40 h-36 flex flex-col items-center justify-center p-1">
-              <span className="text-[10px] text-foreground-muted mb-1 font-medium">{tAuto('k0488')}</span>
-              {frontImg.imageUrl ? (
-                <div className="relative w-full flex-1 overflow-hidden rounded cursor-pointer" onClick={() => setZoomedImage(frontImg.imageUrl)}>
-                  <img src={frontImg.imageUrl} alt="Front ID" className="w-full h-full object-cover" />
-                  <span className="absolute bottom-1 right-1 p-1 bg-black/60 rounded text-white text-[10px] flex items-center gap-0.5"><ZoomIn className="w-3 h-3" /></span>
-                </div>
-              ) : <span className="text-xs text-foreground-muted">{tAuto('k0489')}</span>}
+          {/* Bảng thông tin định danh chi tiết */}
+          <div className="p-4 rounded-xl bg-muted/40 border border-border text-xs space-y-3">
+            <h3 className="font-semibold text-foreground text-xs uppercase tracking-wider text-muted-foreground">
+              Thông tin định danh Căn cước công dân
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+              <div>
+                <span className="text-foreground-muted block text-[11px]">Họ tên trên thẻ</span>
+                <span className="font-bold text-foreground text-sm">{kyc.fullNameOnId}</span>
+              </div>
+              <div>
+                <span className="text-foreground-muted block text-[11px]">Số CCCD (12 số)</span>
+                <span className="font-mono font-bold text-primary text-sm">{kyc.idNumberPlain || kyc.idNumberMasked}</span>
+              </div>
+              <div>
+                <span className="text-foreground-muted block text-[11px]">Ngày sinh</span>
+                <span className="font-medium text-foreground">{kyc.dateOfBirth || 'Chưa cung cấp'}</span>
+              </div>
+              <div>
+                <span className="text-foreground-muted block text-[11px]">Ngày cấp CCCD</span>
+                <span className="font-medium text-foreground">{kyc.issueDate || 'Chưa cung cấp'}</span>
+              </div>
+              <div className="sm:col-span-2">
+                <span className="text-foreground-muted block text-[11px]">Nơi cấp</span>
+                <span className="font-medium text-foreground">{kyc.issuePlace || 'Chưa cung cấp'}</span>
+              </div>
+              <div>
+                <span className="text-foreground-muted block text-[11px]">Số điện thoại</span>
+                <span className="font-medium text-foreground">{kyc.userPhone || 'Chưa cập nhật'}</span>
+              </div>
+              <div>
+                <span className="text-foreground-muted block text-[11px]">Thời gian gửi hồ sơ</span>
+                <span className="font-medium text-foreground">{kyc.submittedAt ? new Date(kyc.submittedAt).toLocaleString('vi-VN') : 'Mới đây'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Khu vực ảnh CCCD 2 mặt */}
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-foreground text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <ImageIcon className="w-3.5 h-3.5 text-primary" />
+                Ảnh chụp thẻ CCCD hai mặt
+              </h3>
+              <span className="text-[11px] text-foreground-muted">Nhấn vào ảnh để xem kích thước lớn</span>
             </div>
 
-            {/* Các khung hình khuôn mặt */}
-            {faceDetail?.frames && faceDetail.frames.length > 0 ? (
-              faceDetail.frames.map((frame, idx) => {
-                const isRevealed = unblurred[frame.id];
-                const url = frameUrls[frame.id];
-                return (
-                  <div key={frame.id} className="relative rounded-xl overflow-hidden border border-border bg-muted/40 h-36 flex flex-col items-center justify-center p-1">
-                    <span className="text-[10px] text-foreground-muted mb-1 font-medium truncate w-full text-center">{tAuto('k0490')}{' '}{idx + 1}: {frame.purpose}</span>
-                    <div className="relative w-full flex-1 overflow-hidden rounded bg-black flex items-center justify-center cursor-pointer" onClick={() => toggleFrame(frame.id)}>
-                      {url ? (
-                        <img src={url} alt={frame.purpose} className={`w-full h-full object-cover transition duration-200 ${isRevealed ? '' : 'filter blur-md'}`} />
-                      ) : (
-                        <div className="text-center p-2 text-white/80 text-[11px] flex flex-col items-center gap-1">
-                          <Eye className="w-4 h-4 text-primary" /> <span>{tAuto('k0491')}</span>
-                        </div>
-                      )}
-                      {url && (
-                        <button type="button" onClick={(e) => { e.stopPropagation(); setZoomedImage(url); }} className="absolute bottom-1 right-1 p-1 bg-black/60 rounded text-white text-[10px]"><ZoomIn className="w-3 h-3" /></button>
-                      )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* CCCD Mặt trước */}
+              <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/40 aspect-16/10 flex flex-col items-center justify-center">
+                {effectiveFrontUrl ? (
+                  <>
+                    <img
+                      src={effectiveFrontUrl}
+                      alt="Mặt trước CCCD"
+                      className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-102 cursor-pointer"
+                      onClick={() => setZoomedImage({ url: effectiveFrontUrl, title: 'Ảnh mặt trước CCCD' })}
+                    />
+                    <div
+                      className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                      onClick={() => setZoomedImage({ url: effectiveFrontUrl, title: 'Ảnh mặt trước CCCD' })}
+                    >
+                      <span className="px-3 py-1.5 rounded-lg bg-surface/90 text-foreground text-xs font-medium flex items-center gap-1.5 shadow">
+                        <ZoomIn className="w-3.5 h-3.5" /> Phóng to
+                      </span>
                     </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="col-span-3 h-36 border border-dashed border-border rounded-xl flex items-center justify-center text-xs text-foreground-muted">
-                {tAuto('k0492')}
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-white text-[10px] font-medium backdrop-blur-xs">
+                      Mặt trước CCCD
+                    </div>
+                  </>
+                ) : (
+                  <span className="text-xs text-foreground-muted">Đang tải ảnh mặt trước hoặc không có ảnh</span>
+                )}
               </div>
-            )}
+
+              {/* CCCD Mặt sau */}
+              <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/40 aspect-16/10 flex flex-col items-center justify-center">
+                {effectiveBackUrl ? (
+                  <>
+                    <img
+                      src={effectiveBackUrl}
+                      alt="Mặt sau CCCD"
+                      className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-102 cursor-pointer"
+                      onClick={() => setZoomedImage({ url: effectiveBackUrl, title: 'Ảnh mặt sau CCCD' })}
+                    />
+                    <div
+                      className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                      onClick={() => setZoomedImage({ url: effectiveBackUrl, title: 'Ảnh mặt sau CCCD' })}
+                    >
+                      <span className="px-3 py-1.5 rounded-lg bg-surface/90 text-foreground text-xs font-medium flex items-center gap-1.5 shadow">
+                        <ZoomIn className="w-3.5 h-3.5" /> Phóng to
+                      </span>
+                    </div>
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-white text-[10px] font-medium backdrop-blur-xs">
+                      Mặt sau CCCD
+                    </div>
+                  </>
+                ) : (
+                  <span className="text-xs text-foreground-muted">Đang tải ảnh mặt sau hoặc không có ảnh</span>
+                )}
+              </div>
+            </div>
           </div>
+
+          {/* Khung hình khuôn mặt sinh trắc học nếu có */}
+          {faceDetail?.frames && faceDetail.frames.length > 0 && (
+            <div className="space-y-2 pt-2 border-t border-border">
+              <h3 className="font-semibold text-foreground text-xs uppercase tracking-wider text-muted-foreground">
+                Ảnh xác thực khuôn mặt sinh trắc học
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {faceDetail.frames.map((frame, idx) => {
+                  const isRevealed = unblurred[frame.id];
+                  const url = frameUrls[frame.id];
+                  return (
+                    <div key={frame.id} className="relative rounded-xl overflow-hidden border border-border bg-muted/40 h-36 flex flex-col items-center justify-center p-1">
+                      <span className="text-[10px] text-foreground-muted mb-1 font-medium truncate w-full text-center">Khung {idx + 1}: {frame.purpose}</span>
+                      <div className="relative w-full flex-1 overflow-hidden rounded bg-black flex items-center justify-center cursor-pointer" onClick={() => toggleFrame(frame.id)}>
+                        {url ? (
+                          <img src={url} alt={frame.purpose} className={`w-full h-full object-cover transition duration-200 ${isRevealed ? '' : 'filter blur-md'}`} />
+                        ) : (
+                          <div className="text-center p-2 text-white/80 text-[11px] flex flex-col items-center gap-1">
+                            <Eye className="w-4 h-4 text-primary" /> <span>Nhấn để xem</span>
+                          </div>
+                        )}
+                        {url && (
+                          <button type="button" onClick={(e) => { e.stopPropagation(); setZoomedImage({ url, title: `Khung khuôn mặt ${idx + 1}` }); }} className="absolute bottom-1 right-1 p-1 bg-black/60 rounded text-white text-[10px]"><ZoomIn className="w-3 h-3" /></button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Thao tác khuôn mặt nếu PENDING */}
+          {faceDetail && faceDetail.status === 'PENDING' && (
+            <div className="p-3 rounded-xl bg-muted/50 border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span className="text-xs font-semibold text-foreground">Thẩm định khuôn mặt:</span>
+              {showFaceReject ? (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <select value={faceReasonCode} onChange={(e) => setFaceReasonCode(e.target.value)} className="text-xs rounded border border-border bg-surface px-2 py-1 text-foreground">
+                    <option value="KHONG_KHOP_GIAY_TO">Không khớp giấy tờ</option>
+                    <option value="NGHI_NGO_GIA_MAO">Nghi ngờ giả mạo</option>
+                    <option value="ANH_KEM_CHAT_LUONG">Ảnh kém chất lượng</option>
+                    <option value="KHAC">Lý do khác</option>
+                  </select>
+                  <Button size="sm" variant="danger" isLoading={isProcessing} onClick={() => handleFaceDecision('FAILED')}>Xác nhận từ chối</Button>
+                  <Button size="sm" variant="ghost" onClick={() => setShowFaceReject(false)}>Hủy</Button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" className="text-danger" leftIcon={<X className="w-3.5 h-3.5" />} onClick={() => setShowFaceReject(true)}>Từ chối mặt</Button>
+                  <Button size="sm" variant="primary" leftIcon={<Check className="w-3.5 h-3.5" />} isLoading={isProcessing} onClick={() => handleFaceDecision('PASSED')}>Duyệt mặt</Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Form từ chối hồ sơ */}
+          {showRejectForm && (
+            <form onSubmit={(e) => { e.preventDefault(); setIsProcessing(true); onReject(kyc.id, reasonCode, reasonNote, kyc.version).finally(() => setIsProcessing(false)); }} className="p-4 rounded-xl bg-danger/10 border border-danger/20 space-y-3 text-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <label className="font-semibold text-foreground">Lý do từ chối:</label>
+                <select value={reasonCode} onChange={(e) => setReasonCode(e.target.value)} className="text-xs rounded-lg border border-border bg-surface px-3 py-1.5 text-foreground">
+                  <option value="BLURRY_IMAGE">{t('blurryImage')}</option>
+                  <option value="ID_NUMBER_MISMATCH">{t('idNumberMismatch')}</option>
+                  <option value="EXPIRED_DOCUMENT">{t('expiredDocument')}</option>
+                  <option value="SUSPECTED_FRAUD">{t('suspectedFraud')}</option>
+                  <option value="OTHER">{t('other')}</option>
+                </select>
+              </div>
+              <textarea rows={2} value={reasonNote} onChange={(e) => setReasonNote(e.target.value)} placeholder="Ghi chú chi tiết cho chủ trọ cần bổ sung những gì..." className="w-full text-xs rounded-lg border border-border bg-surface p-2.5 text-foreground" />
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="ghost" size="sm" onClick={() => setShowRejectForm(false)}>{t('close')}</Button>
+                <Button type="submit" variant="danger" size="sm" isLoading={isProcessing}>{t('reject')}</Button>
+              </div>
+            </form>
+          )}
         </div>
 
-        {/* Action Panel for Face Decision if pending */}
-        {faceDetail && faceDetail.status === 'PENDING' && (
-          <div className="p-3 rounded-xl bg-muted/50 border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <span className="text-xs font-semibold text-foreground">{tAuto('k0493')}</span>
-            {showFaceReject ? (
-              <div className="flex items-center gap-2 flex-wrap">
-                <select value={faceReasonCode} onChange={(e) => setFaceReasonCode(e.target.value)} className="text-xs rounded border border-border bg-card px-2 py-1 text-foreground">
-                  <option value="KHONG_KHOP_GIAY_TO">{tAuto('k0494')}</option>
-                  <option value="NGHI_NGO_GIA_MAO">{tAuto('k0495')}</option>
-                  <option value="ANH_KEM_CHAT_LUONG">{tAuto('k0496')}</option>
-                  <option value="KHAC">{tAuto('k0497')}</option>
-                </select>
-                <Button size="sm" variant="danger" isLoading={isProcessing} onClick={() => handleFaceDecision('FAILED')}>{tAuto('k0498')}</Button>
-                <Button size="sm" variant="ghost" onClick={() => setShowFaceReject(false)}>{tAuto('k0126')}</Button>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" className="text-danger" leftIcon={<X className="w-3.5 h-3.5" />} onClick={() => setShowFaceReject(true)}>{tAuto('k0499')}</Button>
-                <Button size="sm" variant="primary" leftIcon={<Check className="w-3.5 h-3.5" />} isLoading={isProcessing} onClick={() => handleFaceDecision('PASSED')}>{tAuto('k0500')}</Button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* KYC Document Decision Form */}
-        {showRejectForm ? (
-          <form onSubmit={(e) => { e.preventDefault(); setIsProcessing(true); onReject(kyc.id, reasonCode, reasonNote, kyc.version).finally(() => setIsProcessing(false)); }} className="p-3 rounded-xl bg-danger/10 border border-danger/20 space-y-2 text-xs">
-            <div className="flex gap-2 items-center">
-              <label className="font-semibold text-foreground">{tAuto('k0501')}</label>
-              <select value={reasonCode} onChange={(e) => setReasonCode(e.target.value)} className="text-xs rounded border border-border bg-card px-2 py-1 text-foreground">
-                <option value="BLURRY_IMAGE">{t('blurryImage')}</option>
-                <option value="ID_NUMBER_MISMATCH">{t('idNumberMismatch')}</option>
-                <option value="EXPIRED_DOCUMENT">{t('expiredDocument')}</option>
-                <option value="SUSPECTED_FRAUD">{t('suspectedFraud')}</option>
-                <option value="OTHER">{t('other')}</option>
-              </select>
-            </div>
-            <textarea rows={2} value={reasonNote} onChange={(e) => setReasonNote(e.target.value)} placeholder="Ghi chú chi tiết cho chủ trọ..." className="w-full text-xs rounded border border-border bg-card p-2 text-foreground" />
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setShowRejectForm(false)}>{t('close')}</Button>
-              <Button type="submit" variant="danger" size="sm" isLoading={isProcessing}>{t('reject')}</Button>
-            </div>
-          </form>
-        ) : (
-          <div className="flex items-center justify-between pt-2 border-t border-border">
+        {/* Footer Actions Modal */}
+        {!showRejectForm && (
+          <div className="flex items-center justify-between pt-3 border-t border-border shrink-0">
             <Button variant="ghost" size="sm" onClick={onClose}>{t('close')}</Button>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="text-danger border-danger/40" leftIcon={<X className="w-3.5 h-3.5" />} onClick={() => setShowRejectForm(true)}>{tAuto('k0502')}</Button>
-              <Button variant="primary" size="sm" leftIcon={<Check className="w-3.5 h-3.5" />} isLoading={isProcessing} onClick={() => { setIsProcessing(true); onApprove(kyc.id, kyc.version).finally(() => setIsProcessing(false)); }}>{tAuto('k0503')}</Button>
+            <div className="flex gap-2.5">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-danger border-danger/40 hover:bg-danger/10"
+                leftIcon={<X className="w-3.5 h-3.5" />}
+                onClick={() => setShowRejectForm(true)}
+              >
+                Từ chối hồ sơ
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                leftIcon={<Check className="w-3.5 h-3.5" />}
+                isLoading={isProcessing}
+                onClick={() => {
+                  setIsProcessing(true);
+                  onApprove(kyc.id, kyc.version).finally(() => setIsProcessing(false));
+                }}
+              >
+                Duyệt KYC
+              </Button>
             </div>
           </div>
         )}
 
+        {/* Zoomed Image Viewer Modal */}
         {zoomedImage && (
-          <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-pointer" onClick={() => setZoomedImage(null)}>
-            <img src={zoomedImage} alt="Zoomed" className="max-h-[90vh] max-w-[90vw] object-contain rounded-xl" />
+          <div className="fixed inset-0 z-60 bg-black/90 flex flex-col items-center justify-center p-4 cursor-pointer" onClick={() => setZoomedImage(null)}>
+            <div className="max-w-4xl max-h-[85vh] flex flex-col items-center gap-2" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between w-full text-white text-xs px-2">
+                <span className="font-semibold">{zoomedImage.title}</span>
+                <button
+                  type="button"
+                  onClick={() => setZoomedImage(null)}
+                  className="p-1 rounded bg-white/20 text-white hover:bg-white/40 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <img src={zoomedImage.url} alt={zoomedImage.title} className="max-h-[80vh] max-w-[90vw] object-contain rounded-xl shadow-2xl bg-black" />
+            </div>
           </div>
         )}
       </div>
