@@ -1,5 +1,5 @@
-import { UserChangePasswordView } from '@/presentation/components/profile/UserChangePasswordView';
+import { SecuritySettingsView } from '@/presentation/components/profile/SecuritySettingsView';
 
 export default function LandlordSettingsPage() {
-  return <UserChangePasswordView />;
+  return <SecuritySettingsView />;
 }

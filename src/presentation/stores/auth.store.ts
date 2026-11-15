@@ -26,7 +26,7 @@ interface AuthState {
   retryAfterSeconds: number | null;
   initSession: () => Promise<void>;
   refreshMe: () => Promise<User | null>;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string, twoFactorCode?: string) => Promise<boolean>;
   loginWithGoogle: (
     credential: string,
     nonce: string,
@@ -111,10 +111,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  login: async (email, password) => {
+  login: async (email, password, twoFactorCode) => {
     set(LOADING_RESET);
     try {
-      const session = await container.auth.loginUseCase.execute({ email, password });
+      const session = await container.auth.loginUseCase.execute({ email, password, twoFactorCode });
       ApiClient.setToken(session.tokens.token);
       const user = await enrichFromMe(session.user);
       set({ user, activeRole: getEffectiveRole(user, readPreferredRoleCookie()), accessToken: session.tokens.token, isAuthenticated: true, hasHydrated: true, isLoading: false });

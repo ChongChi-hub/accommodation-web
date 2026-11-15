@@ -1,6 +1,7 @@
 export interface LoginRequestDto {
   email: string;
   password: string;
+  twoFactorCode?: string;
 }
 
 export interface RegisterRequestDto {

@@ -1,6 +1,6 @@
-import { UserChangePasswordView } from '@/presentation/components/profile/UserChangePasswordView';
+import { SecuritySettingsView } from '@/presentation/components/profile/SecuritySettingsView';
 
 export default function ModeratorSecurityPage() {
-  return <UserChangePasswordView />;
+  return <SecuritySettingsView />;
 }
 

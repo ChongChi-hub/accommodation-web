@@ -20,6 +20,7 @@ import { HttpContractRepository } from '../repositories/http-contract.repository
 import { HttpBillingRepository } from '../repositories/http-billing.repository';
 import { HttpOwnershipKycRepository } from '../repositories/http-ownership-kyc.repository';
 import { HttpNotificationRepository } from '../repositories/http-notification.repository';
+import { HttpTwoFactorRepository } from '../repositories/http-two-factor.repository';
 import { StaticBadgeRepository } from '../static/StaticBadgeRepository';
 import { LoginUseCase } from '@/application/use-cases/auth/login.use-case';
 import { RegisterUseCase } from '@/application/use-cases/auth/register.use-case';
@@ -48,6 +49,7 @@ const contractRepository = new HttpContractRepository();
 const billingRepository = new HttpBillingRepository();
 const ownershipKycRepository = new HttpOwnershipKycRepository();
 const notificationRepository = new HttpNotificationRepository();
+const twoFactorRepository = new HttpTwoFactorRepository();
 const badgeRepository = new StaticBadgeRepository(
   notificationRepository,
   kycRepository
@@ -123,5 +125,8 @@ export const container = {
   },
   badge: {
     badgeRepository,
+  },
+  twoFactor: {
+    twoFactorRepository,
   },
 };
