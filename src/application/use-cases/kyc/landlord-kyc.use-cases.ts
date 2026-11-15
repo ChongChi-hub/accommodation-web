@@ -11,6 +11,7 @@ export class LandlordKycUseCases {
   async submitKyc(data: {
     fullNameOnId: string;
     idNumber: string;
+    phone?: string;
     dateOfBirth: string;
     issueDate: string;
     issuePlace: string;
@@ -31,11 +32,43 @@ export class LandlordKycUseCases {
       throw new Error('Vui lòng chụp và tải lên cả 2 mặt CCCD');
     }
 
+    let frontImageUrl: string | undefined;
+    let backImageUrl: string | undefined;
+
+    try {
+      const uploadToCloudinary = async (file: File) => {
+        const cfd = new FormData();
+        cfd.append('file', file);
+        cfd.append('folder', 'cozynest/kyc');
+        const res = await fetch('/api/upload/cloudinary', {
+          method: 'POST',
+          body: cfd,
+        });
+        if (!res.ok) return undefined;
+        const json = await res.json();
+        return json?.data?.url as string | undefined;
+      };
+
+      const [fUrl, bUrl] = await Promise.all([
+        uploadToCloudinary(data.frontImage),
+        uploadToCloudinary(data.backImage),
+      ]);
+      frontImageUrl = fUrl;
+      backImageUrl = bUrl;
+    } catch {
+      // Fallback: Proceed with multipart upload to identity-service
+    }
+
     const formData = new FormData();
+    formData.append('front', data.frontImage);
+    formData.append('back', data.backImage);
     formData.append('frontImage', data.frontImage);
     formData.append('backImage', data.backImage);
+    if (frontImageUrl) formData.append('frontImageUrl', frontImageUrl);
+    if (backImageUrl) formData.append('backImageUrl', backImageUrl);
     formData.append('fullNameOnId', data.fullNameOnId.trim());
     formData.append('idNumber', data.idNumber.trim());
+    if (data.phone) formData.append('phone', data.phone.trim());
     formData.append('dateOfBirth', data.dateOfBirth);
     formData.append('issueDate', data.issueDate);
     formData.append('issuePlace', data.issuePlace.trim());

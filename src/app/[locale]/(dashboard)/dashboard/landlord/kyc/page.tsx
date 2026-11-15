@@ -40,6 +40,7 @@ export default function LandlordKycPage() {
   const handleSubmit = async (data: {
     fullNameOnId: string;
     idNumber: string;
+    phone?: string;
     dateOfBirth: string;
     issueDate: string;
     issuePlace: string;

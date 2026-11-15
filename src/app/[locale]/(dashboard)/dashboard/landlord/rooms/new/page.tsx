@@ -27,7 +27,7 @@ export default function NewRoomPage() {
   const [kycApproved, setKycApproved] = useState(true);
 
   const [formData, setFormData] = useState({
-    title: '', roomType: 'MINI_APARTMENT', province: 'HN', ward: 'HN_DVH',
+    title: '', roomType: 'MINI_APARTMENT', province: '01', ward: '',
     address: '', area: '', price: '', deposit: '', maxOccupants: '2',
     electricityCost: '3500', waterCost: '25000',
     initialElectricityReading: '0', initialWaterReading: '0',

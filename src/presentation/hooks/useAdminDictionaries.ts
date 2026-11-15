@@ -100,16 +100,16 @@ export function useAdminDictionaries() {
         locations: [
           {
             id: '1',
-            code: 'HN',
+            code: '01',
             name: 'Thành phố Hà Nội',
-            coverage: '22 phường trọng điểm',
+            coverage: '126 xã/phường',
             status: 'COVERED',
           },
           {
             id: '2',
-            code: 'HCM',
+            code: '79',
             name: 'Thành phố Hồ Chí Minh',
-            coverage: '13 phường trọng điểm',
+            coverage: '168 xã/phường',
             status: 'COVERED',
           },
         ],

@@ -596,7 +596,6 @@ export default function LandlordUtilitiesPage() {
         <div className="space-y-3 pt-2 text-center">
           {previewPhoto && (
             <div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={previewPhoto}
                 alt="Meter photo"

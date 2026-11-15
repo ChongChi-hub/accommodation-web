@@ -24,6 +24,8 @@ export interface LandlordKycStatus {
   remainingAttempts: number;
   hasFrontImage: boolean;
   hasBackImage: boolean;
+  frontImageUrl?: string;
+  backImageUrl?: string;
   canResubmit: boolean;
 }
 
@@ -46,9 +48,11 @@ export interface KycModerationDetail {
   userId: string;
   userEmail: string;
   userPhone: string;
+  userFullName?: string;
   userRegisteredAt?: string;
   fullNameOnId: string;
   idNumberMasked: string;
+  idNumberPlain?: string;
   dateOfBirth: string;
   issueDate: string;
   issuePlace: string;
@@ -62,5 +66,7 @@ export interface KycModerationDetail {
   version: number;
   hasFrontImage: boolean;
   hasBackImage: boolean;
+  frontImageUrl?: string;
+  backImageUrl?: string;
 }
 

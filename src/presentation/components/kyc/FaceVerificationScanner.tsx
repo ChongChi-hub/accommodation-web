@@ -1,8 +1,8 @@
 'use client';
-import { useTranslations } from 'next-intl';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Camera, AlertCircle, RotateCcw, ShieldCheck } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Camera, AlertCircle, RotateCcw, ShieldCheck, RefreshCw } from 'lucide-react';
 import { FaceChallenge } from '@/domain/entities/FaceVerification';
 import { Button } from '@/presentation/components/ui/Button';
 
@@ -12,6 +12,7 @@ interface Props {
   onCancel: () => void;
   isSubmitting: boolean;
 }
+
 type Stage = 'CAMERA_PERM' | 'READY' | 'CAPTURING_NEUTRAL' | 'CAPTURING_ACTIONS' | 'REVIEW';
 
 export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmitting }: Props) {
@@ -20,9 +21,14 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [currentActionIndex, setCurrentActionIndex] = useState(0);
   const [countdown, setCountdown] = useState<number | null>(null);
-  const [neutralBlob, setNeutralBlob] = useState<Blob | null>(null), [actionBlobs, setActionBlobs] = useState<Blob[]>([]);
-  const [neutralPreview, setNeutralPreview] = useState<string | null>(null), [actionPreviews, setActionPreviews] = useState<string[]>([]);
-  const videoRef = useRef<HTMLVideoElement | null>(null), canvasRef = useRef<HTMLCanvasElement | null>(null), streamRef = useRef<MediaStream | null>(null);
+  const [neutralBlob, setNeutralBlob] = useState<Blob | null>(null);
+  const [actionBlobs, setActionBlobs] = useState<Blob[]>([]);
+  const [neutralPreview, setNeutralPreview] = useState<string | null>(null);
+  const [actionPreviews, setActionPreviews] = useState<string[]>([]);
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -31,59 +37,124 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
     }
   }, []);
 
-  useEffect(() => () => stopCamera(), [stopCamera]);
-
-  const startCamera = async () => {
+  const startCamera = useCallback(async () => {
     setCameraError(null);
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
         throw new Error('Trình duyệt của bạn không hỗ trợ truy cập máy ảnh (WebRTC)');
       }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 640 }, height: { ideal: 640 }, facingMode: 'user' },
+        video: {
+          width: { ideal: 640 },
+          height: { ideal: 640 },
+          facingMode: 'user',
+        },
         audio: false,
       });
       streamRef.current = stream;
+
+      // Chuyển sang stage READY trước để video element mount vào DOM
+      setStage('READY');
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        videoRef.current.muted = true;
+        await videoRef.current.play().catch(() => {});
       }
-      setStage('READY');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as { name?: string; message?: string };
       const errMap: Record<string, string> = {
         NotAllowedError: 'Quyền truy cập máy ảnh bị từ chối. Vui lòng cho phép quyền máy ảnh trên trình duyệt.',
         PermissionDeniedError: 'Quyền truy cập máy ảnh bị từ chối. Vui lòng cho phép quyền máy ảnh trên trình duyệt.',
         NotFoundError: 'Không tìm thấy thiết bị máy ảnh trên máy tính hoặc điện thoại của bạn.',
         NotReadableError: 'Máy ảnh đang được sử dụng bởi ứng dụng khác. Vui lòng đóng ứng dụng đó và thử lại.',
       };
-      setCameraError(errMap[err.name] || err.message || 'Không thể khởi động máy ảnh');
+      setCameraError(errMap[errorObj.name || ''] || errorObj.message || 'Không thể khởi động máy ảnh');
+      setStage('CAMERA_PERM');
     }
-  };
+  }, []);
+
+  // Tự động khởi động camera khi mở scanner
+  useEffect(() => {
+    startCamera();
+    return () => stopCamera();
+  }, [startCamera, stopCamera]);
+
+  // Đảm bảo stream được gắn vào thẻ video khi video element mount hoặc stage đổi
+  const handleVideoRef = useCallback((node: HTMLVideoElement | null) => {
+    videoRef.current = node;
+    if (node && streamRef.current) {
+      if (node.srcObject !== streamRef.current) {
+        node.srcObject = streamRef.current;
+      }
+      node.muted = true;
+      node.play().catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    if (stage === 'READY' || stage === 'CAPTURING_NEUTRAL' || stage === 'CAPTURING_ACTIONS') {
+      if (videoRef.current && streamRef.current) {
+        if (videoRef.current.srcObject !== streamRef.current) {
+          videoRef.current.srcObject = streamRef.current;
+        }
+        videoRef.current.muted = true;
+        videoRef.current.play().catch(() => {});
+      }
+    }
+  }, [stage]);
 
   const captureCurrentFrame = (): Blob | null => {
     if (!videoRef.current || !canvasRef.current) return null;
-    const canvas = canvasRef.current, video = videoRef.current;
-    canvas.width = 480; canvas.height = 480;
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    const vWidth = video.videoWidth || 640;
+    const vHeight = video.videoHeight || 480;
+
+    canvas.width = 480;
+    canvas.height = 480;
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
-    const minDim = Math.min(video.videoWidth, video.videoHeight);
-    ctx.drawImage(video, (video.videoWidth - minDim) / 2, (video.videoHeight - minDim) / 2, minDim, minDim, 0, 0, 480, 480);
-    const arr = canvas.toDataURL('image/jpeg', 0.9).split(','), bstr = atob(arr[1]);
+
+    const minDim = Math.min(vWidth, vHeight);
+    ctx.drawImage(
+      video,
+      (vWidth - minDim) / 2,
+      (vHeight - minDim) / 2,
+      minDim,
+      minDim,
+      0,
+      0,
+      480,
+      480
+    );
+
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    const arr = dataUrl.split(',');
+    const bstr = atob(arr[1]);
     const u8 = new Uint8Array(bstr.length);
-    for (let i = 0; i < bstr.length; i++) u8[i] = bstr.charCodeAt(i);
+    for (let i = 0; i < bstr.length; i++) {
+      u8[i] = bstr.charCodeAt(i);
+    }
     return new Blob([u8], { type: 'image/jpeg' });
   };
 
-  const startCaptureSequence = () => {
-    setNeutralBlob(null); setActionBlobs([]); setNeutralPreview(null); setActionPreviews([]);
-    setCurrentActionIndex(0); setStage('CAPTURING_NEUTRAL');
-    runCountdown(() => {
-      const blob = captureCurrentFrame();
-      if (blob) {
-        setNeutralBlob(blob); setNeutralPreview(URL.createObjectURL(blob));
-        setStage('CAPTURING_ACTIONS'); startActionCapture(0);
+  const runCountdown = (onFinish: () => void) => {
+    setCountdown(3);
+    let count = 3;
+    const timer = setInterval(() => {
+      count -= 1;
+      if (count <= 0) {
+        clearInterval(timer);
+        setCountdown(null);
+        onFinish();
+      } else {
+        setCountdown(count);
       }
-    });
+    }, 1000);
   };
 
   const startActionCapture = (actionIdx: number) => {
@@ -93,24 +164,40 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
       if (blob) {
         setActionBlobs((prev) => [...prev, blob]);
         setActionPreviews((prev) => [...prev, URL.createObjectURL(blob)]);
-        if (actionIdx + 1 < challenge.actions.length) startActionCapture(actionIdx + 1);
-        else { stopCamera(); setStage('REVIEW'); }
+        if (actionIdx + 1 < challenge.actions.length) {
+          startActionCapture(actionIdx + 1);
+        } else {
+          stopCamera();
+          setStage('REVIEW');
+        }
       }
     });
   };
 
-  const runCountdown = (onFinish: () => void) => {
-    setCountdown(3);
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev === null || prev <= 1) { clearInterval(timer); onFinish(); return null; }
-        return prev - 1;
-      });
-    }, 1000);
+  const startCaptureSequence = () => {
+    setNeutralBlob(null);
+    setActionBlobs([]);
+    setNeutralPreview(null);
+    setActionPreviews([]);
+    setCurrentActionIndex(0);
+    setStage('CAPTURING_NEUTRAL');
+
+    runCountdown(() => {
+      const blob = captureCurrentFrame();
+      if (blob) {
+        setNeutralBlob(blob);
+        setNeutralPreview(URL.createObjectURL(blob));
+        setStage('CAPTURING_ACTIONS');
+        startActionCapture(0);
+      }
+    });
   };
 
   const handleRetake = () => {
-    setNeutralBlob(null); setActionBlobs([]); setNeutralPreview(null); setActionPreviews([]);
+    setNeutralBlob(null);
+    setActionBlobs([]);
+    setNeutralPreview(null);
+    setActionPreviews([]);
     startCamera();
   };
 
@@ -126,12 +213,14 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
           <ShieldCheck className="w-5 h-5 text-emerald-600" />
           <h2 className="font-semibold text-lg text-foreground">{tAuto('k0463')}</h2>
         </div>
-        <span className="text-xs font-mono bg-muted px-2 py-1 rounded text-muted-foreground">{tAuto('k0464')}{' '}{challenge.attemptNo}/3</span>
+        <span className="text-xs font-mono bg-muted px-2 py-1 rounded text-muted-foreground">
+          {tAuto('k0464')} {challenge.attemptNo}/3
+        </span>
       </div>
 
       {stage === 'CAMERA_PERM' && (
         <div className="text-center py-8 space-y-4">
-          <div className="w-16 h-16 bg-brand-50 dark:bg-brand-950 text-brand-600 rounded-full flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto">
             <Camera className="w-8 h-8" />
           </div>
           <div>
@@ -152,23 +241,31 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
           )}
           <div className="flex gap-3 justify-center pt-2">
             <Button variant="outline" onClick={onCancel}>{tAuto('k0469')}</Button>
-            <Button onClick={startCamera}>{tAuto('k0470')}</Button>
+            <Button onClick={startCamera} leftIcon={<RefreshCw className="w-4 h-4" />}>
+              {cameraError ? 'Thử lại kết nối Camera' : tAuto('k0470')}
+            </Button>
           </div>
         </div>
       )}
 
       {(stage === 'READY' || stage === 'CAPTURING_NEUTRAL' || stage === 'CAPTURING_ACTIONS') && (
         <div className="space-y-4 text-center">
-          <div className="relative w-80 h-80 mx-auto rounded-full overflow-hidden border-4 border-brand-500 shadow-inner bg-black">
-            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover transform -scale-x-100" />
+          <div className="relative w-80 h-80 mx-auto rounded-full overflow-hidden border-4 border-primary shadow-inner bg-black flex items-center justify-center">
+            <video
+              ref={handleVideoRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover transform -scale-x-100"
+            />
             <canvas ref={canvasRef} className="hidden" />
 
             {/* Ellipse Guide Overlay */}
             <div className="absolute inset-4 border-2 border-dashed border-white/70 rounded-full pointer-events-none" />
 
             {countdown !== null && (
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <span className="text-6xl font-bold text-white animate-ping">{countdown}</span>
+              <div className="absolute inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center pointer-events-none">
+                <span className="text-7xl font-bold text-white drop-shadow-lg">{countdown}</span>
               </div>
             )}
           </div>
@@ -181,14 +278,14 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
             )}
             {stage === 'CAPTURING_NEUTRAL' && (
               <div className="space-y-1">
-                <p className="font-semibold text-foreground">{tAuto('k0472')}</p>
+                <p className="font-semibold text-foreground text-base">{tAuto('k0472')}</p>
                 <p className="text-xs text-muted-foreground">{tAuto('k0473')}</p>
               </div>
             )}
             {stage === 'CAPTURING_ACTIONS' && (
               <div className="space-y-1">
-                <p className="font-semibold text-brand-600">
-                  {tAuto('k0474')}{' '}{currentActionIndex + 2}: {challenge.actions[currentActionIndex]?.description}
+                <p className="font-semibold text-primary text-base">
+                  {tAuto('k0474')} {currentActionIndex + 2}: {challenge.actions[currentActionIndex]?.description}
                 </p>
                 <p className="text-xs text-muted-foreground">{tAuto('k0475')}</p>
               </div>
@@ -197,8 +294,12 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
 
           {stage === 'READY' && (
             <div className="flex gap-3 justify-center">
-              <Button variant="outline" onClick={() => { stopCamera(); onCancel(); }}>{tAuto('k0126')}</Button>
-              <Button onClick={startCaptureSequence}>{tAuto('k0476')}</Button>
+              <Button variant="outline" onClick={() => { stopCamera(); onCancel(); }}>
+                {tAuto('k0126')}
+              </Button>
+              <Button onClick={startCaptureSequence} variant="primary">
+                {tAuto('k0476')}
+              </Button>
             </div>
           )}
         </div>
@@ -216,16 +317,22 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
           <div className="grid grid-cols-3 gap-3">
             <div className="border border-border rounded-lg p-2 text-center bg-muted/40">
               <div className="aspect-square rounded overflow-hidden mb-1.5 bg-black">
-                {neutralPreview && <img src={neutralPreview} alt="Chính diện" className="w-full h-full object-cover" />}
+                {neutralPreview && (
+                  <img src={neutralPreview} alt="Chính diện" className="w-full h-full object-cover" />
+                )}
               </div>
               <span className="text-xs font-medium text-foreground">{tAuto('k0479')}</span>
             </div>
             {challenge.actions.map((act, idx) => (
               <div key={act.code} className="border border-border rounded-lg p-2 text-center bg-muted/40">
                 <div className="aspect-square rounded overflow-hidden mb-1.5 bg-black">
-                  {actionPreviews[idx] && <img src={actionPreviews[idx]} alt={act.description} className="w-full h-full object-cover" />}
+                  {actionPreviews[idx] && (
+                    <img src={actionPreviews[idx]} alt={act.description} className="w-full h-full object-cover" />
+                  )}
                 </div>
-                <span className="text-xs font-medium text-foreground truncate block">{idx + 2}. {act.description}</span>
+                <span className="text-xs font-medium text-foreground truncate block">
+                  {idx + 2}. {act.description}
+                </span>
               </div>
             ))}
           </div>
@@ -235,10 +342,15 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
           </div>
 
           <div className="flex gap-3 justify-end pt-2">
-            <Button variant="outline" onClick={handleRetake} disabled={isSubmitting} leftIcon={<RotateCcw className="w-4 h-4" />}>
+            <Button
+              variant="outline"
+              onClick={handleRetake}
+              disabled={isSubmitting}
+              leftIcon={<RotateCcw className="w-4 h-4" />}
+            >
               {tAuto('k0481')}
             </Button>
-            <Button onClick={handleSubmit} disabled={isSubmitting}>
+            <Button onClick={handleSubmit} disabled={isSubmitting} isLoading={isSubmitting}>
               {isSubmitting ? 'Đang mã hóa & gửi...' : 'Gửi xác thực'}
             </Button>
           </div>
@@ -247,4 +359,3 @@ export function FaceVerificationScanner({ challenge, onSubmit, onCancel, isSubmi
     </div>
   );
 }
-

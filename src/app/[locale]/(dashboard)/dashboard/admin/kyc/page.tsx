@@ -128,15 +128,17 @@ function AdminKycContent() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      leftIcon={<Eye className="w-3.5 h-3.5" />}
-                      isLoading={isLoadingDetail}
+                    <button
+                      type="button"
+                      disabled={isLoadingDetail}
                       onClick={() => selectKyc(item.id)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed
+                        bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-700 hover:text-white hover:border-teal-700
+                        dark:bg-teal-950/70 dark:text-teal-300 dark:border-teal-800 dark:hover:bg-teal-600 dark:hover:text-white"
                     >
-                      {tAuto('k0008')}
-                    </Button>
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>{tAuto('k0008')}</span>
+                    </button>
                   </TableCell>
                 </TableRow>
               ))}

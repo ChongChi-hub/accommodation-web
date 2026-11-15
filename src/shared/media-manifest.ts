@@ -98,12 +98,12 @@ export const MEDIA_MANIFEST: Record<string, Record<string, MediaAssetMeta>> = {
       "altVi": "Phòng trọ khép kín gọn gàng có bàn học và ánh sáng tự nhiên",
       "altEn": "Cozy single rental room with desk and natural daylight",
       "blurDataURL": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAABwAQCdASoQAAsABUB8JZQAATFamAD9z4YCZuNIXXMnrO0H0/ZcD2whfhrHB+KJVbzAiHuzSaujgAAA",
-      "webp640": "/images/categories/phong-tro-640.webp",
-      "webp1080": "/images/categories/phong-tro-1080.webp",
-      "webp1920": "/images/categories/phong-tro-1920.webp",
-      "avif1920": "/images/categories/phong-tro-1920.avif",
-      "author": "Collov Home Design",
-      "license": "Unsplash License"
+      "webp640": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_640,q_auto,f_auto/v1794587759/decor-phong-tro-104_itqi48.jpg",
+      "webp1080": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1080,q_auto,f_auto/v1794587759/decor-phong-tro-104_itqi48.jpg",
+      "webp1920": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1920,q_auto,f_auto/v1794587759/decor-phong-tro-104_itqi48.jpg",
+      "avif1920": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1920,q_auto,f_avif/v1794587759/decor-phong-tro-104_itqi48.jpg",
+      "author": "Cozynest Cloudinary",
+      "license": "Custom Upload"
     },
     "nha-nguyen-can": {
       "slug": "nha-nguyen-can",
@@ -111,12 +111,12 @@ export const MEDIA_MANIFEST: Record<string, Record<string, MediaAssetMeta>> = {
       "altVi": "Không gian phòng khách nhà nguyên căn hiện đại thông thoáng",
       "altEn": "Modern whole townhouse interior with spacious living area",
       "blurDataURL": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADwAQCdASoQAAsABUB8JQBOgCLaQRzvFQAA/aaa7uXfkvK28OTXNL9K7AE0mVvP2NXkLfV01donbAgnwsHi1+FZJp3xB2myxgA=",
-      "webp640": "/images/categories/nha-nguyen-can-640.webp",
-      "webp1080": "/images/categories/nha-nguyen-can-1080.webp",
-      "webp1920": "/images/categories/nha-nguyen-can-1920.webp",
-      "avif1920": "/images/categories/nha-nguyen-can-1920.avif",
-      "author": "R ARCHITECTURE",
-      "license": "Unsplash License"
+      "webp640": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_640,q_auto,f_auto/v1794587760/z6924884283880_5ec4a3b8f94d4ce9912c60ef543925f7_klqhbu.jpg",
+      "webp1080": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1080,q_auto,f_auto/v1794587760/z6924884283880_5ec4a3b8f94d4ce9912c60ef543925f7_klqhbu.jpg",
+      "webp1920": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1920,q_auto,f_auto/v1794587760/z6924884283880_5ec4a3b8f94d4ce9912c60ef543925f7_klqhbu.jpg",
+      "avif1920": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1920,q_auto,f_avif/v1794587760/z6924884283880_5ec4a3b8f94d4ce9912c60ef543925f7_klqhbu.jpg",
+      "author": "Cozynest Cloudinary",
+      "license": "Custom Upload"
     },
     "can-ho": {
       "slug": "can-ho",
@@ -124,12 +124,12 @@ export const MEDIA_MANIFEST: Record<string, Record<string, MediaAssetMeta>> = {
       "altVi": "Căn hộ mini đầy đủ tiện nghi với bếp ăn và phòng ngủ thoáng đãng",
       "altEn": "Modern studio apartment with sleek kitchenette and living zone",
       "blurDataURL": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAACwAQCdASoQAAsABUB8JYgCdACb+7WAAPjEqhonpnVRIV4AhB2CjkJ4i8R81a5NyNJUIZ77DrVe1VZ7AMVqfUq13xAAAA==",
-      "webp640": "/images/categories/can-ho-640.webp",
-      "webp1080": "/images/categories/can-ho-1080.webp",
-      "webp1920": "/images/categories/can-ho-1920.webp",
-      "avif1920": "/images/categories/can-ho-1920.avif",
-      "author": "Roberto Nickson",
-      "license": "Unsplash License"
+      "webp640": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_640,q_auto,f_auto/v1794587759/thiet-ke-noi-that-chung-cu-mini-15.jpg_i4m02s.webp",
+      "webp1080": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1080,q_auto,f_auto/v1794587759/thiet-ke-noi-that-chung-cu-mini-15.jpg_i4m02s.webp",
+      "webp1920": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1920,q_auto,f_auto/v1794587759/thiet-ke-noi-that-chung-cu-mini-15.jpg_i4m02s.webp",
+      "avif1920": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1920,q_auto,f_avif/v1794587759/thiet-ke-noi-that-chung-cu-mini-15.jpg_i4m02s.webp",
+      "author": "Cozynest Cloudinary",
+      "license": "Custom Upload"
     },
     "o-ghep": {
       "slug": "o-ghep",
@@ -137,12 +137,12 @@ export const MEDIA_MANIFEST: Record<string, Record<string, MediaAssetMeta>> = {
       "altVi": "Không gian phòng ở ghép sạch sẽ với giường đơn và góc sinh hoạt chung",
       "altEn": "Tidy coliving shared room with single beds and common workspace",
       "blurDataURL": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAAAQAgCdASoQAAsABUB8JZQAAsRCCKcHyAPgAP7p++riWqwm1cArQ3KpGINjGOGEVp3Sd/pHp3sg+eZDR8SnXx3u2+xbjjIRIyc/McAA",
-      "webp640": "/images/categories/o-ghep-640.webp",
-      "webp1080": "/images/categories/o-ghep-1080.webp",
-      "webp1920": "/images/categories/o-ghep-1920.webp",
-      "avif1920": "/images/categories/o-ghep-1920.avif",
-      "author": "Marcus Loke",
-      "license": "Unsplash License"
+      "webp640": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_640,q_auto,f_auto/v1794587759/images_lllbal.jpg",
+      "webp1080": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1080,q_auto,f_auto/v1794587759/images_lllbal.jpg",
+      "webp1920": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1920,q_auto,f_auto/v1794587759/images_lllbal.jpg",
+      "avif1920": "https://res.cloudinary.com/dfs07oaet/image/upload/c_fill,g_auto,w_1920,q_auto,f_avif/v1794587759/images_lllbal.jpg",
+      "author": "Cozynest Cloudinary",
+      "license": "Custom Upload"
     }
   },
   "areas": {

@@ -1,15 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
+import { Dialog } from '@/presentation/components/ui/Dialog';
 import { LandlordKycStatus } from '@/domain/entities/LandlordKyc';
 import { useAuthenticatedKycImage } from '@/presentation/hooks/useAuthenticatedKycImage';
 import { useFaceVerification } from '@/presentation/hooks/useFaceVerification';
-import { ShieldCheck, Clock, AlertTriangle, ShieldX, RefreshCw } from 'lucide-react';
+import { ShieldCheck, Clock, AlertTriangle, ShieldX, RefreshCw, Maximize2, Loader2, Eye } from 'lucide-react';
 
 interface LandlordKycStatusCardProps {
   status: LandlordKycStatus;
@@ -22,6 +23,16 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
   const frontImage = useAuthenticatedKycImage(status.hasFrontImage ? '/landlord/kyc/images/front' : null);
   const backImage = useAuthenticatedKycImage(status.hasBackImage ? '/landlord/kyc/images/back' : null);
   const { faceStatus } = useFaceVerification();
+
+  const [previewModal, setPreviewModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    url: string | null;
+  }>({
+    isOpen: false,
+    title: '',
+    url: null,
+  });
 
   const renderBadge = () => {
     switch (status.status) {
@@ -81,7 +92,7 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
             </Badge>
           </div>
           <p className="text-[11px] text-foreground-muted">
-            {status.status === 'APPROVED' ? 'Đã xác minh thông tin giấy tờ' : status.status === 'PENDING' ? 'Đang chờ đối chiếu giấy tờ' : status.status === 'REJECTED' ? 'Giấy tờ bị từ chối' : 'Chưa nộp giấy tờ'}
+            {status.status === 'APPROVED' ? 'Đã xác minh thông tin giấy tờ' : status.status === 'PENDING' ? 'Đang chờ Admin / Kiểm duyệt viên duyệt' : status.status === 'REJECTED' ? 'Giấy tờ bị từ chối' : 'Chưa nộp giấy tờ'}
           </p>
         </div>
 
@@ -109,9 +120,14 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
       </div>
 
       {status.status === 'PENDING' && (
-        <div className="p-4 rounded-xl bg-warning/10 border border-warning/20 space-y-1">
-          <p className="text-sm font-semibold text-warning">{t('bannerPendingTitle')}</p>
-          <p className="text-xs text-warning-foreground leading-relaxed">{t('bannerPendingDesc')}</p>
+        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-1.5">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-amber-600 animate-pulse" />
+            <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">{t('bannerPendingTitle')}</p>
+          </div>
+          <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+            Hồ sơ xác minh căn cước công dân của bạn đã được gửi thành công và đang được <strong>Admin / Kiểm duyệt viên</strong> đối chiếu thông tin. Quá trình kiểm duyệt thường diễn ra nhanh chóng. Sau khi được duyệt, bạn sẽ được cấp quyền đăng phòng trọ.
+          </p>
         </div>
       )}
 
@@ -141,19 +157,89 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
       )}
 
       {(status.hasFrontImage || status.hasBackImage) && (
-        <div className="space-y-2">
-          <p className="text-xs font-semibold text-foreground">{t('frontImage')} & {t('backImage')}</p>
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+              <Eye className="w-3.5 h-3.5 text-primary" />
+              Ảnh chụp CCCD đã gửi
+            </p>
+            <span className="text-[11px] text-foreground-muted">Nhấn vào ảnh để xem kích thước lớn</span>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="h-40 rounded-xl overflow-hidden bg-muted/40 border border-border flex items-center justify-center">
-              {frontImage.imageUrl ? (
-                <img src={frontImage.imageUrl} alt="Front ID" className="w-full h-full object-cover" />
+            {/* Mặt trước */}
+            <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/40 aspect-16/10 flex items-center justify-center">
+              {frontImage.isLoading ? (
+                <div className="flex flex-col items-center gap-2 text-foreground-muted">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <span className="text-xs">Đang tải ảnh mặt trước...</span>
+                </div>
+              ) : frontImage.imageUrl ? (
+                <>
+                  <img
+                    src={frontImage.imageUrl}
+                    alt="Mặt trước CCCD"
+                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-102"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPreviewModal({
+                          isOpen: true,
+                          title: 'Ảnh mặt trước CCCD',
+                          url: frontImage.imageUrl,
+                        })
+                      }
+                      className="px-3 py-1.5 rounded-lg bg-surface/90 text-foreground text-xs font-medium flex items-center gap-1.5 shadow hover:bg-surface cursor-pointer"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                      Phóng to
+                    </button>
+                  </div>
+                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-white text-[10px] font-medium backdrop-blur-xs">
+                    Mặt trước CCCD
+                  </div>
+                </>
               ) : (
                 <span className="text-xs text-foreground-muted">{t('frontImage')}</span>
               )}
             </div>
-            <div className="h-40 rounded-xl overflow-hidden bg-muted/40 border border-border flex items-center justify-center">
-              {backImage.imageUrl ? (
-                <img src={backImage.imageUrl} alt="Back ID" className="w-full h-full object-cover" />
+
+            {/* Mặt sau */}
+            <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/40 aspect-16/10 flex items-center justify-center">
+              {backImage.isLoading ? (
+                <div className="flex flex-col items-center gap-2 text-foreground-muted">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <span className="text-xs">Đang tải ảnh mặt sau...</span>
+                </div>
+              ) : backImage.imageUrl ? (
+                <>
+                  <img
+                    src={backImage.imageUrl}
+                    alt="Mặt sau CCCD"
+                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-102"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPreviewModal({
+                          isOpen: true,
+                          title: 'Ảnh mặt sau CCCD',
+                          url: backImage.imageUrl,
+                        })
+                      }
+                      className="px-3 py-1.5 rounded-lg bg-surface/90 text-foreground text-xs font-medium flex items-center gap-1.5 shadow hover:bg-surface cursor-pointer"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                      Phóng to
+                    </button>
+                  </div>
+                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/70 text-white text-[10px] font-medium backdrop-blur-xs">
+                    Mặt sau CCCD
+                  </div>
+                </>
               ) : (
                 <span className="text-xs text-foreground-muted">{t('backImage')}</span>
               )}
@@ -161,6 +247,24 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
           </div>
         </div>
       )}
+
+      {/* Modal phóng to ảnh */}
+      <Dialog
+        isOpen={previewModal.isOpen}
+        onClose={() => setPreviewModal({ isOpen: false, title: '', url: null })}
+        title={previewModal.title}
+        size="lg"
+      >
+        <div className="max-h-[75vh] overflow-auto flex items-center justify-center rounded-xl bg-black/5 p-2">
+          {previewModal.url && (
+            <img
+              src={previewModal.url}
+              alt={previewModal.title}
+              className="max-h-[70vh] w-auto max-w-full rounded-lg object-contain shadow-lg"
+            />
+          )}
+        </div>
+      </Dialog>
     </Card>
   );
 }

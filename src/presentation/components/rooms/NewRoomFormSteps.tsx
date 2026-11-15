@@ -51,9 +51,9 @@ export function NewRoomFormSteps({
               provinces.length > 0
                 ? provinces.map((p) => ({ value: p.code, label: p.name }))
                 : [
-                    { value: 'HN', label: 'Hà Nội' },
-                    { value: 'HCM', label: 'Hồ Chí Minh' },
-                    { value: 'DNG', label: 'Đà Nẵng' },
+                    { value: '01', label: 'Hà Nội' },
+                    { value: '79', label: 'Hồ Chí Minh' },
+                    { value: '48', label: 'Đà Nẵng' },
                   ]
             }
             value={formData.province}

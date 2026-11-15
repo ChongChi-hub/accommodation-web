@@ -43,7 +43,7 @@ export function HomeFinalCta() {
                 variant="outline"
                 size="lg"
                 leftIcon={<PlusCircle className="w-4 h-4" />}
-                className="w-full sm:w-auto px-8 font-semibold border-white/20 text-white hover:bg-white/10"
+                className="w-full sm:w-auto px-8 font-semibold bg-transparent dark:bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white"
               >
                 {t('postRoomCta')}
               </Button>
