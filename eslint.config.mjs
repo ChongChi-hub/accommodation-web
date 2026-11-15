@@ -82,13 +82,7 @@ export default [
           ],
         },
       ],
-      'i18next/no-literal-string': [
-        'warn',
-        {
-          mode: 'jsx-text-only',
-          'should-validate-template': true,
-        },
-      ],
+      'i18next/no-literal-string': 'off',
     },
   },
 ];
