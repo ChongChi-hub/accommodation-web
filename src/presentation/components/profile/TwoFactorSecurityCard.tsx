@@ -212,7 +212,7 @@ export function TwoFactorSecurityCard() {
             required
           />
           <div className="flex items-center gap-2">
-            <Button type="submit" variant="destructive" isLoading={disableMutation.isPending}>
+            <Button type="submit" variant="danger" isLoading={disableMutation.isPending}>
               Xac nhan tat
             </Button>
             <Button type="button" variant="outline" onClick={() => setIsDisabling(false)}>

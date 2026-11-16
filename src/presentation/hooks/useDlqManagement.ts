@@ -1,12 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HttpDlqRepository } from '@/infrastructure/repositories/http-dlq.repository';
-import { useToastStore } from '@/presentation/stores/toast.store';
+import { toast } from '@/presentation/stores/toast.store';
 
 const dlqRepo = new HttpDlqRepository();
 
 export function useDlqManagement() {
   const queryClient = useQueryClient();
-  const { addToast } = useToastStore();
 
   const messagesQuery = useQuery({
     queryKey: ['admin', 'dlq', 'messages'],
@@ -24,18 +23,10 @@ export function useDlqManagement() {
     mutationFn: (id: string) => dlqRepo.replay(id),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'dlq'] });
-      addToast({
-        type: 'success',
-        title: 'Thành công',
-        message: `Đã xếp hàng phát lại sự kiện ${data.eventType}`,
-      });
+      toast.success(`Đã xếp hàng phát lại sự kiện ${data.eventType}`);
     },
     onError: (err: Error) => {
-      addToast({
-        type: 'error',
-        title: 'Lỗi',
-        message: err.message || 'Không thể phát lại sự kiện DLQ',
-      });
+      toast.error(err.message || 'Không thể phát lại sự kiện DLQ');
     },
   });
 
@@ -43,18 +34,10 @@ export function useDlqManagement() {
     mutationFn: (id: string) => dlqRepo.discard(id),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'dlq'] });
-      addToast({
-        type: 'info',
-        title: 'Đã loại bỏ',
-        message: `Đã loại bỏ sự kiện ${data.eventType}`,
-      });
+      toast.info(`Đã loại bỏ sự kiện ${data.eventType}`);
     },
     onError: (err: Error) => {
-      addToast({
-        type: 'error',
-        title: 'Lỗi',
-        message: err.message || 'Không thể loại bỏ sự kiện DLQ',
-      });
+      toast.error(err.message || 'Không thể loại bỏ sự kiện DLQ');
     },
   });
 
