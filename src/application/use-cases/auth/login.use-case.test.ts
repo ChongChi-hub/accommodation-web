@@ -55,7 +55,10 @@ describe('LoginUseCase', () => {
 
     const result = await useCase.execute({ email: 'tenant@cozynest.vn', password: 'SampleTestPass_99' });
     expect(result.tokens.token).toBe('mock-jwt');
-    expect(mockRepo.login).toHaveBeenCalledWith('tenant@cozynest.vn', 'SampleTestPass_99');
+    expect(mockRepo.login).toHaveBeenCalledWith('tenant@cozynest.vn', 'SampleTestPass_99', undefined);
+
+    await useCase.execute({ email: 'admin@cozynest.vn', password: 'SampleTestPass_99', twoFactorCode: '123456' });
+    expect(mockRepo.login).toHaveBeenCalledWith('admin@cozynest.vn', 'SampleTestPass_99', '123456');
   });
 });
 
