@@ -99,7 +99,7 @@ export default function HostProfilePage({ params }: { params: Promise<{ id: stri
               <h1 className="text-lg font-bold text-stone-900 dark:text-stone-100">{profile.name}</h1>
             </div>
 
-            <div className="flex justify-center gap-2">
+            <div className="flex justify-center gap-2 flex-wrap">
               {profile.verified ? (
                 <Badge variant="success" size="sm">
                   <ShieldCheck className="w-3.5 h-3.5" /> {t('verifiedBadge')}
@@ -109,6 +109,9 @@ export default function HostProfilePage({ params }: { params: Promise<{ id: stri
                   <ShieldAlert className="w-3.5 h-3.5" /> {t('unverifiedBadge')}
                 </Badge>
               )}
+              <Badge variant="info" size="sm">
+                Trust Score: {profile.trustScore || 85}/100
+              </Badge>
             </div>
 
             <div className="pt-4 border-t border-stone-100 dark:border-stone-800 grid grid-cols-2 gap-2 text-xs text-stone-600 dark:text-stone-300">

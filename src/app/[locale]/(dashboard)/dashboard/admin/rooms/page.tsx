@@ -122,7 +122,7 @@ function AdminRoomsContent() {
               {rooms.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-foreground">#{r.id}</span>
                       <Badge
                         variant={
@@ -138,7 +138,17 @@ function AdminRoomsContent() {
                         {r.status === 'REJECTED' && t('statusRejected')}
                         {r.status === 'PENDING' && t('statusPending')}
                       </Badge>
+                      {r.riskLevel === 'HIGH_RISK' && (
+                        <Badge variant="danger" size="sm">
+                          HIGH_RISK
+                        </Badge>
+                      )}
                     </div>
+                    {r.riskLevel === 'HIGH_RISK' && r.riskReasons && (
+                      <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium truncate max-w-xs mt-0.5">
+                        [{r.riskReasons}]
+                      </p>
+                    )}
                     <p className="text-xs text-foreground-muted truncate max-w-xs mt-0.5">
                       {r.title}
                     </p>
@@ -213,6 +223,18 @@ function AdminRoomsContent() {
               </div>
               <h3 className="text-base font-bold text-foreground">{selectedRoom.title}</h3>
             </div>
+
+            {selectedRoom.riskLevel === 'HIGH_RISK' && (
+              <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-xs text-rose-800 dark:text-rose-300 space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-rose-700 dark:text-rose-400">
+                  <ShieldAlert className="w-4 h-4 shrink-0" />
+                  <span>Cảnh báo tin ảo / Rủi ro cao (HIGH_RISK)</span>
+                </div>
+                <p className="text-[11px] leading-relaxed">
+                  {selectedRoom.riskReasons || 'Tin đăng bị hệ thống phát hiện có dấu hiệu bất thường về giá hoặc trùng lặp ảnh.'}
+                </p>
+              </div>
+            )}
 
             <div className="p-4 rounded-xl bg-surface-muted border border-border space-y-3 text-xs">
               <div className="flex items-center gap-2 text-foreground">

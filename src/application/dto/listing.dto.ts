@@ -55,6 +55,7 @@ export interface LandlordSnapshotDto {
   responseRatePercent?: number;
   responseTimeMinutes?: number;
   roomCount?: number;
+  trustScore?: number;
   joinedAt?: string;
 }
 
@@ -69,6 +70,7 @@ export interface HostPublicProfileDto {
   responseRatePercent?: number;
   responseTimeMinutes?: number;
   roomCount?: number;
+  trustScore?: number;
   joinedAt?: string;
   rooms: RoomDto[];
 }
@@ -146,6 +148,8 @@ export interface RoomDto {
   initialElectricityReading?: number;
   initialWaterReading?: number;
   status: string;
+  riskLevel?: string;
+  riskReasons?: string;
   publicationStatus?: string;
   occupancyStatus?: string;
   approved: boolean;
