@@ -178,6 +178,10 @@ export default function RegisterPage() {
               {t('acceptTermsPrefix')}{' '}
               <Link href="/terms" className="font-semibold text-primary dark:text-primary-400 hover:underline">
                 {t('termsLink')}
+              </Link>
+              {', '}
+              <Link href="/regulations" className="font-semibold text-primary dark:text-primary-400 hover:underline">
+                {t('regulationsLink')}
               </Link>{' '}
               {t('acceptTermsAnd')}{' '}
               <Link href="/privacy" className="font-semibold text-primary dark:text-primary-400 hover:underline">

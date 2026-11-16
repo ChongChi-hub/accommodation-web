@@ -3,6 +3,7 @@
 import React from 'react';
 import { TwoFactorSecurityCard } from './TwoFactorSecurityCard';
 import { UserChangePasswordView } from './UserChangePasswordView';
+import { DataSubjectPrivacyCard } from './DataSubjectPrivacyCard';
 
 export function SecuritySettingsView() {
   return (
@@ -19,6 +20,9 @@ export function SecuritySettingsView() {
         <div>
           <h2 className="text-base font-semibold text-foreground mb-3">Doi mat khau</h2>
           <UserChangePasswordView />
+        </div>
+        <div>
+          <DataSubjectPrivacyCard />
         </div>
       </div>
     </div>
