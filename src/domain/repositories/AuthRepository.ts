@@ -13,7 +13,7 @@ export interface AuthSession {
 }
 
 export interface AuthRepository {
-  login(email: string, password: string): Promise<AuthSession>;
+  login(email: string, password: string, twoFactorCode?: string): Promise<AuthSession>;
   register(data: { email: string; phone: string; password: string; fullName: string; role: string }): Promise<AuthSession>;
   refreshToken(refreshToken: string): Promise<AuthSession>;
   getMe?(): Promise<User>;

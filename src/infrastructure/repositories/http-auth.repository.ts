@@ -53,8 +53,8 @@ async function postAuthBff<T = any>(path: string, payload: unknown): Promise<T> 
 }
 
 export class HttpAuthRepository implements AuthRepository {
-  async login(email: string, password: string): Promise<AuthSession> {
-    const data = await postAuthBff<any>('/api/auth/login', { email, password });
+  async login(email: string, password: string, twoFactorCode?: string): Promise<AuthSession> {
+    const data = await postAuthBff<any>('/api/auth/login', { email, password, twoFactorCode });
     ApiClient.setToken(null);
     const primaryRole = resolveCookieRole(data.user);
     setUiRoleCookie(primaryRole);

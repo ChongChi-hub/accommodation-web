@@ -21,6 +21,8 @@ export interface PendingRoomItem {
   address: string;
   submittedAt: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  riskLevel?: 'NORMAL' | 'HIGH_RISK';
+  riskReasons?: string;
 }
 
 export interface KycReviewItem {

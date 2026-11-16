@@ -178,7 +178,8 @@
       "googleNotConfigured": "Google authentication is currently unavailable.",
       "invalidNonce": "Google authentication session expired or invalid.",
       "networkError": "Network error. Please check your connection and try again."
-    }
+    },
+    "regulationsLink": "E-Commerce Regulations"
   },
   "common": {
     "loading": "Loading data...",
@@ -1342,7 +1343,15 @@
     "phone": "1900 8866 (8:00 - 21:00)",
     "allRightsReserved": "All rights reserved.",
     "photoLicenses": "Photo licenses",
-    "motto": "Building a respectful, transparent renting community."
+    "motto": "Building a respectful, transparent renting community.",
+    "regulations": "E-Commerce Regulations",
+    "disputeResolution": "Dispute Resolution & Refunds",
+    "companyName": "CozyNest Vietnam JSC",
+    "taxCode": "Tax Code: 0110892345 issued by Hanoi DPI",
+    "representedBy": "Legal Representative: Managing Director",
+    "headquarters": "Headquarters: 6th Floor, Detech Building, 8 Ton That Thuyet, My Dinh 2, Nam Tu Liem, Hanoi",
+    "moitRegistered": "REGISTERED WITH MOIT",
+    "moitNotice": "Registered E-Commerce Exchange under Decree 52/2013/ND-CP and 85/2021/ND-CP"
   },
   "rooms": {
     "perMonth": "/month",
@@ -2314,5 +2323,39 @@
     "emptyTitle": "No landlords found",
     "emptyDesc": "No landlords matched your search keyword.",
     "searchPlaceholder": "Search landlord name..."
+  },
+  "regulationsPage": {
+    "breadcrumb": "E-Commerce Regulations",
+    "badge": "Decree 52/2013/ND-CP & Decree 85/2021/ND-CP",
+    "title": "Operating Regulations of CozyNest E-Commerce Trading Floor",
+    "subtitle": "Regulations defining rights and responsibilities of parties participating in accommodation rental transactions on CozyNest under Vietnamese law.",
+    "sec1Title": "1. General Principles & Operating Model",
+    "sec1Content": "CozyNest is an e-commerce platform providing intermediary connection between landlords and tenants. All listing creations, identity verifications (eKYC), and contract executions must comply with Vietnamese law, prohibiting fraudulent listings or unauthorized brokerage.",
+    "sec2Title": "2. Rights and Obligations of Landlords & Tenants",
+    "sec2Content": "Landlords must provide truthful, accurate pricing, amenities, and ownership or leasing authorization documentation. Tenants must pay on time, adhere to room rules, and preserve property.",
+    "sec3Title": "3. Information Control & Transaction Security",
+    "sec3Content": "CozyNest employs data auditing tools, anomaly detection (undervalued pricing, platform bypass contacts, duplicate room images via pHash), and biometric face verification before publishing or withdrawing escrow deposits.",
+    "sec4Title": "4. Handling of Violations",
+    "sec4Content": "Accounts violating regulations by fake listings, deposit fraud, or dishonest property conditions will be permanently suspended, all listings removed, and dossiers submitted to competent authorities if criminal indications arise."
+  },
+  "disputePage": {
+    "breadcrumb": "Dispute Resolution",
+    "badge": "Consumer Protection",
+    "title": "Dispute Resolution, Complaints & Refund Policy",
+    "subtitle": "Process for receiving and resolving complaints arising during accommodation rental and contract execution under MoIT regulations.",
+    "sec1Title": "1. Principles of Conciliation & Negotiation",
+    "sec1Content": "CozyNest encourages parties to prioritize resolving disputes through negotiation and direct conciliation. The platform administration acts as mediator cross-checking electronic contracts, room handover media, and escrow records.",
+    "sec2Title": "2. Complaint Resolution Workflow & Timeline",
+    "sec2Content": "Users submit complaints via Hotline 1900 6868 or email phaply@toam.vn with evidence within 48 hours of occurrence. CozyNest receives and responds with resolution options within 3 business days.",
+    "sec3Title": "3. Refund & Escrow Release Policy",
+    "sec3Content": "If actual property substantially diverges from listing (>20% size discrepancy, missing promised amenities) or landlord unilaterally cancels without valid cause, escrow funds are refunded 100% to tenant within 24 working hours."
+  },
+  "cookieBanner": {
+    "title": "Cookie & Privacy Policy",
+    "nd13Badge": "Decree 13/2023/ND-CP",
+    "desc": "We use necessary cookies for session persistence and security cookies for fraud detection in accordance with Vietnamese personal data protection regulations.",
+    "privacyLink": "Learn more in our Privacy Policy",
+    "btnEssentialOnly": "Essential Cookies Only",
+    "btnAcceptAll": "Accept All"
   }
 }

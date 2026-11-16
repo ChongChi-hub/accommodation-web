@@ -51,24 +51,31 @@ export function RoomLandlordCard({ landlord }: RoomLandlordCardProps) {
         </Link>
       </div>
 
-      <div className="grid grid-cols-3 gap-2.5 pt-3 border-t border-stone-100 dark:border-stone-800/80 text-center text-xs">
-        <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
-          <span className="text-stone-400 block text-[11px] font-medium">{tAuto('k0605')}</span>
+      <div className="grid grid-cols-4 gap-2 pt-3 border-t border-stone-100 dark:border-stone-800/80 text-center text-xs">
+        <div className="p-2 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
+          <span className="text-stone-400 block text-[10px] font-medium">Trust Score</span>
+          <span className="font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5">
+            {landlord.trustScore || 85}/100
+          </span>
+        </div>
+
+        <div className="p-2 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
+          <span className="text-stone-400 block text-[10px] font-medium">{tAuto('k0605')}</span>
           <span className="font-bold text-stone-900 dark:text-stone-100 flex items-center justify-center gap-1 mt-0.5">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
             {(landlord.ratingAvg || 5.0).toFixed(1)}
           </span>
         </div>
 
-        <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
-          <span className="text-stone-400 block text-[11px] font-medium">{tAuto('k0606')}</span>
+        <div className="p-2 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
+          <span className="text-stone-400 block text-[10px] font-medium">{tAuto('k0606')}</span>
           <span className="font-bold text-stone-900 dark:text-stone-100 block mt-0.5">
             {responseRate}%
           </span>
         </div>
 
-        <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
-          <span className="text-stone-400 block text-[11px] font-medium">{tAuto('k0607')}</span>
+        <div className="p-2 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
+          <span className="text-stone-400 block text-[10px] font-medium">{tAuto('k0607')}</span>
           <span className="font-bold text-stone-900 dark:text-stone-100 flex items-center justify-center gap-1 mt-0.5">
             <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
             ~{responseTime}

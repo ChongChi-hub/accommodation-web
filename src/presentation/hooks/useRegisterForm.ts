@@ -148,7 +148,12 @@ export function useRegisterForm(initialRole: AuthIntendedRole) {
 
     const msg = mappedKey
       ? t(mappedKey)
-      : t(st.errorStatus === 429 ? 'errors.tooManyRequests' : network ? 'errors.networkError' : 'errors.emailExists');
+      : st.error ||
+        (st.errorStatus === 429
+          ? t('errors.tooManyRequests')
+          : network
+          ? t('errors.networkError')
+          : t('errors.emailExists'));
 
     if (st.errorCode === 'ERR_AUTH_EMAIL_EXISTS') setFieldErrors((p) => ({ ...p, email: msg }));
     if (st.errorCode === 'ERR_AUTH_PHONE_EXISTS') setFieldErrors((p) => ({ ...p, phone: msg }));

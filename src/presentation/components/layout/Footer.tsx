@@ -61,6 +61,16 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/regulations" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
+                  {t('regulations')}
+                </Link>
+              </li>
+              <li>
+                <Link href="/dispute-resolution" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
+                  {t('disputeResolution')}
+                </Link>
+              </li>
+              <li>
                 <Link href="/terms" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
                   {t('terms')}
                 </Link>
@@ -101,7 +111,32 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-stone-200 dark:border-stone-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-400">
+        <div className="mt-8 pt-6 border-t border-stone-200 dark:border-stone-800 text-[11px] leading-relaxed text-stone-500 dark:text-stone-400 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-1">
+            <p className="font-semibold text-stone-700 dark:text-stone-300">{t('companyName')}</p>
+            <p>{t('taxCode')} • {t('representedBy')}</p>
+            <p>{t('headquarters')}</p>
+          </div>
+          <div className="shrink-0">
+            <a
+              href="http://online.gov.vn"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t('moitRegistered')}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-300 dark:border-red-900 bg-red-50/50 dark:bg-red-950/30 text-red-700 dark:text-red-400 hover:border-red-400 transition"
+            >
+              <div className="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+                ★
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-[10px] font-bold uppercase tracking-wider leading-none">{t('moitRegistered')}</span>
+                <span className="text-[9px] text-stone-500 dark:text-stone-400 mt-0.5">online.gov.vn</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div className="mt-6 border-t border-stone-200 dark:border-stone-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-400">
           <p>&copy; {new Date().getFullYear()}{' '}{tAuto('k0539')}{' '}{t('allRightsReserved')}</p>
           <div className="flex items-center gap-4">
             <Link

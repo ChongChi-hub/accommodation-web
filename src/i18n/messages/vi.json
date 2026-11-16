@@ -178,7 +178,8 @@
       "googleNotConfigured": "Tính năng đăng nhập Google hiện chưa sẵn sàng.",
       "invalidNonce": "Phiên xác thực Google không hợp lệ hoặc đã hết hạn.",
       "networkError": "Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng và thử lại."
-    }
+    },
+    "regulationsLink": "Quy chế sàn TMĐT"
   },
   "common": {
     "loading": "Đang tải dữ liệu...",
@@ -1342,7 +1343,15 @@
     "phone": "1900 8866 (8:00 - 21:00)",
     "allRightsReserved": "Bảo lưu mọi quyền.",
     "photoLicenses": "Bản quyền hình ảnh",
-    "motto": "Chung tay kiến tạo trải nghiệm thuê trọ văn minh."
+    "motto": "Chung tay kiến tạo trải nghiệm thuê trọ văn minh.",
+    "regulations": "Quy chế sàn TMĐT",
+    "disputeResolution": "Giải quyết tranh chấp & hoàn tiền",
+    "companyName": "Công ty Cổ phần CozyNest Việt Nam",
+    "taxCode": "Mã số thuế: 0110892345 do Sở KH&ĐT TP. Hà Nội cấp",
+    "representedBy": "Đại diện pháp luật: Giám đốc Điều hành",
+    "headquarters": "Trụ sở: Tầng 6, Tòa nhà Detech, số 8 Tôn Thất Thuyết, P. Mỹ Đình 2, Q. Nam Từ Liêm, TP. Hà Nội",
+    "moitRegistered": "ĐÃ ĐĂNG KÝ BỘ CÔNG THƯƠNG",
+    "moitNotice": "Đã đăng ký Sàn giao dịch TMĐT theo Nghị định 52/2013/NĐ-CP và 85/2021/NĐ-CP"
   },
   "rooms": {
     "perMonth": "/tháng",
@@ -2314,5 +2323,39 @@
     "emptyTitle": "Không tìm thấy chủ trọ",
     "emptyDesc": "Không có chủ trọ nào phù hợp với từ khóa tìm kiếm.",
     "searchPlaceholder": "Tìm tên chủ trọ..."
+  },
+  "regulationsPage": {
+    "breadcrumb": "Quy chế sàn TMĐT",
+    "badge": "Nghị định 52/2013/NĐ-CP & Nghị định 85/2021/NĐ-CP",
+    "title": "Quy chế Hoạt động Sàn Giao dịch Thương mại Điện tử CozyNest",
+    "subtitle": "Văn bản quy định quyền, trách nhiệm của các bên tham gia giao dịch thuê bất động sản, căn hộ, phòng trọ trên nền tảng CozyNest theo quy định của pháp luật Việt Nam.",
+    "sec1Title": "1. Nguyên tắc chung & Mô hình hoạt động",
+    "sec1Content": "CozyNest là sàn giao dịch thương mại điện tử cung cấp dịch vụ trung gian kết nối chủ nhà (Bên cho thuê) và khách thuê (Bên thuê). Mọi giao dịch tạo tin đăng, xác thực định danh (eKYC) và giao kết hợp đồng phải tuân thủ pháp luật Việt Nam, nghiêm cấm các hành vi gian lận thông tin hoặc môi giới trái phép.",
+    "sec2Title": "2. Quyền và nghĩa vụ của Chủ nhà & Khách thuê",
+    "sec2Content": "Chủ nhà có nghĩa vụ cung cấp thông tin trung thực, chính xác về giá cả, tiện ích và giấy tờ chứng minh quyền sở hữu hoặc quyền cho thuê hợp pháp. Khách thuê có nghĩa vụ thanh toán đúng hạn, tuân thủ nội quy phòng trọ và giữ gìn tài sản chung.",
+    "sec3Title": "3. Cơ chế kiểm soát thông tin & An toàn giao dịch",
+    "sec3Content": "CozyNest áp dụng công cụ đối soát dữ liệu, phát hiện tin đăng bất thường (giá quá rẻ, chèn số điện thoại né sàn, trùng ảnh phòng bằng công nghệ pHash) và yêu cầu xác thực khuôn mặt sinh trắc học trước khi đăng bài hoặc rút tiền ký quỹ.",
+    "sec4Title": "4. Trách nhiệm xử lý vi phạm",
+    "sec4Content": "Các tài khoản vi phạm quy chế đăng tin ảo, lừa đảo đặt cọc hoặc không trung thực về hiện trạng phòng sẽ bị đình chỉ hoạt động vĩnh viễn, hạ toàn bộ tin đăng và chuyển giao hồ sơ cho cơ quan chức năng có thẩm quyền khi có dấu hiệu vi phạm pháp luật hình sự."
+  },
+  "disputePage": {
+    "breadcrumb": "Giải quyết tranh chấp",
+    "badge": "Bảo vệ quyền lợi người tiêu dùng",
+    "title": "Cơ chế Giải quyết Tranh chấp, Khiếu nại & Chính sách Hoàn tiền",
+    "subtitle": "Quy trình tiếp nhận và giải quyết khiếu nại phát sinh trong quá trình thuê phòng và thực hiện hợp đồng theo quy định của Bộ Công Thương.",
+    "sec1Title": "1. Nguyên tắc hòa giải & thương lượng",
+    "sec1Content": "CozyNest khuyến khích các bên ưu tiên giải quyết tranh chấp thông qua thương lượng và hòa giải trực tiếp. Ban quản trị sàn sẽ đóng vai trò trung gian đối chiếu dữ liệu hợp đồng điện tử, video hiện trạng phòng lúc bàn giao và chứng từ thanh toán ký quỹ.",
+    "sec2Title": "2. Quy trình & Thời hạn xử lý khiếu nại",
+    "sec2Content": "Người dùng gửi khiếu nại qua Tổng đài 1900 6868 hoặc email phaply@toam.vn kèm bằng chứng trong vòng 48 giờ kể từ khi phát sinh sự việc. CozyNest tiếp nhận và phản hồi phương án xử lý trong tối đa 3 ngày làm việc.",
+    "sec3Title": "3. Chính sách hoàn tiền & giải tỏa tiền ký quỹ",
+    "sec3Content": "Trường hợp phòng thực tế sai khác nghiêm trọng so với tin đăng (diện tích sai >20%, không có tiện ích cam kết) hoặc chủ nhà đơn phương hủy hẹn mà không có lý do chính đáng, tiền cọc trong tài khoản ký quỹ trung gian sẽ được hoàn lại 100% cho khách thuê trong vòng 24 giờ làm việc."
+  },
+  "cookieBanner": {
+    "title": "Chính sách Cookie & Quyền riêng tư",
+    "nd13Badge": "Nghị định 13/2023/NĐ-CP",
+    "desc": "Chúng tôi sử dụng cookie cần thiết để duy trì phiên đăng nhập và cookie bảo mật nhằm phát hiện gian lận tài khoản theo quy định bảo vệ dữ liệu cá nhân Việt Nam.",
+    "privacyLink": "Tìm hiểu thêm trong Chính sách Bảo mật",
+    "btnEssentialOnly": "Chỉ dùng Cookie thiết yếu",
+    "btnAcceptAll": "Chấp nhận tất cả"
   }
 }

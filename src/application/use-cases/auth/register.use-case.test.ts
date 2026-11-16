@@ -71,4 +71,41 @@ describe('RegisterUseCase', () => {
     expect(session.tokens.token).toBe('reg-token-123');
     expect(mockRepo.register).toHaveBeenCalledWith(dto);
   });
+
+  it('allows registration when phone is omitted', async () => {
+    const mockRepo: AuthRepository = {
+      login: vi.fn(),
+      register: vi.fn().mockResolvedValue({
+        tokens: { token: 'reg-token-123', refreshToken: 'reg-refresh-456' },
+        user: { id: 'u3', email: 'tenant.nophone@cozynest.vn', fullName: 'Khách Không SĐT' } as any,
+      }),
+      refreshToken: vi.fn(),
+      getProfile: vi.fn(),
+      updateProfile: vi.fn(),
+      changePassword: vi.fn(),
+      forgotPassword: vi.fn(),
+      resetPassword: vi.fn(),
+      logout: vi.fn(),
+      getUserProfile: vi.fn(),
+      updateUserProfile: vi.fn(),
+      uploadAvatar: vi.fn(),
+      deleteAvatar: vi.fn(),
+      getGoogleStatus: vi.fn(),
+      getGoogleNonce: vi.fn(),
+      loginWithGoogle: vi.fn(),
+    };
+    const useCase = new RegisterUseCase(mockRepo);
+
+    const dto = {
+      email: 'tenant.nophone@cozynest.vn',
+      phone: '',
+      password: 'SecurePassword123!',
+      fullName: 'Khách Không SĐT',
+      role: 'TENANT',
+    };
+
+    const session = await useCase.execute(dto);
+    expect(session.tokens.token).toBe('reg-token-123');
+    expect(mockRepo.register).toHaveBeenCalledWith(dto);
+  });
 });

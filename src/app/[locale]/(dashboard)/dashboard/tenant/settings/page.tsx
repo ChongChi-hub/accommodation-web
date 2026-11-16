@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { UserChangePasswordView } from '@/presentation/components/profile/UserChangePasswordView';
+import { SecuritySettingsView } from '@/presentation/components/profile/SecuritySettingsView';
 
 export default function TenantSettingsPage() {
-  return <UserChangePasswordView />;
+  return <SecuritySettingsView />;
 }

@@ -8,7 +8,7 @@ export class LoginUseCase {
     if (!dto.email || !dto.password) {
       throw new Error('Vui lòng nhập đầy đủ email và mật khẩu');
     }
-    return this.authRepository.login(dto.email, dto.password);
+    return this.authRepository.login(dto.email, dto.password, dto.twoFactorCode);
   }
 }
 

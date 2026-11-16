@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { ToastContainer } from '@/presentation/components/ui/Toast';
+import { CookieConsentBanner } from '@/presentation/components/legal/CookieConsentBanner';
 import { ThemeInitializer } from '@/presentation/components/layout/ThemeInitializer';
 import '@/styles/globals.css';
 
@@ -48,6 +49,7 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           {children}
           <ToastContainer />
+          <CookieConsentBanner />
         </NextIntlClientProvider>
       </body>
     </html>

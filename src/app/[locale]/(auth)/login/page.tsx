@@ -16,7 +16,7 @@ import {
   resolveAuthErrorKey,
   resolveReturnUrlReasonKey,
 } from '@/presentation/validation/auth-errors';
-import { Info, LogIn, User } from 'lucide-react';
+import { Info, LogIn, ShieldCheck, User } from 'lucide-react';
 
 export default function LoginPage() {
   const t = useTranslations('auth');
@@ -36,12 +36,13 @@ export default function LoginPage() {
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [requires2Fa, setRequires2Fa] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{ identifier?: string; password?: string }>({});
   const [summaryError, setSummaryError] = useState<string | null>(null);
   const [isNetworkError, setIsNetworkError] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [status, setStatus] = useState<SubmitStatus>('idle');
-
   const identifierRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const errorSummaryRef = useRef<HTMLDivElement>(null);
@@ -77,31 +78,33 @@ export default function LoginPage() {
 
     setFieldErrors({});
     setStatus('loading');
-    const ok = await login(trimmedId, password);
+    const ok = await login(trimmedId, password, requires2Fa ? twoFactorCode.trim() : undefined);
 
     if (ok) {
       setStatus('success');
       if (action === 'bookmark' && roomId) {
-        try {
-          await container.bookmark.bookmarkRepository.addBookmark(Number(roomId));
-        } catch {
-          // Bookmark error should not block login redirect
-        }
+        container.bookmark.bookmarkRepository.addBookmark(Number(roomId)).catch(() => {});
       }
       const roles = useAuthStore.getState().user?.roles || [];
       const safeTarget = getSafeRedirectUrl(returnUrl, roles);
       setTimeout(() => {
-        if (safeTarget) router.push(safeTarget as any);
-        else if (roles.includes('ADMIN')) router.push('/dashboard/admin');
-        else if (roles.includes('MODERATOR')) router.push('/dashboard/moderator');
-        else if (roles.includes('LANDLORD')) router.push('/dashboard/landlord');
-        else router.push('/dashboard/tenant');
+        const dest = safeTarget || (roles.includes('ADMIN') ? '/dashboard/admin' : roles.includes('MODERATOR') ? '/dashboard/moderator' : roles.includes('LANDLORD') ? '/dashboard/landlord' : '/dashboard/tenant');
+        router.push(dest as any);
       }, 220);
       return;
     }
 
     setStatus('idle');
     const st = useAuthStore.getState();
+    if (st.errorCode === 'ERR_2FA_REQUIRED') {
+      setRequires2Fa(true);
+      setSummaryError('Tài khoản yêu cầu mã xác thực 2 lớp. Vui lòng nhập mã từ ứng dụng Google Authenticator.');
+      return;
+    }
+    if (st.errorCode === 'ERR_2FA_INVALID') {
+      setSummaryError('Mã xác thực 2FA không chính xác hoặc đã hết hạn.');
+      return;
+    }
     const mappedKey = resolveAuthErrorKey(st.errorCode);
     const network = st.errorCode === 'ERR_NETWORK';
     setIsNetworkError(network);
@@ -110,14 +113,9 @@ export default function LoginPage() {
       setCooldown(st.retryAfterSeconds && st.retryAfterSeconds > 0 ? st.retryAfterSeconds : 60);
     }
 
-    const fallbackKey =
-      st.errorStatus === 429
-        ? 'errors.tooManyRequests'
-        : st.errorStatus === 503
-          ? 'errors.serviceUnavailable'
-          : network
-            ? 'errors.networkError'
-            : 'errors.badCredentials';
+    const fallbackKey = st.errorStatus === 429 ? 'errors.tooManyRequests'
+      : st.errorStatus === 503 ? 'errors.serviceUnavailable'
+      : network ? 'errors.networkError' : 'errors.badCredentials';
 
     setSummaryError(mappedKey ? t(mappedKey) : t(fallbackKey));
     requestAnimationFrame(() => errorSummaryRef.current?.focus());
@@ -193,6 +191,23 @@ export default function LoginPage() {
             </Link>
           }
         />
+
+        {requires2Fa && (
+          <TextField
+            id="login-2fa"
+            name="twoFactorCode"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            label="Mã xác thực 2 lớp (TOTP)"
+            placeholder="Nhập 6 số TOTP hoặc 8 số dự phòng"
+            value={twoFactorCode}
+            onChange={(e) => setTwoFactorCode(e.target.value)}
+            leftIcon={<ShieldCheck className="w-4 h-4 text-primary" />}
+            desktopAutoFocus
+            staggerIndex={3}
+          />
+        )}
 
         <SubmitButton
           status={status}
