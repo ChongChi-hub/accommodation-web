@@ -2357,5 +2357,24 @@
     "privacyLink": "Learn more in our Privacy Policy",
     "btnEssentialOnly": "Essential Cookies Only",
     "btnAcceptAll": "Accept All"
+  },
+  "chat": {
+    "allConversations": "All conversations",
+    "landlordRole": "Landlord",
+    "tenantRole": "Tenant",
+    "messagesTitle": "Messages",
+    "openFullPage": "Open full page",
+    "noConversations": "No conversations yet",
+    "noMessagesYet": "No messages yet",
+    "loadingMessages": "Loading messages...",
+    "startGreeting": "Start a conversation",
+    "greetingHint": "Send a message to discuss room details and appointments.",
+    "typePlaceholder": "Type a message...",
+    "typePlaceholderLandlord": "Type a reply to the tenant...",
+    "toggleChat": "Toggle chatbox",
+    "chatboxPill": "Chat",
+    "onlineStatus": "Online",
+    "selectConversation": "Select a conversation",
+    "selectConversationHint": "Select from the list on the left to view chat history or send a new message."
   }
 }

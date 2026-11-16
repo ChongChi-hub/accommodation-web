@@ -60,7 +60,17 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
 
   const handleMessage = () => {
     checkAuthAndExecute(() => {
-      router.push('/dashboard/tenant/messages');
+      const rawLandlordId = room.landlord?.landlordId;
+      const landlordId =
+        typeof rawLandlordId === 'number' || (typeof rawLandlordId === 'string' && /^\d+$/.test(rawLandlordId))
+          ? (Number(rawLandlordId) < 10 ? `u-landlord-0${rawLandlordId}` : `u-landlord-${rawLandlordId}`)
+          : (rawLandlordId || 'u-landlord-01');
+      const landlordName = encodeURIComponent(room.landlord?.name || 'Chủ trọ');
+      const roomId = encodeURIComponent(String(room.id));
+      const roomTitle = encodeURIComponent(room.title);
+      router.push(
+        `/dashboard/tenant/messages?landlordId=${landlordId}&landlordName=${landlordName}&roomId=${roomId}&roomTitle=${roomTitle}`
+      );
     });
   };
 

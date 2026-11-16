@@ -2357,5 +2357,24 @@
     "privacyLink": "Tìm hiểu thêm trong Chính sách Bảo mật",
     "btnEssentialOnly": "Chỉ dùng Cookie thiết yếu",
     "btnAcceptAll": "Chấp nhận tất cả"
+  },
+  "chat": {
+    "allConversations": "Tất cả cuộc hội thoại",
+    "landlordRole": "Chủ nhà trọ",
+    "tenantRole": "Khách thuê",
+    "messagesTitle": "Tin nhắn trao đổi",
+    "openFullPage": "Mở toàn màn hình",
+    "noConversations": "Chưa có cuộc trò chuyện nào",
+    "noMessagesYet": "Chưa có tin nhắn nào",
+    "loadingMessages": "Đang tải tin nhắn...",
+    "startGreeting": "Bắt đầu cuộc trò chuyện",
+    "greetingHint": "Gửi tin nhắn để trao đổi chi tiết về phòng trọ và lịch hẹn xem phòng.",
+    "typePlaceholder": "Nhập nội dung tin nhắn...",
+    "typePlaceholderLandlord": "Nhập nội dung phản hồi cho khách thuê...",
+    "toggleChat": "Mở hộp thư tin nhắn",
+    "chatboxPill": "Nhắn tin",
+    "onlineStatus": "Đang hoạt động",
+    "selectConversation": "Chọn một cuộc trò chuyện",
+    "selectConversationHint": "Chọn từ danh sách bên trái để xem lịch sử trao đổi hoặc gửi tin nhắn mới."
   }
 }

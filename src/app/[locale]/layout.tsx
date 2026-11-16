@@ -5,6 +5,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { ToastContainer } from '@/presentation/components/ui/Toast';
 import { CookieConsentBanner } from '@/presentation/components/legal/CookieConsentBanner';
+import { FloatingChatWidget } from '@/presentation/components/chat/FloatingChatWidget';
 import { ThemeInitializer } from '@/presentation/components/layout/ThemeInitializer';
 import '@/styles/globals.css';
 
@@ -50,6 +51,7 @@ export default async function RootLayout({
           {children}
           <ToastContainer />
           <CookieConsentBanner />
+          <FloatingChatWidget />
         </NextIntlClientProvider>
       </body>
     </html>
