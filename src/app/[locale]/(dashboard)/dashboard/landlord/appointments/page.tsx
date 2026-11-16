@@ -11,6 +11,7 @@ import { AppointmentDetailDrawer } from '@/presentation/components/landlord/appo
 import { ConfirmAppointmentModal } from '@/presentation/components/landlord/appointments/ConfirmAppointmentModal';
 import { CancelAppointmentModal } from '@/presentation/components/landlord/appointments/CancelAppointmentModal';
 import { CompleteAppointmentModal } from '@/presentation/components/landlord/appointments/CompleteAppointmentModal';
+import { AddToGoogleCalendarModal } from '@/presentation/components/landlord/appointments/AddToGoogleCalendarModal';
 
 export default function LandlordAppointmentsPage() {
   const {
@@ -29,6 +30,8 @@ export default function LandlordAppointmentsPage() {
     cancelTarget,
     completeTarget,
     conflictWarning,
+    calendarModalTarget,
+    setCalendarModalTarget,
     handleStatusChange,
     handleRoomChange,
     handleSearchChange,
@@ -148,6 +151,12 @@ export default function LandlordAppointmentsPage() {
         appointment={completeTarget}
         onClose={() => setCompleteTarget(null)}
         onComplete={executeComplete}
+      />
+
+      <AddToGoogleCalendarModal
+        isOpen={!!calendarModalTarget}
+        appointment={calendarModalTarget}
+        onClose={() => setCalendarModalTarget(null)}
       />
     </div>
   );

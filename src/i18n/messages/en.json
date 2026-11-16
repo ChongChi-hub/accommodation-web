@@ -803,6 +803,20 @@
           "notePlaceholder": "Additional notes about the viewing...",
           "cancel": "Cancel",
           "submit": "Save Outcome"
+        },
+        "googleCalendar": {
+          "title": "Add to Google Calendar",
+          "question": "Would you like to add this appointment to Google Calendar?",
+          "description": "Save to your Google Calendar to receive reminders and never miss a viewing appointment.",
+          "tenantName": "Tenant",
+          "phone": "Phone",
+          "roomId": "Room ID",
+          "appointmentTime": "Appointment Time",
+          "location": "Location",
+          "tenantNote": "Tenant's Note",
+          "dismiss": "Maybe later",
+          "addToCalendar": "Add to Google Calendar",
+          "openedSuccess": "Opened Google Calendar in a new tab!"
         }
       }
     }

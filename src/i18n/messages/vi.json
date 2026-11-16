@@ -803,6 +803,20 @@
           "notePlaceholder": "Ghi chú thêm về buổi xem phòng...",
           "cancel": "Hủy bỏ",
           "submit": "Lưu kết quả"
+        },
+        "googleCalendar": {
+          "title": "Thêm vào Google Calendar",
+          "question": "Bạn có muốn ghi chú ngày hẹn này vào Google Calendar không?",
+          "description": "Lưu lại vào Google Calendar để nhận thông báo nhắc nhở và không bỏ lỡ lịch hẹn xem phòng.",
+          "tenantName": "Khách hẹn",
+          "phone": "Số điện thoại",
+          "roomId": "Mã phòng",
+          "appointmentTime": "Thời gian hẹn",
+          "location": "Địa điểm hẹn",
+          "tenantNote": "Ghi chú của khách",
+          "dismiss": "Để sau",
+          "addToCalendar": "Thêm vào Google Calendar",
+          "openedSuccess": "Đã mở Google Calendar trong tab mới!"
         }
       }
     }

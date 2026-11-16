@@ -26,21 +26,24 @@ export function useAppointmentActions(
   const [cancelTarget, setCancelTarget] = useState<ViewingAppointmentItem | null>(null);
   const [completeTarget, setCompleteTarget] = useState<ViewingAppointmentItem | null>(null);
   const [conflictWarning, setConflictWarning] = useState<ConflictWarning | null>(null);
+  const [calendarModalTarget, setCalendarModalTarget] = useState<ViewingAppointmentItem | null>(null);
 
   const executeConfirm = async (force: boolean = false, landlordNote?: string) => {
     if (!confirmTarget) return;
+    const itemToConfirm = { ...confirmTarget };
     try {
-      await container.landlord.appointmentRepository.confirm(confirmTarget.id, {
+      await container.landlord.appointmentRepository.confirm(itemToConfirm.id, {
         force,
         landlordNote,
-        version: confirmTarget.version,
+        version: itemToConfirm.version,
       });
       toast.success('Đã xác nhận lịch hẹn xem phòng!');
       setConfirmTarget(null);
       setConflictWarning(null);
+      setCalendarModalTarget(itemToConfirm);
       refresh();
-      if (selectedDetail?.id === confirmTarget.id) {
-        openDetail(confirmTarget.id);
+      if (selectedDetail?.id === itemToConfirm.id) {
+        openDetail(itemToConfirm.id);
       }
     } catch (err: unknown) {
       if (err instanceof ApiError && err.errorCode === 'TIME_CONFLICT') {
@@ -109,10 +112,12 @@ export function useAppointmentActions(
     cancelTarget,
     completeTarget,
     conflictWarning,
+    calendarModalTarget,
     setConfirmTarget,
     setCancelTarget,
     setCompleteTarget,
     setConflictWarning,
+    setCalendarModalTarget,
     executeConfirm,
     executeCancel,
     executeComplete,
