@@ -131,7 +131,7 @@ export function useRegisterForm(initialRole: AuthIntendedRole) {
     if (ok) {
       setStatus('success');
       setTimeout(() => {
-        router.push(role === 'LANDLORD' ? '/dashboard/landlord/kyc' : '/dashboard/tenant');
+        router.push(role === 'LANDLORD' ? '/dashboard/landlord' : '/dashboard/tenant');
       }, 220);
       return;
     }

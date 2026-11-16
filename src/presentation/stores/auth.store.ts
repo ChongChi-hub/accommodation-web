@@ -146,7 +146,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const session = await container.auth.registerUseCase.execute(data);
       ApiClient.setToken(session.tokens.token);
       const user = await enrichFromMe(session.user);
-      set({ user, activeRole: getEffectiveRole(user, readPreferredRoleCookie()), accessToken: session.tokens.token, isAuthenticated: true, hasHydrated: true, isLoading: false });
+      const preferredRole = data.role === 'LANDLORD' ? 'LANDLORD' : readPreferredRoleCookie();
+      set({ user, activeRole: getEffectiveRole(user, preferredRole), accessToken: session.tokens.token, isAuthenticated: true, hasHydrated: true, isLoading: false });
       return true;
     } catch (err) {
       set({ isLoading: false, ...extractApiErrorState(err, 'Đăng ký thất bại') });

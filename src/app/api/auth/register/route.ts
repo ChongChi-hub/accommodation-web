@@ -41,11 +41,12 @@ export async function POST(req: NextRequest) {
     const res = NextResponse.json(sanitizedJson, { status: 200 });
     if (typeof rawData?.token === 'string' && rawData.token) {
       const userObj = rawData.user as { roles?: string[] } | undefined;
+      const requestedRole = typeof body?.role === 'string' && body.role.toUpperCase() === 'LANDLORD' ? 'LANDLORD' : undefined;
       attachAuthCookies(
         res,
         rawData.token,
         typeof rawData.refreshToken === 'string' ? rawData.refreshToken : undefined,
-        resolvePrimaryRole(userObj?.roles)
+        requestedRole || resolvePrimaryRole(userObj?.roles)
       );
     }
     res.headers.set('Cache-Control', 'no-store');
