@@ -147,6 +147,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       ApiClient.setToken(session.tokens.token);
       const user = await enrichFromMe(session.user);
       const preferredRole = data.role === 'LANDLORD' ? 'LANDLORD' : readPreferredRoleCookie();
+      if (preferredRole) {
+        writePreferredRoleCookie(preferredRole);
+      }
       set({ user, activeRole: getEffectiveRole(user, preferredRole), accessToken: session.tokens.token, isAuthenticated: true, hasHydrated: true, isLoading: false });
       return true;
     } catch (err) {
