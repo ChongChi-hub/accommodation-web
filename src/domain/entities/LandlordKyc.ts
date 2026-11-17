@@ -37,6 +37,7 @@ export interface KycModerationListItem {
   fullNameOnId: string;
   idNumberMasked: string;
   status: KycStatus;
+  faceStatus?: string;
   attemptCount: number;
   submittedAt: string;
   reviewedAt?: string;
