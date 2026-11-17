@@ -8,17 +8,18 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
 import { container } from '@/infrastructure/di/container';
-import { PaymentIntent, RefundItem, TenantFinancialStats } from '@/domain/entities/Billing';
+import { EscrowHold, PaymentIntent, RefundItem, TenantFinancialStats } from '@/domain/entities/Billing';
 import { Contract } from '@/domain/entities/Contract';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
-import { AlertTriangle, CheckCircle2, QrCode, RefreshCw, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Lock, QrCode, RefreshCw, ShieldCheck } from 'lucide-react';
 
 export default function TenantDepositsPage() {
   const t = useTranslations('sprint3.deposit');
   const tc = useTranslations('sprint3.common');
   const [stats, setStats] = useState<TenantFinancialStats | null>(null);
   const [contracts, setContracts] = useState<Contract[]>([]);
+  const [escrows, setEscrows] = useState<EscrowHold[]>([]);
   const [refunds, setRefunds] = useState<RefundItem[]>([]);
   const [intent, setIntent] = useState<PaymentIntent | null>(null);
   const [selectedContractId, setSelectedContractId] = useState('');
@@ -38,14 +39,16 @@ export default function TenantDepositsPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const [s, cList, rList] = await Promise.all([
+      const [s, cList, rList, escList] = await Promise.all([
         container.billing.billingRepository.getTenantDashboardStats(),
         container.contract.contractRepository.getTenantContracts(),
         container.billing.billingRepository.getTenantRefunds(),
+        container.billing.billingRepository.getTenantEscrows(),
       ]);
       setStats(s);
       setContracts(cList);
       setRefunds(rList);
+      setEscrows(escList);
       if (cList.length > 0) {
         const first = cList[0];
         setSelectedContractId((prev) => prev || first.id);
@@ -60,6 +63,19 @@ export default function TenantDepositsPage() {
       toast.error(tc('loadError'));
     }
   }, [tc]);
+
+  const handleConfirmMoveIn = async (contractId: string) => {
+    setBusy(true);
+    try {
+      await container.billing.billingRepository.confirmMoveIn(contractId);
+      await loadData();
+      toast.success(tc('actionSuccess'));
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : tc('actionError'));
+    } finally {
+      setBusy(false);
+    }
+  };
 
   useEffect(() => {
     loadData();
@@ -192,6 +208,79 @@ export default function TenantDepositsPage() {
             )}
           </div>
         )}
+      </Card>
+
+      {/* Escrow Holds List */}
+      <Card className="p-0 overflow-hidden">
+        <div className="px-5 py-3 border-b border-stone-100 dark:border-stone-800 text-xs font-bold text-stone-900 dark:text-stone-100 flex items-center justify-between">
+          <span>Danh sách Ký quỹ Tiền cọc Hợp đồng ({escrows.length})</span>
+          <span className="text-[11px] text-stone-500 font-normal">Quản lý ký quỹ Escrow bảo đảm hai chiều</span>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('contractId')}</TableHead>
+              <TableHead>{t('amount')}</TableHead>
+              <TableHead>Trạng thái Ký quỹ</TableHead>
+              <TableHead>Xác nhận dọn vào</TableHead>
+              <TableHead className="text-right">{tc('actionCol')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {escrows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-xs py-5 text-stone-500">
+                  Chưa có khoản tiền cọc hợp đồng nào trong quỹ Escrow
+                </TableCell>
+              </TableRow>
+            ) : (
+              escrows.map((e) => (
+                <TableRow key={e.id}>
+                  <TableCell className="font-mono text-xs font-semibold">{e.contractId}</TableCell>
+                  <TableCell className="font-bold text-teal-700">{formatVnd(e.amount)}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        e.status === 'RELEASED'
+                          ? 'success'
+                          : e.status === 'DISPUTE_FROZEN'
+                          ? 'danger'
+                          : e.status === 'HELD'
+                          ? 'info'
+                          : 'warning'
+                      }
+                      size="sm"
+                    >
+                      {e.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-xs">
+                    <span className={e.tenantConfirmedMoveIn ? 'text-emerald-600 font-semibold' : 'text-stone-400'}>
+                      {e.tenantConfirmedMoveIn ? '✓ Bạn đã dọn vào' : '⏳ Chờ bạn xác nhận'}
+                    </span>
+                    <span className="mx-1.5 text-stone-300">|</span>
+                    <span className={e.landlordConfirmedMoveIn ? 'text-emerald-600 font-semibold' : 'text-stone-400'}>
+                      {e.landlordConfirmedMoveIn ? '✓ Chủ trọ đã giao phòng' : '⏳ Chờ bàn giao'}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {e.status === 'HELD' && !e.tenantConfirmedMoveIn && (
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        isLoading={busy}
+                        leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
+                        onClick={() => handleConfirmMoveIn(e.contractId)}
+                      >
+                        Xác nhận nhận phòng
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </Card>
 
       <Card className="p-5 space-y-4">

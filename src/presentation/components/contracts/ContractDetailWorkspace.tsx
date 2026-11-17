@@ -11,6 +11,7 @@ import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
 import { Skeleton } from '@/presentation/components/ui/Skeleton';
 import { container } from '@/infrastructure/di/container';
 import { Contract, ContractAmendment, ContractOccupant } from '@/domain/entities/Contract';
+import { EscrowHold, PaymentIntent } from '@/domain/entities/Billing';
 import { RoomDetailDto } from '@/application/dto/listing.dto';
 import { User } from '@/domain/entities/User';
 import { toast } from '@/presentation/stores/toast.store';
@@ -28,8 +29,12 @@ import {
   Download,
   Droplets,
   ExternalLink,
+  KeyRound,
+  Lock,
   PenTool,
   Printer,
+  QrCode,
+  RefreshCw,
   ShieldCheck,
   UploadCloud,
   XCircle,
@@ -65,21 +70,34 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
 
+  // Escrow & Deposit state
+  const [escrowHold, setEscrowHold] = useState<EscrowHold | null>(null);
+  const [payDepositOpen, setPayDepositOpen] = useState(false);
+  const [freezeEscrowOpen, setFreezeEscrowOpen] = useState(false);
+  const [freezeReason, setFreezeReason] = useState('');
+  const [depositInputAmount, setDepositInputAmount] = useState<string>('');
+  const [depositIntent, setDepositIntent] = useState<PaymentIntent | null>(null);
+
   const [busy, setBusy] = useState(false);
 
   const loadAll = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [c, occ, amd, profile] = await Promise.all([
+      const [c, occ, amd, profile, escrow] = await Promise.all([
         container.contract.contractRepository.getContract(contractId),
         container.contract.contractRepository.getOccupants(contractId).catch(() => []),
         container.contract.contractRepository.getAmendments(contractId).catch(() => []),
         container.auth.getProfileUseCase.execute().catch(() => null),
+        container.billing.billingRepository.getEscrowHold(contractId).catch(() => null),
       ]);
       setContract(c);
       setOccupants(occ);
       setAmendments(amd);
       setCurrentUser(profile);
+      setEscrowHold(escrow);
+      if (c?.depositAmount) {
+        setDepositInputAmount(String(c.depositAmount));
+      }
 
       if (c?.roomId) {
         try {
@@ -188,6 +206,74 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
       setRejectOpen(false);
       setRejectReason('');
       toast.success(tc('actionSuccess'));
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : tc('actionError'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleCreateDepositIntent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const intent = await container.billing.billingRepository.createPaymentIntent({
+        orderType: 'DEPOSIT',
+        orderId: contractId,
+        amount: Number(depositInputAmount) || Number(contract?.depositAmount) || 2000000,
+      });
+      setDepositIntent(intent);
+      toast.success(tc('actionSuccess'));
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : tc('actionError'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleSimulateDepositPaid = async () => {
+    if (!depositIntent) return;
+    setBusy(true);
+    try {
+      await container.billing.billingRepository.simulateSandboxWebhook({
+        paymentCode: depositIntent.paymentCode,
+        amount: depositIntent.amount,
+        status: 'PAID',
+      });
+      setDepositIntent((prev) => (prev ? { ...prev, status: 'PAID' } : null));
+      await loadAll();
+      toast.success('Thanh toán cọc thành công! Tiền cọc đã được nạp vào quỹ ký quỹ an toàn (Escrow).');
+      setPayDepositOpen(false);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : tc('actionError'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleConfirmMoveIn = async () => {
+    setBusy(true);
+    try {
+      const updated = await container.billing.billingRepository.confirmMoveIn(contractId);
+      setEscrowHold(updated);
+      toast.success('Xác nhận nhận phòng & bàn giao thành công!');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : tc('actionError'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleFreezeEscrow = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!freezeReason.trim()) return;
+    setBusy(true);
+    try {
+      const updated = await container.billing.billingRepository.freezeEscrow(contractId, freezeReason.trim());
+      setEscrowHold(updated);
+      setFreezeEscrowOpen(false);
+      setFreezeReason('');
+      toast.success('Đã gửi yêu cầu phong tỏa tiền cọc để giải quyết khiếu nại!');
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : tc('actionError'));
     } finally {
@@ -386,6 +472,142 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
           <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-200 flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{t('physicalSignedNotice')}</span>
+          </div>
+        )}
+      </Card>
+
+      {/* Smart Escrow Deposit & Move-In Confirmation Card */}
+      <Card className="p-5 border-l-4 border-l-blue-600 dark:border-l-blue-500 space-y-4 print:hidden">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                  Tài khoản Ký quỹ Tiền cọc (Escrow Hold)
+                </h2>
+                <Badge
+                  variant={
+                    escrowHold?.status === 'RELEASED'
+                      ? 'success'
+                      : escrowHold?.status === 'DISPUTE_FROZEN'
+                      ? 'danger'
+                      : escrowHold?.status === 'HELD'
+                      ? 'info'
+                      : 'warning'
+                  }
+                  size="sm"
+                >
+                  {escrowHold?.status === 'HELD'
+                    ? 'Đang ký quỹ an toàn'
+                    : escrowHold?.status === 'DISPUTE_FROZEN'
+                    ? 'Đang phong tỏa khiếu nại'
+                    : escrowHold?.status === 'RELEASED'
+                    ? 'Đã giải ngân'
+                    : escrowHold?.status === 'REFUNDED'
+                    ? 'Đã hoàn trả'
+                    : 'Chờ thanh toán cọc'}
+                </Badge>
+              </div>
+              <p className="text-xs text-stone-500 mt-0.5">
+                Tiền cọc: <strong className="text-stone-800 dark:text-stone-200">{formatVnd(escrowHold?.amount || contract.depositAmount)}</strong> ({numberToVietnameseWords(escrowHold?.amount || contract.depositAmount)})
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {!escrowHold && role === 'TENANT' && (
+              <Button
+                variant="primary"
+                size="sm"
+                leftIcon={<QrCode className="w-3.5 h-3.5" />}
+                onClick={() => {
+                  setDepositInputAmount(String(contract.depositAmount || 2000000));
+                  setPayDepositOpen(true);
+                }}
+              >
+                Thanh toán cọc giữ chỗ (VietQR)
+              </Button>
+            )}
+
+            {escrowHold?.status === 'HELD' && (
+              <>
+                {role === 'TENANT' && !escrowHold.tenantConfirmedMoveIn && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
+                    onClick={handleConfirmMoveIn}
+                    isLoading={busy}
+                  >
+                    Khách thuê: Xác nhận nhận phòng
+                  </Button>
+                )}
+                {role === 'LANDLORD' && !escrowHold.landlordConfirmedMoveIn && (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    leftIcon={<KeyRound className="w-3.5 h-3.5" />}
+                    onClick={handleConfirmMoveIn}
+                    isLoading={busy}
+                  >
+                    Chủ trọ: Bàn giao chìa khóa & Dọn vào
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-rose-600 hover:bg-rose-50 border-rose-200"
+                  leftIcon={<Lock className="w-3.5 h-3.5" />}
+                  onClick={() => setFreezeEscrowOpen(true)}
+                >
+                  Khiếu nại & Phong tỏa cọc
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Two-Party Move-in Checklist */}
+        {escrowHold && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+            <div className={`p-3 rounded-lg border flex items-center justify-between ${
+              escrowHold.tenantConfirmedMoveIn
+                ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 text-emerald-800 dark:text-emerald-300'
+                : 'bg-stone-50 dark:bg-stone-900/40 border-stone-200 text-stone-600 dark:text-stone-400'
+            }`}>
+              <div className="flex items-center gap-2">
+                {escrowHold.tenantConfirmedMoveIn ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-stone-400" />}
+                <span>Khách thuê dọn vào</span>
+              </div>
+              <span className="font-semibold">
+                {escrowHold.tenantConfirmedMoveIn ? 'Đã xác nhận' : 'Chờ xác nhận'}
+              </span>
+            </div>
+
+            <div className={`p-3 rounded-lg border flex items-center justify-between ${
+              escrowHold.landlordConfirmedMoveIn
+                ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 text-emerald-800 dark:text-emerald-300'
+                : 'bg-stone-50 dark:bg-stone-900/40 border-stone-200 text-stone-600 dark:text-stone-400'
+            }`}>
+              <div className="flex items-center gap-2">
+                {escrowHold.landlordConfirmedMoveIn ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-stone-400" />}
+                <span>Chủ trọ bàn giao phòng</span>
+              </div>
+              <span className="font-semibold">
+                {escrowHold.landlordConfirmedMoveIn ? 'Đã bàn giao' : 'Chờ bàn giao'}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {escrowHold?.status === 'DISPUTE_FROZEN' && (
+          <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 text-xs text-rose-700 flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold">Tiền cọc đang bị phong tỏa do có khiếu nại tranh chấp:</p>
+              <p className="italic mt-0.5">{escrowHold.disputeReason || 'Bên thuê hoặc bên cho thuê yêu cầu bảo vệ quyền lợi.'}</p>
+            </div>
           </div>
         )}
       </Card>
@@ -901,6 +1123,120 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
             </Button>
             <Button variant="primary" type="submit" isLoading={busy}>
               {tc('confirm')}
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+
+      {/* Pay Deposit VietQR Dialog */}
+      <Dialog
+        isOpen={payDepositOpen}
+        onClose={() => setPayDepositOpen(false)}
+        title="Thanh toán tiền cọc giữ chỗ (VietQR)"
+        size="md"
+      >
+        <div className="space-y-4 pt-2">
+          {!depositIntent ? (
+            <form onSubmit={handleCreateDepositIntent} className="space-y-4">
+              <p className="text-xs text-stone-600 dark:text-stone-400">
+                Tiền cọc sẽ được chuyển vào tài khoản trung gian ký quỹ bảo đảm (Escrow) của CozyNest. Tiền chỉ được giải ngân cho chủ trọ sau khi bạn nhận phòng và nghiệm thu hợp đồng.
+              </p>
+              <Input
+                label="Số tiền cọc thanh toán (VND)"
+                type="number"
+                min={1000}
+                required
+                value={depositInputAmount}
+                onChange={(e) => setDepositInputAmount(e.target.value)}
+                helperText="Hệ thống hỗ trợ số tiền cọc theo hợp đồng hoặc số tiền demo (20,000 - 100,000 VND) phục vụ kiểm thử OJT."
+              />
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="outline" type="button" onClick={() => setPayDepositOpen(false)}>
+                  {tc('cancel')}
+                </Button>
+                <Button variant="primary" type="submit" isLoading={busy} leftIcon={<QrCode className="w-3.5 h-3.5" />}>
+                  Tạo mã VietQR
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className="space-y-4">
+              <div className="p-4 rounded-xl border border-teal-200 dark:border-teal-800 bg-teal-50/50 dark:bg-teal-950/20 text-center space-y-2">
+                <div className="flex justify-center">
+                  {depositIntent.qrUrl ? (
+                    <img
+                      src={depositIntent.qrUrl}
+                      alt={depositIntent.paymentCode}
+                      className="w-48 h-48 rounded-xl border-2 border-teal-500 bg-white p-2 shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-48 h-48 bg-stone-100 flex items-center justify-center rounded-xl font-mono text-xs">
+                      {depositIntent.paymentCode}
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-0.5 text-xs text-stone-700 dark:text-stone-300">
+                  <p>
+                    Mã thanh toán: <strong className="font-mono text-teal-700 dark:text-teal-400 font-bold">{depositIntent.paymentCode}</strong>
+                  </p>
+                  <p>
+                    Số tiền: <strong className="text-sm font-bold text-stone-900 dark:text-stone-100">{formatVnd(depositIntent.amount)}</strong>
+                  </p>
+                  <p className="text-[11px] text-stone-500">
+                    Trạng thái: <span className="font-semibold">{depositIntent.status}</span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+                <Button variant="ghost" size="sm" onClick={() => setDepositIntent(null)}>
+                  Đổi số tiền
+                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setPayDepositOpen(false)}>
+                    Đóng
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    isLoading={busy}
+                    leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
+                    onClick={handleSimulateDepositPaid}
+                  >
+                    Giả lập thanh toán Sandbox (PAID)
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </Dialog>
+
+      {/* Freeze Escrow Dialog */}
+      <Dialog
+        isOpen={freezeEscrowOpen}
+        onClose={() => setFreezeEscrowOpen(false)}
+        title="Yêu cầu đóng băng & Khiếu nại tiền cọc"
+        size="md"
+      >
+        <form onSubmit={handleFreezeEscrow} className="space-y-4 pt-2">
+          <p className="text-xs text-stone-600 dark:text-stone-400">
+            Khi phong tỏa, tiền cọc trong quỹ Escrow sẽ được giữ nguyên trạng và không ai có thể rút ra cho đến khi hai bên hòa giải hoặc Quản trị viên can thiệp xử lý.
+          </p>
+          <Input
+            label="Lý do khiếu nại tranh chấp"
+            required
+            value={freezeReason}
+            onChange={(e) => setFreezeReason(e.target.value)}
+            placeholder="Ví dụ: Phòng không đúng hiện trạng ban đầu, chủ trọ không bàn giao chìa khóa đúng hẹn..."
+            helperText="Nêu chi tiết căn cứ và hình ảnh/chứng cứ liên quan."
+          />
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" type="button" onClick={() => setFreezeEscrowOpen(false)}>
+              {tc('cancel')}
+            </Button>
+            <Button variant="primary" type="submit" isLoading={busy} className="bg-rose-600 hover:bg-rose-700 text-white">
+              Xác nhận phong tỏa cọc
             </Button>
           </div>
         </form>
