@@ -41,14 +41,45 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
       : 'tenant';
 
   useEffect(() => {
-    container.badge.badgeRepository.getBadges(roleKey, user?.id).then(setBadges).catch(() => {});
-    if (roleKey === 'landlord') {
-      container.landlord.appointmentRepository
-        .getSummary()
-        .then((s) => setPendingAppointments(s.totalPending))
+    let mounted = true;
+
+    const fetchBadges = () => {
+      container.badge.badgeRepository
+        .getBadges(roleKey, user?.id)
+        .then((data) => {
+          if (mounted) setBadges(data);
+        })
         .catch(() => {});
+
+      if (roleKey === 'landlord') {
+        container.landlord.appointmentRepository
+          .getSummary()
+          .then((s) => {
+            if (mounted) setPendingAppointments(s.totalPending);
+          })
+          .catch(() => {});
+      }
+    };
+
+    fetchBadges();
+
+    const interval = setInterval(fetchBadges, 15000);
+
+    const handleCustomRefresh = () => fetchBadges();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('cozynest:refresh-badges', handleCustomRefresh);
+      window.addEventListener('focus', handleCustomRefresh);
     }
-  }, [roleKey, user?.id]);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('cozynest:refresh-badges', handleCustomRefresh);
+        window.removeEventListener('focus', handleCustomRefresh);
+      }
+    };
+  }, [roleKey, user?.id, pathname]);
 
   const sections = buildSidebarSections(roleKey, badges, pendingAppointments);
   const canSwitch = hasDualRole(user);

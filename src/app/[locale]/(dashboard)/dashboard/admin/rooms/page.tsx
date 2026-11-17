@@ -14,7 +14,7 @@ import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { ErrorState } from '@/presentation/components/ui/ErrorState';
 import { Tabs } from '@/presentation/components/ui/Tabs';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
-import { Check, X, ShieldAlert, Search, Eye, MapPin, User, Calendar, CreditCard } from 'lucide-react';
+import { Check, X, ShieldAlert, Search, Eye, MapPin, User, Calendar, CreditCard, RefreshCw } from 'lucide-react';
 
 function AdminRoomsContent() {
   const tAuto = useTranslations('autoI18n');
@@ -27,6 +27,8 @@ function AdminRoomsContent() {
     activeTab,
     setActiveTab,
     isLoading,
+    isRefreshing,
+    refresh,
     error,
     retry,
     handleApprove,
@@ -82,6 +84,18 @@ function AdminRoomsContent() {
             {t('subtitle')}
           </p>
         </div>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refresh}
+            disabled={isLoading || isRefreshing}
+            leftIcon={<RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />}
+            className="rounded-xl shadow-xs"
+          >
+            {t('btnRefresh')}
+          </Button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
@@ -92,13 +106,25 @@ function AdminRoomsContent() {
           onChange={(id) => setActiveTab(id as any)}
         />
 
-        <div className="w-full sm:w-72">
-          <Input
-            placeholder={t('searchPlaceholder')}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            leftIcon={<Search className="w-4 h-4" />}
-          />
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="w-full sm:w-72">
+            <Input
+              placeholder={t('searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              leftIcon={<Search className="w-4 h-4" />}
+            />
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refresh}
+            disabled={isLoading || isRefreshing}
+            title={t('btnRefresh')}
+            className="shrink-0 h-10 px-3 rounded-xl sm:hidden"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </Button>
         </div>
       </div>
 
