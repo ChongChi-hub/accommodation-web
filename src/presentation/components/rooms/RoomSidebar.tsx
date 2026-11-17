@@ -61,10 +61,26 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
   const handleMessage = () => {
     checkAuthAndExecute(() => {
       const rawLandlordId = room.landlord?.landlordId;
-      const landlordId =
-        typeof rawLandlordId === 'number' || (typeof rawLandlordId === 'string' && /^\d+$/.test(rawLandlordId))
-          ? (Number(rawLandlordId) < 10 ? `u-landlord-0${rawLandlordId}` : `u-landlord-${rawLandlordId}`)
-          : (rawLandlordId || 'u-landlord-01');
+      let landlordId = 'u-huy-01';
+      if (
+        rawLandlordId === 2122472122 ||
+        room.landlord?.email === 'dgiahuy2911@gmail.com'
+      ) {
+        landlordId = 'u-huy-01';
+      } else if (
+        rawLandlordId === 2 ||
+        room.landlord?.email === 'lehuunhathao2k6@gmail.com'
+      ) {
+        landlordId = 'u-hao-01';
+      } else if (
+        typeof rawLandlordId === 'number' ||
+        (typeof rawLandlordId === 'string' && /^\d+$/.test(String(rawLandlordId)))
+      ) {
+        landlordId =
+          Number(rawLandlordId) < 10 ? `u-landlord-0${rawLandlordId}` : `u-landlord-${rawLandlordId}`;
+      } else if (rawLandlordId) {
+        landlordId = String(rawLandlordId);
+      }
       const landlordName = encodeURIComponent(room.landlord?.name || 'Chủ trọ');
       const roomId = encodeURIComponent(String(room.id));
       const roomTitle = encodeURIComponent(room.title);

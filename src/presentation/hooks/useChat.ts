@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Conversation, ChatMessage, StartConversationParams } from '@/domain/entities/Chat';
 import { container } from '@/infrastructure/di/container';
 import { toast } from '@/presentation/stores/toast.store';
+import { useAuthStore } from '@/presentation/stores/auth.store';
 
 export interface UseChatOptions {
   autoLoad?: boolean;
@@ -39,6 +40,7 @@ export function useChat(options: UseChatOptions = {}) {
   const activeConvIdRef = useRef<string | null>(null);
   activeConvIdRef.current = activeConversation?.id || null;
 
+  const { user } = useAuthStore();
   const repo = container.chat.chatRepository;
 
   const loadConversations = useCallback(async () => {
@@ -197,6 +199,7 @@ export function useChat(options: UseChatOptions = {}) {
               recipientId,
               recipientName,
               recipientRole,
+              senderName: user?.fullName || undefined,
               roomId,
               roomTitle,
             });
