@@ -10,6 +10,7 @@ export interface RoomTypeDto { id: number; code: string; name: string; descripti
 export interface ReviewDto {
   id: number;
   roomId: number;
+  roomTitle?: string;
   tenantId: number;
   tenantName: string;
   tenantAvatar?: string;

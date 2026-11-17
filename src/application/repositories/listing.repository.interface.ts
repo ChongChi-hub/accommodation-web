@@ -31,6 +31,11 @@ export interface IListingRepository {
   getWards(code: string, isProvince?: boolean): Promise<WardDto[]>;
   getAmenities(): Promise<AmenityDto[]>;
   getReviews(roomId: number): Promise<ReviewDto[]>;
+  getTenantReviews?(): Promise<ReviewDto[]>;
+  getLandlordReviews?(): Promise<ReviewDto[]>;
+  replyReview?(reviewId: number, reply: string): Promise<ReviewDto>;
+  getSavedSearches?(): Promise<any[]>;
+  deleteSavedSearch?(id: number): Promise<void>;
   getHotAreas(limit?: number, nonEmptyOnly?: boolean): Promise<HotAreaDto[]>;
   getRoomTypes?(): Promise<RoomTypeDto[]>;
   getBanners(): Promise<BannerDto[]>;

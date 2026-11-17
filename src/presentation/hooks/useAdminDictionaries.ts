@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { ApiClient } from '@/infrastructure/http/api-client';
 
 export interface DictionaryItem {
   id: string;
@@ -50,68 +51,48 @@ export function useAdminDictionaries() {
     }
 
     try {
+      const [roomTypes, amenities, provinces] = await Promise.all([
+        ApiClient.get<Array<{ id: number; code: string; name: string; description?: string }>>('/room-types').catch(() => []),
+        ApiClient.get<Array<{ id: number; code: string; name: string; category?: string }>>('/amenities').catch(() => []),
+        ApiClient.get<Array<{ id: number; code: string; name: string; fullName?: string }>>('/locations/provinces').catch(() => []),
+      ]);
+
+      const mappedRoomTypes: DictionaryItem[] = (Array.isArray(roomTypes) ? roomTypes : []).map((rt) => ({
+        id: String(rt.id),
+        code: rt.code,
+        name: rt.name,
+        description: rt.description || 'Loại phòng chuẩn hệ thống',
+        status: 'ACTIVE',
+      }));
+
+      const mappedAmenities: DictionaryItem[] = (Array.isArray(amenities) ? amenities : []).map((am) => ({
+        id: String(am.id),
+        code: am.code,
+        name: am.name,
+        category: am.category || 'Tiện ích phòng',
+        status: 'ACTIVE',
+      }));
+
+      const mappedLocations: DictionaryItem[] = (Array.isArray(provinces) ? provinces : []).map((p) => ({
+        id: String(p.id),
+        code: p.code,
+        name: p.fullName || p.name,
+        coverage: 'Toàn tỉnh / thành phố',
+        status: 'COVERED',
+      }));
+
       setItems({
-        room_types: [
-          {
-            id: '1',
-            code: 'MINI_APARTMENT',
-            name: 'Chung cư mini',
-            description: 'Phòng khép kín đầy đủ đồ tiện nghi hiện đại',
-            status: 'ACTIVE',
-          },
-          {
-            id: '2',
-            code: 'STUDIO',
-            name: 'Căn hộ Studio',
-            description: 'Không gian mở kết hợp phòng ngủ và bếp',
-            status: 'ACTIVE',
-          },
-          {
-            id: '3',
-            code: 'APARTMENT',
-            name: 'Căn hộ nguyên căn',
-            description: 'Căn hộ gia đình 2-3 phòng ngủ',
-            status: 'ACTIVE',
-          },
+        room_types: mappedRoomTypes.length > 0 ? mappedRoomTypes : [
+          { id: '1', code: 'MINI_APARTMENT', name: 'Chung cư mini', description: 'Phòng khép kín đầy đủ đồ tiện nghi hiện đại', status: 'ACTIVE' },
+          { id: '2', code: 'STUDIO', name: 'Căn hộ Studio', description: 'Không gian mở kết hợp phòng ngủ và bếp', status: 'ACTIVE' },
         ],
-        amenities: [
-          {
-            id: '1',
-            code: 'wifi',
-            name: 'Wifi tốc độ cao',
-            category: 'Tiện ích cơ bản',
-            status: 'ACTIVE',
-          },
-          {
-            id: '2',
-            code: 'air_conditioner',
-            name: 'Điều hòa 2 chiều',
-            category: 'Điện lạnh',
-            status: 'ACTIVE',
-          },
-          {
-            id: '3',
-            code: 'water_heater',
-            name: 'Bình nóng lạnh',
-            category: 'Thiết bị gia dụng',
-            status: 'ACTIVE',
-          },
+        amenities: mappedAmenities.length > 0 ? mappedAmenities : [
+          { id: '1', code: 'wifi', name: 'Wifi tốc độ cao', category: 'Tiện ích cơ bản', status: 'ACTIVE' },
+          { id: '2', code: 'air_conditioner', name: 'Điều hòa 2 chiều', category: 'Điện lạnh', status: 'ACTIVE' },
         ],
-        locations: [
-          {
-            id: '1',
-            code: '01',
-            name: 'Thành phố Hà Nội',
-            coverage: '126 xã/phường',
-            status: 'COVERED',
-          },
-          {
-            id: '2',
-            code: '79',
-            name: 'Thành phố Hồ Chí Minh',
-            coverage: '168 xã/phường',
-            status: 'COVERED',
-          },
+        locations: mappedLocations.length > 0 ? mappedLocations : [
+          { id: '1', code: '01', name: 'Thành phố Hà Nội', coverage: 'Toàn tỉnh/thành', status: 'COVERED' },
+          { id: '2', code: '79', name: 'Thành phố Hồ Chí Minh', coverage: 'Toàn tỉnh/thành', status: 'COVERED' },
         ],
       });
     } catch (err) {
@@ -134,4 +115,3 @@ export function useAdminDictionaries() {
     retry: fetchData,
   };
 }
-

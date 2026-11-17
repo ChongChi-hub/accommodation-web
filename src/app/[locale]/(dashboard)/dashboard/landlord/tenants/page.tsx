@@ -1,87 +1,164 @@
 'use client';
-import { useTranslations } from 'next-intl';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
 import { Avatar } from '@/presentation/components/ui/Avatar';
+import { EmptyState } from '@/presentation/components/ui/EmptyState';
+import { Skeleton } from '@/presentation/components/ui/Skeleton';
 import { Link } from '@/i18n/routing';
-import { Phone, MessageSquare, ShieldCheck, Calendar } from 'lucide-react';
+import { container } from '@/infrastructure/di/container';
+import { Contract } from '@/domain/entities/Contract';
+import { toast } from '@/presentation/stores/toast.store';
+import { formatIsoDate, formatVnd } from '@/shared/utils/format-vnd';
+import { Phone, MessageSquare, ShieldCheck, Calendar, FileText, PlusCircle, Users } from 'lucide-react';
 
 export default function LandlordTenantsPage() {
   const tAuto = useTranslations('autoI18n');
-  const tenants = [
-    {
-      id: 1,
-      name: 'Nguyễn Văn Thuê',
-      phone: '0987 654 321',
-      email: 'tenant@cozynest.vn',
-      room: 'Phòng 302, Dịch Vọng Hậu',
-      moveInDate: '01/11/2026',
-      contractEnd: '31/10/2027',
-      status: 'ACTIVE',
-      depositPaid: true,
-    },
-    {
-      id: 2,
-      name: 'Lê Thị Mai',
-      phone: '0901 234 567',
-      email: 'mai.le@example.com',
-      room: 'Phòng 501, Láng Hạ',
-      moveInDate: '01/08/2026',
-      contractEnd: '31/07/2027',
-      status: 'ACTIVE',
-      depositPaid: true,
-    },
-  ];
+  const tc = useTranslations('sprint3.common');
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const list = await container.contract.contractRepository.getLandlordContracts();
+      setContracts(list);
+    } catch {
+      toast.error(tc('loadError'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [tc]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'ACTIVE':
+        return (
+          <Badge variant="success" size="sm">
+            <ShieldCheck className="w-3 h-3" /> Đang thuê
+          </Badge>
+        );
+      case 'PENDING_SIGNATURES':
+      case 'PENDING_TENANT':
+      case 'PENDING_LANDLORD':
+        return (
+          <Badge variant="warning" size="sm">
+            Chờ ký hợp đồng
+          </Badge>
+        );
+      case 'EXPIRED':
+        return (
+          <Badge variant="neutral" size="sm">
+            Đã hết hạn
+          </Badge>
+        );
+      case 'TERMINATED':
+      case 'CANCELLED':
+        return (
+          <Badge variant="neutral" size="sm">
+            Đã thanh lý
+          </Badge>
+        );
+      default:
+        return (
+          <Badge variant="primary" size="sm">
+            {status}
+          </Badge>
+        );
+    }
+  };
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
-          {tAuto('k0240')}{tenants.length})
-        </h1>
-        <p className="text-xs text-stone-500 mt-0.5">
-          {tAuto('k0241')}
-        </p>
+    <div className="space-y-6 max-w-4xl mx-auto py-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-foreground">
+            {tAuto('k0240')}{contracts.length})
+          </h1>
+          <p className="text-xs text-foreground-muted mt-0.5">
+            {tAuto('k0241')}
+          </p>
+        </div>
+        <Link href="/dashboard/landlord/contracts">
+          <Button variant="outline" size="sm" leftIcon={<FileText className="w-4 h-4" />}>
+            Xem tất cả hợp đồng
+          </Button>
+        </Link>
       </div>
 
-      <div className="space-y-4">
-        {tenants.map((t) => (
-          <Card key={t.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3.5">
-              <Avatar name={t.name} size="lg" />
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">{t.name}</h3>
-                  <Badge variant="success" size="sm">
-                    <ShieldCheck className="w-3 h-3" />{' '}{tAuto('k0242')}
-                  </Badge>
-                </div>
-                <p className="text-xs font-semibold text-teal-700 dark:text-teal-400">{t.room}</p>
-                <div className="flex items-center gap-3 text-xs text-stone-500">
-                  <span className="flex items-center gap-1">
-                    <Phone className="w-3 h-3 text-stone-400" /> {t.phone}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3 text-stone-400" />{' '}{tAuto('k0243')}{' '}{t.contractEnd}
-                  </span>
+      {isLoading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-28 w-full rounded-2xl" />
+          <Skeleton className="h-28 w-full rounded-2xl" />
+        </div>
+      ) : contracts.length === 0 ? (
+        <Card className="p-10 text-center flex flex-col items-center justify-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-600 flex items-center justify-center">
+            <Users className="w-6 h-6" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-foreground">Chưa có khách thuê nào</h3>
+            <p className="text-xs text-foreground-muted max-w-sm">
+              Khi khách thuê ký hợp đồng thuê phòng với bạn, thông tin khách thuê sẽ tự động hiển thị tại đây.
+            </p>
+          </div>
+          <Link href="/dashboard/landlord/contracts">
+            <Button variant="primary" size="sm" leftIcon={<PlusCircle className="w-4 h-4" />}>
+              Tạo hợp đồng thuê mới
+            </Button>
+          </Link>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {contracts.map((c) => (
+            <Card key={c.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <Avatar name={c.tenantId || 'Tenant'} size="lg" />
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-foreground">
+                      Khách thuê #{c.tenantId?.slice(-6) || c.tenantId}
+                    </h3>
+                    {getStatusBadge(c.status)}
+                  </div>
+                  <p className="text-xs font-semibold text-teal-700 dark:text-teal-400">
+                    Hợp đồng #{c.contractCode} (Phòng ID: {c.roomId})
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-foreground-muted">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-stone-400" />
+                      {formatIsoDate(c.startDate)} - {formatIsoDate(c.endDate)}
+                    </span>
+                    <span className="font-medium text-stone-700 dark:text-stone-300">
+                      Tiền thuê: {formatVnd(c.monthlyRent)}/tháng
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <Link href="/dashboard/landlord/messages">
-                <Button variant="outline" size="sm" leftIcon={<MessageSquare className="w-3.5 h-3.5" />}>
-                  {tAuto('k0244')}
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        ))}
-      </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <Link href={`/dashboard/landlord/contracts/${c.id}`}>
+                  <Button variant="outline" size="sm" leftIcon={<FileText className="w-3.5 h-3.5" />}>
+                    Chi tiết HĐ
+                  </Button>
+                </Link>
+                <Link href={`/dashboard/landlord/messages?targetUserId=${c.tenantId}`}>
+                  <Button variant="primary" size="sm" leftIcon={<MessageSquare className="w-3.5 h-3.5" />}>
+                    {tAuto('k0244')}
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-

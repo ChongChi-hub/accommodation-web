@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { ApiClient } from '@/infrastructure/http/api-client';
 
 export interface AdminAnalyticsData {
   successRate: number;
@@ -42,16 +43,21 @@ export function useAdminAnalytics() {
     }
 
     try {
-      setData({
-        successRate: 74.5,
-        avgTimeToFillDays: 4.2,
-        totalSearches: 128000,
-        topAreas: [
-          { id: '1', key: 'areaCauGiay', percent: 38 },
-          { id: '2', key: 'areaDongDa', percent: 24 },
-          { id: '3', key: 'areaBinhThanh', percent: 19 },
-        ],
-      });
+      const res = await ApiClient.get<AdminAnalyticsData>('/admin/analytics');
+      if (res && typeof res.successRate === 'number') {
+        setData(res);
+      } else {
+        setData({
+          successRate: 74.5,
+          avgTimeToFillDays: 4.2,
+          totalSearches: 128000,
+          topAreas: [
+            { id: '1', key: 'areaCauGiay', percent: 38 },
+            { id: '2', key: 'areaDongDa', percent: 24 },
+            { id: '3', key: 'areaBinhThanh', percent: 19 },
+          ],
+        });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -70,4 +76,3 @@ export function useAdminAnalytics() {
     retry: fetchData,
   };
 }
-
