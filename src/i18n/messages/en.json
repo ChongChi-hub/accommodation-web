@@ -1262,7 +1262,10 @@
     "sectionDescription": "Check available listings and average rents across major cities",
     "roomCount": "{count} rooms available",
     "errorTitle": "Unable to load areas",
-    "noAreas": "No area data available"
+    "noAreas": "No area data available",
+    "otherProvinces": "Other provinces",
+    "viewAll": "Click to view all",
+    "collapse": "Collapse list"
   },
   "howItWorks": {
     "sectionSubtitle": "Transparent process",

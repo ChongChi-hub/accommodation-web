@@ -1262,7 +1262,10 @@
     "sectionDescription": "Xem số lượng phòng có sẵn và mức giá trung bình tại các thành phố lớn",
     "roomCount": "{count} phòng trống",
     "errorTitle": "Không thể tải danh sách khu vực",
-    "noAreas": "Chưa có dữ liệu khu vực"
+    "noAreas": "Chưa có dữ liệu khu vực",
+    "otherProvinces": "Tỉnh thành khác",
+    "viewAll": "Bấm để xem tất cả",
+    "collapse": "Thu gọn danh sách"
   },
   "howItWorks": {
     "sectionSubtitle": "Quy trình minh bạch",
