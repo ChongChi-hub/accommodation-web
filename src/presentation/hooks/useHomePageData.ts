@@ -93,7 +93,7 @@ export function useHomePageData() {
   const fetchHotAreas = useCallback(() => {
     setHotAreas((prev) => ({ ...prev, isLoading: true, error: null }));
     listingRepo
-      .getHotAreas()
+      .getHotAreas(64, true)
       .then((data) => setHotAreas({ data, isLoading: false, error: null }))
       .catch((err) =>
         setHotAreas({
