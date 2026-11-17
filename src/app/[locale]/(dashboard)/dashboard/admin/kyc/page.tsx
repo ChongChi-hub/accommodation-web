@@ -115,17 +115,42 @@ function AdminKycContent() {
                     {item.userPhone}
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      variant={
-                        item.status === 'APPROVED'
-                          ? 'success'
-                          : item.status === 'REJECTED'
-                          ? 'danger'
-                          : 'warning'
-                      }
-                    >
-                      {item.status}
-                    </Badge>
+                    <div className="flex flex-col gap-1 items-start">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-medium text-foreground-muted">CCCD:</span>
+                        <Badge
+                          variant={
+                            item.status === 'APPROVED'
+                              ? 'success'
+                              : item.status === 'REJECTED'
+                              ? 'danger'
+                              : 'warning'
+                          }
+                        >
+                          {item.status}
+                        </Badge>
+                      </div>
+                      {item.faceStatus && item.faceStatus !== 'NONE' && (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-medium text-foreground-muted">Khuôn mặt:</span>
+                          <Badge
+                            variant={
+                              item.faceStatus === 'PASSED'
+                                ? 'success'
+                                : item.faceStatus === 'FAILED'
+                                ? 'danger'
+                                : 'warning'
+                            }
+                          >
+                            {item.faceStatus === 'PASSED'
+                              ? 'PASSED'
+                              : item.faceStatus === 'PENDING'
+                              ? 'PENDING'
+                              : 'FAILED'}
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <button
