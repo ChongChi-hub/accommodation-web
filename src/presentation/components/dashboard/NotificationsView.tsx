@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import { Bell, Calendar, CheckCheck, CreditCard, FileCheck } from 'lucide-react';
+import { Bell, Calendar, CheckCheck, CreditCard, FileCheck, Trash2 } from 'lucide-react';
 import { Notification } from '@/domain/entities/Notification';
 import { container } from '@/infrastructure/di/container';
 import { useAuthStore } from '@/presentation/stores/auth.store';
@@ -48,8 +48,43 @@ export function NotificationsView() {
       await container.notification.notificationRepository.markAllAsRead(user?.id);
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       toast.success(tNotif('markAllSuccess'));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+      }
     } catch {
       toast.error(tNotif('errorTitle'));
+    }
+  };
+
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      await container.notification.notificationRepository.deleteNotification?.(id);
+      toast.success(tNotif('deleteSuccess'));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+      }
+    } catch {
+      toast.error(tNotif('errorTitle'));
+      void fetchNotifications();
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (typeof window !== 'undefined' && !window.confirm(tNotif('confirmDeleteAll'))) {
+      return;
+    }
+    try {
+      setNotifications([]);
+      await container.notification.notificationRepository.deleteAllNotifications?.(user?.id);
+      toast.success(tNotif('deleteAllSuccess'));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+      }
+    } catch {
+      toast.error(tNotif('errorTitle'));
+      void fetchNotifications();
     }
   };
 
@@ -58,6 +93,9 @@ export function NotificationsView() {
       setNotifications((prev) => prev.map((n) => (n.id === item.id ? { ...n, isRead: true } : n)));
       try {
         await container.notification.notificationRepository.markAsRead(item.id);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+        }
       } catch {
         // Non-blocking
       }
@@ -85,16 +123,29 @@ export function NotificationsView() {
           </h1>
           <p className="text-xs text-foreground-muted mt-0.5">{tNotif('pageSubtitle')}</p>
         </div>
-        {unreadCount > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            leftIcon={<CheckCheck className="w-3.5 h-3.5" />}
-            onClick={handleMarkAllRead}
-          >
-            {tNotif('markAllRead')}
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {unreadCount > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<CheckCheck className="w-3.5 h-3.5" />}
+              onClick={handleMarkAllRead}
+            >
+              {tNotif('markAllRead')}
+            </Button>
+          )}
+          {notifications.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-danger hover:bg-danger/10 hover:text-danger"
+              leftIcon={<Trash2 className="w-3.5 h-3.5" />}
+              onClick={handleDeleteAll}
+            >
+              {tNotif('btnDeleteAll')}
+            </Button>
+          )}
+        </div>
       </div>
 
       {isLoading ? (
@@ -125,9 +176,20 @@ export function NotificationsView() {
               <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="text-xs font-bold text-foreground">{n.title}</h3>
-                  <span className="text-[11px] text-foreground-muted shrink-0">
-                    {new Date(n.createdAt).toLocaleDateString('vi-VN')}
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-[11px] text-foreground-muted">
+                      {new Date(n.createdAt).toLocaleDateString('vi-VN')}
+                    </span>
+                    <button
+                      type="button"
+                      title={tNotif('btnDelete')}
+                      aria-label={tNotif('btnDelete')}
+                      onClick={(e) => void handleDelete(n.id, e)}
+                      className="p-1 rounded-lg text-foreground-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
                 <p className="text-xs text-foreground-muted leading-relaxed">{n.message}</p>
               </div>

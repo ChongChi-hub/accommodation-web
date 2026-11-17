@@ -61,6 +61,14 @@ export class HttpNotificationRepository implements NotificationRepository {
     }
   }
 
+  async deleteNotification(id: string): Promise<void> {
+    await ApiClient.delete(`/notifications/${encodeURIComponent(id)}`);
+  }
+
+  async deleteAllNotifications(_userId?: string): Promise<void> {
+    await ApiClient.delete('/notifications');
+  }
+
   async getUnreadCount(_userId?: string): Promise<number> {
     try {
       const res = await ApiClient.get<{ count: number }>('/notifications/unread-count');

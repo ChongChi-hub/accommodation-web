@@ -69,6 +69,14 @@ export class StaticNotificationRepository implements NotificationRepository {
     });
   }
 
+  async deleteNotification(id: string): Promise<void> {
+    this.notifications = this.notifications.filter((n) => n.id !== id);
+  }
+
+  async deleteAllNotifications(_userId?: string): Promise<void> {
+    this.notifications = [];
+  }
+
   async getUnreadCount(userId?: string): Promise<number> {
     return this.notifications.filter((n) => !n.isRead).length;
   }

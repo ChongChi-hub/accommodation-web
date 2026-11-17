@@ -4,6 +4,8 @@ export interface NotificationRepository {
   getNotifications(userId?: string, limit?: number): Promise<Notification[]>;
   markAsRead(id: string): Promise<void>;
   markAllAsRead(userId?: string): Promise<void>;
+  deleteNotification?(id: string): Promise<void>;
+  deleteAllNotifications?(userId?: string): Promise<void>;
   getUnreadCount(userId?: string): Promise<number>;
   getUnreadMessageCount?(userId?: string): Promise<number>;
 }
