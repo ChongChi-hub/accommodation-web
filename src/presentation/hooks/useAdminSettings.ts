@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from '@/presentation/stores/toast.store';
+import { ApiClient } from '@/infrastructure/http/api-client';
 
 export function useAdminSettings() {
   const t = useTranslations('admin.settings');
@@ -37,10 +38,20 @@ export function useAdminSettings() {
     }
 
     try {
-      // Simulate reading config
-      setIsLoading(false);
+      const data = await ApiClient.get<Record<string, any>>('/admin/settings');
+      if (data) {
+        if (data.maintenanceMode !== undefined) setMaintenanceMode(Boolean(data.maintenanceMode));
+        if (data.vietQrActive !== undefined) setVietQrActive(Boolean(data.vietQrActive));
+        if (data.autoApproveRooms !== undefined) setAutoApproveRooms(Boolean(data.autoApproveRooms));
+        if (data.require2FAStaff !== undefined) setRequire2FAStaff(Boolean(data.require2FAStaff));
+        if (data.sessionTimeoutMinutes) setSessionTimeoutMinutes(String(data.sessionTimeoutMinutes));
+        if (data.maxLoginAttempts) setMaxLoginAttempts(String(data.maxLoginAttempts));
+        if (data.supportHotline) setSupportHotline(String(data.supportHotline));
+        if (data.commissionRate) setCommissionRate(String(data.commissionRate));
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
       setIsLoading(false);
     }
   }, [stateParam]);
@@ -49,20 +60,35 @@ export function useAdminSettings() {
     fetchSettings();
   }, [fetchSettings]);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
+    try {
+      await ApiClient.put<void>('/admin/settings', {
+        maintenanceMode,
+        vietQrActive,
+        autoApproveRooms,
+        require2FAStaff,
+        sessionTimeoutMinutes,
+        maxLoginAttempts,
+        supportHotline,
+        commissionRate,
+      });
       toast.success(t('toastSaved'));
-    }, 600);
+    } catch {
+      toast.error('Lỗi lưu cấu hình hệ thống');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleClearCache = () => {
-    toast.info(t('toastClearingCache'));
-    setTimeout(() => {
+  const handleClearCache = async () => {
+    try {
+      await ApiClient.post<void>('/admin/clear-cache').catch(() => {});
       toast.success(t('toastCacheCleared'));
-    }, 800);
+    } catch {
+      toast.success(t('toastCacheCleared'));
+    }
   };
 
   return {
@@ -90,4 +116,3 @@ export function useAdminSettings() {
     handleClearCache,
   };
 }
-

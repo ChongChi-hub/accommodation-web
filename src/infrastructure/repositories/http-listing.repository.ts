@@ -118,6 +118,29 @@ export class HttpListingRepository implements IListingRepository {
     return ApiClient.get<ReviewDto[]>(`/reviews?roomId=${roomId}`);
   }
 
+  async getTenantReviews(): Promise<ReviewDto[]> {
+    const data = await ApiClient.get<ReviewDto[]>('/reviews/tenant');
+    return Array.isArray(data) ? data : [];
+  }
+
+  async getLandlordReviews(): Promise<ReviewDto[]> {
+    const data = await ApiClient.get<ReviewDto[]>('/reviews/landlord');
+    return Array.isArray(data) ? data : [];
+  }
+
+  async replyReview(reviewId: number, reply: string): Promise<ReviewDto> {
+    return ApiClient.post<ReviewDto>(`/reviews/${reviewId}/reply`, { reply });
+  }
+
+  async getSavedSearches(): Promise<any[]> {
+    const data = await ApiClient.get<any[]>('/bookmarks/searches');
+    return Array.isArray(data) ? data : [];
+  }
+
+  async deleteSavedSearch(id: number): Promise<void> {
+    await ApiClient.delete<void>(`/bookmarks/searches/${id}`);
+  }
+
   async getHotAreas(limit = 8, nonEmptyOnly = false): Promise<HotAreaDto[]> {
     const qs = new URLSearchParams({
       limit: String(limit),

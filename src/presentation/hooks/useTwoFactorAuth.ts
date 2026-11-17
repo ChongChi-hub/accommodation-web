@@ -9,8 +9,15 @@ export function useTwoFactorAuth() {
 
   const { data: status, isLoading, error } = useQuery<TwoFactorStatus>({
     queryKey: ['two-factor-status'],
-    queryFn: () => container.twoFactor.twoFactorRepository.getStatus(),
+    queryFn: async () => {
+      try {
+        return await container.twoFactor.twoFactorRepository.getStatus();
+      } catch {
+        return { isEnabled: false };
+      }
+    },
     staleTime: 60_000,
+    retry: false,
   });
 
   const setupMutation = useMutation<TwoFactorSetupData>({

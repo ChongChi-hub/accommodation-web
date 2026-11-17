@@ -7,6 +7,7 @@ import { ToastContainer } from '@/presentation/components/ui/Toast';
 import { CookieConsentBanner } from '@/presentation/components/legal/CookieConsentBanner';
 import { FloatingChatWidget } from '@/presentation/components/chat/FloatingChatWidget';
 import { ThemeInitializer } from '@/presentation/components/layout/ThemeInitializer';
+import { QueryProvider } from '@/presentation/providers/QueryProvider';
 import '@/styles/globals.css';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -48,10 +49,12 @@ export default async function RootLayout({
       <body className="min-h-screen bg-background text-foreground antialiased transition-colors" suppressHydrationWarning>
         <ThemeInitializer />
         <NextIntlClientProvider messages={messages}>
-          {children}
-          <ToastContainer />
-          <CookieConsentBanner />
-          <FloatingChatWidget />
+          <QueryProvider>
+            {children}
+            <ToastContainer />
+            <CookieConsentBanner />
+            <FloatingChatWidget />
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>

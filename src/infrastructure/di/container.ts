@@ -54,7 +54,10 @@ const twoFactorRepository = new HttpTwoFactorRepository();
 const chatRepository = new HttpChatRepository();
 const badgeRepository = new StaticBadgeRepository(
   notificationRepository,
-  kycRepository
+  kycRepository,
+  adminRepository,
+  rentalRequestRepository,
+  billingRepository
 );
 
 // Use Cases & Repositories Container
