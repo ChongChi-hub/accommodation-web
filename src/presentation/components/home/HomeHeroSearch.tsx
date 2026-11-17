@@ -100,16 +100,6 @@ export function HomeHeroSearch({ hotProvinces = [] }: HomeHeroSearchProps) {
     router.push(`${targetPath}${qs ? `?${qs}` : ''}`);
   };
 
-  const handleCategoryClick = (cat: (typeof ROOM_CATEGORIES)[number]) => {
-    setActiveTab(cat.id);
-    const query = new URLSearchParams();
-    if (keyword.trim()) query.set('q', keyword.trim());
-    if (provinceCode) query.set('provinceCode', provinceCode);
-    if (priceMax) query.set('maxPrice', priceMax);
-    const qs = query.toString();
-    router.push(`${cat.path}${qs ? `?${qs}` : ''}`);
-  };
-
   const handleQuickChip = (paramStr: string) => {
     const [key, val] = paramStr.split('=');
     const query = new URLSearchParams();
@@ -146,7 +136,7 @@ export function HomeHeroSearch({ hotProvinces = [] }: HomeHeroSearchProps) {
               type="button"
               role="tab"
               aria-selected={isActive}
-              onClick={() => handleCategoryClick(cat)}
+              onClick={() => setActiveTab(cat.id)}
               className={`px-3.5 py-1.5 text-xs sm:text-sm font-medium rounded-xl transition-all duration-200 cursor-pointer ${
                 isActive
                   ? 'bg-teal-600 text-white shadow-md'
