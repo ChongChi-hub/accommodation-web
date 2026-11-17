@@ -11,6 +11,7 @@ import { ManagedImage } from '@/presentation/components/rooms/ImageCard';
 import { NewRoomFormSteps } from '@/presentation/components/rooms/NewRoomFormSteps';
 import { ProvinceDto, WardDto } from '@/application/dto/listing.dto';
 import { container } from '@/infrastructure/di/container';
+import { useAuthStore } from '@/presentation/stores/auth.store';
 import { toast } from '@/presentation/stores/toast.store';
 import { useRouter } from '@/i18n/routing';
 import { ArrowLeft, ArrowRight, CheckCircle2, Save, ShieldAlert } from 'lucide-react';
@@ -19,6 +20,7 @@ import Link from 'next/link';
 export default function NewRoomPage() {
   const tAuto = useTranslations('autoI18n');
   const router = useRouter();
+  const { user } = useAuthStore();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<ManagedImage[]>([]);
@@ -90,6 +92,8 @@ export default function NewRoomPage() {
         initialElectricityReading: formData.initialElectricityReading ? parseFloat(formData.initialElectricityReading) : 0,
         initialWaterReading: formData.initialWaterReading ? parseFloat(formData.initialWaterReading) : 0,
         allowPets: formData.allowPets, allowCooking: formData.allowCooking,
+        landlordName: user?.fullName,
+        landlordPhone: user?.phone,
         submitForReview: false,
       });
       createdRoomId = newRoom.id;

@@ -140,6 +140,8 @@ export interface UpdateRoomPayload {
 }
 
 export interface CreateRoomPayload extends UpdateRoomPayload {
+  landlordName?: string;
+  landlordPhone?: string;
   submitForReview?: boolean;
 }
 
