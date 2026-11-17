@@ -98,7 +98,7 @@ export function TwoFactorSecurityCard() {
       {!isEnabled && !isSettingUp && (
         <div className="space-y-4">
           <div className="p-3.5 rounded-lg bg-primary-50/50 dark:bg-primary-950/20 border border-primary/20 text-xs text-foreground-muted">
-            Bat xac thuc 2 lop giup bao ve tai khoan truoc cac truy cap trai phep, bat buoc doi voi quan tri vien va chu tro khi rut tien.
+            Bật xác thực 2 lớp là tùy chọn giúp tăng cường bảo mật cho tài khoản của bạn. Khi tắt, bạn có thể đăng nhập bình thường bằng mật khẩu mà không cần nhập mã.
           </div>
           <Button onClick={handleStartSetup} isLoading={setupMutation.isPending || isLoading}>
             <Key className="w-4 h-4 mr-2" />
