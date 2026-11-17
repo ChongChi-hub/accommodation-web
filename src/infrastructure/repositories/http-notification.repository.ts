@@ -28,40 +28,55 @@ function mapNotificationType(raw: string): Notification['type'] {
 
 export class HttpNotificationRepository implements NotificationRepository {
   async getNotifications(_userId?: string, limit = 20): Promise<Notification[]> {
-    if (!ApiClient.getToken()) return [];
-    const data = await ApiClient.get<RawNotificationDto[]>(`/notifications?limit=${limit}`);
-    return (Array.isArray(data) ? data : []).map((n) => ({
-      id: n.id,
-      userId: n.userId,
-      title: n.title,
-      message: n.message ?? n.content ?? '',
-      type: mapNotificationType(n.type),
-      link: n.link ?? n.linkUrl ?? '',
-      isRead: Boolean(n.isRead ?? n.read ?? false),
-      createdAt: n.createdAt,
-    }));
+    try {
+      const data = await ApiClient.get<RawNotificationDto[]>(`/notifications?limit=${limit}`);
+      return (Array.isArray(data) ? data : []).map((n) => ({
+        id: n.id,
+        userId: n.userId,
+        title: n.title,
+        message: n.message ?? n.content ?? '',
+        type: mapNotificationType(n.type),
+        link: n.link ?? n.linkUrl ?? '',
+        isRead: Boolean(n.isRead ?? n.read ?? false),
+        createdAt: n.createdAt,
+      }));
+    } catch {
+      return [];
+    }
   }
 
   async markAsRead(id: string): Promise<void> {
-    if (!ApiClient.getToken()) return;
-    await ApiClient.patch(`/notifications/${encodeURIComponent(id)}/read`);
+    try {
+      await ApiClient.patch(`/notifications/${encodeURIComponent(id)}/read`);
+    } catch {
+      // non-blocking
+    }
   }
 
   async markAllAsRead(_userId?: string): Promise<void> {
-    if (!ApiClient.getToken()) return;
-    await ApiClient.patch('/notifications/read-all');
+    try {
+      await ApiClient.patch('/notifications/read-all');
+    } catch {
+      // non-blocking
+    }
   }
 
   async getUnreadCount(_userId?: string): Promise<number> {
-    if (!ApiClient.getToken()) return 0;
-    const res = await ApiClient.get<{ count: number }>('/notifications/unread-count');
-    return typeof res?.count === 'number' ? res.count : 0;
+    try {
+      const res = await ApiClient.get<{ count: number }>('/notifications/unread-count');
+      return typeof res?.count === 'number' ? res.count : 0;
+    } catch {
+      return 0;
+    }
   }
 
   async getUnreadMessageCount(_userId?: string): Promise<number> {
-    if (!ApiClient.getToken()) return 0;
-    const res = await ApiClient.get<{ count: number }>('/chat/unread-count');
-    return typeof res?.count === 'number' ? res.count : 0;
+    try {
+      const res = await ApiClient.get<{ count: number }>('/chat/unread-count');
+      return typeof res?.count === 'number' ? res.count : 0;
+    } catch {
+      return 0;
+    }
   }
 }
 
