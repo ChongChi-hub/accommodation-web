@@ -42,4 +42,5 @@ export interface IListingRepository {
   getPlatformStats(): Promise<PlatformStatsDto>;
   getFacets(): Promise<RoomFacetsDto>;
   getArticles(): Promise<CmsArticleDto[]>;
+  getArticleBySlug?(slug: string): Promise<CmsArticleDto>;
 }

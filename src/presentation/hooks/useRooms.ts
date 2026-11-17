@@ -5,12 +5,28 @@ import { useSearchParams } from 'next/navigation';
 import { RoomDto, RoomFilterParams, ProvinceDto, WardDto, RoomPaginationMeta } from '@/application/dto/listing.dto';
 import { container } from '@/infrastructure/di/container';
 
+function normalizeProvinceCode(code?: string | null): string | undefined {
+  if (!code) return undefined;
+  const map: Record<string, string> = {
+    '01': 'HN',
+    '79': 'HCM',
+    '48': 'DNG',
+    'DN': 'DNG',
+    '31': 'HP',
+    '92': 'CT',
+    '46': 'HUE',
+    '24': 'BN',
+  };
+  return map[code] || code;
+}
+
 function parseUrlParams(
   searchParams: { get: (key: string) => string | null },
   presetRoomTypeCode?: string
 ): RoomFilterParams {
   const q = searchParams.get('q') || undefined;
-  const provinceCode = searchParams.get('provinceCode') || searchParams.get('province') || undefined;
+  const rawProvince = searchParams.get('provinceCode') || searchParams.get('province');
+  const provinceCode = normalizeProvinceCode(rawProvince);
   const provinceSlug = searchParams.get('provinceSlug') || undefined;
   const roomTypeCode = searchParams.get('roomTypeCode') || searchParams.get('type') || presetRoomTypeCode || undefined;
   const rawMin = searchParams.get('minPrice') || searchParams.get('priceMin');

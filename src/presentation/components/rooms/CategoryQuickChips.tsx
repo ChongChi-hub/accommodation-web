@@ -12,6 +12,51 @@ interface QuickChip {
   apply: (params: RoomFilterParams) => Partial<RoomFilterParams>;
 }
 
+const DEFAULT_ROOMS_CHIPS: QuickChip[] = [
+  {
+    id: 'under_3m',
+    label: 'Dưới 3 triệu',
+    isActive: (p) => p.maxPrice === 3000000,
+    apply: (p) => ({ maxPrice: p.maxPrice === 3000000 ? undefined : 3000000 }),
+  },
+  {
+    id: 'private_wc',
+    label: 'Vệ sinh khép kín',
+    isActive: (p) => p.q === 'khép kín',
+    apply: (p) => ({ q: p.q === 'khép kín' ? undefined : 'khép kín' }),
+  },
+  {
+    id: 'no_landlord',
+    label: 'Không chung chủ',
+    isActive: (p) => p.q === 'không chung chủ',
+    apply: (p) => ({ q: p.q === 'không chung chủ' ? undefined : 'không chung chủ' }),
+  },
+  {
+    id: 'loft',
+    label: 'Có gác lửng',
+    isActive: (p) => p.q === 'gác lửng',
+    apply: (p) => ({ q: p.q === 'gác lửng' ? undefined : 'gác lửng' }),
+  },
+  {
+    id: 'full_furniture',
+    label: 'Đầy đủ nội thất',
+    isActive: (p) => p.furnishing === 'FULL',
+    apply: (p) => ({ furnishing: p.furnishing === 'FULL' ? undefined : 'FULL' }),
+  },
+  {
+    id: 'pets',
+    label: 'Nuôi thú cưng',
+    isActive: (p) => p.allowPets === true,
+    apply: (p) => ({ allowPets: p.allowPets ? undefined : true }),
+  },
+  {
+    id: 'cooking',
+    label: 'Được nấu ăn',
+    isActive: (p) => p.allowCooking === true,
+    apply: (p) => ({ allowCooking: p.allowCooking ? undefined : true }),
+  },
+];
+
 const PHONG_TRO_CHIPS: QuickChip[] = [
   {
     id: 'under_2m',
@@ -24,6 +69,24 @@ const PHONG_TRO_CHIPS: QuickChip[] = [
     label: 'Dưới 3 triệu',
     isActive: (p) => p.maxPrice === 3000000,
     apply: (p) => ({ maxPrice: p.maxPrice === 3000000 ? undefined : 3000000 }),
+  },
+  {
+    id: 'private_wc',
+    label: 'Vệ sinh khép kín',
+    isActive: (p) => p.q === 'khép kín',
+    apply: (p) => ({ q: p.q === 'khép kín' ? undefined : 'khép kín' }),
+  },
+  {
+    id: 'no_landlord',
+    label: 'Không chung chủ',
+    isActive: (p) => p.q === 'không chung chủ',
+    apply: (p) => ({ q: p.q === 'không chung chủ' ? undefined : 'không chung chủ' }),
+  },
+  {
+    id: 'loft',
+    label: 'Gác lửng',
+    isActive: (p) => p.q === 'gác lửng',
+    apply: (p) => ({ q: p.q === 'gác lửng' ? undefined : 'gác lửng' }),
   },
   {
     id: 'pets',
@@ -141,7 +204,7 @@ export function CategoryQuickChips({
   className,
 }: CategoryQuickChipsProps) {
   const tAuto = useTranslations('autoI18n');
-  const chips = categoryKey ? CATEGORY_CHIPS_MAP[categoryKey] : undefined;
+  const chips = categoryKey ? (CATEGORY_CHIPS_MAP[categoryKey] || DEFAULT_ROOMS_CHIPS) : DEFAULT_ROOMS_CHIPS;
   if (!chips || chips.length === 0) return null;
 
   return (

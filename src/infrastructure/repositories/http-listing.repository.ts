@@ -168,4 +168,8 @@ export class HttpListingRepository implements IListingRepository {
   async getArticles(): Promise<CmsArticleDto[]> {
     return ApiClient.get<CmsArticleDto[]>('/cms/articles');
   }
+
+  async getArticleBySlug(slug: string): Promise<CmsArticleDto> {
+    return ApiClient.get<CmsArticleDto>(`/cms/articles/${encodeURIComponent(slug)}`);
+  }
 }

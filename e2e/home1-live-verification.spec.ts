@@ -64,7 +64,7 @@ test.describe('HOME-1: Comprehensive Live Home Page Verification', () => {
   });
 
   test('2. Hero search tab switching and quick chip navigation', async ({ page }) => {
-    await page.goto(`${WEB_URL}/vi`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${WEB_URL}/vi`, { waitUntil: 'networkidle' });
 
     // Category tab switching
     const singleTab = page.locator('button[role="tab"]:has-text("Phòng trọ")');
@@ -79,7 +79,13 @@ test.describe('HOME-1: Comprehensive Live Home Page Verification', () => {
   });
 
   test('3. Hero slideshow pause/play button toggles properly', async ({ page }) => {
-    await page.goto(`${WEB_URL}/vi`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${WEB_URL}/vi`, { waitUntil: 'networkidle' });
+
+    // Dismiss cookie banner if present to avoid intercepting bottom controls
+    const cookieBtn = page.locator('button:has-text("Chấp nhận tất cả")');
+    if (await cookieBtn.isVisible()) {
+      await cookieBtn.click();
+    }
 
     const pauseBtn = page.locator('button[aria-label="Tạm dừng trình chiếu"]');
     await expect(pauseBtn).toBeVisible();

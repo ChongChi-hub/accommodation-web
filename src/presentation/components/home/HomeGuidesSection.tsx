@@ -50,7 +50,7 @@ export function HomeGuidesSection({ articlesState, onRetry }: HomeGuidesSectionP
           </Reveal>
 
           <Link
-            href="/safety-guide"
+            href="/blog"
             className="hidden sm:inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 transition-colors"
           >
             <span>{t('viewAllGuides')}</span>
@@ -123,7 +123,7 @@ export function HomeGuidesSection({ articlesState, onRetry }: HomeGuidesSectionP
                     {/* Read Article Link */}
                     <div className="px-5 pb-5 pt-0">
                       <Link
-                        href={`/safety-guide#${article.slug}`}
+                        href={`/blog/${article.slug}`}
                         className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 dark:text-teal-400 group-hover:text-teal-800 dark:group-hover:text-teal-300 transition-colors"
                       >
                         {t('readArticle')} <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -137,7 +137,7 @@ export function HomeGuidesSection({ articlesState, onRetry }: HomeGuidesSectionP
         )}
 
         <div className="mt-8 text-center sm:hidden">
-          <Link href="/safety-guide" className="text-xs font-semibold text-teal-700 dark:text-teal-400">
+          <Link href="/blog" className="text-xs font-semibold text-teal-700 dark:text-teal-400">
             {t('viewAllGuides')}
           </Link>
         </div>

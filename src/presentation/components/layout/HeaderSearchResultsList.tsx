@@ -2,12 +2,13 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import { AlertCircle, Clock, MapPin, RotateCcw, Trash2 } from 'lucide-react';
+import { AlertCircle, Clock, MapPin, RotateCcw, Trash2, GraduationCap, Building2, Hospital, Bus } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 export type SearchOption =
   | { id: string; kind: 'recent'; query: string }
   | { id: string; kind: 'area'; code: string; name: string }
+  | { id: string; kind: 'landmark'; name: string; query: string; subtitle: string; category?: string }
   | { id: string; kind: 'room'; href: string; title: string; price: number; subtitle: string; image?: string }
   | { id: string; kind: 'viewAll'; query: string };
 
@@ -43,6 +44,7 @@ export function HeaderSearchResultsList({
 
   const recentOptions = options.filter((o): o is Extract<SearchOption, { kind: 'recent' }> => o.kind === 'recent');
   const areaOptions = options.filter((o): o is Extract<SearchOption, { kind: 'area' }> => o.kind === 'area');
+  const landmarkOptions = options.filter((o): o is Extract<SearchOption, { kind: 'landmark' }> => o.kind === 'landmark');
   const roomOptions = options.filter((o): o is Extract<SearchOption, { kind: 'room' }> => o.kind === 'room');
   const viewAllOptions = options.filter((o): o is Extract<SearchOption, { kind: 'viewAll' }> => o.kind === 'viewAll');
 
@@ -51,7 +53,7 @@ export function HeaderSearchResultsList({
       id={listboxId}
       role="listbox"
       className={cn(
-        'hdr-popover-panel absolute mt-2 rounded-2xl border border-border bg-surface text-foreground shadow-2xl p-2 z-50 max-h-[70vh] overflow-y-auto',
+        'hdr-popover-panel absolute mt-2 rounded-2xl border border-border bg-surface text-foreground shadow-2xl p-2 z-50 max-h-[70vh] overflow-y-auto [scrollbar-width:thin] [scrollbar-color:rgba(156,163,175,0.4)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-stone-400/40 hover:[&::-webkit-scrollbar-thumb]:bg-stone-400/70',
         wideDesktop ? 'left-0 right-0 lg:left-0 lg:right-auto lg:w-[400px]' : 'left-0 right-0'
       )}
     >
@@ -123,6 +125,40 @@ export function HeaderSearchResultsList({
               </div>
             </div>
           )}
+
+          {landmarkOptions.length > 0 && (
+            <div className="space-y-1">
+              <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-foreground-muted flex items-center gap-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-primary" />
+                <span>{tSearch('landmarksTitle')}</span>
+              </p>
+              <div className="space-y-1">
+                {landmarkOptions.map((opt) => (
+                  <button
+                    key={opt.id}
+                    id={opt.id}
+                    role="option"
+                    type="button"
+                    aria-selected={activeId === opt.id}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => onSelect(opt)}
+                    className={cn(
+                      'w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl text-left text-xs transition-colors cursor-pointer',
+                      activeId === opt.id
+                        ? 'bg-primary-50 dark:bg-primary-950/60 text-primary font-medium'
+                        : 'hover:bg-surface-muted text-foreground'
+                    )}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <GraduationCap className="w-3.5 h-3.5 text-primary shrink-0" />
+                      <span className="truncate">{opt.name}</span>
+                    </div>
+                    <span className="text-[10px] text-foreground-muted shrink-0">{opt.subtitle}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ) : error ? (
         <div role="alert" className="p-3 rounded-xl bg-danger-surface border border-danger-border space-y-2">
@@ -142,6 +178,38 @@ export function HeaderSearchResultsList({
         </div>
       ) : (
         <div className="space-y-1 p-1">
+          {landmarkOptions.length > 0 && (
+            <div className="space-y-1 pb-1 mb-1 border-b border-border/60">
+              <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                <GraduationCap className="w-3.5 h-3.5" />
+                <span>{tSearch('landmarksTitle')}</span>
+              </p>
+              {landmarkOptions.map((opt) => (
+                <button
+                  key={opt.id}
+                  id={opt.id}
+                  role="option"
+                  type="button"
+                  aria-selected={activeId === opt.id}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => onSelect(opt)}
+                  className={cn(
+                    'w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-left text-xs transition-colors cursor-pointer',
+                    activeId === opt.id
+                      ? 'bg-primary-50 dark:bg-primary-950/60 text-primary font-medium'
+                      : 'hover:bg-surface-muted'
+                  )}
+                >
+                  <div className="flex items-center gap-2 truncate">
+                    <GraduationCap className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span className="font-semibold text-foreground truncate">{opt.name}</span>
+                  </div>
+                  <span className="text-[11px] text-foreground-muted shrink-0">{opt.subtitle}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           <p className="px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-foreground-muted">
             {tSearch('liveSuggestions')}
           </p>
