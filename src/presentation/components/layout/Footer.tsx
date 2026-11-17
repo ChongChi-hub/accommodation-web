@@ -43,6 +43,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/blog" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
+                  {tNav('blog')}
+                </Link>
+              </li>
+              <li>
                 <Link href="/safety-guide" className="hover:text-teal-700 dark:hover:text-teal-400 transition">
                   {t('safetyGuide')}
                 </Link>

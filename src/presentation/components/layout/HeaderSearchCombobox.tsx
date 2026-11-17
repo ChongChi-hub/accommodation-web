@@ -6,6 +6,7 @@ import { usePathname, useRouter } from '@/i18n/routing';
 import { Search, X } from 'lucide-react';
 import { useSearchSuggestions } from '@/presentation/hooks/useSearchSuggestions';
 import { HeaderSearchResultsList, SearchOption } from './HeaderSearchResultsList';
+import { findMatchingLandmarks } from '@/shared/landmarks';
 import { cn } from '@/lib/cn';
 
 interface HeaderSearchComboboxProps {
@@ -52,8 +53,17 @@ export function HeaderSearchCombobox({
 
   const options = useMemo<SearchOption[]>(() => {
     if (!isLiveMode) {
+      const topLandmarks = findMatchingLandmarks('', undefined, 3);
       return [
         ...recentSearches.map((q, idx) => ({ id: `${baseId}-rec-${idx}`, kind: 'recent' as const, query: q })),
+        ...topLandmarks.map((lm) => ({
+          id: `${baseId}-lm-${lm.id}`,
+          kind: 'landmark' as const,
+          name: lm.name,
+          query: lm.searchQuery,
+          subtitle: lm.shortName,
+          category: lm.category,
+        })),
         ...popularAreas.map((a) => ({
           id: `${baseId}-area-${a.code}`,
           kind: 'area' as const,
@@ -62,15 +72,26 @@ export function HeaderSearchCombobox({
         })),
       ];
     }
-    const items: SearchOption[] = rooms.map((r) => ({
-      id: `${baseId}-room-${r.id}`,
-      kind: 'room' as const,
-      href: r.slug ? `/rooms/${r.slug}` : `/rooms/${r.id}`,
-      title: r.title,
-      price: r.price,
-      subtitle: r.provinceName || r.address || '',
-      image: r.primaryImageUrl,
-    }));
+    const matchingLandmarks = findMatchingLandmarks(trimmed, undefined, 2);
+    const items: SearchOption[] = [
+      ...matchingLandmarks.map((lm) => ({
+        id: `${baseId}-lm-${lm.id}`,
+        kind: 'landmark' as const,
+        name: lm.name,
+        query: lm.searchQuery,
+        subtitle: lm.areaDescription,
+        category: lm.category,
+      })),
+      ...rooms.map((r) => ({
+        id: `${baseId}-room-${r.id}`,
+        kind: 'room' as const,
+        href: r.slug ? `/rooms/${r.slug}` : `/rooms/${r.id}`,
+        title: r.title,
+        price: r.price,
+        subtitle: r.provinceName || r.address || '',
+        image: r.primaryImageUrl,
+      })),
+    ];
     items.push({ id: `${baseId}-all`, kind: 'viewAll', query: trimmed });
     return items;
   }, [baseId, isLiveMode, popularAreas, recentSearches, rooms, trimmed]);
@@ -132,7 +153,12 @@ export function HeaderSearchCombobox({
 
   const selectOption = (opt: SearchOption) => {
     if (opt.kind === 'recent') navigateSearch(opt.query);
-    else if (opt.kind === 'area') {
+    else if (opt.kind === 'landmark') {
+      recordSearch(opt.name);
+      setIsOpen(false);
+      router.push(`/rooms?q=${encodeURIComponent(opt.query)}`);
+      onAfterNavigate?.();
+    } else if (opt.kind === 'area') {
       setIsOpen(false);
       router.push(`/rooms?provinceCode=${encodeURIComponent(opt.code)}`);
       onAfterNavigate?.();
