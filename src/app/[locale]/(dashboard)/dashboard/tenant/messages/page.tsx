@@ -9,6 +9,7 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Skeleton } from '@/presentation/components/ui/Skeleton';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { useChat } from '@/presentation/hooks/useChat';
+import { UserPresenceBadge } from '@/presentation/components/chat/UserPresenceBadge';
 import { Send, MessageSquare, Loader2, Home, Clock, CheckCheck, User } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
@@ -172,10 +173,7 @@ function TenantMessagesContent() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    {tChat('onlineStatus')}
-                  </span>
+                  <UserPresenceBadge userId={other?.userId} />
                 </div>
               </div>
 

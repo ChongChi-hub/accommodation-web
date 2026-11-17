@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { getMessagesRoute } from '@/presentation/utils/user-display';
+import { UserPresenceBadge } from '@/presentation/components/chat/UserPresenceBadge';
 
 export interface FloatingChatWidgetProps {
   defaultOpen?: boolean;
@@ -152,6 +153,9 @@ export function FloatingChatWidget({
             </div>
 
             <div className="flex items-center gap-1 shrink-0">
+              {viewMode === 'chat' && otherParticipant && (
+                <UserPresenceBadge userId={otherParticipant.userId} variant="light" className="mr-1 hidden sm:inline-flex" />
+              )}
               {fullMessagesRoute && (
                 <Link
                   href={fullMessagesRoute}
