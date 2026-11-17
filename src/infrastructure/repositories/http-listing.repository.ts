@@ -8,6 +8,7 @@ import {
   WardDto,
   AmenityDto,
   ReviewDto,
+  CreateReviewPayload,
   HotAreaDto,
   BannerDto,
   PlatformStatsDto,
@@ -116,6 +117,10 @@ export class HttpListingRepository implements IListingRepository {
 
   async getReviews(roomId: number): Promise<ReviewDto[]> {
     return ApiClient.get<ReviewDto[]>(`/reviews?roomId=${roomId}`);
+  }
+
+  async createReview(payload: CreateReviewPayload): Promise<ReviewDto> {
+    return ApiClient.post<ReviewDto>('/reviews', payload);
   }
 
   async getTenantReviews(): Promise<ReviewDto[]> {

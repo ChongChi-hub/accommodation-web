@@ -7,6 +7,7 @@ import {
   WardDto,
   AmenityDto,
   ReviewDto,
+  CreateReviewPayload,
   HotAreaDto,
   BannerDto,
   PlatformStatsDto,
@@ -31,6 +32,7 @@ export interface IListingRepository {
   getWards(code: string, isProvince?: boolean): Promise<WardDto[]>;
   getAmenities(): Promise<AmenityDto[]>;
   getReviews(roomId: number): Promise<ReviewDto[]>;
+  createReview?(payload: CreateReviewPayload): Promise<ReviewDto>;
   getTenantReviews?(): Promise<ReviewDto[]>;
   getLandlordReviews?(): Promise<ReviewDto[]>;
   replyReview?(reviewId: number, reply: string): Promise<ReviewDto>;

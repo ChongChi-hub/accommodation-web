@@ -21,6 +21,16 @@ export interface ReviewDto {
   isVerifiedTenant?: boolean;
 }
 
+export interface CreateReviewPayload {
+  roomId: number;
+  rating: number;
+  comment: string;
+  ratingCleanliness?: number;
+  ratingLocation?: number;
+  ratingPriceQuality?: number;
+  ratingSecurity?: number;
+}
+
 export interface RoomImageDetailDto {
   id: number;
   roomId: number;

@@ -16,8 +16,8 @@ export function RoomLandlordCard({ landlord }: RoomLandlordCardProps) {
   if (!landlord) return null;
 
   const landlordId = landlord.landlordId || landlord.id || 1;
-  const name = landlord.name || 'Trần Thị Chủ Trọ';
-  const responseRate = landlord.responseRatePercent || 99;
+  const name = landlord.name || 'Chủ trọ';
+  const responseRate = landlord.responseRatePercent ?? 100;
   const responseTime = landlord.responseTimeMinutes ? `${landlord.responseTimeMinutes} phút` : '15 phút';
 
   return (
@@ -55,7 +55,7 @@ export function RoomLandlordCard({ landlord }: RoomLandlordCardProps) {
         <div className="p-2 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200/50 dark:border-stone-700/50">
           <span className="text-stone-400 block text-[10px] font-medium">Trust Score</span>
           <span className="font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5">
-            {landlord.trustScore || 85}/100
+            {landlord.trustScore ?? 100}/100
           </span>
         </div>
 
@@ -63,7 +63,7 @@ export function RoomLandlordCard({ landlord }: RoomLandlordCardProps) {
           <span className="text-stone-400 block text-[10px] font-medium">{tAuto('k0605')}</span>
           <span className="font-bold text-stone-900 dark:text-stone-100 flex items-center justify-center gap-1 mt-0.5">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            {(landlord.ratingAvg || 5.0).toFixed(1)}
+            {(landlord.ratingAvg ?? 5.0).toFixed(1)}
           </span>
         </div>
 

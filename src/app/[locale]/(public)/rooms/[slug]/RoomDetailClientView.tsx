@@ -159,6 +159,7 @@ export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
 
             {/* 3.7. Tenant Reviews */}
             <RoomReviews
+              roomId={room.id}
               ratingAvg={room.ratingAvg}
               reviewCount={room.reviewCount}
               ratingCleanliness={room.ratingCleanliness}
@@ -166,6 +167,7 @@ export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
               ratingPriceQuality={room.ratingPriceQuality}
               ratingSecurity={room.ratingSecurity}
               reviews={reviews}
+              onReviewSubmitted={retry}
             />
 
             {/* 3.8. Similar Rooms Recommendations */}
