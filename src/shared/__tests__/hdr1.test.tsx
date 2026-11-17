@@ -128,10 +128,9 @@ describe('[HDR-1] Navigation, Routing, Display & UserMenu Tests', () => {
     expect(resolveHome(makeUser({ roles: ['MODERATOR'] }))).toBe('/dashboard/moderator');
     expect(resolveHome(makeUser({ roles: ['ADMIN'] }))).toBe('/dashboard/admin');
 
-    const dualUser = makeUser({ roles: ['TENANT', 'LANDLORD'] });
-    expect(resolveHome(dualUser)).toBe('/dashboard/landlord');
-    expect(resolveHome(dualUser, 'TENANT')).toBe('/dashboard/tenant');
-    expect(resolveHome(dualUser, 'LANDLORD')).toBe('/dashboard/landlord');
+    // Strict single role policy: deterministic routing
+    expect(resolveHome(makeUser({ roles: ['LANDLORD'] }))).toBe('/dashboard/landlord');
+    expect(resolveHome(makeUser({ roles: ['TENANT'] }))).toBe('/dashboard/tenant');
 
     // Pure tenant cannot escalate via preferredRole cookie
     expect(getEffectiveRole(makeUser({ roles: ['TENANT'] }), 'ADMIN')).toBe('TENANT');
@@ -235,16 +234,15 @@ describe('[HDR-1] Navigation, Routing, Display & UserMenu Tests', () => {
     expect(screen.queryByTestId('user-menu-switch-role')).not.toBeInTheDocument();
     cleanup();
 
-    // Dual-role LANDLORD+TENANT -> shows switch button & never mutates user.roles
-    const dualUser = makeUser({ roles: ['TENANT', 'LANDLORD'] });
-    useAuthStore.setState({ user: dualUser, activeRole: 'LANDLORD', isAuthenticated: true, hasHydrated: true });
-    expect(useAuthStore.getState().switchRole('TENANT')).toBe(true);
-    expect(useAuthStore.getState().activeRole).toBe('TENANT');
-    expect(useAuthStore.getState().user?.roles).toEqual(['TENANT', 'LANDLORD']);
+    // Single role policy: dual-role switch is strictly disabled
+    const landlordUser = makeUser({ roles: ['LANDLORD'] });
+    useAuthStore.setState({ user: landlordUser, activeRole: 'LANDLORD', isAuthenticated: true, hasHydrated: true });
+    expect(useAuthStore.getState().switchRole('TENANT')).toBe(false);
+    expect(useAuthStore.getState().activeRole).toBe('LANDLORD');
 
     render(
       <UserMenuPanel
-        user={dualUser}
+        user={landlordUser}
         effectiveRole="LANDLORD"
         unreadNotifications={0}
         unreadMessages={0}
@@ -253,8 +251,7 @@ describe('[HDR-1] Navigation, Routing, Display & UserMenu Tests', () => {
         onLogout={vi.fn()}
       />
     );
-    fireEvent.click(screen.getByTestId('user-menu-switch-role'));
-    expect(onSwitch).toHaveBeenCalledWith('TENANT');
+    expect(screen.queryByTestId('user-menu-switch-role')).not.toBeInTheDocument();
     cleanup();
 
     // MODERATOR & ADMIN -> <= 5 role actions and NO messages link

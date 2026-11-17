@@ -7,15 +7,8 @@ function resolveCookieRole(user: User | undefined | null): string {
   const roles = user?.roles || [];
   if (roles.includes('ADMIN')) return 'ADMIN';
   if (roles.includes('MODERATOR')) return 'MODERATOR';
-  if (typeof document !== 'undefined') {
-    const match = document.cookie.match(/(?:^|;\s*)cozynest_role=([^;]+)/);
-    const preferred = match ? decodeURIComponent(match[1]) : '';
-    if (preferred && roles.includes(preferred as any)) {
-      return preferred;
-    }
-  }
   if (roles.includes('LANDLORD')) return 'LANDLORD';
-  return roles[0] || 'TENANT';
+  return 'TENANT';
 }
 
 function setUiRoleCookie(role?: string) {
