@@ -54,6 +54,12 @@ export function NotificationBell({
 
   useEffect(() => {
     void loadNotifications();
+    const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && !document.hidden) {
+        void loadNotifications();
+      }
+    }, 15000);
+    return () => clearInterval(interval);
   }, [loadNotifications]);
 
   useEffect(() => {

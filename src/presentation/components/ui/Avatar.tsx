@@ -26,11 +26,12 @@ export function Avatar({ src, name, size = 'md', className }: AvatarProps) {
   };
 
   const getInitials = (n: string) => {
-    const parts = n.trim().split(' ');
+    const cleanName = n.replace(/[\(\)\[\]\{\}\-_\.,]/g, ' ').trim();
+    const parts = cleanName.split(/\s+/).filter(Boolean);
     if (parts.length >= 2) {
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
-    return n.slice(0, 2).toUpperCase();
+    return (parts[0] || 'U').slice(0, 2).toUpperCase();
   };
 
   return (

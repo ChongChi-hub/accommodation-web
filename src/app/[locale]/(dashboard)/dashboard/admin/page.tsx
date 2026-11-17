@@ -17,7 +17,7 @@ import { AlertTriangle, ArrowRight, CheckCircle2, ShieldCheck, Activity } from '
 function AdminOverviewContent() {
   const t = useTranslations('admin.overview');
   const { user } = useAuthStore();
-  const { stats, isLoading, error, retry, isEmpty } = useAdminOverview();
+  const { stats, reports, isLoading, error, retry, isEmpty } = useAdminOverview();
 
   if (isLoading) {
     return (
@@ -93,19 +93,19 @@ function AdminOverviewContent() {
         <ChartCard
           title={t('totalUsersTitle')}
           value={new Intl.NumberFormat('vi-VN').format(stats.totalUsers)}
-          change="+15.2%"
+          change=""
           isPositive={true}
           description={t('totalUsersDesc')}
-          dataPoints={[800, 950, 1100, 1220, 1310, 1380, stats.totalUsers]}
+          dataPoints={[stats.totalUsers]}
         />
 
         <ChartCard
           title={t('activeRoomsTitle')}
           value={new Intl.NumberFormat('vi-VN').format(stats.activeRooms)}
-          change="+8.4%"
+          change=""
           isPositive={true}
           description={t('activeRoomsDesc')}
-          dataPoints={[320, 410, 490, 560, 610, 650, stats.activeRooms]}
+          dataPoints={[stats.activeRooms]}
         />
 
         <Card className="p-5 flex flex-col justify-between">
@@ -117,9 +117,11 @@ function AdminOverviewContent() {
               <span className="text-2xl font-bold tracking-tight text-foreground">
                 {stats.pendingApprovals}
               </span>
-              <Badge variant="warning" size="sm">
-                {t('handleReport')}
-              </Badge>
+              {stats.pendingApprovals > 0 && (
+                <Badge variant="warning" size="sm">
+                  {t('handleReport')}
+                </Badge>
+              )}
             </div>
             <p className="text-[11px] text-foreground-muted mt-1">{t('pendingRoomsDesc')}</p>
           </div>
@@ -141,12 +143,14 @@ function AdminOverviewContent() {
             </p>
             <div className="flex items-baseline gap-2 mt-1.5">
               <span className="text-2xl font-bold tracking-tight text-foreground">
-                5
+                {stats.pendingKyc ?? 0}
               </span>
-              <Badge variant="warning" size="sm">
-                <ShieldCheck className="w-3 h-3 mr-1" />
-                <span>{t('ekycBadge')}</span>
-              </Badge>
+              {(stats.pendingKyc ?? 0) > 0 && (
+                <Badge variant="warning" size="sm">
+                  <ShieldCheck className="w-3 h-3 mr-1" />
+                  <span>{t('ekycBadge')}</span>
+                </Badge>
+              )}
             </div>
             <p className="text-[11px] text-foreground-muted mt-1">{t('pendingKycDesc')}</p>
           </div>
@@ -173,17 +177,24 @@ function AdminOverviewContent() {
               {t('recentReportsTitle')}
             </h2>
           </div>
-          <div className="p-4 bg-surface-muted rounded-xl flex items-center justify-between border border-border">
-            <div className="space-y-0.5">
-              <p className="text-xs font-semibold text-foreground">{t('recentReportsDesc')}</p>
-              <p className="text-[11px] text-foreground-muted">{t('recentReportsReporter')}</p>
+          {reports && reports.length > 0 ? (
+            <div className="p-4 bg-surface-muted rounded-xl flex items-center justify-between border border-border">
+              <div className="space-y-0.5">
+                <p className="text-xs font-semibold text-foreground">{reports[0].reason || reports[0].targetTitle}</p>
+                <p className="text-[11px] text-foreground-muted">{reports[0].reporterName || 'Người dùng'} • {reports[0].createdAt || 'Gần đây'}</p>
+              </div>
+              <Link href="/dashboard/admin/reports">
+                <Button variant="outline" size="sm">
+                  {t('handleReport')}
+                </Button>
+              </Link>
             </div>
-            <Link href="/dashboard/admin/reports">
-              <Button variant="outline" size="sm">
-                {t('handleReport')}
-              </Button>
-            </Link>
-          </div>
+          ) : (
+            <div className="p-6 bg-surface-muted/40 rounded-xl text-center border border-dashed border-border/80">
+              <p className="text-xs font-medium text-foreground-muted">Không có báo cáo vi phạm nào gần đây</p>
+              <p className="text-[11px] text-foreground-muted/70 mt-0.5">Hệ thống đang hoạt động an toàn và ổn định.</p>
+            </div>
+          )}
         </Card>
 
         <Card className="p-6 space-y-4">
