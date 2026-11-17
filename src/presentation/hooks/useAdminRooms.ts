@@ -73,16 +73,21 @@ export function useAdminRooms() {
 
   const handleApprove = useCallback(
     async (id: number) => {
-      await container.admin.adminRepository.approveRoom(id);
-      setRooms((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, status: 'APPROVED' as const } : r))
-      );
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+      try {
+        await container.admin.adminRepository.approveRoom(id);
+        setRooms((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, status: 'APPROVED' as const } : r))
+        );
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+        }
+        toast.success(t('toastApproved', { id }));
+      } catch (err: any) {
+        toast.error(err?.message || 'Không thể phê duyệt tin đăng phòng này.');
+        fetchRooms(true);
       }
-      toast.success(t('toastApproved', { id }));
     },
-    [t]
+    [t, fetchRooms]
   );
 
   const handleOpenReject = (id: number) => {
@@ -97,16 +102,22 @@ export function useAdminRooms() {
       toast.error(t('rejectReasonRequired'));
       return;
     }
-    await container.admin.adminRepository.rejectRoom(selectedRoomId, rejectReason);
-    setRooms((prev) =>
-      prev.map((r) => (r.id === selectedRoomId ? { ...r, status: 'REJECTED' as const } : r))
-    );
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+    try {
+      await container.admin.adminRepository.rejectRoom(selectedRoomId, rejectReason);
+      setRooms((prev) =>
+        prev.map((r) => (r.id === selectedRoomId ? { ...r, status: 'REJECTED' as const } : r))
+      );
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+      }
+      setRejectModalOpen(false);
+      toast.info(t('toastRejected', { id: selectedRoomId }));
+    } catch (err: any) {
+      toast.error(err?.message || 'Không thể từ chối tin đăng phòng này.');
+      setRejectModalOpen(false);
+      fetchRooms(true);
     }
-    setRejectModalOpen(false);
-    toast.info(t('toastRejected', { id: selectedRoomId }));
-  }, [selectedRoomId, rejectReason, t]);
+  }, [selectedRoomId, rejectReason, t, fetchRooms]);
 
   const filteredRooms = useMemo(() => {
     return rooms.filter((r) => {
