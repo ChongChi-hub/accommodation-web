@@ -6,7 +6,7 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { toast } from '@/presentation/stores/toast.store';
 import { useTwoFactorAuth } from '@/presentation/hooks/useTwoFactorAuth';
-import { ShieldCheck, ShieldAlert, Key, Copy, Check, QrCode } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, Key, Copy, Check } from 'lucide-react';
 
 export function TwoFactorSecurityCard() {
   const { isEnabled, isLoading, setupMutation, verifyMutation, disableMutation } = useTwoFactorAuth();
@@ -24,39 +24,39 @@ export function TwoFactorSecurityCard() {
       setIsSettingUp(true);
       setVerifyCode('');
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Khong the khoi tao 2FA');
+      toast.error(err instanceof Error ? err.message : 'Không thể khởi tạo 2FA');
     }
   };
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!verifyCode.trim()) {
-      toast.error('Vui long nhap ma xac thuc 6 chu so');
+      toast.error('Vui lòng nhập mã xác thực 6 chữ số');
       return;
     }
     try {
       await verifyMutation.mutateAsync(verifyCode.trim());
-      toast.success('Kich hoat xac thuc 2 lop thanh cong');
+      toast.success('Kích hoạt xác thực 2 lớp thành công');
       setIsSettingUp(false);
       setVerifyCode('');
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Ma xac thuc khong chinh xac');
+      toast.error(err instanceof Error ? err.message : 'Mã xác thực không chính xác');
     }
   };
 
   const handleDisable = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!disableCode.trim()) {
-      toast.error('Vui long nhap ma TOTP hoac ma du phong');
+      toast.error('Vui lòng nhập mã TOTP hoặc mã dự phòng');
       return;
     }
     try {
       await disableMutation.mutateAsync(disableCode.trim());
-      toast.success('Da vo hieu hoa bao mat 2 lop');
+      toast.success('Đã vô hiệu hóa bảo mật 2 lớp');
       setIsDisabling(false);
       setDisableCode('');
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Ma xac thuc khong hop le');
+      toast.error(err instanceof Error ? err.message : 'Mã xác thực không hợp lệ');
     }
   };
 
@@ -69,7 +69,7 @@ export function TwoFactorSecurityCard() {
       setCopiedCodes(true);
       setTimeout(() => setCopiedCodes(false), 2000);
     }
-    toast.success('Da sao chep vao bo nho tam');
+    toast.success('Đã sao chép vào bộ nhớ tạm');
   };
 
   const setupData = setupMutation.data;
@@ -82,16 +82,16 @@ export function TwoFactorSecurityCard() {
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground text-base">Xac thuc hai lop (2FA TOTP)</h3>
+            <h3 className="font-semibold text-foreground text-base">Xác thực hai lớp (2FA TOTP)</h3>
             <p className="text-xs text-foreground-muted mt-0.5">
-              Bao ve tai khoan bang Google Authenticator hoac ung dung TOTP tuong thich.
+              Bảo vệ tài khoản bằng Google Authenticator hoặc ứng dụng TOTP tương thích.
             </p>
           </div>
         </div>
         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${
           isEnabled ? 'bg-success/15 text-success' : 'bg-foreground-muted/15 text-foreground-muted'
         }`}>
-          {isEnabled ? 'Dang bat' : 'Chua kich hoat'}
+          {isEnabled ? 'Đang bật' : 'Chưa kích hoạt'}
         </span>
       </div>
 
@@ -102,96 +102,88 @@ export function TwoFactorSecurityCard() {
           </div>
           <Button onClick={handleStartSetup} isLoading={setupMutation.isPending || isLoading}>
             <Key className="w-4 h-4 mr-2" />
-            Thiet lap bao mat 2 lop
+            Bật bảo mật 2 lớp
           </Button>
         </div>
       )}
 
       {!isEnabled && isSettingUp && setupData && (
         <div className="space-y-5 border-t border-border pt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-background-subtle rounded-xl border border-border flex flex-col items-center justify-center text-center">
-              <p className="text-xs font-medium text-foreground mb-3 flex items-center gap-1.5">
-                <QrCode className="w-4 h-4" />
-                1. Quet ma QR bang Google Authenticator
+          <div className="space-y-4 max-w-xl">
+            <div className="p-3.5 rounded-lg bg-background-subtle border border-border space-y-2">
+              <p className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                <Key className="w-4 h-4 text-primary" />
+                1. Khóa bí mật Google Authenticator (Base32)
               </p>
-              <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(setupData.qrUri)}`}
-                alt="2FA QR Code"
-                className="w-44 h-44 rounded-lg bg-white p-2 border border-border"
-              />
+              <p className="text-xs text-foreground-muted">
+                Thêm khóa bí mật vào Google Authenticator (chọn <strong>Nhập khóa thiết lập</strong> / <strong>Enter a setup key</strong>):
+              </p>
+              <div className="flex items-center gap-2">
+                <code className="text-sm font-mono font-semibold bg-background px-3 py-2 rounded-lg border border-border flex-1 select-all break-all tracking-wider text-primary">
+                  {setupData.secret}
+                </code>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => copyToClipboard(setupData.secret, 'secret')}
+                >
+                  {copiedSecret ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <p className="text-xs font-medium text-foreground mb-1.5">2. Ma bi mat (Base32)</p>
-                <div className="flex items-center gap-2">
-                  <code className="text-xs font-mono bg-background px-2.5 py-1.5 rounded border border-border flex-1 select-all break-all">
-                    {setupData.secret}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="text-xs font-medium text-foreground">2. Mã khôi phục dự phòng (8 mã)</p>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(setupData.backupCodes.join('\n'), 'codes')}
+                  className="text-xs text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  {copiedCodes ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
+                  Sao chép tất cả
+                </button>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 bg-background rounded-lg border border-border">
+                {setupData.backupCodes.map((code, idx) => (
+                  <code key={idx} className="text-xs font-mono text-foreground-muted select-all text-center py-1 bg-background-subtle rounded border border-border/50">
+                    {code}
                   </code>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyToClipboard(setupData.secret, 'secret')}
-                  >
-                    {copiedSecret ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  </Button>
-                </div>
+                ))}
               </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <p className="text-xs font-medium text-foreground">3. Ma khoi phuc du phong (8 ma)</p>
-                  <button
-                    type="button"
-                    onClick={() => copyToClipboard(setupData.backupCodes.join('\n'), 'codes')}
-                    className="text-xs text-primary hover:underline inline-flex items-center gap-1"
-                  >
-                    {copiedCodes ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                    Sao chep tat ca
-                  </button>
-                </div>
-                <div className="grid grid-cols-2 gap-1.5 p-2 bg-background rounded border border-border">
-                  {setupData.backupCodes.map((code, idx) => (
-                    <code key={idx} className="text-xs font-mono text-foreground-muted select-all">
-                      {code}
-                    </code>
-                  ))}
-                </div>
-                <p className="text-[11px] text-warning mt-1">Luu lai cac ma tren o noi an toan de dung khi mat thiet bi.</p>
-              </div>
+              <p className="text-[11px] text-warning mt-1.5">Lưu lại các mã trên ở nơi an toàn để dùng khi mất thiết bị.</p>
             </div>
+
+            <form onSubmit={handleVerify} className="space-y-3 pt-2">
+              <Input
+                label="3. Nhập mã xác thực 6 chữ số để hoàn tất"
+                placeholder="VD: 123456"
+                maxLength={6}
+                value={verifyCode}
+                onChange={(e) => setVerifyCode(e.target.value.replace(/[^0-9]/g, ''))}
+                required
+              />
+              <div className="flex items-center gap-2">
+                <Button type="submit" isLoading={verifyMutation.isPending}>
+                  Xác nhận &amp; Kích hoạt
+                </Button>
+                <Button type="button" variant="outline" onClick={() => setIsSettingUp(false)}>
+                  Hủy
+                </Button>
+              </div>
+            </form>
           </div>
-
-          <form onSubmit={handleVerify} className="space-y-3 max-w-sm">
-            <Input
-              label="4. Nhap ma xac thuc 6 chu so de hoan tat"
-              placeholder="VD: 123456"
-              maxLength={6}
-              value={verifyCode}
-              onChange={(e) => setVerifyCode(e.target.value.replace(/[^0-9]/g, ''))}
-              required
-            />
-            <div className="flex items-center gap-2">
-              <Button type="submit" isLoading={verifyMutation.isPending}>
-                Xac nhan &amp; Kich hoat
-              </Button>
-              <Button type="button" variant="outline" onClick={() => setIsSettingUp(false)}>
-                Huy
-              </Button>
-            </div>
-          </form>
         </div>
       )}
 
       {isEnabled && !isDisabling && (
         <div className="space-y-4">
           <p className="text-xs text-foreground-muted">
-            Tai khoan cua ban da duoc bao ve boi ma TOTP. Ma xac thuc se duoc yeu cau khi dang nhap hoac thuc hien cac giao dich quan trong.
+            Tài khoản của bạn đã được bảo vệ bởi mã TOTP. Mã xác thực sẽ được yêu cầu khi đăng nhập hoặc thực hiện các giao dịch quan trọng.
           </p>
           <Button variant="outline" onClick={() => setIsDisabling(true)}>
-            Vo hieu hoa 2FA
+            Vô hiệu hóa 2FA
           </Button>
         </div>
       )}
@@ -200,11 +192,11 @@ export function TwoFactorSecurityCard() {
         <form onSubmit={handleDisable} className="space-y-3 max-w-sm border-t border-border pt-4">
           <div className="flex items-center gap-2 text-warning text-xs mb-1">
             <ShieldAlert className="w-4 h-4 shrink-0" />
-            <span>Nhap ma TOTP hien tai hoac ma du phong de xac nhan tat 2FA</span>
+            <span>Nhập mã TOTP hiện tại hoặc mã dự phòng để xác nhận tắt 2FA</span>
           </div>
           <Input
-            label="Ma xac thuc TOTP / Du phong"
-            placeholder="6 hoac 8 chu so"
+            label="Mã xác thực TOTP / Dự phòng"
+            placeholder="6 hoặc 8 chữ số"
             maxLength={8}
             value={disableCode}
             onChange={(e) => setDisableCode(e.target.value.replace(/[^0-9]/g, ''))}
@@ -212,10 +204,10 @@ export function TwoFactorSecurityCard() {
           />
           <div className="flex items-center gap-2">
             <Button type="submit" variant="danger" isLoading={disableMutation.isPending}>
-              Xac nhan tat
+              Xác nhận tắt
             </Button>
             <Button type="button" variant="outline" onClick={() => setIsDisabling(false)}>
-              Huy
+              Hủy
             </Button>
           </div>
         </form>
