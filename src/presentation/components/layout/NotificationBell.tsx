@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/i18n/routing';
-import { AlertCircle, Bell, CheckCheck, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, Bell, CheckCheck, CheckCircle2, Trash2 } from 'lucide-react';
 import { Notification } from '@/domain/entities/Notification';
 import { UserRole } from '@/domain/entities/User';
 import { container } from '@/infrastructure/di/container';
@@ -54,12 +54,23 @@ export function NotificationBell({
 
   useEffect(() => {
     void loadNotifications();
+    const handleBadgeRefresh = () => {
+      void loadNotifications();
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('cozynest:refresh-badges', handleBadgeRefresh);
+    }
     const interval = setInterval(() => {
       if (typeof document !== 'undefined' && !document.hidden) {
         void loadNotifications();
       }
     }, 15000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('cozynest:refresh-badges', handleBadgeRefresh);
+      }
+    };
   }, [loadNotifications]);
 
   useEffect(() => {
@@ -92,8 +103,29 @@ export function NotificationBell({
       setItems((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
       toast.success(tNotif('markAllSuccess'));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+      }
     } catch {
       toast.error(tNotif('errorTitle'));
+    }
+  };
+
+  const handleDeleteItem = async (notif: Notification, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setItems((prev) => prev.filter((n) => n.id !== notif.id));
+    if (!notif.isRead) {
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    }
+    try {
+      await container.notification.notificationRepository.deleteNotification?.(notif.id);
+      toast.success(tNotif('deleteSuccess'));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+      }
+    } catch {
+      toast.error(tNotif('errorTitle'));
+      void loadNotifications();
     }
   };
 
@@ -103,6 +135,9 @@ export function NotificationBell({
       setUnreadCount((prev) => Math.max(0, prev - 1));
       try {
         await container.notification.notificationRepository.markAsRead(notif.id);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+        }
       } catch {
         // Non-blocking
       }
@@ -190,12 +225,19 @@ export function NotificationBell({
               </div>
             ) : (
               items.map((n) => (
-                <button
+                <div
                   key={n.id}
-                  type="button"
                   onClick={() => handleItemClick(n)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      void handleItemClick(n);
+                    }
+                  }}
                   className={cn(
-                    'w-full text-left py-2.5 px-2 flex items-start gap-2.5 rounded-xl transition-colors cursor-pointer',
+                    'group w-full text-left py-2.5 px-2 flex items-start gap-2.5 rounded-xl transition-colors cursor-pointer',
                     n.isRead
                       ? 'hover:bg-surface-muted/60 opacity-85'
                       : 'bg-primary-50/60 dark:bg-primary-950/30 hover:bg-primary-50 dark:hover:bg-primary-950/50'
@@ -211,7 +253,16 @@ export function NotificationBell({
                     <p className="text-xs font-semibold text-foreground truncate">{n.title}</p>
                     <p className="text-[11px] text-foreground-muted line-clamp-2 mt-0.5">{n.message}</p>
                   </div>
-                </button>
+                  <button
+                    type="button"
+                    title={tNotif('btnDelete')}
+                    aria-label={tNotif('btnDelete')}
+                    onClick={(e) => void handleDeleteItem(n, e)}
+                    className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-foreground-muted hover:text-danger hover:bg-danger/10 transition-all cursor-pointer shrink-0"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               ))
             )}
           </div>
