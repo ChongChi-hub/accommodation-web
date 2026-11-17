@@ -45,8 +45,12 @@ export class StaticBadgeRepository implements BadgeRepository {
             this.adminRepo.getPendingRooms().catch(() => []),
             this.adminRepo.getReports().catch(() => []),
           ]);
-          adminPendingRooms = (rooms || []).filter((r: any) => r.status === 'PENDING').length;
-          adminPendingReports = (reports || []).filter((rp: any) => rp.status === 'PENDING').length;
+          adminPendingRooms = (rooms || []).filter(
+            (r: any) => (r.status === 'PENDING' || r.status === 'PENDING_REVIEW') && r.status !== 'REJECTED'
+          ).length;
+          adminPendingReports = (reports || []).filter(
+            (rp: any) => (rp.status === 'PENDING' || rp.status === 'PENDING_REVIEW') && rp.status !== 'RESOLVED'
+          ).length;
         } catch {
           adminPendingRooms = 0;
           adminPendingReports = 0;

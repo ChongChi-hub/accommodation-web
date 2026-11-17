@@ -249,6 +249,7 @@
       "colPrice": "Listed Rent",
       "colSubmitted": "Submitted",
       "colActions": "Actions",
+      "btnRefresh": "Refresh list",
       "btnApprove": "Approve",
       "btnReject": "Reject",
       "btnPreview": "View Details",

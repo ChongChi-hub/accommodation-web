@@ -249,6 +249,7 @@
       "colPrice": "Giá niêm yết",
       "colSubmitted": "Thời gian gửi",
       "colActions": "Thao tác",
+      "btnRefresh": "Làm mới danh sách",
       "btnApprove": "Duyệt tin",
       "btnReject": "Từ chối",
       "btnPreview": "Xem chi tiết",

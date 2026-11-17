@@ -22,8 +22,14 @@ export function useAdminRooms() {
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
-  const fetchRooms = useCallback(async () => {
-    setIsLoading(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchRooms = useCallback(async (isManualRefresh = false) => {
+    if (isManualRefresh) {
+      setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
     setError(null);
 
     if (stateParam === 'loading') {
@@ -32,11 +38,13 @@ export function useAdminRooms() {
     }
     if (stateParam === 'error') {
       setIsLoading(false);
+      setIsRefreshing(false);
       setError('SIMULATED_ERROR');
       return;
     }
     if (stateParam === 'empty') {
       setIsLoading(false);
+      setIsRefreshing(false);
       setRooms([]);
       return;
     }
@@ -44,15 +52,23 @@ export function useAdminRooms() {
     try {
       const data = await container.admin.adminRepository.getPendingRooms();
       setRooms(data);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
   }, [stateParam]);
 
   useEffect(() => {
     fetchRooms();
+  }, [fetchRooms]);
+
+  const handleRefresh = useCallback(async () => {
+    await fetchRooms(true);
   }, [fetchRooms]);
 
   const handleApprove = useCallback(
@@ -61,6 +77,9 @@ export function useAdminRooms() {
       setRooms((prev) =>
         prev.map((r) => (r.id === id ? { ...r, status: 'APPROVED' as const } : r))
       );
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+      }
       toast.success(t('toastApproved', { id }));
     },
     [t]
@@ -82,6 +101,9 @@ export function useAdminRooms() {
     setRooms((prev) =>
       prev.map((r) => (r.id === selectedRoomId ? { ...r, status: 'REJECTED' as const } : r))
     );
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+    }
     setRejectModalOpen(false);
     toast.info(t('toastRejected', { id: selectedRoomId }));
   }, [selectedRoomId, rejectReason, t]);
@@ -105,7 +127,9 @@ export function useAdminRooms() {
     activeTab,
     setActiveTab,
     isLoading,
+    isRefreshing,
     error,
+    refresh: handleRefresh,
     retry: fetchRooms,
     handleApprove,
     handleOpenReject,
