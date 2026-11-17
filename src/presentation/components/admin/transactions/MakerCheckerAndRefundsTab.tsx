@@ -8,31 +8,37 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { Select } from '@/presentation/components/ui/Select';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
-import { RefundItem } from '@/domain/entities/Billing';
+import { PayoutItem, RefundItem } from '@/domain/entities/Billing';
 import { formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
-import { CheckCircle2, PlusCircle, XCircle } from 'lucide-react';
+import { CheckCircle2, Landmark, PlusCircle, ShieldAlert, XCircle } from 'lucide-react';
 import { AccountItem, AdjustmentRequest } from './types';
 
 interface MakerCheckerAndRefundsTabProps {
   accounts: AccountItem[];
   requests: AdjustmentRequest[];
   refunds: RefundItem[];
+  payouts?: PayoutItem[];
   currentUserId?: string;
   onCreateAdjustment: (payload: { accountNumber: string; direction: 'CREDIT' | 'DEBIT'; amount: number; reason: string }) => Promise<void>;
   onApprove: (req: AdjustmentRequest) => Promise<void>;
   onReject: (req: AdjustmentRequest) => Promise<void>;
   onApproveRefund: (refundId: string) => Promise<void>;
+  onApprovePayout?: (payoutId: string) => Promise<void>;
+  onRejectPayout?: (payoutId: string, reason?: string) => Promise<void>;
 }
 
 export function MakerCheckerAndRefundsTab({
   accounts,
   requests,
   refunds,
+  payouts = [],
   currentUserId,
   onCreateAdjustment,
   onApprove,
   onReject,
   onApproveRefund,
+  onApprovePayout,
+  onRejectPayout,
 }: MakerCheckerAndRefundsTabProps) {
   const tl = useTranslations('sprint3.ledger');
   const tc = useTranslations('sprint3.common');
@@ -145,6 +151,99 @@ export function MakerCheckerAndRefundsTab({
                 </TableCell>
               </TableRow>
             ))}
+          </TableBody>
+        </Table>
+      </Card>
+
+      {/* Landlord Payout Approvals (Maker-Checker Queue) */}
+      <Card className="p-0 overflow-hidden">
+        <div className="px-5 py-3 border-b border-stone-100 dark:border-stone-800 text-xs font-bold text-stone-900 dark:text-stone-100 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Landmark className="w-4 h-4 text-teal-600" />
+            <span>Duyệt Yêu cầu Rút tiền Chủ trọ ({payouts.length})</span>
+          </div>
+          <span className="text-[11px] text-stone-500 font-normal">Hạn mức phê duyệt kép Maker-Checker: &gt; 10,000,000 VND</span>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Mã rút tiền</TableHead>
+              <TableHead>Chủ trọ</TableHead>
+              <TableHead>Ngân hàng &amp; STK</TableHead>
+              <TableHead>{td('amount')}</TableHead>
+              <TableHead>Cấp duyệt</TableHead>
+              <TableHead>{tc('statusCol')}</TableHead>
+              <TableHead>{tc('dateCol')}</TableHead>
+              <TableHead className="text-right">{tc('actionCol')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {payouts.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center text-xs py-5 text-stone-500">
+                  Không có yêu cầu rút tiền nào cần xử lý
+                </TableCell>
+              </TableRow>
+            ) : (
+              payouts.map((p) => {
+                const isHighValue = p.amount > 10_000_000;
+                const isPending = p.status === 'PENDING_APPROVAL' || p.status === 'REQUESTED';
+                return (
+                  <TableRow key={p.id}>
+                    <TableCell className="font-mono text-xs font-semibold">{p.payoutCode}</TableCell>
+                    <TableCell className="font-mono text-xs">{p.landlordId || '-'}</TableCell>
+                    <TableCell className="text-xs">
+                      {p.bankCode} - {p.accountNumber} ({p.accountHolder})
+                    </TableCell>
+                    <TableCell className="font-bold text-stone-900 dark:text-stone-100">{formatVnd(p.amount)}</TableCell>
+                    <TableCell>
+                      {isHighValue ? (
+                        <Badge variant="warning" size="sm">Maker-Checker (&gt;10M)</Badge>
+                      ) : (
+                        <Badge variant="info" size="sm">Tự động (&le;10M)</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={p.status === 'COMPLETED' ? 'success' : p.status === 'REJECTED' ? 'danger' : 'warning'}
+                        size="sm"
+                      >
+                        {p.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs text-stone-500">{formatIsoDateTime(p.createdAt)}</TableCell>
+                    <TableCell className="text-right">
+                      {isPending && onApprovePayout && onRejectPayout && (
+                        <div className="flex justify-end gap-1.5">
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
+                            onClick={() => onApprovePayout(p.id)}
+                          >
+                            {tc('approve')}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-rose-600 hover:bg-rose-50"
+                            leftIcon={<XCircle className="w-3.5 h-3.5" />}
+                            onClick={() => {
+                              const reason = window.prompt('Nhập lý do từ chối yêu cầu rút tiền:');
+                              if (reason !== null) {
+                                onRejectPayout(p.id, reason.trim() || undefined);
+                              }
+                            }}
+                          >
+                            {tc('reject')}
+                          </Button>
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
       </Card>

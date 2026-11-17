@@ -115,6 +115,40 @@ export interface PayoutItem {
   accountHolder: string;
   status: string;
   createdAt: string;
+  landlordId?: string;
+  failureReason?: string;
+}
+
+export interface RiskProfile {
+  userId: string;
+  dailyLimit: number;
+  dailyWithdrawnAmount: number;
+  lastWithdrawalDate?: string | null;
+  velocityCount: number;
+  frozen: boolean;
+  freezeReason?: string | null;
+  bankChangedAt?: string | null;
+  blacklisted: boolean;
+  blacklistReason?: string | null;
+  updatedAt: string;
+}
+
+export interface EscrowHold {
+  id: string;
+  contractId: string;
+  tenantId: string;
+  landlordId: string;
+  amount: number;
+  status: 'HELD' | 'DISPUTE_FROZEN' | 'RELEASED' | 'REFUNDED' | string;
+  sandboxMode: boolean;
+  tenantConfirmedMoveIn: boolean;
+  landlordConfirmedMoveIn: boolean;
+  moveInConfirmedAt?: string | null;
+  inspectionEndsAt: string;
+  disputeReason?: string | null;
+  releasedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface RefundItem {

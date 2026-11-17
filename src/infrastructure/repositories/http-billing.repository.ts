@@ -1,6 +1,7 @@
 import {
   AdminFinancialStats,
   CreatePaymentIntentPayload,
+  EscrowHold,
   GenerateInvoicePayload,
   Invoice,
   LandlordFinancialStats,
@@ -8,6 +9,7 @@ import {
   PayoutItem,
   RecordUtilityReadingPayload,
   RefundItem,
+  RiskProfile,
   TenantFinancialStats,
   UtilityReading,
   UtilityReadingAudit,
@@ -112,6 +114,19 @@ export class HttpBillingRepository {
     return Array.isArray(res) ? res : [];
   }
 
+  async getAdminPayouts(): Promise<PayoutItem[]> {
+    const res = await ApiClient.get<PayoutItem[]>('/billing/payouts/admin').catch(() => []);
+    return Array.isArray(res) ? res : [];
+  }
+
+  async approvePayout(id: string): Promise<PayoutItem> {
+    return ApiClient.post<PayoutItem>(`/billing/payouts/${encodeURIComponent(id)}/approve`);
+  }
+
+  async rejectPayout(id: string, reason?: string): Promise<PayoutItem> {
+    return ApiClient.post<PayoutItem>(`/billing/payouts/${encodeURIComponent(id)}/reject`, { reason });
+  }
+
   async requestPayout(payload: {
     amount: number;
     bankCode: string;
@@ -120,6 +135,23 @@ export class HttpBillingRepository {
     otp: string;
   }): Promise<PayoutItem> {
     return ApiClient.post<PayoutItem>('/billing/payouts', payload);
+  }
+
+  async getRiskProfiles(): Promise<RiskProfile[]> {
+    const res = await ApiClient.get<RiskProfile[]>('/billing/risk/profiles').catch(() => []);
+    return Array.isArray(res) ? res : [];
+  }
+
+  async freezeUser(userId: string, reason?: string): Promise<RiskProfile> {
+    return ApiClient.post<RiskProfile>(`/billing/risk/${encodeURIComponent(userId)}/freeze`, { reason });
+  }
+
+  async unfreezeUser(userId: string): Promise<RiskProfile> {
+    return ApiClient.post<RiskProfile>(`/billing/risk/${encodeURIComponent(userId)}/unfreeze`);
+  }
+
+  async blacklistUser(userId: string, reason?: string): Promise<RiskProfile> {
+    return ApiClient.post<RiskProfile>(`/billing/risk/${encodeURIComponent(userId)}/blacklist`, { reason });
   }
 
   async getTenantRefunds(): Promise<RefundItem[]> {
@@ -170,6 +202,33 @@ export class HttpBillingRepository {
 
   async getAdminDashboardStats(): Promise<AdminFinancialStats> {
     return ApiClient.get<AdminFinancialStats>('/billing/dashboard/admin');
+  }
+
+  async getEscrowHold(contractId: string): Promise<EscrowHold | null> {
+    try {
+      const res = await ApiClient.get<EscrowHold | null>(`/billing/escrow/${encodeURIComponent(contractId)}`);
+      return res || null;
+    } catch {
+      return null;
+    }
+  }
+
+  async getTenantEscrows(): Promise<EscrowHold[]> {
+    const res = await ApiClient.get<EscrowHold[]>('/billing/escrow/tenant').catch(() => []);
+    return Array.isArray(res) ? res : [];
+  }
+
+  async getLandlordEscrows(): Promise<EscrowHold[]> {
+    const res = await ApiClient.get<EscrowHold[]>('/billing/escrow/landlord').catch(() => []);
+    return Array.isArray(res) ? res : [];
+  }
+
+  async confirmMoveIn(contractId: string): Promise<EscrowHold> {
+    return ApiClient.post<EscrowHold>(`/billing/escrow/${encodeURIComponent(contractId)}/confirm-move-in`);
+  }
+
+  async freezeEscrow(contractId: string, reason: string): Promise<EscrowHold> {
+    return ApiClient.post<EscrowHold>(`/billing/escrow/${encodeURIComponent(contractId)}/freeze`, { reason });
   }
 
   async exportDashboardCsvBlob(): Promise<Blob> {
