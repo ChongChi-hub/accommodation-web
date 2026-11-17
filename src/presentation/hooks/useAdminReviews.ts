@@ -53,24 +53,25 @@ export function useAdminReviews() {
 
   const toggleVisibility = useCallback(
     async (id: number) => {
-      await container.admin.adminRepository.toggleReviewVisibility(id);
-      setReviews((prev) =>
-        prev.map((r) => {
-          if (r.id === id) {
-            const next = r.status === 'VISIBLE' ? ('HIDDEN' as const) : ('VISIBLE' as const);
-            toast.info(
-              t('toastStatus', {
-                id,
-                status: next === 'VISIBLE' ? t('statusVisible') : t('statusHidden'),
-              })
-            );
-            return { ...r, status: next };
-          }
-          return r;
-        })
-      );
+      const target = reviews.find((r) => r.id === id);
+      const nextStatus = target?.status === 'VISIBLE' ? ('HIDDEN' as const) : ('VISIBLE' as const);
+
+      try {
+        await container.admin.adminRepository.toggleReviewVisibility(id);
+        setReviews((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, status: nextStatus } : r))
+        );
+        toast.info(
+          t('toastStatus', {
+            id,
+            status: nextStatus === 'VISIBLE' ? t('statusVisible') : t('statusHidden'),
+          })
+        );
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Có lỗi xảy ra khi cập nhật trạng thái');
+      }
     },
-    [t]
+    [reviews, t]
   );
 
   const filteredReviews = useMemo(() => {
