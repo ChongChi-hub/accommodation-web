@@ -2,6 +2,7 @@ export interface AdminStats {
   totalUsers: number;
   activeRooms: number;
   pendingApprovals: number;
+  pendingKyc?: number;
   monthlyRevenue: number;
   servicesHealth: {
     gateway: boolean;
