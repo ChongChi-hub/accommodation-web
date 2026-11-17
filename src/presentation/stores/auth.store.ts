@@ -219,12 +219,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   clearError: () => set({ error: null, errorCode: null, errorStatus: null, retryAfterSeconds: null }),
 
-  switchRole: (newRole: 'TENANT' | 'LANDLORD') => {
-    const current = get().user;
-    if (!current || !hasDualRole(current)) return false;
-    writePreferredRoleCookie(newRole);
-    set({ activeRole: newRole });
-    return true;
+  switchRole: (_newRole: 'TENANT' | 'LANDLORD') => {
+    return false;
   },
 
   updateUser: (partial: Partial<User>) => {

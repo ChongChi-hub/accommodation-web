@@ -49,19 +49,15 @@ export function formatShortName(
   };
 }
 
-export function hasDualRole(user: User | null | undefined): boolean {
-  if (!user?.roles) return false;
-  return user.roles.includes('LANDLORD') && user.roles.includes('TENANT');
+export function hasDualRole(_user: User | null | undefined): boolean {
+  return false;
 }
 
 export function getEffectiveRole(
   user: User | null | undefined,
-  activeRole?: UserRole | null
+  _activeRole?: UserRole | null
 ): UserRole | null {
   if (!user?.roles?.length) return null;
-  if (activeRole && user.roles.includes(activeRole)) {
-    return activeRole;
-  }
   if (user.roles.includes('ADMIN')) return 'ADMIN';
   if (user.roles.includes('MODERATOR')) return 'MODERATOR';
   if (user.roles.includes('LANDLORD')) return 'LANDLORD';
