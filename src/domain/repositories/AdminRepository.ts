@@ -74,13 +74,60 @@ export interface UserItem {
 }
 
 export interface ReportItem {
-  id: number;
+  id: string | number;
   targetType: string;
+  targetId?: string;
   targetTitle: string;
   reporterName: string;
   reason: string;
+  description?: string;
+  evidenceUrls?: string[];
   status: 'PENDING' | 'RESOLVED' | 'DISMISSED';
   createdAt: string;
+}
+
+export interface AdminAnalyticsAreaItem {
+  id: string;
+  key: string;
+  percent: number;
+}
+
+export interface AdminAnalyticsData {
+  successRate: number;
+  avgTimeToFillDays: number;
+  totalSearches: number;
+  topAreas: AdminAnalyticsAreaItem[];
+}
+
+export interface AdminSupportTicketReply {
+  id: string;
+  ticketId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: 'USER' | 'ADMIN' | 'MODERATOR';
+  message: string;
+  createdAt: string;
+}
+
+export interface AdminSupportTicketItem {
+  id: string;
+  ticketCode: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  userPhone?: string;
+  subject: string;
+  category: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
+  description: string;
+  assignedTo?: string | null;
+  assignedAgentName?: string | null;
+  replyCount?: number;
+  createdAt: string;
+  updatedAt: string;
+  resolvedAt?: string | null;
+  replies?: AdminSupportTicketReply[];
 }
 
 export interface AuditLogItem {
@@ -116,9 +163,15 @@ export interface AdminRepository {
   getUsers(): Promise<UserItem[]>;
   toggleUserLock(id: number | string): Promise<void>;
   getReports(): Promise<ReportItem[]>;
-  resolveReport(id: number): Promise<void>;
+  resolveReport(id: string | number): Promise<void>;
+  dismissReport?(id: string | number): Promise<void>;
   getReviews(): Promise<AdminReviewItem[]>;
   toggleReviewVisibility(id: number): Promise<void>;
   getAuditLogs(filters?: { search?: string; source?: string; action?: string; limit?: number }): Promise<AuditLogItem[]>;
+  getAnalytics(): Promise<AdminAnalyticsData>;
+  getSupportTickets(filters?: { status?: string; category?: string; search?: string }): Promise<AdminSupportTicketItem[]>;
+  getSupportTicketDetail(id: string): Promise<AdminSupportTicketItem>;
+  replySupportTicket(id: string, message: string): Promise<AdminSupportTicketReply>;
+  updateSupportTicketStatus(id: string, status: string): Promise<void>;
 }
 

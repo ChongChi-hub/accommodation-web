@@ -2,18 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { ApiClient } from '@/infrastructure/http/api-client';
+import { container } from '@/infrastructure/di/container';
+import { AdminAnalyticsData } from '@/domain/repositories/AdminRepository';
 
-export interface AdminAnalyticsData {
-  successRate: number;
-  avgTimeToFillDays: number;
-  totalSearches: number;
-  topAreas: Array<{
-    id: string;
-    key: 'areaCauGiay' | 'areaDongDa' | 'areaBinhThanh';
-    percent: number;
-  }>;
-}
+export type { AdminAnalyticsData };
 
 export function useAdminAnalytics() {
   const searchParams = useSearchParams();
@@ -43,21 +35,8 @@ export function useAdminAnalytics() {
     }
 
     try {
-      const res = await ApiClient.get<AdminAnalyticsData>('/admin/analytics');
-      if (res && typeof res.successRate === 'number') {
-        setData(res);
-      } else {
-        setData({
-          successRate: 74.5,
-          avgTimeToFillDays: 4.2,
-          totalSearches: 128000,
-          topAreas: [
-            { id: '1', key: 'areaCauGiay', percent: 38 },
-            { id: '2', key: 'areaDongDa', percent: 24 },
-            { id: '3', key: 'areaBinhThanh', percent: 19 },
-          ],
-        });
-      }
+      const res = await container.admin.adminRepository.getAnalytics();
+      setData(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {

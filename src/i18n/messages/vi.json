@@ -337,7 +337,14 @@
       "emptyTitle": "Không có báo cáo vi phạm nào",
       "emptyDesc": "Hệ thống đang hoạt động an toàn, không có khiếu nại tồn đọng.",
       "errorTitle": "Lỗi tải danh sách báo cáo",
-      "errorDesc": "Không thể kết nối đến máy chủ quản trị."
+      "errorDesc": "Không thể kết nối đến máy chủ quản trị.",
+      "tabDismissed": "Đã bác bỏ",
+      "statusDismissed": "Đã bác bỏ",
+      "btnDismiss": "Bác bỏ",
+      "evidenceTitle": "Hình ảnh / Bằng chứng vi phạm",
+      "noEvidence": "Không có hình ảnh đính kèm",
+      "statusResolvedNotice": "Báo cáo này đã được tiếp nhận và xử lý vi phạm",
+      "statusDismissedNotice": "Báo cáo này đã được xem xét và bác bỏ"
     },
     "reviews": {
       "title": "Quản lý đánh giá & bình luận",

@@ -7,6 +7,9 @@ import {
   UserItem,
   ReportItem,
   AuditLogItem,
+  AdminAnalyticsData,
+  AdminSupportTicketItem,
+  AdminSupportTicketReply,
 } from '@/domain/repositories/AdminRepository';
 
 /**
@@ -54,7 +57,8 @@ export class StaticAdminRepository implements AdminRepository {
     return [];
   }
 
-  async resolveReport(_id: number): Promise<void> {}
+  async resolveReport(_id: string | number): Promise<void> {}
+  async dismissReport(_id: string | number): Promise<void> {}
 
   async getReviews(): Promise<AdminReviewItem[]> {
     return [];
@@ -65,4 +69,48 @@ export class StaticAdminRepository implements AdminRepository {
   async getAuditLogs(): Promise<AuditLogItem[]> {
     return [];
   }
+
+  async getAnalytics(): Promise<AdminAnalyticsData> {
+    return {
+      successRate: 0,
+      avgTimeToFillDays: 0,
+      totalSearches: 0,
+      topAreas: [],
+    };
+  }
+
+  async getSupportTickets(): Promise<AdminSupportTicketItem[]> {
+    return [];
+  }
+
+  async getSupportTicketDetail(id: string): Promise<AdminSupportTicketItem> {
+    return {
+      id,
+      ticketCode: id,
+      userId: '',
+      userName: '',
+      userEmail: '',
+      subject: '',
+      category: '',
+      priority: 'MEDIUM',
+      status: 'OPEN',
+      description: '',
+      createdAt: '',
+      updatedAt: '',
+    };
+  }
+
+  async replySupportTicket(id: string, message: string): Promise<AdminSupportTicketReply> {
+    return {
+      id: 'mock',
+      ticketId: id,
+      senderId: 'admin',
+      senderName: 'Admin',
+      senderRole: 'ADMIN',
+      message,
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  async updateSupportTicketStatus(_id: string, _status: string): Promise<void> {}
 }
