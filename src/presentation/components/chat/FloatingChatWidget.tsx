@@ -154,7 +154,7 @@ export function FloatingChatWidget({
 
             <div className="flex items-center gap-1 shrink-0">
               {viewMode === 'chat' && otherParticipant && (
-                <UserPresenceBadge userId={otherParticipant.userId} variant="light" className="mr-1 hidden sm:inline-flex" />
+                <UserPresenceBadge userId={otherParticipant.userId} variant="light" className="mr-1 inline-flex text-[10px] px-2 py-0.5" />
               )}
               {fullMessagesRoute && (
                 <Link
@@ -199,7 +199,14 @@ export function FloatingChatWidget({
                       activeConversation?.id === c.id && 'bg-teal-50/50 dark:bg-teal-950/30'
                     )}
                   >
-                    <Avatar name={c.otherParticipant?.name || 'User'} size="md" />
+                    <div className="relative shrink-0">
+                      <Avatar name={c.otherParticipant?.name || 'User'} size="md" />
+                      <UserPresenceBadge
+                        userId={c.otherParticipant?.userId}
+                        variant="dot"
+                        className="absolute bottom-0 right-0"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <p className="text-xs font-bold text-stone-900 dark:text-stone-100 truncate">
