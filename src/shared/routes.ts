@@ -26,6 +26,7 @@ export const APP_ROUTES = {
   tenantNotifications: '/dashboard/tenant/notifications',
   tenantProfile: '/dashboard/tenant/profile',
   tenantSecurity: '/dashboard/tenant/settings',
+  tenantKyc: '/dashboard/tenant/kyc',
 
   landlordHome: '/dashboard/landlord',
   landlordRooms: '/dashboard/landlord/rooms',

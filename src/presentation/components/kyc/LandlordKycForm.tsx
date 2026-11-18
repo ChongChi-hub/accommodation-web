@@ -652,3 +652,5 @@ export function LandlordKycForm({ onSubmit, isSubmitting }: LandlordKycFormProps
     </>
   );
 }
+
+export const IdentityKycForm = LandlordKycForm;

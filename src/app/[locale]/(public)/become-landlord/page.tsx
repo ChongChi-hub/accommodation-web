@@ -32,7 +32,7 @@ export default function BecomeLandlordPage() {
     }
     if (!user?.kycVerified) {
       toast.error('Vui lòng hoàn tất xác thực CCCD (KYC) trước khi nâng cấp.');
-      router.push(APP_ROUTES.tenantSecurity);
+      router.push(APP_ROUTES.tenantKyc);
       return;
     }
     setIsSubmitting(true);
@@ -173,7 +173,7 @@ export default function BecomeLandlordPage() {
               </p>
             </div>
             <Link
-              href={APP_ROUTES.tenantSecurity}
+              href={APP_ROUTES.tenantKyc}
               className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-800 transition-colors shrink-0"
             >
               <ShieldCheck className="w-4 h-4" />

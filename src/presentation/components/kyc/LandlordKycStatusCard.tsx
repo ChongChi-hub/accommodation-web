@@ -15,9 +15,10 @@ import { ShieldCheck, Clock, AlertTriangle, ShieldX, RefreshCw, Maximize2, Loade
 interface LandlordKycStatusCardProps {
   status: LandlordKycStatus;
   onResubmitClick: () => void;
+  role?: 'TENANT' | 'LANDLORD';
 }
 
-export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycStatusCardProps) {
+export function LandlordKycStatusCard({ status, onResubmitClick, role = 'LANDLORD' }: LandlordKycStatusCardProps) {
   const tAuto = useTranslations('autoI18n');
   const t = useTranslations('kyc');
   const frontImage = useAuthenticatedKycImage(status.hasFrontImage ? '/landlord/kyc/images/front' : null);
@@ -40,7 +41,7 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
         return (
           <Badge variant="success" size="md">
             <ShieldCheck className="w-4 h-4 mr-1 text-success" />
-            {t('badgeVerified')}
+            {role === 'TENANT' ? 'Đã xác minh danh tính' : t('badgeVerified')}
           </Badge>
         );
       case 'PENDING':
@@ -71,7 +72,9 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
     <Card className="p-6 border border-border space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <h2 className="text-base font-bold text-foreground">{status.fullNameOnId || 'Chủ trọ'}</h2>
+          <h2 className="text-base font-bold text-foreground">
+            {status.fullNameOnId || (role === 'TENANT' ? 'Người thuê' : 'Chủ trọ')}
+          </h2>
           <p className="text-xs text-foreground-muted mt-0.5">
             {tAuto('k0218')}{' '}<span className="font-mono font-medium text-foreground">{status.idNumberMasked || 'Chưa cung cấp'}</span>
           </p>
@@ -79,7 +82,7 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
         {renderBadge()}
       </div>
 
-      {/* Tiến độ 2 phần KYC: Giấy tờ & Khuôn mặt */}
+      {/* Tiến độ 2 phần KYC: Giấy tờ & Khuôn mặt / Nâng cấp */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-muted/40 rounded-xl border border-border">
         <div className="space-y-1.5 border-b sm:border-b-0 sm:border-r border-border pb-3 sm:pb-0 sm:pr-3">
           <div className="flex items-center justify-between">
@@ -96,27 +99,51 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
           </p>
         </div>
 
-        <div className="space-y-1.5 sm:pl-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">2</span>
-              {tAuto('k0482')}
-            </span>
-            <Badge variant={faceStatus?.status === 'PASSED' ? 'success' : faceStatus?.status === 'FAILED' ? 'danger' : faceStatus?.status === 'PENDING' ? 'warning' : 'neutral'} size="sm">
-              {faceStatus?.status || 'NONE'}
-            </Badge>
+        {role === 'TENANT' ? (
+          <div className="space-y-1.5 sm:pl-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">2</span>
+                Trở thành Chủ trọ
+              </span>
+              <Badge variant={status.status === 'APPROVED' ? 'success' : 'neutral'} size="sm">
+                {status.status === 'APPROVED' ? 'SẴN SÀNG' : 'CHỜ DUYỆT CCCD'}
+              </Badge>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[11px] text-foreground-muted">
+                {status.status === 'APPROVED' ? 'Đã đủ điều kiện nâng cấp lên Chủ trọ' : 'Cần hoàn tất duyệt CCCD trước khi nâng cấp'}
+              </p>
+              {status.status === 'APPROVED' && (
+                <Link href="/become-landlord" className="text-[11px] font-medium text-primary hover:underline flex items-center gap-0.5">
+                  Nâng cấp ngay &rarr;
+                </Link>
+              )}
+            </div>
           </div>
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-[11px] text-foreground-muted">
-              {faceStatus?.status === 'PASSED' ? 'Khuôn mặt đã khớp CCCD' : faceStatus?.status === 'PENDING' ? 'Đang chờ đối chiếu khuôn mặt' : faceStatus?.status === 'FAILED' ? 'Khuôn mặt chưa đạt' : 'Chưa thực hiện'}
-            </p>
-            {faceStatus?.status !== 'PASSED' && (
-              <Link href="/dashboard/landlord/kyc/face" className="text-[11px] font-medium text-primary hover:underline flex items-center gap-0.5">
-                {faceStatus?.status === 'FAILED' ? 'Thử lại' : 'Thực hiện'} &rarr;
-              </Link>
-            )}
+        ) : (
+          <div className="space-y-1.5 sm:pl-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">2</span>
+                {tAuto('k0482')}
+              </span>
+              <Badge variant={faceStatus?.status === 'PASSED' ? 'success' : faceStatus?.status === 'FAILED' ? 'danger' : faceStatus?.status === 'PENDING' ? 'warning' : 'neutral'} size="sm">
+                {faceStatus?.status || 'NONE'}
+              </Badge>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[11px] text-foreground-muted">
+                {faceStatus?.status === 'PASSED' ? 'Khuôn mặt đã khớp CCCD' : faceStatus?.status === 'PENDING' ? 'Đang chờ đối chiếu khuôn mặt' : faceStatus?.status === 'FAILED' ? 'Khuôn mặt chưa đạt' : 'Chưa thực hiện'}
+              </p>
+              {faceStatus?.status !== 'PASSED' && (
+                <Link href="/dashboard/landlord/kyc/face" className="text-[11px] font-medium text-primary hover:underline flex items-center gap-0.5">
+                  {faceStatus?.status === 'FAILED' ? 'Thử lại' : 'Thực hiện'} &rarr;
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {status.status === 'PENDING' && (
@@ -126,7 +153,15 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
             <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">{t('bannerPendingTitle')}</p>
           </div>
           <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-            Hồ sơ xác minh căn cước công dân của bạn đã được gửi thành công và đang được <strong>Admin / Kiểm duyệt viên</strong> đối chiếu thông tin. Quá trình kiểm duyệt thường diễn ra nhanh chóng. Sau khi được duyệt, bạn sẽ được cấp quyền đăng phòng trọ.
+            {role === 'TENANT' ? (
+              <>
+                Hồ sơ xác minh căn cước công dân của bạn đã được gửi thành công và đang được <strong>Admin / Kiểm duyệt viên</strong> đối chiếu thông tin. Sau khi được duyệt, bạn sẽ có thể ký hợp đồng thuê trọ điện tử và nhận bảo vệ tiền cọc an toàn trên Tổ Ấm.
+              </>
+            ) : (
+              <>
+                Hồ sơ xác minh căn cước công dân của bạn đã được gửi thành công và đang được <strong>Admin / Kiểm duyệt viên</strong> đối chiếu thông tin. Quá trình kiểm duyệt thường diễn ra nhanh chóng. Sau khi được duyệt, bạn sẽ được cấp quyền đăng phòng trọ.
+              </>
+            )}
           </p>
         </div>
       )}
@@ -268,4 +303,6 @@ export function LandlordKycStatusCard({ status, onResubmitClick }: LandlordKycSt
     </Card>
   );
 }
+
+export const IdentityKycStatusCard = LandlordKycStatusCard;
 
