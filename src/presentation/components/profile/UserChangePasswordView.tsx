@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { Input } from '@/presentation/components/ui/Input';
@@ -8,7 +8,7 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Card } from '@/presentation/components/ui/Card';
 import { toast } from '@/presentation/stores/toast.store';
 import { container } from '@/infrastructure/di/container';
-import { KeyRound, ShieldAlert, Eye, EyeOff } from 'lucide-react';
+import { KeyRound, ShieldAlert, Eye, EyeOff, Mail, CheckCircle2 } from 'lucide-react';
 
 export function UserChangePasswordView() {
   const tAuto = useTranslations('autoI18n');
@@ -16,9 +16,34 @@ export function UserChangePasswordView() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [otp, setOtp] = useState('');
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [otpCooldown, setOtpCooldown] = useState(0);
+
+  useEffect(() => {
+    if (otpCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setOtpCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [otpCooldown]);
+
+  const handleSendOtp = async () => {
+    if (otpCooldown > 0) return;
+    setIsSendingOtp(true);
+    try {
+      await container.profile.profileUseCases.sendChangePasswordOtp();
+      toast.success('Mã OTP xác thực 6 số đã được gửi đến email của bạn.');
+      setOtpCooldown(60);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Không thể gửi mã OTP qua email.');
+    } finally {
+      setIsSendingOtp(false);
+    }
+  };
 
   const calculateStrength = (pwd: string) => {
     if (!pwd) return 0;
@@ -46,15 +71,21 @@ export function UserChangePasswordView() {
       toast.error(t('passwordMismatch'));
       return;
     }
+    if (!otp || otp.trim().length !== 6) {
+      toast.error('Vui lòng nhập đủ 6 chữ số mã OTP xác nhận từ email.');
+      return;
+    }
     setIsSubmitting(true);
     try {
-      await container.profile.profileUseCases.changePassword(currentPassword, newPassword, confirmPassword);
+      await container.profile.profileUseCases.changePassword(currentPassword, newPassword, confirmPassword, otp);
       toast.success(t('changePasswordSuccess'));
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      setOtp('');
+      setOtpCooldown(0);
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Error changing password');
+      toast.error(err instanceof Error ? err.message : 'Lỗi khi đổi mật khẩu.');
     } finally {
       setIsSubmitting(false);
     }
@@ -144,13 +175,44 @@ export function UserChangePasswordView() {
           leftIcon={<KeyRound className="w-4 h-4 text-foreground-muted" />}
         />
 
+        {/* OTP Verification Section */}
+        <div className="p-4 rounded-xl border border-primary-200/60 dark:border-primary-900/40 bg-primary-50/30 dark:bg-primary-950/20 space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-primary" />
+              <span className="text-xs font-semibold text-foreground">Mã xác thực OTP qua Email</span>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleSendOtp}
+              isLoading={isSendingOtp}
+              disabled={otpCooldown > 0 || isSendingOtp}
+            >
+              {otpCooldown > 0 ? `Gửi lại (${otpCooldown}s)` : 'Gửi mã OTP qua email'}
+            </Button>
+          </div>
+
+          <Input
+            label="Nhập mã 6 chữ số từ email"
+            type="text"
+            maxLength={6}
+            value={otp}
+            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+            placeholder="Ví dụ: 123456"
+            required
+            leftIcon={<CheckCircle2 className="w-4 h-4 text-foreground-muted" />}
+          />
+        </div>
+
         <div className="pt-2">
           <Button
             type="submit"
             variant="primary"
             size="sm"
             isLoading={isSubmitting}
-            disabled={!currentPassword || !newPassword || !confirmPassword}
+            disabled={!currentPassword || !newPassword || !confirmPassword || otp.trim().length !== 6}
           >
             {t('saveChanges')}
           </Button>

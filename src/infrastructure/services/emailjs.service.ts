@@ -1,10 +1,22 @@
 export const EMAILJS_CONFIG = {
-  SERVICE_ID: 'service_cozynest',
-  PUBLIC_KEY: 'Re_5YClSOUJvPTVQF',
-  PRIVATE_KEY: 'qNyRWL93ZyFJgqNcgbMQ9',
-  TEMPLATES: {
-    REGISTER: 'template_91vlzrx',
-    VERIFY_EMAIL: 'template_59nc5mf',
+  // Account 1: Register and Verify Email
+  ACC1: {
+    SERVICE_ID: 'service_cozynest',
+    PUBLIC_KEY: 'Re_5YClSOUJvPTVQF',
+    PRIVATE_KEY: 'qNyRWL93ZyFJgqNcgbMQ9',
+    TEMPLATES: {
+      REGISTER: 'template_91vlzrx',
+      VERIFY_EMAIL: 'template_59nc5mf',
+    },
+  },
+  // Account 2: Change Password OTP
+  ACC2: {
+    SERVICE_ID: 'service_pp9ykfq',
+    PUBLIC_KEY: 'mhVhUeI-C6HkEfVNy',
+    PRIVATE_KEY: 'lhAfrXJWJpwyWGhFxSHnY',
+    TEMPLATES: {
+      CHANGE_PASSWORD: 'template_30c269c',
+    },
   },
 };
 
@@ -15,8 +27,11 @@ export interface SendOtpParams {
   expiryMinutes?: number;
 }
 
-export async function sendEmailJs(
+export async function sendEmailJsRaw(
+  serviceId: string,
   templateId: string,
+  userId: string,
+  accessToken: string,
   params: Record<string, string>
 ): Promise<{ success: boolean; error?: string }> {
   try {
@@ -26,10 +41,10 @@ export async function sendEmailJs(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        service_id: EMAILJS_CONFIG.SERVICE_ID,
+        service_id: serviceId,
         template_id: templateId,
-        user_id: EMAILJS_CONFIG.PUBLIC_KEY,
-        accessToken: EMAILJS_CONFIG.PRIVATE_KEY,
+        user_id: userId,
+        accessToken: accessToken,
         template_params: params,
       }),
     });
@@ -49,21 +64,50 @@ export async function sendEmailJs(
 export async function sendRegisterOtpEmail(
   params: SendOtpParams
 ): Promise<{ success: boolean; error?: string }> {
-  return sendEmailJs(EMAILJS_CONFIG.TEMPLATES.REGISTER, {
-    to_name: params.toName || 'Quý khách',
-    to_email: params.toEmail,
-    otp_code: params.otpCode,
-    expiry_minutes: String(params.expiryMinutes || 10),
-  });
+  return sendEmailJsRaw(
+    EMAILJS_CONFIG.ACC1.SERVICE_ID,
+    EMAILJS_CONFIG.ACC1.TEMPLATES.REGISTER,
+    EMAILJS_CONFIG.ACC1.PUBLIC_KEY,
+    EMAILJS_CONFIG.ACC1.PRIVATE_KEY,
+    {
+      to_name: params.toName || 'Quý khách',
+      to_email: params.toEmail,
+      otp_code: params.otpCode,
+      expiry_minutes: String(params.expiryMinutes || 10),
+    }
+  );
 }
 
 export async function sendVerifyEmailOtpEmail(
   params: SendOtpParams
 ): Promise<{ success: boolean; error?: string }> {
-  return sendEmailJs(EMAILJS_CONFIG.TEMPLATES.VERIFY_EMAIL, {
-    to_name: params.toName || 'Quý khách',
-    to_email: params.toEmail,
-    otp_code: params.otpCode,
-    expiry_minutes: String(params.expiryMinutes || 10),
-  });
+  return sendEmailJsRaw(
+    EMAILJS_CONFIG.ACC1.SERVICE_ID,
+    EMAILJS_CONFIG.ACC1.TEMPLATES.VERIFY_EMAIL,
+    EMAILJS_CONFIG.ACC1.PUBLIC_KEY,
+    EMAILJS_CONFIG.ACC1.PRIVATE_KEY,
+    {
+      to_name: params.toName || 'Quý khách',
+      to_email: params.toEmail,
+      otp_code: params.otpCode,
+      expiry_minutes: String(params.expiryMinutes || 10),
+    }
+  );
+}
+
+export async function sendChangePasswordOtpEmail(
+  params: SendOtpParams
+): Promise<{ success: boolean; error?: string }> {
+  return sendEmailJsRaw(
+    EMAILJS_CONFIG.ACC2.SERVICE_ID,
+    EMAILJS_CONFIG.ACC2.TEMPLATES.CHANGE_PASSWORD,
+    EMAILJS_CONFIG.ACC2.PUBLIC_KEY,
+    EMAILJS_CONFIG.ACC2.PRIVATE_KEY,
+    {
+      to_name: params.toName || 'Quý khách',
+      to_email: params.toEmail,
+      otp_code: params.otpCode,
+      expiry_minutes: String(params.expiryMinutes || 10),
+    }
+  );
 }

@@ -34,13 +34,25 @@ export class ProfileUseCases {
     return this.authRepo.deleteAvatar();
   }
 
-  async changePassword(current: string, next: string, confirmNext: string): Promise<void> {
+  async sendChangePasswordOtp(): Promise<void> {
+    if (this.authRepo.sendChangePasswordOtp) {
+      return this.authRepo.sendChangePasswordOtp();
+    }
+  }
+
+  async changePassword(current: string, next: string, confirmNext: string, otp?: string): Promise<void> {
     if (!current) throw new Error('Vui lòng nhập mật khẩu hiện tại');
     if (!next || next.length < 8) {
       throw new Error('Mật khẩu mới phải có ít nhất 8 ký tự');
     }
     if (next !== confirmNext) {
       throw new Error('Mật khẩu xác nhận không khớp');
+    }
+    if (otp !== undefined && otp !== null) {
+      if (otp.trim().length !== 6) {
+        throw new Error('Vui lòng nhập mã OTP xác thực gồm 6 chữ số gửi về email');
+      }
+      return this.authRepo.changePassword(current, next, otp.trim());
     }
     return this.authRepo.changePassword(current, next);
   }

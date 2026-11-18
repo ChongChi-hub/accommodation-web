@@ -18,13 +18,15 @@ export interface AuthRepository {
   refreshToken(refreshToken: string): Promise<AuthSession>;
   getMe?(): Promise<User>;
   applyLandlord?(): Promise<LandlordApplicationSummary>;
+  upgradeToLandlord?(): Promise<User>;
   getProfile(): Promise<User>;
   updateProfile(data: { fullName: string; phone: string }): Promise<User>;
   getUserProfile(): Promise<UserProfile>;
   updateUserProfile(data: UpdateUserProfileDto): Promise<UserProfile>;
   uploadAvatar(file: File): Promise<{ avatarUrl: string }>;
   deleteAvatar(): Promise<void>;
-  changePassword(currentPassword: string, newPassword: string): Promise<void>;
+  sendChangePasswordOtp?(): Promise<void>;
+  changePassword(currentPassword: string, newPassword: string, otp?: string): Promise<void>;
   forgotPassword(email: string): Promise<void>;
   resetPassword(email: string, otp: string, newPassword: string): Promise<void>;
   verifyEmail?(email: string, otp: string): Promise<void>;

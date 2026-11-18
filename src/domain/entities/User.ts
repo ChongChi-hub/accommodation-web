@@ -27,8 +27,11 @@ export interface User {
   dateOfBirth: string | null;
   status: UserStatus;
   roles: UserRole[];
+  role?: UserRole;
   permissions?: string[];
   emailVerified?: boolean;
+  kycVerified?: boolean;
+  faceVerified?: boolean;
   hasPassword?: boolean;
   phoneMissing?: boolean;
   landlordApplication?: LandlordApplicationSummary | null;

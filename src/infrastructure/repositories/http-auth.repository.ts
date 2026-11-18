@@ -207,11 +207,16 @@ export class HttpAuthRepository implements AuthRepository {
     }
   }
 
-  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  async sendChangePasswordOtp(): Promise<void> {
+    await ApiClient.post('/auth/change-password/send-otp');
+  }
+
+  async changePassword(currentPassword: string, newPassword: string, otp?: string): Promise<void> {
     await ApiClient.post('/auth/change-password', {
       currentPassword,
       oldPassword: currentPassword,
       newPassword,
+      otp,
     });
   }
 
@@ -229,6 +234,14 @@ export class HttpAuthRepository implements AuthRepository {
 
   async verifyMyEmail(): Promise<User> {
     const data = await ApiClient.post<User>('/me/verify-email');
+    if (typeof window !== 'undefined' && data) {
+      localStorage.setItem('cozynest_user', JSON.stringify(data));
+    }
+    return data;
+  }
+
+  async upgradeToLandlord(): Promise<User> {
+    const data = await ApiClient.post<User>('/me/upgrade-landlord');
     if (typeof window !== 'undefined' && data) {
       localStorage.setItem('cozynest_user', JSON.stringify(data));
     }

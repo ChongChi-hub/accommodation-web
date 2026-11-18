@@ -24,6 +24,32 @@ export default function BecomeLandlordPage() {
   const hasPendingApplication =
     appStatus && appStatus !== 'NOT_APPLIED' && appStatus !== 'APPROVED';
 
+  const handleUpgrade = async () => {
+    if (!user?.emailVerified) {
+      toast.error('Vui lòng xác minh địa chỉ email trước khi nâng cấp.');
+      router.push(APP_ROUTES.tenantSecurity);
+      return;
+    }
+    if (!user?.kycVerified) {
+      toast.error('Vui lòng hoàn tất xác thực CCCD (KYC) trước khi nâng cấp.');
+      router.push(APP_ROUTES.tenantSecurity);
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      if (container.auth.authRepository.upgradeToLandlord) {
+        await container.auth.authRepository.upgradeToLandlord();
+      }
+      await refreshMe();
+      toast.success('Chúc mừng! Bạn đã nâng cấp thành công lên Chủ trọ.');
+      router.push(APP_ROUTES.landlordHome);
+    } catch (err) {
+      toast.error(err instanceof Error && err.message ? err.message : 'Nâng cấp chủ trọ thất bại');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleApply = async () => {
     if (!user?.emailVerified) {
       toast.error('Vui lòng xác minh địa chỉ email trước khi nộp hồ sơ.');
@@ -135,18 +161,46 @@ export default function BecomeLandlordPage() {
               <ArrowRight className="w-4 h-4" />
             </Link>
           </>
+        ) : !user?.kycVerified ? (
+          <>
+            <div className="space-y-1">
+              <p className="text-xs sm:text-sm font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 shrink-0" />
+                <span>Yêu cầu xác thực CCCD (KYC)</span>
+              </p>
+              <p className="text-xs text-foreground-muted">
+                Email đã được xác thực! Bước tiếp theo, bạn cần hoàn tất xác thực CCCD gắn chip để đủ điều kiện nâng cấp.
+              </p>
+            </div>
+            <Link
+              href={APP_ROUTES.tenantSecurity}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-800 transition-colors shrink-0"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Xác thực CCCD ngay</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </>
         ) : (
           <>
-            <p className="text-xs sm:text-sm text-foreground-muted">{t('step1Desc')}</p>
+            <div className="space-y-1">
+              <p className="text-xs sm:text-sm font-semibold text-success flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>Tài khoản đủ điều kiện nâng cấp!</span>
+              </p>
+              <p className="text-xs text-foreground-muted">
+                Bạn đã xác minh cả Email và CCCD thành công. Bấm xác nhận bên dưới để chuyển sang tài khoản Chủ trọ.
+              </p>
+            </div>
             <Button
               type="button"
               variant="primary"
               size="md"
               disabled={isSubmitting}
-              onClick={handleApply}
+              onClick={handleUpgrade}
               rightIcon={<ArrowRight className="w-4 h-4" />}
             >
-              {isSubmitting ? t('actionSubmitting') : t('actionStart')}
+              {isSubmitting ? 'Đang nâng cấp...' : 'Nâng cấp lên Chủ trọ ngay'}
             </Button>
           </>
         )}
