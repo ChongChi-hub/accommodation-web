@@ -8,6 +8,8 @@ import {
   ReportItem,
   AuditLogItem,
   AdminAnalyticsData,
+  AdminPlatformStatsOverview,
+  AdminPlatformStatsTimeseries,
   AdminSupportTicketItem,
   AdminSupportTicketReply,
 } from '@/domain/repositories/AdminRepository';
@@ -113,4 +115,45 @@ export class StaticAdminRepository implements AdminRepository {
   }
 
   async updateSupportTicketStatus(_id: string, _status: string): Promise<void> {}
+
+  async getPlatformStatsOverview(from?: string, to?: string): Promise<AdminPlatformStatsOverview> {
+    const today = new Date().toISOString().slice(0, 10);
+    return {
+      from: from || today,
+      to: to || today,
+      generatedAt: new Date().toISOString(),
+      degraded: false,
+      failedSources: [],
+      sourceStatus: { identity: 'OK', listing: 'OK', booking: 'OK', billing: 'OK' },
+      identity: null,
+      listing: { topAreas: [] },
+      booking: null,
+      billing: null,
+      kpis: {
+        totalUsers: 0, newUsersInRange: 0, pendingKyc: 0, totalRooms: 0, activeRooms: 0,
+        pendingRooms: 0, rejectedRooms: 0, totalViews: 0, totalAppointments: 0,
+        completedAppointments: 0, totalRentalRequests: 0, totalContracts: 0, activeContracts: 0,
+        totalInvoices: 0, paidInvoices: 0, paidRevenue: 0, fintechMode: 'SANDBOX_ONLY',
+        successRate: 0, avgTimeToFillDays: 0,
+      },
+    };
+  }
+
+  async getPlatformStatsTimeseries(params: {
+    metric: 'users' | 'rooms' | 'appointments' | 'contracts' | 'revenue';
+    from?: string;
+    to?: string;
+    granularity?: 'day' | 'week' | 'month';
+  }): Promise<AdminPlatformStatsTimeseries> {
+    const today = new Date().toISOString().slice(0, 10);
+    return {
+      metric: params.metric,
+      granularity: params.granularity || 'day',
+      from: params.from || today,
+      to: params.to || today,
+      degraded: false,
+      source: 'booking',
+      points: [],
+    };
+  }
 }

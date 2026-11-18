@@ -8,6 +8,8 @@ import {
   ReportItem,
   AuditLogItem,
   AdminAnalyticsData,
+  AdminPlatformStatsOverview,
+  AdminPlatformStatsTimeseries,
   AdminSupportTicketItem,
   AdminSupportTicketReply,
 } from '@/domain/repositories/AdminRepository';
@@ -131,12 +133,35 @@ export class HttpAdminRepository implements AdminRepository {
     const data = await ApiClient.get<AdminAnalyticsData>('/admin/analytics');
     return (
       data || {
-        successRate: 74.5,
-        avgTimeToFillDays: 4.2,
-        totalSearches: 128000,
+        successRate: null,
+        avgTimeToFillDays: null,
+        totalSearches: null,
         topAreas: [],
+        degraded: true,
       }
     );
+  }
+
+  async getPlatformStatsOverview(from?: string, to?: string): Promise<AdminPlatformStatsOverview> {
+    const params = new URLSearchParams();
+    if (from) params.append('from', from);
+    if (to) params.append('to', to);
+    const qs = params.toString();
+    return ApiClient.get<AdminPlatformStatsOverview>(`/admin/stats/overview${qs ? `?${qs}` : ''}`);
+  }
+
+  async getPlatformStatsTimeseries(args: {
+    metric: 'users' | 'rooms' | 'appointments' | 'contracts' | 'revenue';
+    from?: string;
+    to?: string;
+    granularity?: 'day' | 'week' | 'month';
+  }): Promise<AdminPlatformStatsTimeseries> {
+    const params = new URLSearchParams();
+    params.append('metric', args.metric);
+    if (args.from) params.append('from', args.from);
+    if (args.to) params.append('to', args.to);
+    if (args.granularity) params.append('granularity', args.granularity);
+    return ApiClient.get<AdminPlatformStatsTimeseries>(`/admin/stats/timeseries?${params.toString()}`);
   }
 
   async getSupportTickets(filters?: {

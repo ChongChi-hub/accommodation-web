@@ -89,14 +89,73 @@ export interface ReportItem {
 export interface AdminAnalyticsAreaItem {
   id: string;
   key: string;
+  districtCode?: string;
+  count?: number;
   percent: number;
 }
 
 export interface AdminAnalyticsData {
-  successRate: number;
-  avgTimeToFillDays: number;
-  totalSearches: number;
+  successRate: number | null;
+  avgTimeToFillDays: number | null;
+  totalSearches: number | null;
   topAreas: AdminAnalyticsAreaItem[];
+  degraded?: boolean;
+  failedSources?: string[];
+}
+
+export interface AdminPlatformStatsKpis {
+  totalUsers: number | null;
+  newUsersInRange: number | null;
+  pendingKyc: number | null;
+  totalRooms: number | null;
+  activeRooms: number | null;
+  pendingRooms: number | null;
+  rejectedRooms: number | null;
+  totalViews: number | null;
+  totalAppointments: number | null;
+  completedAppointments: number | null;
+  totalRentalRequests: number | null;
+  totalContracts: number | null;
+  activeContracts: number | null;
+  totalInvoices: number | null;
+  paidInvoices: number | null;
+  paidRevenue: number | null;
+  fintechMode: string | null;
+  successRate: number | null;
+  avgTimeToFillDays: number | null;
+}
+
+export interface AdminPlatformStatsOverview {
+  from: string;
+  to: string;
+  generatedAt: string;
+  degraded: boolean;
+  failedSources: string[];
+  sourceStatus: Record<string, string>;
+  identity: Record<string, unknown> | null;
+  listing: { topAreas?: AdminAnalyticsAreaItem[]; roomsByStatus?: Record<string, number> } | null;
+  booking: {
+    appointmentsByStatus?: Record<string, number>;
+    rentalRequestsByStatus?: Record<string, number>;
+    contractsByStatus?: Record<string, number>;
+  } | null;
+  billing: { invoicesByStatus?: Record<string, number>; fintechMode?: string } | null;
+  kpis: AdminPlatformStatsKpis;
+}
+
+export interface AdminTimeseriesPoint {
+  bucket: string;
+  value: number;
+}
+
+export interface AdminPlatformStatsTimeseries {
+  metric: string;
+  granularity: string;
+  from: string;
+  to: string;
+  degraded: boolean;
+  source: string;
+  points: AdminTimeseriesPoint[];
 }
 
 export interface AdminSupportTicketReply {
@@ -169,6 +228,13 @@ export interface AdminRepository {
   toggleReviewVisibility(id: number): Promise<void>;
   getAuditLogs(filters?: { search?: string; source?: string; action?: string; limit?: number }): Promise<AuditLogItem[]>;
   getAnalytics(): Promise<AdminAnalyticsData>;
+  getPlatformStatsOverview(from?: string, to?: string): Promise<AdminPlatformStatsOverview>;
+  getPlatformStatsTimeseries(params: {
+    metric: 'users' | 'rooms' | 'appointments' | 'contracts' | 'revenue';
+    from?: string;
+    to?: string;
+    granularity?: 'day' | 'week' | 'month';
+  }): Promise<AdminPlatformStatsTimeseries>;
   getSupportTickets(filters?: { status?: string; category?: string; search?: string }): Promise<AdminSupportTicketItem[]>;
   getSupportTicketDetail(id: string): Promise<AdminSupportTicketItem>;
   replySupportTicket(id: string, message: string): Promise<AdminSupportTicketReply>;
