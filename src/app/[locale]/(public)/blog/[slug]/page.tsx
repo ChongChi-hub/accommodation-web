@@ -20,6 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const res = await fetch(`${rawApiUrl}/cms/articles/${encodeURIComponent(slug)}`, {
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(3000),
     });
 
     if (!res.ok) {
@@ -81,9 +82,11 @@ export default async function BlogDetailPage({ params }: PageProps) {
     const [articleRes, listRes] = await Promise.all([
       fetch(`${rawApiUrl}/cms/articles/${encodeURIComponent(slug)}`, {
         next: { revalidate: 60 },
+        signal: AbortSignal.timeout(3000),
       }),
       fetch(`${rawApiUrl}/cms/articles`, {
         next: { revalidate: 60 },
+        signal: AbortSignal.timeout(3000),
       }),
     ]);
 

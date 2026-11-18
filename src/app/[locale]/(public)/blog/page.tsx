@@ -52,6 +52,7 @@ export default async function BlogPage({ params }: PageProps) {
 
     const res = await fetch(`${rawApiUrl}/cms/articles`, {
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(3000),
     });
 
     if (res.ok) {
