@@ -233,27 +233,44 @@ function AdminReportsContent() {
             </div>
 
             {/* Evidence URLs if available */}
-            {selectedReport.evidenceUrls && selectedReport.evidenceUrls.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-foreground-muted flex items-center gap-1.5">
-                  <ImageIcon className="w-3.5 h-3.5" />
-                  <span>{t('evidenceTitle')}</span>
-                </h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {selectedReport.evidenceUrls.map((url: string, index: number) => (
-                    <a
-                      key={index}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block rounded-lg overflow-hidden border border-border hover:opacity-80 transition-opacity"
-                    >
-                      <img src={url} alt={`Evidence ${index + 1}`} className="w-full h-24 object-cover" />
-                    </a>
-                  ))}
+            {(() => {
+              const evidenceList: string[] = Array.isArray(selectedReport.evidenceUrls)
+                ? selectedReport.evidenceUrls
+                : typeof selectedReport.evidenceUrls === 'string'
+                ? (() => {
+                    try {
+                      const p = JSON.parse(selectedReport.evidenceUrls);
+                      return Array.isArray(p) ? p : [selectedReport.evidenceUrls];
+                    } catch {
+                      return selectedReport.evidenceUrls.trim() ? [selectedReport.evidenceUrls] : [];
+                    }
+                  })()
+                : [];
+
+              if (evidenceList.length === 0) return null;
+
+              return (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-foreground-muted flex items-center gap-1.5">
+                    <ImageIcon className="w-3.5 h-3.5" />
+                    <span>{t('evidenceTitle')}</span>
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {evidenceList.map((url: string, index: number) => (
+                      <a
+                        key={index}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block rounded-lg overflow-hidden border border-border hover:opacity-80 transition-opacity"
+                      >
+                        <img src={url} alt={`Evidence ${index + 1}`} className="w-full h-24 object-cover" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Action Footer */}
             {selectedReport.status === 'PENDING' ? (

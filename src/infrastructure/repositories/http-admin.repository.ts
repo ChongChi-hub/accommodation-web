@@ -73,8 +73,25 @@ export class HttpAdminRepository implements AdminRepository {
   }
 
   async getReports(): Promise<ReportItem[]> {
-    const data = await ApiClient.get<ReportItem[]>('/admin/reports');
-    return data || [];
+    const data = await ApiClient.get<any[]>('/admin/reports');
+    return (data || []).map((r) => {
+      let evidenceUrls: string[] = [];
+      if (Array.isArray(r.evidenceUrls)) {
+        evidenceUrls = r.evidenceUrls;
+      } else if (typeof r.evidenceUrls === 'string' && r.evidenceUrls.trim().length > 0) {
+        try {
+          const parsed = JSON.parse(r.evidenceUrls);
+          if (Array.isArray(parsed)) evidenceUrls = parsed;
+          else evidenceUrls = [r.evidenceUrls];
+        } catch {
+          evidenceUrls = [r.evidenceUrls];
+        }
+      }
+      return {
+        ...r,
+        evidenceUrls,
+      };
+    });
   }
 
   async resolveReport(id: string | number): Promise<void> {
