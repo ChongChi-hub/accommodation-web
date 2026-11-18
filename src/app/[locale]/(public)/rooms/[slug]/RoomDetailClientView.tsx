@@ -210,6 +210,7 @@ export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
       <RoomMobileActionBar
         room={room}
         onOpenAppointment={() => setModalType('appointment')}
+        onOpenRental={() => setModalType('rental')}
       />
 
       {/* Booking / Rental Request Modal */}
@@ -218,6 +219,8 @@ export function RoomDetailClientView({ slug }: RoomDetailClientViewProps) {
           isOpen={true}
           onClose={() => setModalType(null)}
           roomTitle={room.title}
+          roomAddress={room.address}
+          roomCoverThumbKey={room.images?.[0]?.imageUrl}
           roomId={room.id}
           landlordId={room.landlord?.landlordId ?? room.landlord?.id}
           type={modalType}

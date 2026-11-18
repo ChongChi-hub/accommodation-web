@@ -58,7 +58,7 @@ export function Dialog({
       />
       <div
         className={cn(
-          'relative w-full rounded-2xl bg-surface p-6 shadow-2xl border border-border z-10 duration-150 text-foreground',
+          'relative w-full max-h-[90vh] overflow-y-auto rounded-2xl bg-surface p-6 shadow-2xl border border-border z-10 duration-150 text-foreground',
           sizeClasses[size],
           className
         )}
