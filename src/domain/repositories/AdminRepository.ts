@@ -15,15 +15,39 @@ export interface AdminStats {
 
 export interface PendingRoomItem {
   id: number;
+  roomUuid?: string;
   title: string;
   landlordName: string;
+  landlordPhone?: string;
+  landlordId?: number;
   price: number;
+  deposit?: number;
+  electricityCost?: number;
+  waterCost?: number;
+  internetCost?: number;
+  serviceCost?: number;
   area: number;
   address: string;
+  provinceCode?: string;
+  districtCode?: string;
+  wardCode?: string;
+  description?: string;
+  roomTypeCode?: string;
+  floor?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  maxOccupants?: number;
+  allowPets?: boolean;
+  allowCooking?: boolean;
+  curfew?: string;
+  houseRules?: string;
+  images?: string[];
+  amenities?: string[];
   submittedAt: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
   riskLevel?: 'NORMAL' | 'HIGH_RISK';
   riskReasons?: string;
+  verifiedOwnership?: boolean;
 }
 
 export interface KycReviewItem {

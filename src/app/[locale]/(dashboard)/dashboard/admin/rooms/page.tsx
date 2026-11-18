@@ -14,7 +14,30 @@ import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { ErrorState } from '@/presentation/components/ui/ErrorState';
 import { Tabs } from '@/presentation/components/ui/Tabs';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
-import { Check, X, ShieldAlert, Search, Eye, MapPin, User, Calendar, CreditCard, RefreshCw } from 'lucide-react';
+import {
+  Check,
+  X,
+  ShieldAlert,
+  Search,
+  Eye,
+  MapPin,
+  User,
+  Calendar,
+  CreditCard,
+  RefreshCw,
+  ImageIcon,
+  ChevronLeft,
+  ChevronRight,
+  Phone,
+  Sparkles,
+  Zap,
+  Droplets,
+  Wifi,
+  Wrench,
+  FileText,
+  ShieldCheck,
+} from 'lucide-react';
+import { PendingRoomItem } from '@/domain/repositories/AdminRepository';
 
 function AdminRoomsContent() {
   const tAuto = useTranslations('autoI18n');
@@ -40,7 +63,13 @@ function AdminRoomsContent() {
     setRejectReason,
   } = useAdminRooms();
 
-  const [selectedRoom, setSelectedRoom] = useState<any | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<PendingRoomItem | null>(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const handleOpenRoomDetails = (room: PendingRoomItem) => {
+    setSelectedRoom(room);
+    setActiveImageIndex(0);
+  };
 
   if (isLoading) {
     return (
@@ -190,7 +219,7 @@ function AdminRoomsContent() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setSelectedRoom(r)}
+                        onClick={() => handleOpenRoomDetails(r)}
                         title={tCommon('details')}
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -224,16 +253,91 @@ function AdminRoomsContent() {
         </Card>
       )}
 
-      {/* Room Detail Drawer (Bước 4 Requirement) */}
+      {/* Room Detail Drawer */}
       <Drawer
         isOpen={Boolean(selectedRoom)}
         onClose={() => setSelectedRoom(null)}
-        title={t('colTitle')}
+        title="Chi tiết bài đăng phòng trọ"
       >
         {selectedRoom && (
-          <div className="space-y-6">
+          <div className="space-y-5 pb-6">
+            {/* Image Gallery */}
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
+              <div className="relative rounded-2xl overflow-hidden bg-stone-900 border border-border aspect-video flex items-center justify-center group">
+                {selectedRoom.images && selectedRoom.images.length > 0 ? (
+                  <>
+                    <img
+                      src={selectedRoom.images[activeImageIndex] || selectedRoom.images[0]}
+                      alt={selectedRoom.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-black/60 text-white text-[11px] font-medium backdrop-blur-xs flex items-center gap-1.5 shadow-xs">
+                      <ImageIcon className="w-3.5 h-3.5" />
+                      <span>
+                        {activeImageIndex + 1} / {selectedRoom.images.length}
+                      </span>
+                    </div>
+                    {selectedRoom.images.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActiveImageIndex((prev) =>
+                              prev > 0 ? prev - 1 : selectedRoom.images!.length - 1
+                            )
+                          }
+                          className="absolute left-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/80 text-white transition-colors cursor-pointer"
+                          aria-label="Ảnh trước"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActiveImageIndex((prev) =>
+                              prev < selectedRoom.images!.length - 1 ? prev + 1 : 0
+                            )
+                          }
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/80 text-white transition-colors cursor-pointer"
+                          aria-label="Ảnh sau"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-2 text-foreground-muted p-8 text-center">
+                    <ImageIcon className="w-10 h-10 opacity-30" />
+                    <p className="text-xs font-medium">Chủ trọ chưa tải lên hình ảnh cho phòng này</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Thumbnails row */}
+              {selectedRoom.images && selectedRoom.images.length > 1 && (
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5 scrollbar-thin">
+                  {selectedRoom.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActiveImageIndex(idx)}
+                      className={`relative shrink-0 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                        activeImageIndex === idx
+                          ? 'border-teal-600 ring-2 ring-teal-500/30 opacity-100'
+                          : 'border-transparent opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={img} alt="" className="w-16 h-12 object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Room Title & Status Header */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Badge
                   variant={
                     selectedRoom.status === 'APPROVED'
@@ -243,13 +347,27 @@ function AdminRoomsContent() {
                       : 'warning'
                   }
                 >
-                  {selectedRoom.status}
+                  {selectedRoom.status === 'APPROVED' && t('statusApproved')}
+                  {selectedRoom.status === 'REJECTED' && t('statusRejected')}
+                  {selectedRoom.status === 'PENDING' && t('statusPending')}
                 </Badge>
-                <span className="text-xs text-foreground-muted">{tAuto('k0015')}{selectedRoom.id}</span>
+                {selectedRoom.roomTypeCode && (
+                  <Badge variant="neutral" size="sm">
+                    {selectedRoom.roomTypeCode}
+                  </Badge>
+                )}
+                {selectedRoom.verifiedOwnership && (
+                  <Badge variant="success" size="sm" className="gap-1">
+                    <ShieldCheck className="w-3 h-3" />
+                    Đã xác minh chính chủ
+                  </Badge>
+                )}
+                <span className="text-xs text-foreground-muted">#{selectedRoom.id}</span>
               </div>
-              <h3 className="text-base font-bold text-foreground">{selectedRoom.title}</h3>
+              <h3 className="text-base font-bold text-foreground leading-snug">{selectedRoom.title}</h3>
             </div>
 
+            {/* High Risk Alert */}
             {selectedRoom.riskLevel === 'HIGH_RISK' && (
               <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-xs text-rose-800 dark:text-rose-300 space-y-1">
                 <div className="flex items-center gap-1.5 font-bold text-rose-700 dark:text-rose-400">
@@ -262,27 +380,178 @@ function AdminRoomsContent() {
               </div>
             )}
 
-            <div className="p-4 rounded-xl bg-surface-muted border border-border space-y-3 text-xs">
-              <div className="flex items-center gap-2 text-foreground">
-                <MapPin className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>{selectedRoom.address}</span>
+            {/* Key Specs Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="p-2.5 rounded-xl bg-surface-muted border border-border/60 text-center">
+                <span className="text-[11px] text-foreground-muted block">Diện tích</span>
+                <span className="text-xs font-bold text-foreground">{selectedRoom.area} m²</span>
               </div>
-              <div className="flex items-center gap-2 text-foreground">
-                <User className="w-4 h-4 text-teal-700 shrink-0" />
-                <span>{tAuto('k0016')}{' '}{selectedRoom.landlordName}</span>
+              <div className="p-2.5 rounded-xl bg-surface-muted border border-border/60 text-center">
+                <span className="text-[11px] text-foreground-muted block">Tầng</span>
+                <span className="text-xs font-bold text-foreground">{selectedRoom.floor ?? 1}</span>
               </div>
-              <div className="flex items-center gap-2 text-foreground">
-                <CreditCard className="w-4 h-4 text-teal-700 shrink-0" />
-                <span className="font-bold text-teal-700 dark:text-teal-400">
-                  {formatPrice(selectedRoom.price)}{' '}{tAuto('k0017')}
+              <div className="p-2.5 rounded-xl bg-surface-muted border border-border/60 text-center">
+                <span className="text-[11px] text-foreground-muted block">Số người</span>
+                <span className="text-xs font-bold text-foreground">{selectedRoom.maxOccupants ?? 2} người</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-surface-muted border border-border/60 text-center">
+                <span className="text-[11px] text-foreground-muted block">Phòng ngủ / WC</span>
+                <span className="text-xs font-bold text-foreground">
+                  {selectedRoom.bedrooms ?? 1} PN / {selectedRoom.bathrooms ?? 1} WC
                 </span>
-              </div>
-              <div className="flex items-center gap-2 text-foreground-muted">
-                <Calendar className="w-4 h-4 shrink-0" />
-                <span>{tAuto('k0018')}{' '}{selectedRoom.submittedAt}</span>
               </div>
             </div>
 
+            {/* Pricing & Utility Breakdown */}
+            <div className="p-4 rounded-xl bg-surface-muted border border-border space-y-2.5 text-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-border/50">
+                <span className="text-foreground-muted flex items-center gap-1.5">
+                  <CreditCard className="w-3.5 h-3.5 text-teal-700 shrink-0" />
+                  Giá thuê tháng
+                </span>
+                <span className="font-bold text-sm text-teal-700 dark:text-teal-400">
+                  {formatPrice(selectedRoom.price)} / tháng
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-y-2 gap-x-4 pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground-muted">Tiền cọc:</span>
+                  <span className="font-semibold text-foreground">
+                    {selectedRoom.deposit ? formatPrice(selectedRoom.deposit) : '0 đ'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground-muted flex items-center gap-1">
+                    <Zap className="w-3 h-3 text-amber-500 shrink-0" /> Điện:
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    {selectedRoom.electricityCost ? `${formatPrice(selectedRoom.electricityCost)}/kWh` : 'Theo giá nhà nước'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground-muted flex items-center gap-1">
+                    <Droplets className="w-3 h-3 text-blue-500 shrink-0" /> Nước:
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    {selectedRoom.waterCost ? `${formatPrice(selectedRoom.waterCost)}/m³` : 'Theo hóa đơn'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground-muted flex items-center gap-1">
+                    <Wifi className="w-3 h-3 text-violet-500 shrink-0" /> Internet:
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    {selectedRoom.internetCost ? `${formatPrice(selectedRoom.internetCost)}/tháng` : 'Miễn phí'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground-muted flex items-center gap-1">
+                    <Wrench className="w-3 h-3 text-slate-500 shrink-0" /> Dịch vụ:
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    {selectedRoom.serviceCost ? `${formatPrice(selectedRoom.serviceCost)}/tháng` : 'Miễn phí'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Address & Landlord Info Card */}
+            <div className="p-3.5 rounded-xl bg-surface-muted border border-border space-y-2 text-xs">
+              <div className="flex items-start gap-2 text-foreground">
+                <MapPin className="w-4 h-4 text-teal-700 shrink-0 mt-0.5" />
+                <span>{selectedRoom.address}</span>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                <div className="flex items-center gap-2 text-foreground">
+                  <User className="w-4 h-4 text-teal-700 shrink-0" />
+                  <span className="font-semibold">{selectedRoom.landlordName}</span>
+                </div>
+                {selectedRoom.landlordPhone && (
+                  <div className="flex items-center gap-1.5 text-foreground-muted font-mono">
+                    <Phone className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>{selectedRoom.landlordPhone}</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-2 text-foreground-muted pt-1 text-[11px]">
+                <Calendar className="w-3.5 h-3.5 shrink-0" />
+                <span>Gửi duyệt: {selectedRoom.submittedAt}</span>
+              </div>
+            </div>
+
+            {/* Description */}
+            {selectedRoom.description && (
+              <div className="space-y-1.5">
+                <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-teal-700" />
+                  Mô tả bài đăng
+                </h4>
+                <div className="p-3 rounded-xl bg-surface-muted text-xs text-foreground/90 whitespace-pre-line leading-relaxed border border-border/60 max-h-48 overflow-y-auto">
+                  {selectedRoom.description}
+                </div>
+              </div>
+            )}
+
+            {/* Amenities */}
+            {selectedRoom.amenities && selectedRoom.amenities.length > 0 && (
+              <div className="space-y-1.5">
+                <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  Tiện ích phòng ({selectedRoom.amenities.length})
+                </h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedRoom.amenities.map((amenity, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-[11px] font-medium"
+                    >
+                      <Check className="w-3 h-3 text-teal-600" />
+                      {amenity}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Rules & Living Habits */}
+            <div className="space-y-1.5">
+              <h4 className="text-xs font-bold text-foreground">Quy định & Nội quy phòng</h4>
+              <div className="p-3 rounded-xl bg-surface-muted border border-border/60 space-y-1.5 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground-muted">Nuôi thú cưng:</span>
+                  <span
+                    className={`font-semibold ${
+                      selectedRoom.allowPets ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground-muted'
+                    }`}
+                  >
+                    {selectedRoom.allowPets ? 'Cho phép nuôi thú cưng' : 'Không cho phép'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground-muted">Nấu ăn trong phòng:</span>
+                  <span
+                    className={`font-semibold ${
+                      selectedRoom.allowCooking ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground-muted'
+                    }`}
+                  >
+                    {selectedRoom.allowCooking ? 'Cho phép nấu ăn' : 'Không cho phép'}
+                  </span>
+                </div>
+                {selectedRoom.curfew && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-foreground-muted">Giờ giấc:</span>
+                    <span className="font-semibold text-foreground">{selectedRoom.curfew}</span>
+                  </div>
+                )}
+                {selectedRoom.houseRules && (
+                  <p className="pt-1.5 border-t border-border/40 text-[11px] text-foreground-muted leading-relaxed">
+                    Nội quy khác: {selectedRoom.houseRules}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Approval / Rejection Actions */}
             {selectedRoom.status === 'PENDING' && (
               <div className="flex gap-2 pt-4 border-t border-border">
                 <Button
