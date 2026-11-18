@@ -8,6 +8,7 @@ import { PasswordField } from '@/presentation/components/auth/PasswordField';
 import { SubmitButton } from '@/presentation/components/auth/SubmitButton';
 import { FormErrorSummary } from '@/presentation/components/auth/FormErrorSummary';
 import { GoogleLoginButton } from '@/presentation/components/auth/GoogleLoginButton';
+import { RegisterOtpModal } from '@/presentation/components/auth/RegisterOtpModal';
 import { useRegisterForm } from '@/presentation/hooks/useRegisterForm';
 import { Mail, Phone, User, UserPlus } from 'lucide-react';
 
@@ -224,6 +225,16 @@ export default function RegisterPage() {
           {t('loginBtn')}
         </Link>
       </p>
+
+      <RegisterOtpModal
+        isOpen={f.isOtpModalOpen}
+        email={f.email}
+        onClose={() => f.setIsOtpModalOpen(false)}
+        onConfirm={f.handleConfirmOtp}
+        onResend={f.handleResendOtp}
+        isSubmitting={f.isConfirmingOtp}
+        errorMessage={f.otpError}
+      />
     </div>
   );
 }

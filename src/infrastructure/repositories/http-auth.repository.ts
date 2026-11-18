@@ -227,6 +227,14 @@ export class HttpAuthRepository implements AuthRepository {
     await ApiClient.post('/auth/verify-email', { email, otp });
   }
 
+  async verifyMyEmail(): Promise<User> {
+    const data = await ApiClient.post<User>('/me/verify-email');
+    if (typeof window !== 'undefined' && data) {
+      localStorage.setItem('cozynest_user', JSON.stringify(data));
+    }
+    return data;
+  }
+
   async resendVerifyEmail(email: string): Promise<void> {
     await ApiClient.post('/auth/verify-email/resend', { email });
   }

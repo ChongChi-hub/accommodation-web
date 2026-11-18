@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/routing';
-import { ArrowRight, Building2, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
+import { AlertCircle, ArrowRight, Building2, CheckCircle2, Mail, ShieldCheck, Sparkles } from 'lucide-react';
 import { container } from '@/infrastructure/di/container';
 import { APP_ROUTES } from '@/shared/routes';
 import { useAuthStore } from '@/presentation/stores/auth.store';
@@ -25,6 +25,11 @@ export default function BecomeLandlordPage() {
     appStatus && appStatus !== 'NOT_APPLIED' && appStatus !== 'APPROVED';
 
   const handleApply = async () => {
+    if (!user?.emailVerified) {
+      toast.error('Vui lòng xác minh địa chỉ email trước khi nộp hồ sơ.');
+      router.push(APP_ROUTES.tenantSecurity);
+      return;
+    }
     setIsSubmitting(true);
     try {
       if (container.auth.authRepository.applyLandlord) {
@@ -107,6 +112,26 @@ export default function BecomeLandlordPage() {
               className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-800 shrink-0"
             >
               <span>{t('actionContinueKyc')}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </>
+        ) : !user?.emailVerified ? (
+          <>
+            <div className="space-y-1">
+              <p className="text-xs sm:text-sm font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>Yêu cầu xác minh địa chỉ email</span>
+              </p>
+              <p className="text-xs text-foreground-muted">
+                Để đảm bảo an toàn và đủ điều kiện làm chủ trọ, bạn cần xác minh địa chỉ email trong Cài đặt tài khoản.
+              </p>
+            </div>
+            <Link
+              href={APP_ROUTES.tenantSecurity}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition-colors shrink-0"
+            >
+              <Mail className="w-4 h-4" />
+              <span>Xác minh email ngay</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </>

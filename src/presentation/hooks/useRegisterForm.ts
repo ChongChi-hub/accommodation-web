@@ -8,6 +8,8 @@ import { useAuthPanelContext, type AuthIntendedRole } from '@/presentation/compo
 import type { SubmitStatus } from '@/presentation/components/auth/SubmitButton';
 import { evaluatePasswordStrength } from '@/presentation/validation/password-strength';
 import { resolveAuthErrorKey } from '@/presentation/validation/auth-errors';
+import { sendRegisterOtpEmail } from '@/infrastructure/services/emailjs.service';
+import { toast } from '@/presentation/stores/toast.store';
 import {
   checkEmailTypo,
   createRegisterSchema,
@@ -38,6 +40,12 @@ export function useRegisterForm(initialRole: AuthIntendedRole) {
   const [isNetworkError, setIsNetworkError] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [status, setStatus] = useState<SubmitStatus>('idle');
+
+  // OTP verification state for registration
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [generatedOtp, setGeneratedOtp] = useState<string | null>(null);
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [isConfirmingOtp, setIsConfirmingOtp] = useState(false);
 
   const fullNameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -80,6 +88,30 @@ export function useRegisterForm(initialRole: AuthIntendedRole) {
     setFieldErrors((prev) => ({ ...prev, [field]: key ? t(key) : undefined }));
   };
 
+  const handleSendOtp = async (targetEmail: string, targetName: string): Promise<boolean> => {
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    setGeneratedOtp(otp);
+    setOtpError(null);
+
+    const res = await sendRegisterOtpEmail({
+      toName: targetName,
+      toEmail: targetEmail,
+      otpCode: otp,
+      expiryMinutes: 10,
+    });
+
+    if (!res.success) {
+      const err = res.error || 'Không thể gửi email xác thực. Vui lòng kiểm tra lại dịch vụ Email.';
+      setSummaryError(err);
+      setOtpError(err);
+      toast.error('Gửi mã xác thực email thất bại');
+      return false;
+    }
+
+    toast.success(`Đã gửi mã xác thực 6 số đến ${targetEmail}`);
+    return true;
+  };
+
   const performSubmit = async () => {
     if (cooldown > 0) return;
     setSummaryError(null);
@@ -120,16 +152,39 @@ export function useRegisterForm(initialRole: AuthIntendedRole) {
 
     setFieldErrors({});
     setStatus('loading');
+
+    // Send OTP to email via EmailJS before completing registration
+    const sent = await handleSendOtp(parsed.data.email, parsed.data.fullName);
+    setStatus('idle');
+
+    if (sent) {
+      setIsOtpModalOpen(true);
+    }
+  };
+
+  const handleConfirmOtp = async (enteredOtp: string) => {
+    setOtpError(null);
+    if (enteredOtp.trim() !== generatedOtp) {
+      setOtpError('Mã xác thực không chính xác. Vui lòng kiểm tra lại hòm thư.');
+      return;
+    }
+
+    setIsConfirmingOtp(true);
+    setStatus('loading');
+
     const ok = await register({
       role,
-      fullName: parsed.data.fullName,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
+      fullName: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone.trim(),
       password,
     });
 
+    setIsConfirmingOtp(false);
+
     if (ok) {
       setStatus('success');
+      setIsOtpModalOpen(false);
       setTimeout(() => {
         router.push(role === 'LANDLORD' ? '/dashboard/landlord' : '/dashboard/tenant');
       }, 220);
@@ -155,12 +210,12 @@ export function useRegisterForm(initialRole: AuthIntendedRole) {
           ? t('errors.networkError')
           : t('errors.emailExists'));
 
-    if (st.errorCode === 'ERR_AUTH_EMAIL_EXISTS') setFieldErrors((p) => ({ ...p, email: msg }));
-    if (st.errorCode === 'ERR_AUTH_PHONE_EXISTS') setFieldErrors((p) => ({ ...p, phone: msg }));
-    if (st.errorCode?.startsWith('ERR_AUTH_PASSWORD')) setFieldErrors((p) => ({ ...p, password: msg }));
-
+    setOtpError(msg);
     setSummaryError(msg);
-    requestAnimationFrame(() => errorSummaryRef.current?.focus());
+  };
+
+  const handleResendOtp = async (): Promise<boolean> => {
+    return handleSendOtp(email.trim().toLowerCase(), fullName.trim());
   };
 
   return {
@@ -197,5 +252,11 @@ export function useRegisterForm(initialRole: AuthIntendedRole) {
     refs: { fullNameRef, emailRef, phoneRef, passwordRef, confirmRef, termsRef, errorSummaryRef },
     validateSingleField,
     performSubmit,
+    isOtpModalOpen,
+    setIsOtpModalOpen,
+    otpError,
+    isConfirmingOtp,
+    handleConfirmOtp,
+    handleResendOtp,
   };
 }
