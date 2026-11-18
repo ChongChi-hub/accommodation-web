@@ -70,7 +70,7 @@ function LandlordMessagesContent() {
   const other = activeConversation?.otherParticipant;
 
   return (
-    <div className="space-y-4 max-w-5xl">
+    <div className="space-y-4 min-w-0">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
           {tAuto('k0182')}

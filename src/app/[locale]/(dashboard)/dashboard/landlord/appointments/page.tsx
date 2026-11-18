@@ -71,7 +71,7 @@ export default function LandlordAppointmentsPage() {
   }, [appointments]);
 
   return (
-    <div className="space-y-6 max-w-6xl pb-12">
+    <div className="space-y-6 pb-12 min-w-0">
       <AppointmentHeader
         summary={summary}
         currentStatus={status}

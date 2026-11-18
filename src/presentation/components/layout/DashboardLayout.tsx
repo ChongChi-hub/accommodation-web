@@ -93,14 +93,14 @@ export function DashboardLayout({ children, allowedRoles }: DashboardLayoutProps
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col overflow-x-clip">
       <DashboardHeader onToggleMobileSidebar={() => setIsMobileSidebarOpen(true)} />
-      
-      <div className="flex-1 flex mx-auto w-full max-w-7xl">
-        {/* Desktop Sidebar */}
+
+      <div className="flex-1 flex w-full min-w-0">
+        {/* Desktop Sidebar pinned flush left */}
         <DashboardSidebar />
 
-        {/* Mobile Offcanvas Drawer */}
+        {/* Mobile Offcanvas Drawer (<1024px) */}
         <Drawer
           isOpen={isMobileSidebarOpen}
           onClose={() => setIsMobileSidebarOpen(false)}
@@ -110,33 +110,35 @@ export function DashboardLayout({ children, allowedRoles }: DashboardLayoutProps
           <DashboardSidebar isMobile onClose={() => setIsMobileSidebarOpen(false)} />
         </Drawer>
 
-        {/* Main Content Area */}
-        <main className="w-full flex-1 p-4 md:p-8 overflow-y-auto space-y-6">
-          {user?.roles?.includes('LANDLORD') && !user?.faceVerified && !pathname.includes('/kyc/face') && (
-            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
-                  <ShieldAlert className="w-5 h-5" />
+        {/* Main Content Area: uses full remaining width, caps gracefully at 1600px on ultrawide */}
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto overflow-x-clip">
+          <div className="w-full max-w-[1600px] mx-auto space-y-6 min-w-0">
+            {user?.roles?.includes('LANDLORD') && !user?.faceVerified && !pathname.includes('/kyc/face') && (
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
+                    <ShieldAlert className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-bold text-amber-900 dark:text-amber-200">
+                      Yêu cầu xác thực khuôn mặt (Face Verification)
+                    </h4>
+                    <p className="text-xs text-amber-700 dark:text-amber-300/90 mt-0.5">
+                      Bạn đã nâng cấp thành công lên Chủ trọ. Để đảm bảo an toàn và được quyền đăng phòng mới hoặc lập hợp đồng, vui lòng hoàn tất xác thực khuôn mặt.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold text-amber-900 dark:text-amber-200">
-                    Yêu cầu xác thực khuôn mặt (Face Verification)
-                  </h4>
-                  <p className="text-xs text-amber-700 dark:text-amber-300/90 mt-0.5">
-                    Bạn đã nâng cấp thành công lên Chủ trọ. Để đảm bảo an toàn và được quyền đăng phòng mới hoặc lập hợp đồng, vui lòng hoàn tất xác thực khuôn mặt.
-                  </p>
-                </div>
+                <Link
+                  href="/dashboard/landlord/kyc/face"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shrink-0 transition-colors"
+                >
+                  <span>Xác thực ngay</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
-              <Link
-                href="/dashboard/landlord/kyc/face"
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shrink-0 transition-colors"
-              >
-                <span>Xác thực ngay</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          )}
-          {children}
+            )}
+            {children}
+          </div>
         </main>
       </div>
 

@@ -58,7 +58,7 @@ export default function TenantRentalRequestsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 min-w-0">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
           {t('tenantTitle')} ({requests.length})
