@@ -33,16 +33,37 @@ export function MessageBadgeLink({
     let active = true;
     const repo = container.notification.notificationRepository;
     if (!repo.getUnreadMessageCount) return;
-    repo
-      .getUnreadMessageCount(userId)
-      .then((count) => {
-        if (active) setUnreadMessages(count);
-      })
-      .catch(() => {
-        // Ignore silent badge error
-      });
+
+    const fetchUnread = () => {
+      repo
+        .getUnreadMessageCount(userId)
+        .then((count) => {
+          if (active) setUnreadMessages(count);
+        })
+        .catch(() => {
+          // Ignore silent badge error
+        });
+    };
+
+    fetchUnread();
+
+    const interval = setInterval(fetchUnread, 5000);
+
+    const handleRefresh = () => fetchUnread();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('cozynest:refresh-badges', handleRefresh);
+      window.addEventListener('chat:unread-updated', handleRefresh);
+      window.addEventListener('focus', handleRefresh);
+    }
+
     return () => {
       active = false;
+      clearInterval(interval);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('cozynest:refresh-badges', handleRefresh);
+        window.removeEventListener('chat:unread-updated', handleRefresh);
+        window.removeEventListener('focus', handleRefresh);
+      }
     };
   }, [hasHydrated, isAuthenticated, href, userId]);
 

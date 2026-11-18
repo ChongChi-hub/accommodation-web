@@ -63,11 +63,23 @@ export function useChat(options: UseChatOptions = {}) {
         const msgs = await repo.getMessages(convId);
         setMessages(msgs);
         // Mark as read
-        repo.markAsRead(convId).catch(() => {});
+        repo
+          .markAsRead(convId)
+          .then(() => {
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+              window.dispatchEvent(new CustomEvent('chat:unread-updated'));
+            }
+          })
+          .catch(() => {});
         // Update local unreadCount
         setConversations((prev) =>
           prev.map((c) => (c.id === convId ? { ...c, unreadCount: 0 } : c))
         );
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('cozynest:refresh-badges'));
+          window.dispatchEvent(new CustomEvent('chat:unread-updated'));
+        }
       } catch (err: unknown) {
         if (!silent) {
           const msg = err instanceof Error ? err.message : 'Không thể tải tin nhắn';
