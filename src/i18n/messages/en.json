@@ -2143,6 +2143,7 @@
       "landlordTitle": "Manage Rental Requests",
       "landlordSubtitle": "Review tenant applications and initiate digital lease contracts.",
       "sendRequest": "Send Rental Request",
+      "sendMessage": "Message",
       "moveInDate": "Proposed Move-in Date",
       "occupants": "Number of Occupants",
       "note": "Message to Landlord",

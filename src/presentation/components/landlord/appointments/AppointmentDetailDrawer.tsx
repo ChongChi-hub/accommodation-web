@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '@/presentation/components/ui/Button';
 import { ViewingAppointmentDetail, ViewingAppointmentItem } from '@/domain/entities/ViewingAppointment';
 import { AppointmentStatusBadge } from './AppointmentStatusBadge';
-import { X, Clock, Calendar, Phone, Mail, User, Building2, Copy, Check, ExternalLink } from 'lucide-react';
+import { X, Clock, Phone, Mail, User, Building2, Copy, Check, ExternalLink, MessageSquare } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 
@@ -28,6 +28,7 @@ export function AppointmentDetailDrawer({
   onOpenComplete,
 }: AppointmentDetailDrawerProps) {
   const t = useTranslations('landlord.appointments.detail');
+  const tChat = useTranslations('chat');
   const [copied, setCopied] = useState(false);
 
   if (!isOpen) return null;
@@ -195,7 +196,17 @@ export function AppointmentDetailDrawer({
         </div>
 
         {detail && (
-          <div className="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/80 flex items-center justify-end gap-2">
+          <div className="p-4 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/80 flex items-center justify-between gap-2 flex-wrap">
+            {detail.tenantId ? (
+              <Link
+                href={`/dashboard/landlord/messages?tenantId=${encodeURIComponent(detail.tenantId)}&tenantName=${encodeURIComponent(detail.contactName || '')}&roomId=${detail.roomId}&roomTitle=${encodeURIComponent(detail.roomTitle || '')}`}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                {tChat('sendMessage')}
+              </Link>
+            ) : <span />}
+            <div className="flex items-center justify-end gap-2">
             {detail.status === 'PENDING' && (
               <>
                 <Button variant="outline" size="sm" onClick={() => onOpenCancel(detail)}>
@@ -231,6 +242,7 @@ export function AppointmentDetailDrawer({
                 </Button>
               </>
             )}
+            </div>
           </div>
         )}
       </div>

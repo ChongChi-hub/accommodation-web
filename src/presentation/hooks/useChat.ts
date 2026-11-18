@@ -134,10 +134,10 @@ export function useChat(options: UseChatOptions = {}) {
   );
 
   const sendMessage = useCallback(
-    async (content: string) => {
+    async (content: string): Promise<boolean> => {
       const trimmed = content.trim();
       const currentConvId = activeConvIdRef.current;
-      if (!trimmed || !currentConvId) return;
+      if (!trimmed || !currentConvId) return false;
 
       setIsSending(true);
 
@@ -182,11 +182,13 @@ export function useChat(options: UseChatOptions = {}) {
               : c
           )
         );
+        return true;
       } catch (err: unknown) {
-        // Rollback optimistic message on error
+        // Rollback optimistic message on error; caller preserves draft so user can retry without losing text
         setMessages((prev) => prev.filter((m) => m.id !== tempId));
         const msg = err instanceof Error ? err.message : 'Gửi tin nhắn thất bại';
         toast.error(msg);
+        return false;
       } finally {
         setIsSending(false);
       }
@@ -265,20 +267,36 @@ export function useChat(options: UseChatOptions = {}) {
     repo,
   ]);
 
-  // Real-time polling
+  // Real-time polling: pauses automatically when autoLoad is false or browser tab is hidden
   useEffect(() => {
-    if (!pollIntervalMs || pollIntervalMs <= 0) return;
+    if (!autoLoad || !pollIntervalMs || pollIntervalMs <= 0) return;
 
-    const interval = setInterval(() => {
+    const tick = () => {
+      if (typeof document !== 'undefined' && document.hidden) return;
       const currentId = activeConvIdRef.current;
       if (currentId) {
         loadMessages(currentId, true);
       }
       loadConversations();
-    }, pollIntervalMs);
+    };
 
-    return () => clearInterval(interval);
-  }, [pollIntervalMs, loadMessages, loadConversations]);
+    const interval = setInterval(tick, pollIntervalMs);
+    const onVisibility = () => {
+      if (typeof document !== 'undefined' && !document.hidden) {
+        tick();
+      }
+    };
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', onVisibility);
+    }
+
+    return () => {
+      clearInterval(interval);
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', onVisibility);
+      }
+    };
+  }, [autoLoad, pollIntervalMs, loadMessages, loadConversations]);
 
   const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
 

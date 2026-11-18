@@ -13,7 +13,7 @@ import { container } from '@/infrastructure/di/container';
 import { RentalRequest } from '@/domain/entities/RentalRequest';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDate, formatIsoDateTime } from '@/shared/utils/format-vnd';
-import { Check, X, FileText, UserCheck, Eye, XCircle } from 'lucide-react';
+import { Check, X, FileText, UserCheck, Eye, XCircle, MessageSquare } from 'lucide-react';
 
 type StatusTab = 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
 
@@ -218,6 +218,13 @@ export default function LandlordRentalRequestsPage() {
               )}
 
               <div className="pt-2 flex flex-wrap justify-end gap-2">
+                <Link
+                  href={`/dashboard/landlord/messages?tenantId=${encodeURIComponent(r.tenantId)}&tenantName=${encodeURIComponent(r.tenantName || t('fallbackGuestName'))}&roomId=${encodeURIComponent(r.roomId)}&roomTitle=${encodeURIComponent(r.roomTitle || t('fallbackRoomTitle'))}`}
+                >
+                  <Button variant="ghost" size="sm" leftIcon={<MessageSquare className="w-3.5 h-3.5" />}>
+                    {t('sendMessage')}
+                  </Button>
+                </Link>
                 {r.status === 'PENDING' && (
                   <>
                     <Button

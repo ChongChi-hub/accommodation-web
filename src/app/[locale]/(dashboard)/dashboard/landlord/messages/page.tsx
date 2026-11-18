@@ -10,7 +10,8 @@ import { Skeleton } from '@/presentation/components/ui/Skeleton';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { useChat } from '@/presentation/hooks/useChat';
 import { UserPresenceBadge } from '@/presentation/components/chat/UserPresenceBadge';
-import { Send, MessageSquare, Loader2, Home, Clock, CheckCheck, User } from 'lucide-react';
+import { SafeMessageContent } from '@/presentation/components/chat/SafeMessageContent';
+import { Send, MessageSquare, Loader2, Home, Clock, CheckCheck, User, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 function LandlordMessagesContent() {
@@ -25,6 +26,7 @@ function LandlordMessagesContent() {
   const roomTitleParam = searchParams.get('roomTitle') || undefined;
 
   const [inputMsg, setInputMsg] = useState('');
+  const [mobileShowThread, setMobileShowThread] = useState(Boolean(conversationIdParam || tenantIdParam));
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -53,8 +55,10 @@ function LandlordMessagesContent() {
     e.preventDefault();
     if (!inputMsg.trim() || isSending) return;
     const text = inputMsg;
-    setInputMsg('');
-    await sendMessage(text);
+    const ok = await sendMessage(text);
+    if (ok) {
+      setInputMsg('');
+    }
   };
 
   const formatTime = (isoString?: string | null) => {
@@ -79,8 +83,11 @@ function LandlordMessagesContent() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[640px]">
-        {/* Left column: Conversations list */}
-        <Card className="p-0 overflow-hidden flex flex-col border border-stone-200 dark:border-stone-800">
+        {/* Left column: Conversations list (1-col toggle on mobile) */}
+        <Card className={cn(
+          'p-0 overflow-hidden flex-col border border-stone-200 dark:border-stone-800',
+          mobileShowThread ? 'hidden md:flex' : 'flex'
+        )}>
           <div className="p-3.5 border-b border-stone-100 dark:border-stone-800 font-bold text-xs uppercase tracking-wider text-stone-500 flex items-center justify-between">
             <span>{tAuto('k0184')}</span>
             <span className="text-[11px] font-mono text-stone-400">({conversations.length})</span>
@@ -106,7 +113,10 @@ function LandlordMessagesContent() {
                   <button
                     key={c.id}
                     type="button"
-                    onClick={() => selectConversation(c.id)}
+                    onClick={() => {
+                      selectConversation(c.id);
+                      setMobileShowThread(true);
+                    }}
                     className={cn(
                       'w-full p-3.5 flex items-start gap-3 text-left transition-colors cursor-pointer',
                       isActive
@@ -153,13 +163,24 @@ function LandlordMessagesContent() {
           </div>
         </Card>
 
-        {/* Right column: Chat thread */}
-        <Card className="md:col-span-2 p-0 overflow-hidden flex flex-col border border-stone-200 dark:border-stone-800">
+        {/* Right column: Chat thread (1-col toggle on mobile) */}
+        <Card className={cn(
+          'md:col-span-2 p-0 overflow-hidden flex-col border border-stone-200 dark:border-stone-800',
+          mobileShowThread ? 'flex' : 'hidden md:flex'
+        )}>
           {activeConversation ? (
             <>
               {/* Header */}
               <div className="p-3.5 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-stone-50/60 dark:bg-stone-800/40">
                 <div className="flex items-center gap-2.5 min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => setMobileShowThread(false)}
+                    aria-label={tChat('allConversations')}
+                    className="md:hidden p-1.5 rounded-lg hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
                   <Avatar name={other?.name || 'Khách thuê'} size="sm" />
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-stone-900 dark:text-stone-100 truncate">
@@ -218,7 +239,7 @@ function LandlordMessagesContent() {
                               : 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 border border-stone-200/80 dark:border-stone-700 rounded-tl-xs'
                           )}
                         >
-                          {m.content}
+                          <SafeMessageContent text={m.content} />
                         </div>
                         <span className="text-[10px] text-stone-400 mt-1 px-1 flex items-center gap-1">
                           <Clock className="w-2.5 h-2.5" />
@@ -239,18 +260,25 @@ function LandlordMessagesContent() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Chat send input */}
+              {/* Chat send input (Enter sends, Shift+Enter adds newline) */}
               <form
                 onSubmit={handleSend}
-                className="p-3 border-t border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900 flex gap-2"
+                className="p-3 border-t border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900 flex items-end gap-2"
               >
-                <input
-                  type="text"
+                <textarea
+                  rows={1}
+                  maxLength={2000}
                   value={inputMsg}
                   onChange={(e) => setInputMsg(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      void handleSend(e as unknown as React.FormEvent);
+                    }
+                  }}
                   placeholder={tChat('typePlaceholderLandlord')}
                   disabled={isSending}
-                  className="flex-1 bg-stone-50 dark:bg-stone-800 rounded-xl px-3.5 py-2.5 text-xs text-stone-900 dark:text-stone-100 placeholder:text-stone-400 border border-transparent focus:border-teal-700 focus:bg-white dark:focus:bg-stone-900 focus:outline-none transition-colors"
+                  className="flex-1 resize-none max-h-28 bg-stone-50 dark:bg-stone-800 rounded-xl px-3.5 py-2.5 text-xs text-stone-900 dark:text-stone-100 placeholder:text-stone-400 border border-transparent focus:border-teal-700 focus:bg-white dark:focus:bg-stone-900 focus:outline-none transition-colors"
                 />
                 <Button
                   type="submit"

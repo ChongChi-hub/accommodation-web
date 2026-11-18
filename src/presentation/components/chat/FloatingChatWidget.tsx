@@ -21,6 +21,7 @@ import {
 import { cn } from '@/lib/cn';
 import { getMessagesRoute } from '@/presentation/utils/user-display';
 import { UserPresenceBadge } from '@/presentation/components/chat/UserPresenceBadge';
+import { SafeMessageContent } from '@/presentation/components/chat/SafeMessageContent';
 
 export interface FloatingChatWidgetProps {
   defaultOpen?: boolean;
@@ -84,8 +85,10 @@ export function FloatingChatWidget({
     e.preventDefault();
     if (!inputText.trim() || isSending) return;
     const text = inputText;
-    setInputText('');
-    await sendMessage(text);
+    const ok = await sendMessage(text);
+    if (ok) {
+      setInputText('');
+    }
   };
 
   const otherParticipant = activeConversation?.otherParticipant;
@@ -269,7 +272,7 @@ export function FloatingChatWidget({
                             : 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 border border-stone-200/80 dark:border-stone-700/80 rounded-tl-xs'
                         )}
                       >
-                        {m.content}
+                        <SafeMessageContent text={m.content} />
                       </div>
                       <span className="text-[9px] text-stone-400 mt-0.5 px-1 flex items-center gap-1">
                         <Clock className="w-2.5 h-2.5" />
@@ -294,13 +297,20 @@ export function FloatingChatWidget({
                 onSubmit={handleSend}
                 className="p-2.5 border-t border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 flex items-center gap-2"
               >
-                <input
-                  type="text"
+                <textarea
+                  rows={1}
+                  maxLength={2000}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      void handleSend(e as unknown as React.FormEvent);
+                    }
+                  }}
                   placeholder={tChat('typePlaceholder')}
                   disabled={isSending || isLoading}
-                  className="flex-1 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-xs px-3 py-2 rounded-xl border border-transparent focus:border-teal-500 focus:bg-white dark:focus:bg-stone-900 focus:outline-none transition-colors"
+                  className="flex-1 resize-none max-h-24 bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100 text-xs px-3 py-2 rounded-xl border border-transparent focus:border-teal-500 focus:bg-white dark:focus:bg-stone-900 focus:outline-none transition-colors"
                 />
                 <Button
                   type="submit"
