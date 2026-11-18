@@ -105,7 +105,7 @@ function AdminAnalyticsContent() {
             <div key={area.id} className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <span className="font-semibold text-foreground">
-                  {idx + 1}. {t(area.key)}
+                  {idx + 1}. {t(area.key as any)}
                 </span>
                 <span className="font-bold text-teal-700 dark:text-teal-400">
                   {t('areaPercent', { percent: area.percent })}

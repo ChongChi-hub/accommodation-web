@@ -84,10 +84,10 @@ export function useAdminSettings() {
 
   const handleClearCache = async () => {
     try {
-      await ApiClient.post<void>('/admin/clear-cache').catch(() => {});
+      await ApiClient.post<void>('/admin/clear-cache', {});
       toast.success(t('toastCacheCleared'));
     } catch {
-      toast.success(t('toastCacheCleared'));
+      toast.error('Lỗi khi xóa bộ nhớ đệm hệ thống');
     }
   };
 

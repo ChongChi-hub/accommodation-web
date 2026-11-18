@@ -29,6 +29,7 @@ function AdminReportsContent() {
     error,
     retry,
     handleResolve,
+    handleDismiss,
   } = useAdminReports();
 
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
@@ -189,16 +190,29 @@ function AdminReportsContent() {
                 <FileText className="w-3.5 h-3.5" />
                 <span>{tAuto('k0011')}</span>
               </h4>
-              <div className="p-4 rounded-xl border border-border bg-surface text-xs leading-relaxed text-foreground">
-                {selectedReport.reason}
+              <div className="p-4 rounded-xl border border-border bg-surface text-xs leading-relaxed text-foreground space-y-2">
+                <p className="font-semibold text-foreground">{selectedReport.reason}</p>
+                {selectedReport.description && selectedReport.description !== selectedReport.reason && (
+                  <p className="text-foreground-muted">{selectedReport.description}</p>
+                )}
               </div>
             </div>
 
             {selectedReport.status === 'PENDING' && (
-              <div className="pt-4 border-t border-border flex justify-end">
+              <div className="pt-4 border-t border-border flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  className="w-1/2"
+                  onClick={() => {
+                    handleDismiss(selectedReport.id);
+                    setSelectedReport(null);
+                  }}
+                >
+                  Bác bỏ
+                </Button>
                 <Button
                   variant="primary"
-                  className="w-full"
+                  className="w-1/2"
                   onClick={() => {
                     handleResolve(selectedReport.id);
                     setSelectedReport(null);

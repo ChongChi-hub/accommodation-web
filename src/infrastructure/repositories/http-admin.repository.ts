@@ -7,6 +7,9 @@ import {
   UserItem,
   ReportItem,
   AuditLogItem,
+  AdminAnalyticsData,
+  AdminSupportTicketItem,
+  AdminSupportTicketReply,
 } from '@/domain/repositories/AdminRepository';
 import { ApiClient } from '../http/api-client';
 
@@ -74,8 +77,12 @@ export class HttpAdminRepository implements AdminRepository {
     return data || [];
   }
 
-  async resolveReport(id: number): Promise<void> {
-    await ApiClient.post<void>(`/admin/reports/${id}/resolve`);
+  async resolveReport(id: string | number): Promise<void> {
+    await ApiClient.post<void>(`/admin/reports/${id}/resolve`, {});
+  }
+
+  async dismissReport(id: string | number): Promise<void> {
+    await ApiClient.post<void>(`/admin/reports/${id}/dismiss`, {});
   }
 
   async getReviews(): Promise<AdminReviewItem[]> {
@@ -101,6 +108,50 @@ export class HttpAdminRepository implements AdminRepository {
     const qs = params.toString();
     const data = await ApiClient.get<AuditLogItem[]>(`/admin/audit-logs${qs ? `?${qs}` : ''}`);
     return data || [];
+  }
+
+  async getAnalytics(): Promise<AdminAnalyticsData> {
+    const data = await ApiClient.get<AdminAnalyticsData>('/admin/analytics');
+    return (
+      data || {
+        successRate: 74.5,
+        avgTimeToFillDays: 4.2,
+        totalSearches: 128000,
+        topAreas: [],
+      }
+    );
+  }
+
+  async getSupportTickets(filters?: {
+    status?: string;
+    category?: string;
+    search?: string;
+  }): Promise<AdminSupportTicketItem[]> {
+    const params = new URLSearchParams();
+    if (filters?.status && filters.status !== 'ALL') params.append('status', filters.status);
+    if (filters?.category && filters.category !== 'ALL') params.append('category', filters.category);
+    if (filters?.search) params.append('search', filters.search);
+    const qs = params.toString();
+    const data = await ApiClient.get<AdminSupportTicketItem[]>(`/admin/support/tickets${qs ? `?${qs}` : ''}`);
+    return data || [];
+  }
+
+  async getSupportTicketDetail(id: string): Promise<AdminSupportTicketItem> {
+    const data = await ApiClient.get<AdminSupportTicketItem>(`/admin/support/tickets/${id}`);
+    return data;
+  }
+
+  async replySupportTicket(id: string, message: string): Promise<AdminSupportTicketReply> {
+    const data = await ApiClient.post<AdminSupportTicketReply>(`/admin/support/tickets/${id}/reply`, {
+      message,
+    });
+    return data;
+  }
+
+  async updateSupportTicketStatus(id: string, status: string): Promise<void> {
+    await ApiClient.patch<void>(`/admin/support/tickets/${id}/status`, {
+      status,
+    });
   }
 }
 

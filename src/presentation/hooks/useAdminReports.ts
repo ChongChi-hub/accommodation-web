@@ -52,7 +52,7 @@ export function useAdminReports() {
   }, [fetchReports]);
 
   const handleResolve = useCallback(
-    async (id: number) => {
+    async (id: string | number) => {
       await container.admin.adminRepository.resolveReport(id);
       setReports((prev) =>
         prev.map((r) => (r.id === id ? { ...r, status: 'RESOLVED' as const } : r))
@@ -60,6 +60,19 @@ export function useAdminReports() {
       toast.success(t('toastResolved'));
     },
     [t]
+  );
+
+  const handleDismiss = useCallback(
+    async (id: string | number) => {
+      if (container.admin.adminRepository.dismissReport) {
+        await container.admin.adminRepository.dismissReport(id);
+      }
+      setReports((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status: 'DISMISSED' as const } : r))
+      );
+      toast.success('Đã bác bỏ báo cáo vi phạm');
+    },
+    []
   );
 
   const filteredReports = useMemo(() => {
@@ -83,6 +96,7 @@ export function useAdminReports() {
     error,
     retry: fetchReports,
     handleResolve,
+    handleDismiss,
   };
 }
 
