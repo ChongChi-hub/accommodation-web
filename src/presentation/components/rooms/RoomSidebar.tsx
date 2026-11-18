@@ -19,6 +19,8 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { RoomDetailDto } from '@/application/dto/listing.dto';
+import { useAuthStore } from '@/presentation/stores/auth.store';
+import { toast } from '@/presentation/stores/toast.store';
 import { BookmarkButton } from './BookmarkButton';
 import { RoomShareButton } from './RoomShareButton';
 
@@ -31,6 +33,7 @@ interface RoomSidebarProps {
 export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSidebarProps) {
   const tAuto = useTranslations('autoI18n');
   const router = useRouter();
+  const user = useAuthStore((s) => s.user);
   const formatPrice = (p: number) => new Intl.NumberFormat('vi-VN').format(Math.round(p || 0));
 
   const isUnavailable =
@@ -46,12 +49,29 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
       ? 'Phòng đang bảo trì & sửa chữa'
       : 'Phòng hiện đã có người thuê';
 
-  const checkAuthAndExecute = (action: () => void) => {
+  const checkAuthAndExecute = (action: () => void, requireTenantRole = false) => {
     if (typeof document !== 'undefined') {
       const hasSession = document.cookie.includes('cozynest_role=');
-      if (!hasSession) {
+      if (!hasSession && !user) {
         const returnUrl = encodeURIComponent(window.location.pathname);
         router.push(`/login?returnUrl=${returnUrl}`);
+        return;
+      }
+    }
+    if (requireTenantRole && user) {
+      const roleUpper = (user.role || '').toUpperCase();
+      const rolesUpper = (user.roles || []).map((r) => r.toUpperCase());
+      const canBook =
+        roleUpper === 'TENANT' ||
+        roleUpper === 'ADMIN' ||
+        rolesUpper.includes('TENANT') ||
+        rolesUpper.includes('ADMIN');
+      if (!canBook) {
+        toast.error('Chỉ tài khoản Khách thuê mới có thể đặt lịch xem phòng hoặc gửi yêu cầu thuê.');
+        return;
+      }
+      if (room.landlord?.email && user.email && room.landlord.email.toLowerCase() === user.email.toLowerCase()) {
+        toast.error('Chủ trọ không thể tự đặt lịch hoặc gửi yêu cầu thuê phòng của chính mình.');
         return;
       }
     }
@@ -176,7 +196,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
           size="lg"
           className="w-full h-11"
           disabled={isUnavailable}
-          onClick={() => checkAuthAndExecute(onOpenAppointment)}
+          onClick={() => checkAuthAndExecute(onOpenAppointment, true)}
           leftIcon={<Calendar className="w-4 h-4" />}
         >
           {isUnavailable ? 'Phòng không khả dụng' : 'Đặt lịch xem phòng'}
@@ -188,7 +208,7 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
           size="lg"
           className="w-full h-11"
           disabled={isUnavailable}
-          onClick={() => checkAuthAndExecute(onOpenRental)}
+          onClick={() => checkAuthAndExecute(onOpenRental, true)}
           leftIcon={<Send className="w-4 h-4" />}
         >
           {tAuto('k0627')}

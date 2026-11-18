@@ -47,6 +47,22 @@ export function RoomReviews({
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const visibleReviews = React.useMemo(
+    () => reviews.filter((r) => !r.status || r.status.toUpperCase() === 'VISIBLE'),
+    [reviews]
+  );
+
+  const visibleCount = visibleReviews.length;
+  const computedAvg = React.useMemo(() => {
+    if (visibleCount > 0) {
+      const sum = visibleReviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+      return Math.round((sum / visibleCount) * 10) / 10;
+    }
+    return ratingAvg || 0;
+  }, [visibleReviews, visibleCount, ratingAvg]);
+
+  const effectiveReviewCount = visibleCount > 0 ? visibleCount : (reviewCount || 0);
+
   const criteria = [
     { label: 'Vệ sinh & Sạch sẽ', score: ratingCleanliness ?? 5.0 },
     { label: 'Vị trí & Tiện ích xung quanh', score: ratingLocation ?? 5.0 },
@@ -99,7 +115,7 @@ export function RoomReviews({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200 dark:border-stone-800">
         <div>
           <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-            {tAuto('k0613')}{reviewCount})
+            {tAuto('k0613')}{effectiveReviewCount})
           </h2>
           <p className="text-xs text-stone-500">
             {tAuto('k0614')}
@@ -120,13 +136,13 @@ export function RoomReviews({
           )}
 
           <div className="flex items-center gap-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/60 px-4 py-2 rounded-2xl">
-            <Star className="w-6 h-6 text-amber-500 fill-amber-500" />
+            <Star className={`w-6 h-6 ${effectiveReviewCount > 0 ? 'text-amber-500 fill-amber-500' : 'text-stone-300 dark:text-stone-600'}`} />
             <div>
               <span className="text-2xl font-black text-amber-950 dark:text-amber-200">
-                {(ratingAvg || 5.0).toFixed(1)}
+                {effectiveReviewCount > 0 ? (computedAvg || 5.0).toFixed(1) : '—'}
               </span>
               <span className="text-xs text-amber-700 dark:text-amber-400 block font-medium">
-                {tAuto('k0615')}
+                {effectiveReviewCount > 0 ? tAuto('k0615') : 'Chưa có đánh giá'}
               </span>
             </div>
           </div>
@@ -145,23 +161,25 @@ export function RoomReviews({
               <div className="w-20 bg-stone-200 dark:bg-stone-700 h-1.5 rounded-full overflow-hidden">
                 <div
                   className="bg-teal-700 dark:text-teal-400 h-full rounded-full"
-                  style={{ width: `${(c.score / 5) * 100}%` }}
+                  style={{ width: `${effectiveReviewCount > 0 ? (c.score / 5) * 100 : 0}%` }}
                 />
               </div>
-              <span className="font-bold text-stone-900 dark:text-stone-100">{c.score.toFixed(1)}</span>
+              <span className="font-bold text-stone-900 dark:text-stone-100">
+                {effectiveReviewCount > 0 ? c.score.toFixed(1) : '—'}
+              </span>
             </div>
           </div>
         ))}
       </div>
 
       {/* Reviews List */}
-      {reviews.length === 0 ? (
+      {visibleReviews.length === 0 ? (
         <div className="p-6 text-center rounded-2xl border border-stone-200 dark:border-stone-800 text-xs text-stone-500">
           {tAuto('k0616')}
         </div>
       ) : (
         <div className="space-y-4">
-          {reviews.map((rev) => (
+          {visibleReviews.map((rev) => (
             <div
               key={rev.id}
               className="p-4 rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-white dark:bg-stone-900/40 space-y-3"
