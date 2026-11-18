@@ -9,7 +9,7 @@ export interface UserPresence {
   lastActiveAt: string | null;
 }
 
-export function useUserPresence(userId?: string | null, pollIntervalMs = 8000) {
+export function useUserPresence(userId?: string | null, pollIntervalMs = 5000) {
   const [presence, setPresence] = useState<UserPresence | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 

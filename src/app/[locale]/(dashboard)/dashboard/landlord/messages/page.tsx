@@ -114,7 +114,14 @@ function LandlordMessagesContent() {
                         : 'hover:bg-stone-50 dark:hover:bg-stone-800/40'
                     )}
                   >
-                    <Avatar name={participantName} size="md" className="shrink-0" />
+                    <div className="relative shrink-0">
+                      <Avatar name={participantName} size="md" />
+                      <UserPresenceBadge
+                        userId={c.otherParticipant?.userId}
+                        variant="dot"
+                        className="absolute bottom-0 right-0"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <p className="text-xs font-bold text-stone-900 dark:text-stone-100 truncate">

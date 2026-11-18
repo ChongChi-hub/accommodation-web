@@ -61,18 +61,8 @@ export function RoomSidebar({ room, onOpenAppointment, onOpenRental }: RoomSideb
   const handleMessage = () => {
     checkAuthAndExecute(() => {
       const rawLandlordId = room.landlord?.landlordId;
-      let landlordId = 'u-huy-01';
+      let landlordId = 'u-landlord-01';
       if (
-        rawLandlordId === 2122472122 ||
-        room.landlord?.email === 'dgiahuy2911@gmail.com'
-      ) {
-        landlordId = 'u-huy-01';
-      } else if (
-        rawLandlordId === 2 ||
-        room.landlord?.email === 'lehuunhathao2k6@gmail.com'
-      ) {
-        landlordId = 'u-hao-01';
-      } else if (
         typeof rawLandlordId === 'number' ||
         (typeof rawLandlordId === 'string' && /^\d+$/.test(String(rawLandlordId)))
       ) {
