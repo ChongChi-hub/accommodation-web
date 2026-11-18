@@ -50,11 +50,7 @@ export function NewRoomFormSteps({
             options={
               provinces.length > 0
                 ? provinces.map((p) => ({ value: p.code, label: p.name }))
-                : [
-                    { value: '01', label: 'Hà Nội' },
-                    { value: '79', label: 'Hồ Chí Minh' },
-                    { value: '48', label: 'Đà Nẵng' },
-                  ]
+                : [{ value: '', label: 'Đang tải danh sách tỉnh / thành...' }]
             }
             value={formData.province}
             onChange={(e) => setFormData({ ...formData, province: e.target.value })}
@@ -65,7 +61,7 @@ export function NewRoomFormSteps({
           options={
             wards.length > 0
               ? wards.map((w) => ({ value: w.code, label: w.name }))
-              : [{ value: 'HN_DVH', label: 'Phường Dịch Vọng Hậu' }]
+              : [{ value: '', label: 'Đang tải danh sách phường / xã...' }]
           }
           value={formData.ward}
           onChange={(e) => setFormData({ ...formData, ward: e.target.value })}
