@@ -182,6 +182,14 @@ export class HttpBillingRepository {
     return ApiClient.post<RefundItem>(`/billing/refunds/${encodeURIComponent(id)}/approve`);
   }
 
+  async rejectRefund(id: string, reason?: string): Promise<RefundItem> {
+    return ApiClient.post<RefundItem>(`/billing/refunds/${encodeURIComponent(id)}/reject`, { reason });
+  }
+
+  async retryRefund(id: string): Promise<RefundItem> {
+    return ApiClient.post<RefundItem>(`/billing/refunds/${encodeURIComponent(id)}/retry`);
+  }
+
   async getLandlordDashboardStats(): Promise<LandlordFinancialStats> {
     return ApiClient.get<LandlordFinancialStats>('/billing/dashboard/landlord');
   }
@@ -229,6 +237,23 @@ export class HttpBillingRepository {
 
   async freezeEscrow(contractId: string, reason: string): Promise<EscrowHold> {
     return ApiClient.post<EscrowHold>(`/billing/escrow/${encodeURIComponent(contractId)}/freeze`, { reason });
+  }
+
+  async getAdminEscrows(): Promise<EscrowHold[]> {
+    const res = await ApiClient.get<EscrowHold[]>('/billing/escrow/admin').catch(() => []);
+    return Array.isArray(res) ? res : [];
+  }
+
+  async unfreezeEscrow(contractId: string): Promise<EscrowHold> {
+    return ApiClient.post<EscrowHold>(`/billing/escrow/${encodeURIComponent(contractId)}/unfreeze`);
+  }
+
+  async releaseEscrow(contractId: string): Promise<EscrowHold> {
+    return ApiClient.post<EscrowHold>(`/billing/escrow/${encodeURIComponent(contractId)}/release`);
+  }
+
+  async refundEscrow(contractId: string, reason: string): Promise<EscrowHold> {
+    return ApiClient.post<EscrowHold>(`/billing/escrow/${encodeURIComponent(contractId)}/refund`, { reason });
   }
 
   async exportDashboardCsvBlob(): Promise<Blob> {

@@ -87,8 +87,19 @@ export class HttpAdminRepository implements AdminRepository {
     await ApiClient.post<void>(`/admin/reviews/${id}/toggle`, {});
   }
 
-  async getAuditLogs(): Promise<AuditLogItem[]> {
-    const data = await ApiClient.get<AuditLogItem[]>('/admin/audit-logs');
+  async getAuditLogs(filters?: {
+    search?: string;
+    source?: string;
+    action?: string;
+    limit?: number;
+  }): Promise<AuditLogItem[]> {
+    const params = new URLSearchParams();
+    if (filters?.search) params.append('search', filters.search);
+    if (filters?.source && filters.source !== 'ALL') params.append('source', filters.source);
+    if (filters?.action) params.append('action', filters.action);
+    if (filters?.limit) params.append('limit', String(filters.limit));
+    const qs = params.toString();
+    const data = await ApiClient.get<AuditLogItem[]>(`/admin/audit-logs${qs ? `?${qs}` : ''}`);
     return data || [];
   }
 }

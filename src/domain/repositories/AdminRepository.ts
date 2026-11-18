@@ -84,11 +84,15 @@ export interface ReportItem {
 }
 
 export interface AuditLogItem {
-  id: number;
+  id: number | string;
   actor: string;
+  actorRole?: string;
   action: string;
   target: string;
+  details?: string | null;
   ip: string;
+  userAgent?: string | null;
+  source?: string;
   timestamp: string;
 }
 
@@ -115,6 +119,6 @@ export interface AdminRepository {
   resolveReport(id: number): Promise<void>;
   getReviews(): Promise<AdminReviewItem[]>;
   toggleReviewVisibility(id: number): Promise<void>;
-  getAuditLogs(): Promise<AuditLogItem[]>;
+  getAuditLogs(filters?: { search?: string; source?: string; action?: string; limit?: number }): Promise<AuditLogItem[]>;
 }
 

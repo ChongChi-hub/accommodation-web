@@ -11,6 +11,7 @@ export function useAdminAuditLogs() {
 
   const [logs, setLogs] = useState<AuditLogItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sourceFilter, setSourceFilter] = useState('ALL');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +35,7 @@ export function useAdminAuditLogs() {
     }
 
     try {
-      const data = await container.admin.adminRepository.getAuditLogs();
+      const data = await container.admin.adminRepository.getAuditLogs({ limit: 200 });
       setLogs(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -48,23 +49,31 @@ export function useAdminAuditLogs() {
   }, [fetchLogs]);
 
   const filteredLogs = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
     return logs.filter((l) => {
+      if (sourceFilter !== 'ALL' && (l.source || 'ADMIN').toUpperCase() !== sourceFilter) {
+        return false;
+      }
+      if (!q) return true;
       return (
-        l.actor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        l.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        l.target.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        l.ip.includes(searchTerm)
+        l.actor.toLowerCase().includes(q) ||
+        l.action.toLowerCase().includes(q) ||
+        l.target.toLowerCase().includes(q) ||
+        (l.details || '').toLowerCase().includes(q) ||
+        l.ip.includes(q)
       );
     });
-  }, [logs, searchTerm]);
+  }, [logs, searchTerm, sourceFilter]);
 
   return {
     logs: filteredLogs,
+    totalCount: logs.length,
     searchTerm,
     setSearchTerm,
+    sourceFilter,
+    setSourceFilter,
     isLoading,
     error,
     retry: fetchLogs,
   };
 }
-
