@@ -85,11 +85,19 @@ export function RoomDetailHeader({ room }: RoomDetailHeaderProps) {
           onClick={scrollToReviews}
           className="inline-flex items-center gap-1 font-semibold text-stone-800 dark:text-stone-200 hover:text-teal-700 dark:hover:text-teal-400 hover:underline cursor-pointer select-none"
         >
-          <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500 shrink-0" />
-          <span>{(room.ratingAvg || 5.0).toFixed(1)}</span>
-          <span className="text-stone-500 dark:text-stone-400 font-normal">
-            ({room.reviewCount || 0}{' '}{tAuto('k0586')}
-          </span>
+          <Star className={`w-3.5 h-3.5 shrink-0 ${room.reviewCount && room.reviewCount > 0 ? 'text-amber-500 fill-amber-500' : 'text-stone-400 fill-stone-300 dark:fill-stone-600'}`} />
+          {room.reviewCount && room.reviewCount > 0 ? (
+            <>
+              <span>{(room.ratingAvg || 5.0).toFixed(1)}</span>
+              <span className="text-stone-500 dark:text-stone-400 font-normal">
+                ({room.reviewCount}{' '}{tAuto('k0586')}
+              </span>
+            </>
+          ) : (
+            <span className="text-stone-500 dark:text-stone-400 font-normal text-xs">
+              Chưa có đánh giá
+            </span>
+          )}
         </a>
       </div>
     </div>
