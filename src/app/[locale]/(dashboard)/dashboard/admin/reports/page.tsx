@@ -13,7 +13,8 @@ import { EmptyState } from '@/presentation/components/ui/EmptyState';
 import { ErrorState } from '@/presentation/components/ui/ErrorState';
 import { Tabs } from '@/presentation/components/ui/Tabs';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
-import { AlertTriangle, CheckCircle, Eye, Search, ShieldAlert, FileText, User } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Eye, Search, ShieldAlert, FileText, User, XCircle, Image as ImageIcon } from 'lucide-react';
+import { formatIsoDateTime } from '@/shared/utils/format-vnd';
 
 function AdminReportsContent() {
   const tAuto = useTranslations('autoI18n');
@@ -56,7 +57,30 @@ function AdminReportsContent() {
     { id: 'ALL', label: t('tabAll') },
     { id: 'PENDING', label: t('tabPending') },
     { id: 'RESOLVED', label: t('tabResolved') },
+    { id: 'DISMISSED', label: t('tabDismissed') },
   ];
+
+  const renderStatusBadge = (status: string, size: 'sm' | 'md' = 'sm') => {
+    if (status === 'RESOLVED') {
+      return (
+        <Badge variant="success" size={size}>
+          {t('statusResolved')}
+        </Badge>
+      );
+    }
+    if (status === 'DISMISSED') {
+      return (
+        <Badge variant="neutral" size={size}>
+          {t('statusDismissed')}
+        </Badge>
+      );
+    }
+    return (
+      <Badge variant="danger" size={size}>
+        {t('statusPending')}
+      </Badge>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -121,11 +145,11 @@ function AdminReportsContent() {
                   <TableCell className="text-xs text-foreground-muted max-w-xs truncate">
                     {r.reason}
                   </TableCell>
-                  <TableCell className="text-xs text-foreground-muted">{r.createdAt}</TableCell>
+                  <TableCell className="text-xs text-foreground-muted">
+                    {formatIsoDateTime(r.createdAt)}
+                  </TableCell>
                   <TableCell>
-                    <Badge variant={r.status === 'RESOLVED' ? 'success' : 'danger'} size="sm">
-                      {r.status === 'RESOLVED' ? t('statusResolved') : t('statusPending')}
-                    </Badge>
+                    {renderStatusBadge(r.status)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1.5">
@@ -138,14 +162,26 @@ function AdminReportsContent() {
                         <Eye className="w-3.5 h-3.5" />
                       </Button>
                       {r.status === 'PENDING' && (
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => handleResolve(r.id)}
-                        >
-                          <CheckCircle className="w-3.5 h-3.5 mr-1" />
-                          {t('btnResolve')}
-                        </Button>
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDismiss(r.id)}
+                            title={t('btnDismiss')}
+                          >
+                            <XCircle className="w-3.5 h-3.5 mr-1 text-foreground-muted" />
+                            {t('btnDismiss')}
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => handleResolve(r.id)}
+                            title={t('btnResolve')}
+                          >
+                            <CheckCircle className="w-3.5 h-3.5 mr-1" />
+                            {t('btnResolve')}
+                          </Button>
+                        </>
                       )}
                     </div>
                   </TableCell>
@@ -156,7 +192,7 @@ function AdminReportsContent() {
         </Card>
       )}
 
-      {/* Violation Report Drawer (Bước 4 Requirement) */}
+      {/* Violation Report Drawer */}
       <Drawer
         isOpen={Boolean(selectedReport)}
         onClose={() => setSelectedReport(null)}
@@ -166,9 +202,7 @@ function AdminReportsContent() {
           <div className="space-y-6">
             <div className="space-y-2 pb-4 border-b border-border">
               <div className="flex items-center gap-2">
-                <Badge variant={selectedReport.status === 'RESOLVED' ? 'success' : 'danger'}>
-                  {selectedReport.status === 'RESOLVED' ? t('statusResolved') : t('statusPending')}
-                </Badge>
+                {renderStatusBadge(selectedReport.status, 'md')}
                 <Badge variant="warning">{selectedReport.targetType}</Badge>
               </div>
               <h3 className="text-base font-bold text-foreground">{selectedReport.targetTitle}</h3>
@@ -181,7 +215,7 @@ function AdminReportsContent() {
               </div>
               <div className="flex items-center gap-2 text-foreground-muted">
                 <ShieldAlert className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>{tAuto('k0010')}{' '}{selectedReport.createdAt}</span>
+                <span>{tAuto('k0010')}{' '}{formatIsoDateTime(selectedReport.createdAt)}</span>
               </div>
             </div>
 
@@ -198,7 +232,31 @@ function AdminReportsContent() {
               </div>
             </div>
 
-            {selectedReport.status === 'PENDING' && (
+            {/* Evidence URLs if available */}
+            {selectedReport.evidenceUrls && selectedReport.evidenceUrls.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-foreground-muted flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>{t('evidenceTitle')}</span>
+                </h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {selectedReport.evidenceUrls.map((url: string, index: number) => (
+                    <a
+                      key={index}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block rounded-lg overflow-hidden border border-border hover:opacity-80 transition-opacity"
+                    >
+                      <img src={url} alt={`Evidence ${index + 1}`} className="w-full h-24 object-cover" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Action Footer */}
+            {selectedReport.status === 'PENDING' ? (
               <div className="pt-4 border-t border-border flex items-center gap-2">
                 <Button
                   variant="outline"
@@ -208,7 +266,8 @@ function AdminReportsContent() {
                     setSelectedReport(null);
                   }}
                 >
-                  Bác bỏ
+                  <XCircle className="w-4 h-4 mr-1.5 text-foreground-muted" />
+                  {t('btnDismiss')}
                 </Button>
                 <Button
                   variant="primary"
@@ -221,6 +280,16 @@ function AdminReportsContent() {
                   <CheckCircle className="w-4 h-4 mr-1.5" />
                   {t('btnResolve')}
                 </Button>
+              </div>
+            ) : selectedReport.status === 'RESOLVED' ? (
+              <div className="pt-4 border-t border-border flex items-center gap-2 text-xs text-teal-700 dark:text-teal-400 bg-teal-50/50 dark:bg-teal-950/30 p-3 rounded-xl border border-teal-200 dark:border-teal-800">
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                <span>{t('statusResolvedNotice')}</span>
+              </div>
+            ) : (
+              <div className="pt-4 border-t border-border flex items-center gap-2 text-xs text-foreground-muted bg-surface-muted p-3 rounded-xl border border-border">
+                <XCircle className="w-4 h-4 shrink-0 text-foreground-muted" />
+                <span>{t('statusDismissedNotice')}</span>
               </div>
             )}
           </div>

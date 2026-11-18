@@ -337,7 +337,14 @@
       "emptyTitle": "No violation reports found",
       "emptyDesc": "The platform is operating smoothly with no pending disputes.",
       "errorTitle": "Error loading reports list",
-      "errorDesc": "Could not connect to the moderation service."
+      "errorDesc": "Could not connect to the moderation service.",
+      "tabDismissed": "Dismissed",
+      "statusDismissed": "Dismissed",
+      "btnDismiss": "Dismiss",
+      "evidenceTitle": "Violation Evidence",
+      "noEvidence": "No attached evidence",
+      "statusResolvedNotice": "This report has been reviewed and resolved",
+      "statusDismissedNotice": "This report has been reviewed and dismissed"
     },
     "reviews": {
       "title": "Reviews & Feedback Moderation",
