@@ -19,6 +19,7 @@ export interface ReviewDto {
   landlordReply?: string;
   createdAt: string;
   isVerifiedTenant?: boolean;
+  status?: string;
 }
 
 export interface CreateReviewPayload {

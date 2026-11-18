@@ -84,7 +84,7 @@ export class HttpAdminRepository implements AdminRepository {
   }
 
   async toggleReviewVisibility(id: number): Promise<void> {
-    await ApiClient.post<void>(`/admin/reviews/${id}/toggle`);
+    await ApiClient.post<void>(`/admin/reviews/${id}/toggle`, {});
   }
 
   async getAuditLogs(): Promise<AuditLogItem[]> {

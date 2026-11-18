@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Card } from '@/presentation/components/ui/Card';
 import { Skeleton } from '@/presentation/components/ui/Skeleton';
-import { Star, MessageSquare } from 'lucide-react';
+import { Star, MessageSquare, EyeOff } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { container } from '@/infrastructure/di/container';
 import { ReviewDto } from '@/application/dto/listing.dto';
@@ -67,13 +67,18 @@ export default function TenantReviewsPage() {
                 <Link href={`/rooms/${r.roomId}`} className="text-sm font-bold text-stone-900 dark:text-stone-100 hover:text-teal-700">
                   {r.roomTitle || `Phòng trọ #${r.roomId}`}
                 </Link>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 flex-wrap">
                   {Array.from({ length: r.rating }).map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   ))}
                   <span className="text-xs font-bold text-amber-600 ml-1">{r.rating}.0</span>
                   {r.createdAt && (
                     <span className="text-[11px] text-stone-400 ml-2">({formatIsoDate(r.createdAt)})</span>
+                  )}
+                  {r.status === 'HIDDEN' && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-900/60 px-2 py-0.5 rounded-full ml-2">
+                      <EyeOff className="w-3 h-3" /> Đang bị ẩn
+                    </span>
                   )}
                 </div>
               </div>

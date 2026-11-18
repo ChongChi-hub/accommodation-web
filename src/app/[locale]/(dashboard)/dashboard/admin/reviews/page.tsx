@@ -74,6 +74,54 @@ function AdminReviewsContent() {
         </div>
       </div>
 
+      {/* Review Metrics */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <Card className="p-3.5 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 flex items-center justify-center shrink-0">
+            <Star className="w-4 h-4 fill-amber-500" />
+          </div>
+          <div>
+            <p className="text-[11px] text-foreground-muted font-medium">Điểm TB toàn sàn</p>
+            <p className="text-base font-black text-foreground">
+              {reviews.length > 0
+                ? `${(reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length).toFixed(1)} / 5.0`
+                : 'Chưa có'}
+            </p>
+          </div>
+        </Card>
+        <Card className="p-3.5 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 flex items-center justify-center shrink-0">
+            <MessageSquare className="w-4 h-4" />
+          </div>
+          <div>
+            <p className="text-[11px] text-foreground-muted font-medium">Tổng đánh giá</p>
+            <p className="text-base font-black text-foreground">{reviews.length}</p>
+          </div>
+        </Card>
+        <Card className="p-3.5 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center shrink-0">
+            <Eye className="w-4 h-4" />
+          </div>
+          <div>
+            <p className="text-[11px] text-foreground-muted font-medium">Đang hiển thị</p>
+            <p className="text-base font-black text-emerald-600">
+              {reviews.filter((r) => r.status === 'VISIBLE').length}
+            </p>
+          </div>
+        </Card>
+        <Card className="p-3.5 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center shrink-0">
+            <EyeOff className="w-4 h-4" />
+          </div>
+          <div>
+            <p className="text-[11px] text-foreground-muted font-medium">Đã bị ẩn</p>
+            <p className="text-base font-black text-stone-600 dark:text-stone-300">
+              {reviews.filter((r) => r.status === 'HIDDEN').length}
+            </p>
+          </div>
+        </Card>
+      </div>
+
       {/* Filter and Search */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <Tabs
