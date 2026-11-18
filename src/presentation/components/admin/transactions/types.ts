@@ -54,3 +54,35 @@ export interface AccountItem {
   balance: number;
 }
 
+export interface JournalPostingItem {
+  accountNumber: string;
+  direction: 'DEBIT' | 'CREDIT';
+  amount: number;
+}
+
+export interface JournalEntryDetailItem {
+  id: string;
+  entryNumber: string;
+  description: string;
+  referenceType: string;
+  referenceId: string;
+  totalAmount: number;
+  status: string;
+  createdBy: string;
+  createdAt: string;
+  postings: JournalPostingItem[];
+}
+
+export interface AdminPaymentIntentItem {
+  id: string;
+  paymentCode: string;
+  payerId: string;
+  orderType: string;
+  orderId: string;
+  amount: number;
+  paidAmount: number;
+  status: string;
+  expiresAt: string;
+  createdAt: string;
+}
+

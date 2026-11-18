@@ -4,10 +4,11 @@ import React, { useState } from 'react';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
+import { Input } from '@/presentation/components/ui/Input';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
 import { RiskProfile } from '@/domain/entities/Billing';
-import { formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
-import { AlertOctagon, CheckCircle2, Lock, RefreshCw, ShieldAlert, ShieldCheck, Unlock } from 'lucide-react';
+import { formatVnd } from '@/shared/utils/format-vnd';
+import { AlertOctagon, Lock, RefreshCw, ShieldAlert, ShieldCheck, Unlock } from 'lucide-react';
 
 interface RiskTabProps {
   profiles: RiskProfile[];
@@ -25,12 +26,58 @@ export function RiskTab({
   onRefresh,
 }: RiskTabProps) {
   const [busy, setBusy] = useState(false);
+  const [targetUserId, setTargetUserId] = useState('');
+  const [targetReason, setTargetReason] = useState('');
 
   const frozenCount = profiles.filter((p) => p.frozen).length;
   const blacklistedCount = profiles.filter((p) => p.blacklisted).length;
 
   return (
     <div className="space-y-6">
+      <Card className="p-4">
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!targetUserId.trim()) return;
+            setBusy(true);
+            try {
+              await onFreeze(targetUserId.trim(), targetReason.trim() || undefined);
+              setTargetUserId('');
+              setTargetReason('');
+            } finally {
+              setBusy(false);
+            }
+          }}
+          className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end"
+        >
+          <Input label="User ID cần phong tỏa mới" placeholder="VD: u-landlord-02" required value={targetUserId} onChange={(e) => setTargetUserId(e.target.value)} />
+          <Input label="Lý do phong tỏa" placeholder="Nghi ngờ bất thường..." value={targetReason} onChange={(e) => setTargetReason(e.target.value)} />
+          <Button type="submit" variant="outline" size="md" isLoading={busy} leftIcon={<Lock className="w-3.5 h-3.5" />}>
+            Phong tỏa ví
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="md"
+            className="text-rose-600"
+            isLoading={busy}
+            leftIcon={<AlertOctagon className="w-3.5 h-3.5" />}
+            onClick={async () => {
+              if (!targetUserId.trim()) return;
+              setBusy(true);
+              try {
+                await onBlacklist(targetUserId.trim(), targetReason.trim() || undefined);
+                setTargetUserId('');
+                setTargetReason('');
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            Đưa vào Blacklist
+          </Button>
+        </form>
+      </Card>
       {/* Risk Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-4 space-y-1">
