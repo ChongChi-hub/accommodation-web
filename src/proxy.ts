@@ -85,6 +85,14 @@ export default async function proxy(req: NextRequest) {
     }
   }
 
+  // Redirect legacy /auth/* paths (e.g. /auth/login -> /login)
+  if (cleanPath.startsWith('/auth/')) {
+    const targetAuth = cleanPath.replace('/auth', '');
+    const redirectUrl = new URL(`${localePrefix}${targetAuth}`, req.url);
+    req.nextUrl.searchParams.forEach((v, k) => redirectUrl.searchParams.set(k, v));
+    return NextResponse.redirect(redirectUrl, { status: 308 });
+  }
+
   // Permanent 308 redirects for legacy non-prefixed role paths
   if (
     cleanPath === '/landlord' ||
