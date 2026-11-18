@@ -15,7 +15,7 @@ interface AppointmentDetailDrawerProps {
   onClose: () => void;
   onOpenConfirm: (item: ViewingAppointmentItem) => void;
   onOpenCancel: (item: ViewingAppointmentItem) => void;
-  onOpenComplete: (item: ViewingAppointmentItem) => void;
+  onOpenComplete: (item: ViewingAppointmentItem, defaultOutcome?: 'COMPLETED' | 'NO_SHOW') => void;
 }
 
 export function AppointmentDetailDrawer({
@@ -86,9 +86,9 @@ export function AppointmentDetailDrawer({
                     <Building2 className="w-4 h-4 text-teal-700 mt-0.5 shrink-0" />
                     <div>
                       <h4 className="text-sm font-bold text-stone-900 dark:text-stone-100">
-                        {detail.roomTitle}
+                        {detail.roomTitle || t('actions.fallbackRoomTitle')}
                       </h4>
-                      <p className="text-xs text-stone-500">{detail.roomAddress}</p>
+                      {detail.roomAddress && <p className="text-xs text-stone-500">{detail.roomAddress}</p>}
                     </div>
                   </div>
                   <Link href={`/rooms/${detail.roomId}`} target="_blank" className="text-teal-700 hover:underline">
@@ -116,29 +116,31 @@ export function AppointmentDetailDrawer({
                 <div className="p-3 bg-stone-50 dark:bg-stone-800/40 rounded-md border border-stone-100 dark:border-stone-800 space-y-2 text-xs">
                   <div className="flex items-center gap-2 text-stone-700 dark:text-stone-300">
                     <User className="w-4 h-4 text-stone-400" />
-                    <span className="font-semibold">{detail.contactName}</span>
+                    <span className="font-semibold">{detail.contactName || t('actions.fallbackGuestName')}</span>
                   </div>
-                  <div className="flex items-center justify-between text-stone-700 dark:text-stone-300">
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-stone-400" />
-                      {detail.status === 'CONFIRMED' || detail.status === 'COMPLETED' ? (
-                        <a href={`tel:${detail.contactPhone}`} className="text-teal-700 font-bold hover:underline">
-                          {detail.contactPhone}
-                        </a>
-                      ) : (
-                        <span>{detail.contactPhone}</span>
+                  {detail.contactPhone && (
+                    <div className="flex items-center justify-between text-stone-700 dark:text-stone-300">
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-stone-400" />
+                        {detail.status === 'CONFIRMED' || detail.status === 'COMPLETED' ? (
+                          <a href={`tel:${detail.contactPhone}`} className="text-teal-700 font-bold hover:underline">
+                            {detail.contactPhone}
+                          </a>
+                        ) : (
+                          <span>{detail.contactPhone}</span>
+                        )}
+                      </div>
+                      {detail.status === 'CONFIRMED' && (
+                        <button
+                          onClick={() => handleCopyPhone(detail.contactPhone)}
+                          className="text-stone-400 hover:text-stone-700 p-1 rounded"
+                          title={t('copyPhone')}
+                        >
+                          {copied ? <Check className="w-3.5 h-3.5 text-teal-600" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
                       )}
                     </div>
-                    {detail.status === 'CONFIRMED' && (
-                      <button
-                        onClick={() => handleCopyPhone(detail.contactPhone)}
-                        className="text-stone-400 hover:text-stone-700 p-1 rounded"
-                        title={t('copyPhone')}
-                      >
-                        {copied ? <Check className="w-3.5 h-3.5 text-teal-600" /> : <Copy className="w-3.5 h-3.5" />}
-                      </button>
-                    )}
-                  </div>
+                  )}
                   {detail.contactEmail && (
                     <div className="flex items-center gap-2 text-stone-700 dark:text-stone-300">
                       <Mail className="w-4 h-4 text-stone-400" />
@@ -204,15 +206,30 @@ export function AppointmentDetailDrawer({
                 </Button>
               </>
             )}
-            {isPastConfirmed && (
-              <Button variant="primary" size="sm" onClick={() => onOpenComplete(detail)}>
-                {t('actions.updateOutcome')}
-              </Button>
-            )}
-            {detail.status === 'CONFIRMED' && !isPastConfirmed && (
-              <Button variant="outline" size="sm" onClick={() => onOpenCancel(detail)}>
-                {t('actions.cancel')}
-              </Button>
+            {detail.status === 'CONFIRMED' && (
+              <>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  disabled={!isPastConfirmed}
+                  title={!isPastConfirmed ? t('actions.notStartedHint') : undefined}
+                  onClick={() => onOpenComplete(detail, 'COMPLETED')}
+                >
+                  {t('actions.complete')}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={!isPastConfirmed}
+                  title={!isPastConfirmed ? t('actions.notStartedHint') : undefined}
+                  onClick={() => onOpenComplete(detail, 'NO_SHOW')}
+                >
+                  {t('actions.noShow')}
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => onOpenCancel(detail)}>
+                  {t('actions.cancel')}
+                </Button>
+              </>
             )}
           </div>
         )}

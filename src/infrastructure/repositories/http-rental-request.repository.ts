@@ -11,8 +11,9 @@ export class HttpRentalRequestRepository {
     return ApiClient.post<RentalRequest>(`/booking/rental-requests/${encodeURIComponent(id)}/approve${qs}`);
   }
 
-  async rejectRequest(id: string): Promise<RentalRequest> {
-    return ApiClient.post<RentalRequest>(`/booking/rental-requests/${encodeURIComponent(id)}/reject`);
+  async rejectRequest(id: string, reason?: string): Promise<RentalRequest> {
+    const body = reason && reason.trim() ? { reason: reason.trim() } : undefined;
+    return ApiClient.post<RentalRequest>(`/booking/rental-requests/${encodeURIComponent(id)}/reject`, body);
   }
 
   async cancelRequest(id: string): Promise<RentalRequest> {

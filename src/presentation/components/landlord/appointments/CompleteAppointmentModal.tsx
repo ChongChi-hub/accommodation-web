@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog } from '@/presentation/components/ui/Dialog';
 import { Button } from '@/presentation/components/ui/Button';
 import { ViewingAppointmentItem } from '@/domain/entities/ViewingAppointment';
@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 interface CompleteAppointmentModalProps {
   isOpen: boolean;
   appointment: ViewingAppointmentItem | null;
+  defaultOutcome?: 'COMPLETED' | 'NO_SHOW';
   onClose: () => void;
   onComplete: (outcome: 'COMPLETED' | 'NO_SHOW', note?: string) => Promise<void>;
 }
@@ -17,13 +18,21 @@ interface CompleteAppointmentModalProps {
 export function CompleteAppointmentModal({
   isOpen,
   appointment,
+  defaultOutcome = 'COMPLETED',
   onClose,
   onComplete,
 }: CompleteAppointmentModalProps) {
   const t = useTranslations('landlord.appointments.modals.complete');
-  const [outcome, setOutcome] = useState<'COMPLETED' | 'NO_SHOW'>('COMPLETED');
+  const [outcome, setOutcome] = useState<'COMPLETED' | 'NO_SHOW'>(defaultOutcome);
   const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setOutcome(defaultOutcome);
+      setNote('');
+    }
+  }, [isOpen, defaultOutcome, appointment?.id]);
 
   if (!isOpen || !appointment) return null;
 

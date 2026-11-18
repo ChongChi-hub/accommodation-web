@@ -92,7 +92,7 @@ export default function TenantRentalRequestsPage() {
                     href={`/rooms/${r.roomId}`}
                     className="text-sm font-bold text-stone-900 dark:text-stone-100 hover:text-teal-700"
                   >
-                    {`${t('roomLabel')}: #${r.roomId}`}
+                    {r.roomTitle || t('fallbackRoomTitle')}
                   </Link>
                   <p className="text-stone-500">
                     {t('occupants')}: {r.numOccupants}
@@ -103,8 +103,17 @@ export default function TenantRentalRequestsPage() {
                     </p>
                   )}
                 </div>
-                <span className="text-stone-400">{formatIsoDateTime(r.createdAt)}</span>
+                <span className="text-stone-400">
+                  {t('submittedAt')}: {formatIsoDateTime(r.createdAt)}
+                </span>
               </div>
+
+              {r.status === 'REJECTED' && r.rejectionReason && (
+                <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-xs text-rose-800 dark:text-rose-300">
+                  <span className="font-semibold">{t('rejectionReasonLabel')}: </span>
+                  <span>{r.rejectionReason}</span>
+                </div>
+              )}
 
               <div className="p-3 bg-stone-50 dark:bg-stone-800/40 rounded-xl text-xs text-stone-600 dark:text-stone-300 flex flex-wrap items-center justify-between gap-2">
                 <span>{r.message || '-'}</span>

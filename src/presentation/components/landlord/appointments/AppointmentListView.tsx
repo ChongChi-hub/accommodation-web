@@ -6,7 +6,7 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Pagination } from '@/domain/repositories/LandlordRoomRepository';
 import { ViewingAppointmentItem } from '@/domain/entities/ViewingAppointment';
 import { AppointmentStatusBadge } from './AppointmentStatusBadge';
-import { Calendar, Phone, User, Clock, Check, X, FileText, ChevronRight } from 'lucide-react';
+import { Calendar, Phone, User, Clock, Check, X, CheckCircle2, UserX, ChevronRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface AppointmentListViewProps {
@@ -17,7 +17,7 @@ interface AppointmentListViewProps {
   onOpenDetail: (id: string) => void;
   onOpenConfirm: (item: ViewingAppointmentItem) => void;
   onOpenCancel: (item: ViewingAppointmentItem) => void;
-  onOpenComplete: (item: ViewingAppointmentItem) => void;
+  onOpenComplete: (item: ViewingAppointmentItem, defaultOutcome?: 'COMPLETED' | 'NO_SHOW') => void;
 }
 
 export function AppointmentListView({
@@ -92,36 +92,40 @@ export function AppointmentListView({
                     {formatDateTime(a.scheduledStart)}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="text-stone-400">{t('list.tenantPhone')}:</span>
-                  {a.status === 'CONFIRMED' || a.status === 'COMPLETED' ? (
-                    <a
-                      href={`tel:${a.contactPhone}`}
-                      className="font-semibold text-teal-800 dark:text-teal-400 hover:underline flex items-center gap-1"
-                    >
-                      <Phone className="w-3 h-3" />
-                      {a.contactPhone}
-                    </a>
-                  ) : (
-                    <span className="font-semibold text-stone-600 dark:text-stone-300">
-                      {a.contactPhone}
-                    </span>
-                  )}
-                </div>
+                {a.contactPhone && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-stone-400">{t('list.tenantPhone')}:</span>
+                    {a.status === 'CONFIRMED' || a.status === 'COMPLETED' ? (
+                      <a
+                        href={`tel:${a.contactPhone}`}
+                        className="font-semibold text-teal-800 dark:text-teal-400 hover:underline flex items-center gap-1"
+                      >
+                        <Phone className="w-3 h-3" />
+                        {a.contactPhone}
+                      </a>
+                    ) : (
+                      <span className="font-semibold text-stone-600 dark:text-stone-300">
+                        {a.contactPhone}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-                <div className="md:col-span-8 space-y-1">
+                <div className="md:col-span-7 space-y-1 min-w-0">
                   <h4 className="text-sm font-bold text-stone-900 dark:text-stone-100 line-clamp-1">
-                    {a.roomTitle}
+                    {a.roomTitle || t('actions.fallbackRoomTitle')}
                   </h4>
-                  <p className="text-xs text-stone-500 line-clamp-1">
-                    {a.roomAddress}
-                  </p>
+                  {a.roomAddress && (
+                    <p className="text-xs text-stone-500 line-clamp-1">
+                      {a.roomAddress}
+                    </p>
+                  )}
                   <div className="flex items-center gap-2 text-xs text-stone-600 dark:text-stone-400 pt-1">
                     <span className="flex items-center gap-1 font-medium">
-                      <User className="w-3.5 h-3.5 text-stone-400" />
-                      {a.contactName}
+                      <User className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                      {a.contactName || t('actions.fallbackGuestName')}
                     </span>
                     {a.tenantNote && (
                       <span className="italic line-clamp-1 text-stone-500">
@@ -131,57 +135,75 @@ export function AppointmentListView({
                   </div>
                 </div>
 
-                <div className="md:col-span-4 flex items-center justify-end gap-2 flex-wrap pt-2 md:pt-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onOpenDetail(a.id)}
-                    rightIcon={<ChevronRight className="w-3.5 h-3.5" />}
-                  >
-                    {t('actions.detail')}
-                  </Button>
-
-                  {a.status === 'PENDING' && (
-                    <>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onOpenCancel(a)}
-                        leftIcon={<X className="w-3.5 h-3.5" />}
-                      >
-                        {t('actions.decline')}
-                      </Button>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => onOpenConfirm(a)}
-                        leftIcon={<Check className="w-3.5 h-3.5" />}
-                      >
-                        {t('actions.confirm')}
-                      </Button>
-                    </>
-                  )}
-
-                  {isPastConfirmed && (
+                <div className="md:col-span-5 flex flex-col items-end gap-1.5 pt-2 md:pt-0">
+                  <div className="flex items-center justify-end gap-2 flex-wrap">
                     <Button
-                      variant="primary"
+                      variant="ghost"
                       size="sm"
-                      onClick={() => onOpenComplete(a)}
-                      leftIcon={<FileText className="w-3.5 h-3.5" />}
+                      onClick={() => onOpenDetail(a.id)}
+                      rightIcon={<ChevronRight className="w-3.5 h-3.5" />}
                     >
-                      {t('actions.updateOutcome')}
+                      {t('actions.detail')}
                     </Button>
-                  )}
 
+                    {a.status === 'PENDING' && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onOpenCancel(a)}
+                          leftIcon={<X className="w-3.5 h-3.5" />}
+                        >
+                          {t('actions.decline')}
+                        </Button>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => onOpenConfirm(a)}
+                          leftIcon={<Check className="w-3.5 h-3.5" />}
+                        >
+                          {t('actions.confirm')}
+                        </Button>
+                      </>
+                    )}
+
+                    {a.status === 'CONFIRMED' && (
+                      <>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          disabled={!isPastConfirmed}
+                          title={!isPastConfirmed ? t('actions.notStartedHint') : undefined}
+                          onClick={() => onOpenComplete(a, 'COMPLETED')}
+                          leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
+                        >
+                          {t('actions.complete')}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={!isPastConfirmed}
+                          title={!isPastConfirmed ? t('actions.notStartedHint') : undefined}
+                          onClick={() => onOpenComplete(a, 'NO_SHOW')}
+                          leftIcon={<UserX className="w-3.5 h-3.5" />}
+                        >
+                          {t('actions.noShow')}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onOpenCancel(a)}
+                          leftIcon={<X className="w-3.5 h-3.5" />}
+                        >
+                          {t('actions.cancel')}
+                        </Button>
+                      </>
+                    )}
+                  </div>
                   {a.status === 'CONFIRMED' && !isPastConfirmed && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onOpenCancel(a)}
-                      leftIcon={<X className="w-3.5 h-3.5" />}
-                    >
-                      {t('actions.cancel')}
-                    </Button>
+                    <span className="text-[11px] text-stone-400">
+                      {t('actions.notStartedHint')}
+                    </span>
                   )}
                 </div>
               </div>

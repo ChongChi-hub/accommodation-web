@@ -49,6 +49,16 @@ export default function LandlordAppointmentsPage() {
     refresh,
   } = useLandlordAppointments();
 
+  const [completeOutcome, setCompleteOutcome] = React.useState<'COMPLETED' | 'NO_SHOW'>('COMPLETED');
+
+  const handleOpenComplete = (
+    item: Parameters<typeof setCompleteTarget>[0],
+    defaultOutcome: 'COMPLETED' | 'NO_SHOW' = 'COMPLETED'
+  ) => {
+    setCompleteOutcome(defaultOutcome);
+    setCompleteTarget(item);
+  };
+
   // Extract unique room options for filter dropdown
   const roomOptions = React.useMemo(() => {
     const map = new Map<string, string>();
@@ -91,7 +101,7 @@ export default function LandlordAppointmentsPage() {
             setConflictWarning(null);
           }}
           onOpenCancel={setCancelTarget}
-          onOpenComplete={setCompleteTarget}
+          onOpenComplete={handleOpenComplete}
         />
       )}
 
@@ -104,7 +114,7 @@ export default function LandlordAppointmentsPage() {
             setConflictWarning(null);
           }}
           onOpenCancel={setCancelTarget}
-          onOpenComplete={setCompleteTarget}
+          onOpenComplete={handleOpenComplete}
         />
       )}
 
@@ -125,7 +135,7 @@ export default function LandlordAppointmentsPage() {
           setConflictWarning(null);
         }}
         onOpenCancel={setCancelTarget}
-        onOpenComplete={setCompleteTarget}
+        onOpenComplete={handleOpenComplete}
       />
 
       <ConfirmAppointmentModal
@@ -149,6 +159,7 @@ export default function LandlordAppointmentsPage() {
       <CompleteAppointmentModal
         isOpen={!!completeTarget}
         appointment={completeTarget}
+        defaultOutcome={completeOutcome}
         onClose={() => setCompleteTarget(null)}
         onComplete={executeComplete}
       />
