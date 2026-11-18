@@ -39,7 +39,7 @@ import {
 import { formatIsoDate } from '@/shared/utils/format-vnd';
 
 function AdminSupportContent() {
-  const t = useTranslations('admin.support');
+  const t = useTranslations('pages.support');
   const tAuto = useTranslations('autoI18n');
   const tCommon = useTranslations('common');
 
