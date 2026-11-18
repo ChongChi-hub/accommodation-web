@@ -104,7 +104,7 @@ export function useRegisterForm(initialRole: AuthIntendedRole) {
       const err = res.error || 'Không thể gửi email xác thực. Vui lòng kiểm tra lại dịch vụ Email.';
       setSummaryError(err);
       setOtpError(err);
-      toast.error('Gửi mã xác thực email thất bại');
+      toast.error(err);
       return false;
     }
 
