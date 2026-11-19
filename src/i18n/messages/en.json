@@ -1183,6 +1183,7 @@
       "systemSettings": "System Settings",
       "messages": "Messages",
       "notifications": "Notifications",
+      "bankAccount": "Bank Account & QR",
       "security": "Security & Password",
       "help": "Help & Support",
       "logout": "Sign out"

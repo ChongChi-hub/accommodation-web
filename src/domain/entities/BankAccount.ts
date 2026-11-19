@@ -36,3 +36,4 @@ export const POPULAR_VIETNAM_BANKS: SupportedBank[] = [
   { code: 'VBA', name: 'Ngân hàng Nông nghiệp & Phát triển Nông thôn', shortName: 'Agribank' },
   { code: 'STB', name: 'Ngân hàng TMCP Sài Gòn Thương Tín', shortName: 'Sacombank' },
 ];
+

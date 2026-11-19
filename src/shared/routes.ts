@@ -25,6 +25,7 @@ export const APP_ROUTES = {
   tenantMessages: '/dashboard/tenant/messages',
   tenantNotifications: '/dashboard/tenant/notifications',
   tenantProfile: '/dashboard/tenant/profile',
+  tenantBankAccount: '/dashboard/tenant/bank-account',
   tenantSecurity: '/dashboard/tenant/settings',
   tenantKyc: '/dashboard/tenant/kyc',
 
@@ -38,6 +39,7 @@ export const APP_ROUTES = {
   landlordMessages: '/dashboard/landlord/messages',
   landlordNotifications: '/dashboard/landlord/notifications',
   landlordProfile: '/dashboard/landlord/profile',
+  landlordBankAccount: '/dashboard/landlord/bank-account',
   landlordSecurity: '/dashboard/landlord/settings',
 
   moderatorHome: '/dashboard/moderator',

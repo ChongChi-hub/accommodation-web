@@ -64,6 +64,8 @@ export const NAVIGATION_ITEMS: NavItemConfig[] = [
   { id: 'l-notif', routeKey: 'landlordNotifications', labelKey: 'userMenu.items.notifications', roles: ['LANDLORD'], enabled: true, group: 'userAccountActions', badgeType: 'notifications' },
   { id: 'm-notif', routeKey: 'moderatorNotifications', labelKey: 'userMenu.items.notifications', roles: ['MODERATOR'], enabled: true, group: 'userAccountActions', badgeType: 'notifications' },
   { id: 'a-notif', routeKey: 'adminNotifications', labelKey: 'userMenu.items.notifications', roles: ['ADMIN'], enabled: true, group: 'userAccountActions', badgeType: 'notifications' },
+  { id: 't-bank-account', routeKey: 'tenantBankAccount', labelKey: 'userMenu.items.bankAccount', roles: ['TENANT'], enabled: true, group: 'userAccountActions' },
+  { id: 'l-bank-account', routeKey: 'landlordBankAccount', labelKey: 'userMenu.items.bankAccount', roles: ['LANDLORD'], enabled: true, group: 'userAccountActions' },
   { id: 't-security', routeKey: 'tenantSecurity', labelKey: 'userMenu.items.security', roles: ['TENANT'], enabled: true, group: 'userAccountActions' },
   { id: 'l-security', routeKey: 'landlordSecurity', labelKey: 'userMenu.items.security', roles: ['LANDLORD'], enabled: true, group: 'userAccountActions' },
   { id: 'm-security', routeKey: 'moderatorSecurity', labelKey: 'userMenu.items.security', roles: ['MODERATOR'], enabled: true, group: 'userAccountActions' },

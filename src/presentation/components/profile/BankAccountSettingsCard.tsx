@@ -200,3 +200,4 @@ export function BankAccountSettingsCard({ userRole = 'TENANT' }: Props) {
     </Card>
   );
 }
+
