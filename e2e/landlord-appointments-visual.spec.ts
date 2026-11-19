@@ -209,7 +209,7 @@ test.describe('[APPT-02] Landlord Appointments Visual Verification', () => {
     await page.waitForTimeout(400);
 
     // 11. Complete Modal
-    await page.locator('.space-y-3 button', { hasText: /Cập nhật kết quả|Update Outcome/ }).first().click();
+    await page.locator('.space-y-3 button:not([disabled])', { hasText: /Hoàn thành|Complete|Cập nhật kết quả|Update Outcome/ }).first().click();
     await page.waitForTimeout(400);
     await page.screenshot({ path: path.join(screenshotsDir, 'appointments-complete-modal.png') });
     await page.keyboard.press('Escape');

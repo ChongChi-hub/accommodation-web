@@ -511,3 +511,12 @@ Trước đây, hệ thống cấp vai trò `LANDLORD` ngay lập tức khi đă
 ### 15.3. Giao dịch Xuyên Service (SAGA-01) & Transactional Outbox (BROKER-01)
 * Vòng đời đặt thuê khép kín: `Rental Request` -> `Holding Deposit` -> `Electronic Contract` -> `Room RENTED`.
 * Áp dụng Transactional Outbox Pattern kết hợp Saga Orchestrator đảm bảo tính nhất quán cuối cùng (Eventual Consistency) và các bước bù trừ tự động khi gặp sự cố mạng hoặc hết hạn giao dịch.
+
+---
+
+## 16. Quyết định Thiết kế `[FIX-LIFECYCLE-CHAT-LAYOUT-ADMINSTATS]`
+
+* **H1 & H2 (Vòng đời Lịch hẹn & Yêu cầu thuê):** Chỉ hiển thị nút "Tạo hợp đồng" khi `status === 'APPROVED'` và chưa có hợp đồng; hiển thị tên khách/tên phòng từ snapshot (dự phòng i18n, không bao giờ hiện UUID thô); tách nhãn ngày dọn vào và thời điểm tạo; hiện nút Hoàn thành / Khách không đến ở trạng thái disabled kèm gợi ý trước giờ hẹn.
+* **H3 (Chat):** Tạm dừng polling khi widget đóng hoặc `document.hidden === true`; giữ nguyên bản nháp khi gửi lỗi; dùng `<textarea>` hỗ trợ `Enter`/`Shift+Enter`; hiển thị tin nhắn qua `SafeMessageContent` (escape HTML, chỉ linkify `http://`/`https://`); chuyển đổi 1 cột trên mobile; thêm nút "Nhắn tin" từ chi tiết lịch hẹn và yêu cầu thuê.
+* **H4 (Bố cục Dashboard):** Gỡ `mx-auto max-w-7xl` ở wrapper ngoài của `DashboardLayout` để `DashboardSidebar` dính sát lề trái (`x = 0px`), bổ sung nút thu gọn trên desktop và drawer `< 1024px` (đóng bằng `Escape`/backdrop), giới hạn vùng nội dung `max-w-[1600px]` cho màn hình 1920/2560 và `min-w-0` chống tràn ngang.
+* **H5 (Thống kê ADMIN):** Gỡ bỏ toàn bộ số giả lập (`+6.2%`, `-1.5`, `+24.8%`, fallback `74.5`/`128000`); nối trực tiếp `/api/v1/admin/stats/overview` và `/timeseries`, hỗ trợ bộ lọc 7/30/90 ngày/tùy chọn, xuất CSV (UTF-8 BOM), gắn nhãn `Thử nghiệm (SANDBOX_ONLY)` cho doanh thu hóa đơn và hiển thị cảnh báo khi có nguồn `degraded`.

@@ -47,18 +47,46 @@
 
 ## 4. Phase Checklist
 - [x] PHA 0: Chẩn đoán & BASELINE (DONE-VERIFIED)
-- [x] PHA 1: H2 (GẤP) + H1 (DONE-VERIFIED — waiting for "TIẾP PHA 2")
-- [ ] PHA 2: H4 Layout
-- [ ] PHA 3: H3 Chat
-- [ ] PHA 4: H5 Admin Stats
-- [ ] PHA 5: Nghiệm thu tổng
+- [x] PHA 1 & 1B: H2 (GẤP) + H1 + Security/Fixture/Consumer/Tenant Verification (DONE-VERIFIED)
+- [x] PHA 2: H4 Layout (DONE-VERIFIED)
+- [x] PHA 3: H3 Chat (DONE-VERIFIED)
+- [x] PHA 4: H5 Admin Stats (DONE-VERIFIED)
+- [x] PHA 5: Nghiệm thu tổng & Tài liệu (DONE-VERIFIED)
 
-## 5. PHA 1 Verification Summary [CHẠY LẠI HÔM NAY]
-- **BE `.\gradlew.bat clean test --no-build-cache`**: **472/472 PASSED** (+11 new H1/H2 tests in `booking-service`: 55/55, 0 fail, 0 skip).
-- **FE Static/Unit/Build**: `eslint --max-warnings=0` PASS, `tsc --noEmit` PASS, `vitest` 96/96 PASS, i18n parity 2210/2210 PASS, `verify-links` 96/96 PASS, `verify-manifest` 224/224 PASS, `next build` 202/202 PASS.
-- **FE Playwright (`e2e/fix-lifecycle-h1-h2.spec.ts`)**: **2/2 PASSED** (13.6s), 8 screenshots captured (1440/390, light/dark) in `docs/design/screenshots/fix-lifecycle/pha1/`.
-- **DB Migration `V8`**: Applied cleanly (`uq_contracts_request_id` UNIQUE index active; 2 historical duplicate `contracts.request_id` rows safely detached without deleting any row; 0 REJECTED/CANCELLED/EXPIRED requests had contracts).
-- **5 Baseline "did not run" Playwright tests**: `e2e/hdr1-live-verification.spec.ts` tests #2-#6 (serial mode aborted after pre-existing failure in test #1).
-- **Intentional test update**: `RentalRequestServiceTest.shouldDenyCrossLandlordApprovalAndParticipantReadIdor` updated to expect `RentalRequestNotFoundException` (HTTP 404 IDOR protection per PHA 1 spec).
-- **Direct contract (`requestId == null`) decision**: Kept for legitimate landlord direct-contract workflow (`dashboard/landlord/contracts/page.tsx`, `ct-00000004`), hardened with mandatory room-owner verification via `BookingListingPort.getRoomOwnerId`.
+## 5. PHA 1 & 1B Verification Summary [CHẠY LẠI HÔM NAY]
+- **BE (`c52a3eb`, `51ad54c`)**:
+  - Migration `V8__rental_request_snapshots_and_contract_unique_request.sql` applied on live MySQL (`uq_contracts_request_id` UNIQUE index active; 2 historical duplicate `PENDING_SIGN` contracts `e2c83aa1-2957-4bb9-9a1f-d494c6ba53f1` / `HD-2026-3E9E195A` and `010a704c-97bc-4524-8aae-55d2a440abae` / `HD-2026-DC4C5D3C` safely detached with `request_id = NULL`, zero rows deleted — proposed for owner decision to cancel; 0 REJECTED/CANCELLED/EXPIRED requests had contracts).
+  - `DevAppointmentFixtureController` dual-gated with `@Profile({"dev", "test"})` AND `@ConditionalOnProperty(name = "app.booking.fixtures.enabled", havingValue = "true", matchIfMissing = false)` (OFF by default in `dev`, absent in `prod`, proven by `BookingLifecycleSecurityMatrixTest`).
+  - Live 5-role + IDOR HTTP matrix verified: GUEST=401, TENANT=403, LANDLORD_OWNER=200/409, LANDLORD_B_IDOR=404, MODERATOR=403, ADMIN=403/404/409.
+  - `communication-service`: `CommunicationEventListener` consumes `APPOINTMENT_COMPLETED`, `APPOINTMENT_NO_SHOW`, and `RENTAL_REQUEST_REJECTED` (with `rejectionReason`) idempotently via `CommunicationInboxStore` (`CommunicationAppointmentEventsTest`).
+  - Direct contract (`requestId == null`) decision: kept for legitimate landlord direct-contract workflow (`ct-00000004`), hardened with mandatory room-owner verification via `BookingListingPort.getRoomOwnerId`.
+- **FE (`617c097`)**: `e2e/fix-lifecycle-h1-h2.spec.ts` **2/2 PASSED**, 8 screenshots in `docs/design/screenshots/fix-lifecycle/pha1/`.
+
+## 6. PHA 2 (H4 Layout) Verification Summary [CHẠY LẠI HÔM NAY]
+- **FE (`4693d59`)**: Removed `mx-auto max-w-7xl` from outer `DashboardLayout` wrapper -> `asideLeft === 0px` across 1024/1440/1920/2560, content capped at `max-w-[1600px]`, desktop collapse toggle, mobile drawer `<1024px` with `Escape` + backdrop close, zero horizontal overflow across landlord/tenant/admin.
+- **Playwright (`e2e/fix-layout-h4.spec.ts`)**: **2/2 PASSED**, 6 screenshots in `docs/design/screenshots/fix-lifecycle/pha2/`.
+
+## 7. PHA 3 (H3 Chat) Verification Summary [CHẠY LẠI HÔM NAY]
+- **BE (`7d51e6e`)**: Migration `V5__chat_unique_pair_key.sql` (`UNIQUE uq_conversations_pair_key`), `404 ConversationNotFoundException` IDOR guard, `429 ChatRateLimitException` (20 msgs / 10s), max 2000 chars, raw XSS stored verbatim, removed `u-hao-01` alias from `u-landlord-02`, optional `before` cursor pagination. `communication-service`: **34/34 PASSED**.
+- **FE (`eb47600`)**: `SafeMessageContent.tsx` (HTML-escaped, linkifies `http`/`https` only), `useChat.ts` pauses polling when widget closed or `document.hidden`, draft preserved on send failure, `<textarea>` Enter/Shift+Enter + mobile 1-col toggle on landlord & tenant messages, "Nhắn tin" entry from rental requests & appointment drawer.
+- **Playwright (`e2e/fix-chat-h3.spec.ts`)**: **1/1 PASSED** (2-browser Tenant <-> Landlord real-time messaging + XSS probe verified safe), 3 screenshots in `docs/design/screenshots/fix-lifecycle/pha3/`.
+
+## 8. PHA 4 (H5 Admin Platform Statistics) Verification Summary [CHẠY LẠI HÔM NAY]
+- **BE (`dbecc1f`)**: Removed all cross-schema SQL and `catch (Exception ignored)` from `AdminDashboardController`; preserved least-privilege `admin_user`. Added 4 internal endpoints secured by constant-time `X-Internal-Service-Key` (`identity`, `listing`, `booking`, `billing`), blocked at API Gateway (`404` proven in unit test & live HTTP). Added `GET /api/v1/admin/stats/overview` & `/timeseries` (`@PreAuthorize("hasRole('ADMIN')")`, 3s/5s timeouts, 30s cache, `degraded` flag + `failedSources` + `null` on failed source).
+  - Live 5-role matrix: GUEST=401, TENANT=403, LANDLORD=403, MODERATOR=403, ADMIN=200, invalid date range=400, Gateway `/internal/stats/identity`=404.
+  - Live DB reconciliation (`degraded=false`, all 4 sources `OK`): `totalUsers=25`, `pendingKyc=3`, `totalRooms=85`, `activeRooms=69`, `totalViews=23874`, `totalAppointments=47`, `completedAppointments=8`, `totalRentalRequests=8`, `totalContracts=6`, `activeContracts=2`, `paidInvoices=2`, `paidRevenue=9695000`, `fintechMode=SANDBOX_ONLY`.
+- **FE (`d259c79`)**: Removed all fake hardcoded `+6.2%`, `-1.5`, `+24.8%`, static sparklines, and fake repository fallbacks. Connected to `/overview` & `/timeseries`, added 7/30/90/custom date range picker, CSV export (UTF-8 BOM), `SANDBOX_ONLY` badge, degraded warning banner.
+- **Playwright (`e2e/fix-admin-stats-h5.spec.ts`)**: **1/1 PASSED**, 2 screenshots in `docs/design/screenshots/fix-lifecycle/pha4/`.
+
+## 9. PHA 5 Final Verification vs BASELINE [CHẠY LẠI HÔM NAY]
+
+| Check | Baseline | Final (PHA 5) | Delta |
+|---|---|---|---|
+| BE `.\gradlew.bat clean test --no-build-cache` | 461/461 PASSED (0 fail) | **484/484 PASSED** (0 fail, 0 skip) | **+23 new tests, 0 regressions** |
+| FE `npx eslint . --max-warnings=0` | PASS (0) | **PASS (0)** | Clean |
+| FE `npx tsc --noEmit` | PASS (0) | **PASS (0)** | Clean |
+| FE `npm test` (Vitest + i18n + links + manifest) | 96/96, 2184 keys | **96/96, 2238/2238 keys, 96 links, 224 images** | +54 i18n keys (100% parity) |
+| FE `npm run build` | 202/202 static pages | **202/202 static pages** | Clean |
+| FE Playwright (`npx playwright test --reporter=list`) | 194 pass / 47 fail / 5 dnr (246) | **200 pass / 47 fail / 5 dnr (252)** -> after updating `landlord-appointments-visual.spec.ts:212` label: **201 pass / 46 fail / 5 dnr** | **+6/6 new tests PASS, +1 baseline improved (`auth-token-refresh`), 0 regressions** |
+
 
