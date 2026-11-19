@@ -11,7 +11,7 @@ export interface PaymentIntent {
   createdAt?: string;
 }
 
-export interface SubmitPaymentIntentPayload { note?: string; receiptUrl?: string; }
+export interface SubmitPaymentIntentPayload { note?: string; receiptUrl?: string; payerName?: string; }
 export interface ConfirmPaymentIntentPayload { actualAmount: number; bankTxCode: string; note?: string; }
 export interface CreatePaymentIntentPayload { orderType: 'DEPOSIT' | 'INVOICE' | string; orderId: string; amount: number; }
 

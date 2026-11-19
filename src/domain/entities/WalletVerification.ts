@@ -52,6 +52,22 @@ export interface ManualConfirmPaymentPayload {
   checkerAdminId?: string;
 }
 
+export interface AdminPendingApprovalItem {
+  id: string;
+  paymentCode: string;
+  payerId: string;
+  tenantName: string;
+  orderType: string;
+  orderId: string;
+  amount: number;
+  paidAmount: number;
+  status: string;
+  submittedBankTxCode?: string | null;
+  hasProofImage: boolean;
+  expiresAt?: string | null;
+  createdAt?: string | null;
+}
+
 export interface ConfirmPayoutPaidPayload {
   bankTxCode: string;
   proofUrl?: string;
@@ -64,3 +80,4 @@ export function formatShortRef(id?: string | null, prefix = 'HD'): string {
   if (clean.length <= 10) return clean;
   return `${prefix}-${clean.slice(-8)}`;
 }
+

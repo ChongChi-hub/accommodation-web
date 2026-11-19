@@ -6,17 +6,18 @@ import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
-import { PaymentIntent, PayoutItem } from '@/domain/entities/Billing';
-import { UnmatchedBankInflowItem, formatShortRef } from '@/domain/entities/WalletVerification';
+import { PayoutItem } from '@/domain/entities/Billing';
+import { AdminPendingApprovalItem, UnmatchedBankInflowItem, formatShortRef } from '@/domain/entities/WalletVerification';
 import { walletVerificationRepository } from '@/infrastructure/repositories/http-wallet-verification.repository';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
-import { AlertTriangle, CheckCircle2, QrCode, ShieldCheck, XCircle } from 'lucide-react';
+import { CheckCircle2, Eye, QrCode, ShieldCheck, XCircle } from 'lucide-react';
 import { AdminPayoutQrModal } from './AdminPayoutQrModal';
+import { AdminProofPreviewModal } from './AdminProofPreviewModal';
 
 interface Props {
   unmatchedInflows: UnmatchedBankInflowItem[];
-  manualIntents: PaymentIntent[];
+  pendingApprovals: AdminPendingApprovalItem[];
   payouts: PayoutItem[];
   platformFeeRevenue: number;
   onApprovePayout: (id: string) => Promise<void>;
@@ -25,29 +26,42 @@ interface Props {
 }
 
 export function AdminInflowAndWithdrawalTab({
-  unmatchedInflows, manualIntents, payouts, platformFeeRevenue, onApprovePayout, onRejectPayout, onRefresh,
+  unmatchedInflows, pendingApprovals, payouts, platformFeeRevenue, onApprovePayout, onRejectPayout, onRefresh,
 }: Props) {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [txCodes, setTxCodes] = useState<Record<string, string>>({});
   const [reasons, setReasons] = useState<Record<string, string>>({});
   const [qrPayout, setQrPayout] = useState<PayoutItem | null>(null);
+  const [proofItem, setProofItem] = useState<AdminPendingApprovalItem | null>(null);
 
-  const handleManualConfirm = async (intent: PaymentIntent) => {
-    const bankTxCode = (txCodes[intent.paymentCode] || '').trim();
-    const reason = (reasons[intent.paymentCode] || 'Admin đối soát sao kê ngân hàng xác nhận').trim();
+  const handleApproveDeposit = async (item: AdminPendingApprovalItem) => {
+    const bankTxCode = (txCodes[item.paymentCode] ?? item.submittedBankTxCode ?? '').trim();
+    const reason = (reasons[item.paymentCode] || 'Admin kiểm tra tài khoản LE THANH CUONG đã nhận đủ tiền').trim();
     if (bankTxCode.length < 6) {
-      toast.error('Bắt buộc nhập Mã giao dịch ngân hàng thật (tối thiểu 6 ký tự, ví dụ FT261119...)');
+      toast.error('Bắt buộc nhập Mã giao dịch ngân hàng thật (tối thiểu 6 ký tự) trước khi duyệt');
       return;
     }
-    setBusyId(intent.paymentCode);
+    setBusyId(item.paymentCode);
     try {
       await walletVerificationRepository.manualConfirmPayment({
-        paymentCode: intent.paymentCode, bankTxCode, actualAmount: intent.amount, reason,
+        paymentCode: item.paymentCode, bankTxCode, actualAmount: item.amount, reason,
       });
-      toast.success(`Đã xác nhận thủ công khoản ${intent.paymentCode} với mã GD ${bankTxCode.toUpperCase()}`);
+      toast.success(`Đã duyệt giao dịch ${item.paymentCode}! Tiền cọc đã vào quỹ Escrow.`);
       await onRefresh();
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Xác nhận thủ công thất bại');
+      toast.error(err instanceof Error ? err.message : 'Duyệt giao dịch thất bại');
+    } finally { setBusyId(null); }
+  };
+
+  const handleRejectDeposit = async (item: AdminPendingApprovalItem) => {
+    const reason = (reasons[item.paymentCode] || 'Chưa nhận được tiền hoặc chuyển thiếu vào tài khoản sàn LE THANH CUONG').trim();
+    setBusyId(item.paymentCode);
+    try {
+      await walletVerificationRepository.manualRejectPayment({ paymentCode: item.paymentCode, reason });
+      toast.success(`Đã hủy giao dịch không hợp lệ ${item.paymentCode} và thông báo cho khách thuê.`);
+      await onRefresh();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Hủy giao dịch thất bại');
     } finally { setBusyId(null); }
   };
 
@@ -72,12 +86,12 @@ export function AdminInflowAndWithdrawalTab({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="p-4 space-y-1">
-          <p className="text-xs text-stone-500">Tiền về chưa khớp (Cần xử lý)</p>
-          <p className="text-xl font-black text-amber-600">{unmatchedInflows.filter((u) => u.status === 'UNMATCHED').length}</p>
+        <Card className="p-4 space-y-1 border-amber-200 dark:border-amber-800">
+          <p className="text-xs text-stone-500">Giao dịch tiền cọc chờ Admin duyệt</p>
+          <p className="text-xl font-black text-amber-600">{pendingApprovals.length}</p>
         </Card>
         <Card className="p-4 space-y-1">
-          <p className="text-xs text-stone-500">Yêu cầu rút tiền chờ duyệt / chuyển</p>
+          <p className="text-xs text-stone-500">Yêu cầu rút tiền chủ trọ chờ xử lý</p>
           <p className="text-xl font-black text-blue-600">
             {payouts.filter((p) => p.status === 'REQUESTED' || p.status === 'PENDING_APPROVAL' || p.status === 'APPROVED').length}
           </p>
@@ -88,83 +102,68 @@ export function AdminInflowAndWithdrawalTab({
         </Card>
       </div>
 
-      {/* 1. Unmatched Bank Inflows Queue */}
-      <Card className="p-0 overflow-hidden">
-        <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between">
-          <span className="text-xs font-bold flex items-center gap-1.5">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
-            Hàng đợi Tiền về chưa khớp ({unmatchedInflows.length})
-          </span>
-          <span className="text-[11px] text-stone-500">Lệch số tiền, quá hạn hoặc sai mã tham chiếu — không tự cộng sổ cái</span>
-        </div>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Mã GD NCC</TableHead>
-                <TableHead>Số tiền</TableHead>
-                <TableHead>Nội dung CK</TableHead>
-                <TableHead>Lý do chưa khớp</TableHead>
-                <TableHead>Trạng thái</TableHead>
-                <TableHead>Thời gian</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {unmatchedInflows.length === 0 ? (
-                <TableRow><TableCell colSpan={6} className="text-center text-xs py-5 text-stone-500">Không có giao dịch tiền về chưa khớp nào</TableCell></TableRow>
-              ) : (
-                unmatchedInflows.map((u) => (
-                  <TableRow key={u.id}>
-                    <TableCell className="font-mono text-xs font-semibold">{u.providerTxId}</TableCell>
-                    <TableCell className="font-bold text-amber-700">{formatVnd(u.amount)}</TableCell>
-                    <TableCell className="text-xs max-w-xs truncate">{u.rawContent || '--'}</TableCell>
-                    <TableCell><Badge variant="warning" size="sm">{u.mismatchReason}</Badge></TableCell>
-                    <TableCell><Badge variant={u.status === 'UNMATCHED' ? 'danger' : 'success'} size="sm">{u.status}</Badge></TableCell>
-                    <TableCell className="text-xs text-stone-500">{formatIsoDateTime(u.receivedAt)}</TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </Card>
-
-      {/* 2. Manual Payment Verification Queue */}
-      <Card className="p-0 overflow-hidden">
-        <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between">
+      {/* 1. Admin Deposit / Payment Approval Queue (Primary Flow) */}
+      <Card className="p-0 overflow-hidden border-teal-200 dark:border-teal-800">
+        <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-800 flex flex-wrap items-center justify-between gap-2">
           <span className="text-xs font-bold flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-teal-600" />
-            Khoản chờ xác minh thủ công dự phòng ({manualIntents.length})
+            Giao dịch tiền cọc chờ Admin kiểm tra tài khoản LE THANH CUONG &amp; duyệt ({pendingApprovals.length})
           </span>
+          <span className="text-[11px] text-stone-500">Kiểm tra tiền đã về đủ TK sàn, bấm Duyệt (giữ 50% cọc) hoặc Hủy nếu chưa nhận được tiền</span>
         </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Mã tham chiếu</TableHead>
-                <TableHead>Loại / Mã đơn</TableHead>
-                <TableHead>Số tiền cần thu</TableHead>
-                <TableHead>Mã GD ngân hàng thật &amp; Lý do</TableHead>
-                <TableHead className="text-right">Thao tác</TableHead>
+                <TableHead>Khách thuê &amp; Mã tham chiếu</TableHead>
+                <TableHead>Hợp đồng</TableHead>
+                <TableHead>Số tiền</TableHead>
+                <TableHead>Mã GD ngân hàng &amp; Lý do</TableHead>
+                <TableHead className="text-right">Kiểm tra &amp; Quyết định</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {manualIntents.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="text-center text-xs py-5 text-stone-500">Không có khoản nào đang chờ xác minh thủ công</TableCell></TableRow>
+              {pendingApprovals.length === 0 ? (
+                <TableRow><TableCell colSpan={5} className="text-center text-xs py-6 text-stone-500">Hiện không có giao dịch nào đang chờ Admin duyệt</TableCell></TableRow>
               ) : (
-                manualIntents.map((m) => (
+                pendingApprovals.map((m) => (
                   <TableRow key={m.id}>
-                    <TableCell className="font-mono text-xs font-bold">{m.paymentCode}</TableCell>
-                    <TableCell className="text-xs">{m.orderType} ({formatShortRef(m.orderId, 'HD')})</TableCell>
-                    <TableCell className="font-bold text-teal-700">{formatVnd(m.amount)}</TableCell>
-                    <TableCell className="space-y-1.5">
-                      <Input placeholder="Mã GD ngân hàng (FT...)" value={txCodes[m.paymentCode] || ''} onChange={(e) => setTxCodes((p) => ({ ...p, [m.paymentCode]: e.target.value }))} />
-                      <Input placeholder="Lý do xác nhận thủ công" value={reasons[m.paymentCode] || ''} onChange={(e) => setReasons((p) => ({ ...p, [m.paymentCode]: e.target.value }))} />
+                    <TableCell className="text-xs whitespace-nowrap">
+                      <p className="font-bold text-stone-900 dark:text-stone-100">{m.tenantName}</p>
+                      <p className="font-mono text-[11px] text-teal-700 dark:text-teal-400">{m.paymentCode}</p>
+                      {m.createdAt && <p className="text-[10px] text-stone-400">{formatIsoDateTime(m.createdAt)}</p>}
+                    </TableCell>
+                    <TableCell className="text-xs whitespace-nowrap">
+                      <p className="font-mono font-semibold">{formatShortRef(m.orderId, 'HD')}</p>
+                      <p className="text-[10px] text-stone-400">{m.orderType}</p>
+                    </TableCell>
+                    <TableCell className="font-bold text-teal-700 dark:text-teal-400 whitespace-nowrap">{formatVnd(m.amount)}</TableCell>
+                    <TableCell className="space-y-1.5 min-w-[210px]">
+                      <Input
+                        placeholder="Mã GD ngân hàng (FT...)"
+                        value={txCodes[m.paymentCode] ?? m.submittedBankTxCode ?? ''}
+                        onChange={(e) => setTxCodes((p) => ({ ...p, [m.paymentCode]: e.target.value }))}
+                      />
+                      <Input
+                        placeholder="Ghi chú duyệt hoặc lý do hủy"
+                        value={reasons[m.paymentCode] || ''}
+                        onChange={(e) => setReasons((p) => ({ ...p, [m.paymentCode]: e.target.value }))}
+                      />
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="primary" size="sm" isLoading={busyId === m.paymentCode} leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={() => handleManualConfirm(m)}>
-                        Xác nhận tiền về
-                      </Button>
+                      <div className="flex flex-wrap justify-end gap-1.5">
+                        {m.hasProofImage && (
+                          <Button variant="outline" size="sm" leftIcon={<Eye className="w-3.5 h-3.5" />} onClick={() => setProofItem(m)}>
+                            Xem biên lai
+                          </Button>
+                        )}
+                        <Button variant="primary" size="sm" isLoading={busyId === m.paymentCode} leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={() => handleApproveDeposit(m)}>
+                          Duyệt giao dịch
+                        </Button>
+                        <Button variant="outline" size="sm" isLoading={busyId === m.paymentCode} leftIcon={<XCircle className="w-3.5 h-3.5 text-red-600" />} onClick={() => handleRejectDeposit(m)}>
+                          Hủy giao dịch
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -174,7 +173,7 @@ export function AdminInflowAndWithdrawalTab({
         </div>
       </Card>
 
-      {/* 3. Withdrawal Queue with System-Generated VietQR */}
+      {/* 2. Withdrawal Queue with System-Generated VietQR */}
       <Card className="p-0 overflow-hidden">
         <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-800 text-xs font-bold">
           Hàng đợi Rút tiền Chủ trọ — QR do Hệ thống sinh ({payouts.length})
@@ -216,12 +215,8 @@ export function AdminInflowAndWithdrawalTab({
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex flex-wrap justify-end gap-1.5">
-                        {p.systemVietQrUrl && (
-                          <Button variant="outline" size="sm" leftIcon={<QrCode className="w-3.5 h-3.5" />} onClick={() => setQrPayout(p)}>QR hệ thống</Button>
-                        )}
-                        {p.status === 'PENDING_APPROVAL' && (
-                          <Button variant="secondary" size="sm" onClick={() => onApprovePayout(p.id)}>Duyệt 2 người</Button>
-                        )}
+                        {p.systemVietQrUrl && <Button variant="outline" size="sm" leftIcon={<QrCode className="w-3.5 h-3.5" />} onClick={() => setQrPayout(p)}>QR hệ thống</Button>}
+                        {p.status === 'PENDING_APPROVAL' && <Button variant="secondary" size="sm" onClick={() => onApprovePayout(p.id)}>Duyệt 2 người</Button>}
                         {(p.status === 'REQUESTED' || p.status === 'APPROVED') && (
                           <>
                             <Button variant="primary" size="sm" isLoading={busyId === p.id} leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={() => handleConfirmPayoutPaid(p)}>Xác nhận đã chuyển</Button>
@@ -238,7 +233,15 @@ export function AdminInflowAndWithdrawalTab({
         </div>
       </Card>
 
+      {unmatchedInflows.length > 0 && (
+        <Card className="p-3 text-xs text-stone-500">
+          <strong className="text-stone-700 dark:text-stone-300">Tiền về chưa khớp ({unmatchedInflows.length}):</strong>{' '}
+          {unmatchedInflows.map((u) => `${u.providerTxId} (${formatVnd(u.amount)} - ${u.mismatchReason})`).join(' | ')}
+        </Card>
+      )}
+
       <AdminPayoutQrModal payout={qrPayout} onClose={() => setQrPayout(null)} />
+      <AdminProofPreviewModal item={proofItem} onClose={() => setProofItem(null)} />
     </div>
   );
 }

@@ -52,7 +52,7 @@ export function EscrowTransferProofModal({
   };
 
   const isVisualImage = Boolean(
-    hold.receiptUrl && (hold.receiptUrl.startsWith('data:image/') || hold.receiptUrl.startsWith('http'))
+    hold.receiptUrl && (hold.receiptUrl.startsWith('data:image/') || hold.receiptUrl.startsWith('http') || hold.receiptUrl.startsWith('/api/v1/'))
   );
 
   return (

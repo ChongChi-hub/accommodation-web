@@ -139,12 +139,14 @@ test.describe('[WALLET-VERIFY-LEDGER] UI & Visual Verification', () => {
         receivedAt: '2026-11-19T10:05:00Z',
       }] }),
     }));
-    await page.route('**/api/v1/billing/payments/manual-queue', (r) => r.fulfill({
+    await page.route('**/api/v1/billing/payments/admin/pending-approvals', (r) => r.fulfill({
       status: 200, contentType: 'application/json',
       body: JSON.stringify({ data: [{
-        id: 'pi-1', paymentCode: 'TOAM987654321ABCDEF', orderType: 'DEPOSIT',
+        id: 'pi-1', paymentCode: 'TOAM987654321ABCDEF', payerId: 'u-tenant-01',
+        tenantName: 'Cường Lê', orderType: 'DEPOSIT',
         orderId: 'd8082a0f-c5c9-4d62-9016-1e493f66057c', amount: 10000, paidAmount: 0,
-        status: 'SUBMITTED', createdAt: '2026-11-19T10:00:00Z',
+        status: 'SUBMITTED', submittedBankTxCode: 'FT261119888', hasProofImage: true,
+        createdAt: '2026-11-19T10:00:00Z',
       }] }),
     }));
     await page.route('**/api/v1/billing/payouts/admin', (r) => r.fulfill({
@@ -160,8 +162,10 @@ test.describe('[WALLET-VERIFY-LEDGER] UI & Visual Verification', () => {
 
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/vi/dashboard/admin/transactions', { waitUntil: 'networkidle' });
-    await expect(page.getByText('AMOUNT_MISMATCH')).toBeVisible();
+    await expect(page.getByText('Cường Lê')).toBeVisible();
     await expect(page.getByText('TOAM987654321ABCDEF')).toBeVisible();
+    await expect(page.getByRole('button', { name: /Duyệt giao dịch/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Hủy giao dịch/i })).toBeVisible();
     await expect(page.getByText('60.000 đ')).toBeVisible();
     await setTheme(page, false);
     await page.screenshot({ path: `${SHOT_DIR}/admin-verify-queue-1440-light.png`, fullPage: true });

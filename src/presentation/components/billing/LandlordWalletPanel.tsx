@@ -194,3 +194,4 @@ export function LandlordWalletPanel({ summary, ledgerEntries, loading, error, on
     </div>
   );
 }
+

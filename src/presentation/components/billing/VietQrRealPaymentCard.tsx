@@ -5,6 +5,7 @@ import { PaymentIntent } from '@/domain/entities/Billing';
 import { Button } from '@/presentation/components/ui/Button';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { toast } from '@/presentation/stores/toast.store';
+import { useAuthStore } from '@/presentation/stores/auth.store';
 import { formatVnd } from '@/shared/utils/format-vnd';
 import { container } from '@/infrastructure/di/container';
 import { CheckCircle2, Copy, Check, Clock, QrCode, ShieldCheck, Building2, User, CreditCard, FileText, Lock } from 'lucide-react';
@@ -29,6 +30,7 @@ export function VietQrRealPaymentCard({
   accountNumber = process.env.NEXT_PUBLIC_PLATFORM_BANK_ACCOUNT || '1042701900',
   accountHolder = process.env.NEXT_PUBLIC_PLATFORM_ACCOUNT_HOLDER || 'LE THANH CUONG',
 }: VietQrRealPaymentCardProps) {
+  const currentUser = useAuthStore((s) => s.user);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [currentStatus, setCurrentStatus] = useState<string>(intent.status);
@@ -58,8 +60,11 @@ export function VietQrRealPaymentCard({
       const refreshed = await container.billing.billingRepository.getPaymentIntent(intent.paymentCode);
       if (refreshed.status === 'PAID') {
         setCurrentStatus('PAID');
-        toast.success('Hệ thống đã ghi nhận thanh toán tiền cọc thành công!');
+        toast.success('Admin đã duyệt giao dịch tiền cọc thành công! Quỹ Escrow đã được kích hoạt.');
         onPaid();
+      } else if (refreshed.status === 'CANCELLED' && currentStatus !== 'CANCELLED') {
+        setCurrentStatus('CANCELLED');
+        toast.error('Giao dịch tiền cọc đã bị Admin hủy do chưa nhận được tiền hợp lệ vào tài khoản sàn.');
       } else if (refreshed.status !== currentStatus) {
         setCurrentStatus(refreshed.status);
       }
@@ -93,9 +98,10 @@ export function VietQrRealPaymentCard({
       const updated = await container.billing.billingRepository.submitPaymentIntent(intent.paymentCode, {
         note: `BANK_TX:${bankTxCode.trim().toUpperCase()}|HASH:${receiptHash.trim()}`,
         receiptUrl: receiptImageUrl.trim(),
+        payerName: currentUser?.fullName || currentUser?.email || undefined,
       });
       setCurrentStatus(updated.status || 'SUBMITTED');
-      toast.success('Đã ghi nhận báo chuyển tiền. Hệ thống đang chờ xác minh tiền về tài khoản Sàn.');
+      toast.success('Đã gửi thông báo cho Admin! Giao dịch đang ở trạng thái Đang chờ xác nhận từ hệ thống.');
       onSubmitted?.();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Gửi thông báo chuyển tiền thất bại');
@@ -104,11 +110,7 @@ export function VietQrRealPaymentCard({
     }
   };
 
-  const formatTimer = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
+  const formatTimer = (seconds: number) => `${Math.floor(seconds / 60)}:${seconds % 60 < 10 ? '0' : ''}${seconds % 60}`;
 
   return (
     <div className="p-5 rounded-2xl border border-teal-200 dark:border-teal-800 bg-teal-50/40 dark:bg-teal-950/20 space-y-5">
@@ -121,9 +123,11 @@ export function VietQrRealPaymentCard({
         </div>
         <div className="flex items-center gap-2" aria-live="polite">
           {currentStatus === 'PAID' ? (
-            <Badge variant="success" size="sm">ĐÃ XÁC MINH TIỀN VỀ (ESCROW BẢO VỆ)</Badge>
+            <Badge variant="success" size="sm">ADMIN ĐÃ DUYỆT (ESCROW BẢO VỆ)</Badge>
           ) : currentStatus === 'SUBMITTED' ? (
-            <Badge variant="warning" size="sm">ĐANG CHỜ XÁC MINH TIỀN VỀ ({formatTimer(timeLeftSec)})</Badge>
+            <Badge variant="warning" size="sm">ĐANG CHỜ XÁC NHẬN TỪ HỆ THỐNG</Badge>
+          ) : currentStatus === 'CANCELLED' ? (
+            <Badge variant="danger" size="sm">GIAO DỊCH ĐÃ BỊ HỦY (KHÔNG HỢP LỆ)</Badge>
           ) : currentStatus === 'EXPIRED' ? (
             <Badge variant="danger" size="sm">MÃ ĐÃ HẾT HẠN</Badge>
           ) : (
@@ -189,12 +193,9 @@ export function VietQrRealPaymentCard({
 
           {currentStatus !== 'PAID' && (
             <TransferReceiptVerificationBox
-              bankTxCode={bankTxCode}
-              setBankTxCode={setBankTxCode}
-              receiptHash={receiptHash}
-              setReceiptHash={setReceiptHash}
-              receiptImageUrl={receiptImageUrl}
-              setReceiptImageUrl={setReceiptImageUrl}
+              bankTxCode={bankTxCode} setBankTxCode={setBankTxCode}
+              receiptHash={receiptHash} setReceiptHash={setReceiptHash}
+              receiptImageUrl={receiptImageUrl} setReceiptImageUrl={setReceiptImageUrl}
               disabled={timeLeftSec <= 0 || isVerifying}
             />
           )}
@@ -202,12 +203,16 @@ export function VietQrRealPaymentCard({
           {currentStatus === 'SUBMITTED' ? (
             <div role="status" aria-live="polite" className="p-3 bg-amber-50 dark:bg-amber-950/50 rounded-xl border border-amber-300 dark:border-amber-800 flex items-start gap-2 text-[11px] text-amber-950 dark:text-amber-200">
               <Clock className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
-              <span>Đang chờ xác minh tiền về tài khoản Sàn (tự động kiểm tra mỗi 5 giây). Bằng chứng bạn tải lên chỉ là thông tin hỗ trợ; cọc và nút nhận phòng chỉ mở sau khi hệ thống nhận được biến động số dư thật từ ngân hàng.</span>
+              <span>Đang chờ xác nhận từ hệ thống. Thông báo đã được gửi tới Admin để kiểm tra tiền đã về tài khoản {accountHolder} của sàn. Sau khi Admin duyệt, cọc Escrow sẽ kích hoạt; nếu chưa nhận được tiền, giao dịch sẽ bị hủy.</span>
+            </div>
+          ) : currentStatus === 'CANCELLED' ? (
+            <div role="status" aria-live="polite" className="p-3 bg-red-50 dark:bg-red-950/40 rounded-xl border border-red-300 dark:border-red-800 text-[11px] text-red-900 dark:text-red-200">
+              Giao dịch không hợp lệ hoặc chưa nhận được tiền vào tài khoản sàn và đã bị Admin hủy. Vui lòng hủy phiên cũ và tạo mã VietQR mới nếu cần.
             </div>
           ) : (
             <div className="p-3 bg-teal-50 dark:bg-teal-950/50 rounded-xl border border-teal-200 dark:border-teal-800 flex items-start gap-2 text-[11px] text-teal-900 dark:text-teal-200">
               <ShieldCheck className="w-4 h-4 flex-shrink-0 text-teal-600 mt-0.5" />
-              <span>Bằng chứng tải lên chỉ là thông tin hỗ trợ đối soát. Sau khi bấm &quot;Tôi đã chuyển&quot;, khoản thanh toán chuyển sang trạng thái chờ xác minh tiền về thật từ webhook ngân hàng.</span>
+              <span>Sau khi chuyển tiền và bấm &quot;Tôi đã chuyển tiền&quot;, giao dịch chuyển sang trạng thái Đang chờ xác nhận từ hệ thống và gửi yêu cầu tới Admin kiểm tra tài khoản sàn {accountHolder} trước khi duyệt Escrow.</span>
             </div>
           )}
 
@@ -218,28 +223,21 @@ export function VietQrRealPaymentCard({
             </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={onCancel} disabled={currentStatus === 'PAID'}>
-                Hủy giao dịch
+                {currentStatus === 'CANCELLED' ? 'Đóng & tạo mã mới' : 'Hủy giao dịch'}
               </Button>
               {currentStatus === 'PAID' ? (
                 <Button variant="primary" size="sm" disabled leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}>
-                  Đã xác minh vào Escrow
+                  Admin đã duyệt vào Escrow
                 </Button>
               ) : currentStatus === 'SUBMITTED' ? (
                 <Button variant="secondary" size="sm" disabled leftIcon={<Clock className="w-3.5 h-3.5" />}>
-                  Đang chờ xác minh tiền về
+                  Đang chờ xác nhận từ hệ thống
                 </Button>
-              ) : (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  isLoading={isVerifying}
-                  disabled={timeLeftSec <= 0 || !canConfirmTransfer}
-                  leftIcon={canConfirmTransfer ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                  onClick={handleTenantSubmit}
-                >
-                  {canConfirmTransfer ? 'Tôi đã chuyển tiền' : 'Tôi đã chuyển (Cần mã GD & biên lai hỗ trợ)'}
+              ) : currentStatus !== 'CANCELLED' ? (
+                <Button variant="primary" size="sm" isLoading={isVerifying} disabled={timeLeftSec <= 0 || !canConfirmTransfer} leftIcon={canConfirmTransfer ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />} onClick={handleTenantSubmit}>
+                  {canConfirmTransfer ? 'Tôi đã chuyển tiền' : 'Tôi đã chuyển (Cần mã GD & biên lai)'}
                 </Button>
-              )}
+              ) : null}
             </div>
           </div>
         </div>

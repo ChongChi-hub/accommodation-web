@@ -88,3 +88,4 @@ describe('WalletVerification domain helpers & repository', () => {
     expect(postSpy).toHaveBeenNthCalledWith(2, '/billing/payouts/p-2/cancel');
   });
 });
+

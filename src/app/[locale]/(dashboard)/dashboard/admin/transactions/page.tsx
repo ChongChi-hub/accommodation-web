@@ -9,8 +9,8 @@ import { useAuthStore } from '@/presentation/stores/auth.store';
 import { ApiClient } from '@/infrastructure/http/api-client';
 import { container } from '@/infrastructure/di/container';
 import { walletVerificationRepository } from '@/infrastructure/repositories/http-wallet-verification.repository';
-import { AdminFinancialStats, EscrowHold, PaymentIntent, PayoutItem, RefundItem, RiskProfile } from '@/domain/entities/Billing';
-import { UnmatchedBankInflowItem } from '@/domain/entities/WalletVerification';
+import { AdminFinancialStats, EscrowHold, PayoutItem, RefundItem, RiskProfile } from '@/domain/entities/Billing';
+import { AdminPendingApprovalItem, UnmatchedBankInflowItem } from '@/domain/entities/WalletVerification';
 import { AccountItem, AdjustmentRequest, AdminPaymentIntentItem, JournalEntryDetailItem, ReconciliationSummary } from '@/presentation/components/admin/transactions/types';
 import { ReconTab } from '@/presentation/components/admin/transactions/ReconTab';
 import { TransactionsHistoryTab } from '@/presentation/components/admin/transactions/TransactionsHistoryTab';
@@ -39,12 +39,12 @@ export default function AdminTransactionsAndLedgerPage() {
   const [payouts, setPayouts] = useState<PayoutItem[]>([]);
   const [riskProfiles, setRiskProfiles] = useState<RiskProfile[]>([]);
   const [unmatchedInflows, setUnmatchedInflows] = useState<UnmatchedBankInflowItem[]>([]);
-  const [manualIntents, setManualIntents] = useState<PaymentIntent[]>([]);
+  const [pendingApprovals, setPendingApprovals] = useState<AdminPendingApprovalItem[]>([]);
 
   const loadInitialData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [reconRes, statsRes, accsRes, entriesRes, intentsRes, escrowsRes, reqsRes, refundsRes, payoutsRes, profilesRes, unmatchedRes, manualRes] =
+      const [reconRes, statsRes, accsRes, entriesRes, intentsRes, escrowsRes, reqsRes, refundsRes, payoutsRes, profilesRes, unmatchedRes, pendingRes] =
         await Promise.all([
           ApiClient.request<ReconciliationSummary>('/billing/ledger/reconcile-now', { method: 'POST' }),
           container.billing.billingRepository.getAdminDashboardStats().catch(() => null),
@@ -57,7 +57,7 @@ export default function AdminTransactionsAndLedgerPage() {
           container.billing.billingRepository.getAdminPayouts().catch(() => []),
           container.billing.billingRepository.getRiskProfiles().catch(() => []),
           walletVerificationRepository.getUnmatchedInflows().catch(() => []),
-          walletVerificationRepository.getManualPaymentQueue().catch(() => []),
+          walletVerificationRepository.getAdminPendingApprovals().catch(() => []),
         ]);
       setReconData(reconRes);
       setAdminStats(statsRes);
@@ -70,7 +70,7 @@ export default function AdminTransactionsAndLedgerPage() {
       setPayouts(payoutsRes);
       setRiskProfiles(profilesRes);
       setUnmatchedInflows(unmatchedRes);
-      setManualIntents(manualRes);
+      setPendingApprovals(pendingRes);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Unable to load ledger data');
     } finally {
@@ -106,7 +106,7 @@ export default function AdminTransactionsAndLedgerPage() {
 
       <div className="flex flex-wrap gap-2">
         <Button variant={activeTab === 'VERIFY_QUEUE' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('VERIFY_QUEUE')}>
-          Xác minh &amp; Rút tiền ({unmatchedInflows.length + manualIntents.length + payouts.length})
+          Duyệt cọc &amp; Rút tiền ({pendingApprovals.length + payouts.length})
         </Button>
         <Button variant={activeTab === 'RECON' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('RECON')}>
           {tl('reconTab')}
@@ -133,7 +133,7 @@ export default function AdminTransactionsAndLedgerPage() {
       ) : activeTab === 'VERIFY_QUEUE' ? (
         <AdminInflowAndWithdrawalTab
           unmatchedInflows={unmatchedInflows}
-          manualIntents={manualIntents}
+          pendingApprovals={pendingApprovals}
           payouts={payouts}
           platformFeeRevenue={adminStats?.platformFeeRevenue ?? 0}
           onApprovePayout={async (id) => {

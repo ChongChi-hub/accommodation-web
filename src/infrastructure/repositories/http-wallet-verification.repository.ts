@@ -1,6 +1,7 @@
 import { ApiClient } from '@/infrastructure/http/api-client';
 import { PaymentIntent, PayoutItem } from '@/domain/entities/Billing';
 import {
+  AdminPendingApprovalItem,
   ConfirmPayoutPaidPayload,
   LandlordWalletSummary,
   ManualConfirmPaymentPayload,
@@ -49,6 +50,11 @@ export class HttpWalletVerificationRepository {
     return Array.isArray(res) ? res : [];
   }
 
+  async getAdminPendingApprovals(): Promise<AdminPendingApprovalItem[]> {
+    const res = await ApiClient.get<AdminPendingApprovalItem[]>('/billing/payments/admin/pending-approvals');
+    return Array.isArray(res) ? res : [];
+  }
+
   async getManualPaymentQueue(): Promise<PaymentIntent[]> {
     const res = await ApiClient.get<PaymentIntent[]>('/billing/payments/manual-queue');
     return Array.isArray(res) ? res : [];
@@ -62,9 +68,17 @@ export class HttpWalletVerificationRepository {
     return ApiClient.post('/billing/payments/manual-confirm', payload);
   }
 
+  async manualRejectPayment(payload: { paymentCode: string; reason: string }): Promise<{
+    paymentCode: string;
+    status: string;
+  }> {
+    return ApiClient.post('/billing/payments/manual-reject', payload);
+  }
+
   async getProofImageBlob(paymentCode: string): Promise<Blob> {
     return ApiClient.getBlob(`/billing/payments/proofs/${encodeURIComponent(paymentCode)}/image`);
   }
 }
 
 export const walletVerificationRepository = new HttpWalletVerificationRepository();
+

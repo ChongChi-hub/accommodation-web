@@ -109,7 +109,7 @@ export function TenantEscrowTable({
                             </button>
                           </div>
                         ) : (
-                          <span className="text-[11px] text-stone-400 italic">Chờ xác minh tiền về</span>
+                          <span className="text-[11px] text-stone-400 italic">Chờ Admin duyệt cọc</span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -151,9 +151,9 @@ export function TenantEscrowTable({
                         ) : e.status === 'AWAITING_DEPOSIT' ? (
                           <div className="inline-flex flex-col items-end gap-0.5">
                             <Button variant="secondary" size="sm" disabled leftIcon={<Lock className="w-3.5 h-3.5" />}>
-                              Chờ xác minh tiền về
+                              Chờ Admin duyệt cọc
                             </Button>
-                            <span className="text-[10px] text-stone-500">Mở khóa khi tiền thật về Sàn</span>
+                            <span className="text-[10px] text-stone-500">Mở khóa sau khi Admin duyệt giao dịch</span>
                           </div>
                         ) : null}
                       </TableCell>
