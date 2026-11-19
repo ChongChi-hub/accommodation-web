@@ -81,10 +81,14 @@ export function EscrowDisburseRefundModal({
               </div>
             </div>
           ) : (
-            <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 text-xs">
-              Người dùng chưa cung cấp tài khoản ngân hàng và mã QR trong mục Hồ sơ.
+            <div className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200 text-xs">
+              Bắt buộc: Người dùng chưa cung cấp Số tài khoản ngân hàng và Mã QR. Không thể thực hiện chuyển tiền cho đến khi người dùng cập nhật thông tin ngân hàng.
             </div>
           )}
+        </div>
+
+        <div className="p-3 rounded-xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 text-[11px] text-teal-900 dark:text-teal-200">
+          Sau khi Admin xác nhận đã chuyển tiền, số dư Cọc đang bảo vệ Escrow của cả Khách thuê và Chủ trọ trên hệ thống sẽ được trừ tương ứng (<strong>-{formatVnd(hold.amount)}</strong>).
         </div>
 
         {mode === 'DISBURSE' ? (
@@ -110,11 +114,11 @@ export function EscrowDisburseRefundModal({
         <div className="flex justify-end gap-2 pt-2 border-t border-stone-200 dark:border-stone-800">
           <Button variant="ghost" size="sm" onClick={onClose}>Đóng</Button>
           {mode === 'DISBURSE' ? (
-            <Button variant="primary" size="sm" isLoading={busy} onClick={onConfirmDisburse}>
+            <Button variant="primary" size="sm" isLoading={busy} disabled={!bankInfo || !bankInfo.accountNumber} onClick={onConfirmDisburse}>
               Xác nhận đã giải ngân tiền cọc
             </Button>
           ) : (
-            <Button variant="primary" size="sm" isLoading={busy} onClick={onConfirmRefund}>
+            <Button variant="primary" size="sm" isLoading={busy} disabled={!bankInfo || !bankInfo.accountNumber} onClick={onConfirmRefund}>
               Xác nhận đã hoàn tiền cọc
             </Button>
           )}

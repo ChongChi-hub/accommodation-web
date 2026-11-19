@@ -57,8 +57,18 @@ export function BankAccountSettingsCard({ userRole = 'TENANT' }: Props) {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!accountNumber.trim() || !accountHolder.trim()) {
-      toast.error('Vui lòng nhập đầy đủ số tài khoản và tên chủ tài khoản');
+    const cleanedAcc = accountNumber.trim().replace(/[^0-9a-zA-Z]/g, '');
+    if (!cleanedAcc || cleanedAcc.length < 6 || cleanedAcc.length > 25) {
+      toast.error('Số tài khoản ngân hàng bắt buộc phải từ 6 đến 25 ký tự số/chữ');
+      return;
+    }
+    if (!accountHolder.trim() || accountHolder.trim().length < 2) {
+      toast.error('Vui lòng nhập đầy đủ họ tên chủ tài khoản ngân hàng (viết hoa không dấu)');
+      return;
+    }
+    const finalQrUrl = customQrUrl.trim() || previewQrUrl;
+    if (!finalQrUrl) {
+      toast.error('Bắt buộc phải có mã QR nhận tiền hợp lệ');
       return;
     }
     setSaving(true);
@@ -66,9 +76,9 @@ export function BankAccountSettingsCard({ userRole = 'TENANT' }: Props) {
       const saved = await container.bankAccount.bankAccountRepository.saveMyBankAccount({
         bankCode,
         bankName: selectedBank.shortName,
-        accountNumber: accountNumber.trim(),
+        accountNumber: cleanedAcc,
         accountHolder: accountHolder.trim().toUpperCase(),
-        qrCodeUrl: customQrUrl.trim() || previewQrUrl || undefined,
+        qrCodeUrl: finalQrUrl,
       });
       setBankAccount(saved);
       toast.success('Đã lưu thông tin tài khoản ngân hàng và mã QR thành công!');
@@ -88,18 +98,18 @@ export function BankAccountSettingsCard({ userRole = 'TENANT' }: Props) {
           </div>
           <div>
             <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">
-              Tài khoản ngân hàng &amp; Mã QR nhận tiền
+              Tài khoản ngân hàng &amp; Mã QR nhận tiền (Bắt buộc)
             </h2>
             <p className="text-xs text-stone-500 mt-0.5">
               {userRole === 'LANDLORD'
-                ? 'Cung cấp số tài khoản và mã QR để Admin giải ngân tiền cọc khi đủ điều kiện bàn giao và dọn vào.'
-                : 'Cung cấp số tài khoản và mã QR để Admin hoàn tiền cọc ký quỹ cho bạn khi hợp đồng kết thúc hoặc hủy.'}
+                ? 'Bắt buộc cung cấp số tài khoản và mã QR để Admin Sàn giải ngân tiền cọc khi đủ 2 điều kiện Bàn giao phòng và Đã nhận phòng.'
+                : 'Bắt buộc cung cấp số tài khoản và mã QR để Sàn Tổ Ấm có thông tin đối soát, hoàn trả hoặc rút tiền cọc cho bạn.'}
             </p>
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium">
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Bảo mật 100%</span>
+          <span>{bankAccount ? 'Đã cung cấp STK & QR' : 'Bắt buộc cung cấp'}</span>
         </div>
       </div>
 

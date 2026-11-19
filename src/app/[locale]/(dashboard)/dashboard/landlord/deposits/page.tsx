@@ -9,11 +9,13 @@ import { Input } from '@/presentation/components/ui/Input';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
 import { container } from '@/infrastructure/di/container';
 import { EscrowHold, LandlordFinancialStats, PaymentIntent, PayoutItem } from '@/domain/entities/Billing';
+import { UserBankAccount } from '@/domain/entities/BankAccount';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
 import { AlertTriangle, Landmark, ShieldCheck } from 'lucide-react';
 import { LandlordSubmittedDepositsTable } from '@/presentation/components/billing/LandlordSubmittedDepositsTable';
 import { LandlordEscrowTable } from '@/presentation/components/billing/LandlordEscrowTable';
+import { MandatoryBankAccountBanner } from '@/presentation/components/billing/MandatoryBankAccountBanner';
 
 export default function LandlordDepositsPage() {
   const t = useTranslations('sprint3.deposit');
@@ -22,6 +24,7 @@ export default function LandlordDepositsPage() {
   const [payouts, setPayouts] = useState<PayoutItem[]>([]);
   const [escrows, setEscrows] = useState<EscrowHold[]>([]);
   const [submissions, setSubmissions] = useState<PaymentIntent[]>([]);
+  const [bankAccount, setBankAccount] = useState<UserBankAccount | null>(null);
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({
     amount: '50000',
@@ -31,18 +34,30 @@ export default function LandlordDepositsPage() {
     otp: '',
   });
 
+  const hasValidBank = Boolean(bankAccount && bankAccount.accountNumber && bankAccount.qrCodeUrl);
+
   const loadData = useCallback(async () => {
     try {
-      const [s, pList, escList, subList] = await Promise.all([
+      const [s, pList, escList, subList, bAcc] = await Promise.all([
         container.billing.billingRepository.getLandlordDashboardStats(),
         container.billing.billingRepository.getPayouts(),
         container.billing.billingRepository.getLandlordEscrows(),
         container.billing.billingRepository.getLandlordSubmittedPayments(),
+        container.bankAccount.bankAccountRepository.getMyBankAccount(),
       ]);
       setStats(s);
       setPayouts(pList);
       setEscrows(escList);
       setSubmissions(subList);
+      setBankAccount(bAcc);
+      if (bAcc) {
+        setForm((p) => ({
+          ...p,
+          bankCode: bAcc.bankCode || p.bankCode,
+          accountNumber: bAcc.accountNumber || p.accountNumber,
+          accountHolder: bAcc.accountHolder || p.accountHolder,
+        }));
+      }
     } catch {
       toast.error(tc('loadError'));
     }
@@ -53,6 +68,10 @@ export default function LandlordDepositsPage() {
   }, [loadData]);
 
   const handleConfirmMoveIn = async (contractId: string) => {
+    if (!hasValidBank) {
+      toast.error('Bắt buộc: Vui lòng cung cấp Số tài khoản ngân hàng và Mã QR tại mục Tài khoản ngân hàng & QR trước khi bàn giao phòng để Sàn có thông tin giải ngân!');
+      return;
+    }
     setBusy(true);
     try {
       await container.billing.billingRepository.confirmMoveIn(contractId);
@@ -96,6 +115,10 @@ export default function LandlordDepositsPage() {
 
   const handlePayout = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasValidBank) {
+      toast.error('Bắt buộc: Vui lòng cung cấp Số tài khoản ngân hàng và Mã QR tại mục Tài khoản ngân hàng & QR trước khi yêu cầu rút tiền!');
+      return;
+    }
     setBusy(true);
     try {
       const created = await container.billing.billingRepository.requestPayout({
@@ -126,6 +149,8 @@ export default function LandlordDepositsPage() {
         <p className="text-xs text-stone-500 mt-0.5">{t('landlordSubtitle')}</p>
       </div>
 
+      <MandatoryBankAccountBanner bankAccount={bankAccount} role="LANDLORD" />
+
       <Card className="p-4 border-amber-300 bg-amber-50/70 dark:bg-amber-950/30 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200">
         <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
         <span>{tc('sandboxNotice')}</span>
@@ -146,13 +171,14 @@ export default function LandlordDepositsPage() {
         </Card>
       </div>
 
-      {/* Submitted deposits awaiting landlord bank reconciliation */}
-      <LandlordSubmittedDepositsTable
-        submissions={submissions}
-        busy={busy}
-        onConfirm={handleConfirmPayment}
-        onReject={handleRejectPayment}
-      />
+      {submissions.length > 0 && (
+        <LandlordSubmittedDepositsTable
+          submissions={submissions}
+          busy={busy}
+          onConfirm={handleConfirmPayment}
+          onReject={handleRejectPayment}
+        />
+      )}
 
       <Card className="p-5 space-y-4">
         <div className="flex items-center justify-between">

@@ -10,7 +10,9 @@ import { container } from '@/infrastructure/di/container';
 import { VietQrRealPaymentCard } from '@/presentation/components/billing/VietQrRealPaymentCard';
 import { TenantEscrowTable } from '@/presentation/components/billing/TenantEscrowTable';
 import { TenantRefundSection } from '@/presentation/components/billing/TenantRefundSection';
+import { MandatoryBankAccountBanner } from '@/presentation/components/billing/MandatoryBankAccountBanner';
 import { EscrowHold, PaymentIntent, RefundItem, TenantFinancialStats } from '@/domain/entities/Billing';
+import { UserBankAccount } from '@/domain/entities/BankAccount';
 import { Contract } from '@/domain/entities/Contract';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatVnd } from '@/shared/utils/format-vnd';
@@ -24,10 +26,12 @@ export default function TenantDepositsPage() {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [escrows, setEscrows] = useState<EscrowHold[]>([]);
   const [refunds, setRefunds] = useState<RefundItem[]>([]);
+  const [bankAccount, setBankAccount] = useState<UserBankAccount | null>(null);
   const [intent, setIntent] = useState<PaymentIntent | null>(null);
   const [selectedContractId, setSelectedContractId] = useState('');
   const [busy, setBusy] = useState(false);
 
+  const hasValidBank = Boolean(bankAccount && bankAccount.accountNumber && bankAccount.qrCodeUrl);
   const selectedContract = contracts.find((c) => c.id === selectedContractId) || null;
   const selectedEscrow = escrows.find((e) => e.contractId === selectedContractId) || null;
   const isDepositAlreadyPaid =
@@ -42,29 +46,22 @@ export default function TenantDepositsPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const [s, cList, rList, escList] = await Promise.all([
+      const [s, cList, rList, escList, bAcc] = await Promise.all([
         container.billing.billingRepository.getTenantDashboardStats(),
         container.contract.contractRepository.getTenantContracts(),
         container.billing.billingRepository.getTenantRefunds(),
         container.billing.billingRepository.getTenantEscrows(),
+        container.bankAccount.bankAccountRepository.getMyBankAccount(),
       ]);
-      setStats(s);
-      setContracts(cList);
-      setRefunds(rList);
-      setEscrows(escList);
+      setStats(s); setContracts(cList); setRefunds(rList); setEscrows(escList); setBankAccount(bAcc);
+      if (bAcc) {
+        setRefundForm((p) => ({ ...p, bankCode: bAcc.bankCode || p.bankCode, accountNumber: bAcc.accountNumber || p.accountNumber, accountHolder: bAcc.accountHolder || p.accountHolder }));
+      }
       if (cList.length > 0) {
-        const queryContractId = searchParams.get('contractId');
-        const preferred =
-          (queryContractId ? cList.find((c) => c.id === queryContractId) : null) ||
-          cList.find((c) => c.status === 'AWAITING_DEPOSIT') ||
-          cList[0];
+        const qId = searchParams.get('contractId');
+        const preferred = (qId ? cList.find((c) => c.id === qId) : null) || cList.find((c) => c.status === 'AWAITING_DEPOSIT') || cList[0];
         setSelectedContractId((prev) => prev || preferred.id);
-        setRefundForm((prev) => ({
-          ...prev,
-          contractId: prev.contractId || preferred.id,
-          landlordId: prev.landlordId || preferred.landlordId,
-          amount: prev.amount || String(preferred.depositAmount || 2000000),
-        }));
+        setRefundForm((p) => ({ ...p, contractId: p.contractId || preferred.id, landlordId: p.landlordId || preferred.landlordId, amount: p.amount || String(preferred.depositAmount || 2000000) }));
       }
     } catch {
       toast.error(tc('loadError'));
@@ -76,9 +73,7 @@ export default function TenantDepositsPage() {
     let active = true;
     container.billing.billingRepository
       .getPendingPaymentIntent('DEPOSIT', selectedContractId)
-      .then((pending) => {
-        if (active && pending) setIntent(pending);
-      })
+      .then((pending) => { if (active && pending) setIntent(pending); })
       .catch(() => {});
     return () => { active = false; };
   }, [selectedContractId]);
@@ -86,11 +81,15 @@ export default function TenantDepositsPage() {
   useEffect(() => { loadData(); }, [loadData]);
 
   const handleConfirmMoveIn = async (contractId: string) => {
+    if (!hasValidBank) {
+      toast.error('Bắt buộc: Vui lòng cung cấp Số tài khoản ngân hàng và Mã QR tại mục Tài khoản ngân hàng & QR trước!');
+      return;
+    }
     setBusy(true);
     try {
       await container.billing.billingRepository.confirmMoveIn(contractId);
       await loadData();
-      toast.success(tc('actionSuccess'));
+      toast.success('Đã xác nhận nhận phòng thành công!');
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : tc('actionError'));
     } finally {
@@ -101,6 +100,10 @@ export default function TenantDepositsPage() {
   const handlePayDeposit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedContractId || isDepositAlreadyPaid) return;
+    if (!hasValidBank) {
+      toast.error('Bắt buộc: Vui lòng cung cấp Số tài khoản ngân hàng và Mã QR tại mục Tài khoản ngân hàng & QR trước khi thanh toán cọc!');
+      return;
+    }
     setBusy(true);
     try {
       const created = await container.billing.billingRepository.createPaymentIntent({
@@ -119,6 +122,10 @@ export default function TenantDepositsPage() {
 
   const handleRequestRefund = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasValidBank) {
+      toast.error('Bắt buộc: Vui lòng cung cấp Số tài khoản ngân hàng và Mã QR tại mục Tài khoản ngân hàng & QR trước khi yêu cầu hoàn tiền!');
+      return;
+    }
     setBusy(true);
     try {
       const created = await container.billing.billingRepository.requestRefund({
@@ -145,6 +152,8 @@ export default function TenantDepositsPage() {
         <p className="text-xs text-stone-500 mt-0.5">{t('tenantSubtitle')}</p>
       </div>
 
+      <MandatoryBankAccountBanner bankAccount={bankAccount} role="TENANT" />
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-4 space-y-1">
           <p className="text-xs text-stone-400">{t('activeEscrow')}</p>
@@ -162,7 +171,7 @@ export default function TenantDepositsPage() {
 
       <Card className="p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-bold">Thanh toán tiền cọc giữ chỗ (VietQR)</h2>
+          <h2 className="text-sm font-bold">Thanh toán tiền cọc giữ chỗ (VietQR Sàn Tổ Ấm)</h2>
           <Badge variant={isDepositAlreadyPaid ? 'success' : 'info'} size="sm">
             {isDepositAlreadyPaid ? 'ĐÃ HOÀN TẤT CỌC' : 'BẢO ĐẢM ESCROW'}
           </Badge>
@@ -214,9 +223,7 @@ export default function TenantDepositsPage() {
             intent={intent}
             onPaid={async () => { await loadData(); }}
             onCancel={async () => {
-              try {
-                await container.billing.billingRepository.cancelPaymentIntent(intent.paymentCode);
-              } catch { /* ignore */ }
+              try { await container.billing.billingRepository.cancelPaymentIntent(intent.paymentCode); } catch { /* ignore */ }
               setIntent((p) => (p ? { ...p, status: 'CANCELLED' } : null));
             }}
             onSubmitted={async () => { await loadData(); }}
@@ -224,24 +231,8 @@ export default function TenantDepositsPage() {
         )}
       </Card>
 
-      <TenantEscrowTable
-        escrows={escrows}
-        busy={busy}
-        onConfirmMoveIn={handleConfirmMoveIn}
-        contractLabel={t('contractId')}
-        amountLabel={t('amount')}
-        actionColLabel={tc('actionCol')}
-      />
-
-      <TenantRefundSection
-        refunds={refunds}
-        refundForm={refundForm}
-        setRefundForm={setRefundForm}
-        onSubmitRefund={handleRequestRefund}
-        busy={busy}
-        t={t}
-        tc={tc}
-      />
+      <TenantEscrowTable escrows={escrows} busy={busy} onConfirmMoveIn={handleConfirmMoveIn} contractLabel={t('contractId')} amountLabel={t('amount')} actionColLabel={tc('actionCol')} />
+      <TenantRefundSection refunds={refunds} refundForm={refundForm} setRefundForm={setRefundForm} onSubmitRefund={handleRequestRefund} busy={busy} t={t} tc={tc} />
     </div>
   );
 }

@@ -103,14 +103,15 @@ export function VietQrRealPaymentCard({
   const handleTenantSubmit = async () => {
     setIsVerifying(true);
     try {
-      await container.billing.billingRepository.submitPaymentIntent(intent.paymentCode, {
-        note: 'Người thuê thông báo đã chuyển khoản VietQR',
+      const updated = await container.billing.billingRepository.submitPaymentIntent(intent.paymentCode, {
+        note: 'Người thuê xác nhận đã chuyển khoản VietQR vào tài khoản Sàn',
       });
-      setCurrentStatus('SUBMITTED');
-      toast.success('Đã gửi thông báo chuyển tiền tới chủ trọ. Vui lòng chờ chủ trọ xác nhận tài khoản.');
+      setCurrentStatus(updated.status || 'PAID');
+      toast.success('Đã ghi nhận tiền cọc vào Quỹ Bảo Vệ Escrow của Sàn và thông báo cho chủ trọ để bàn giao phòng!');
+      onPaid();
       onSubmitted?.();
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Gửi thông báo chuyển tiền thất bại');
+      toast.error(err instanceof Error ? err.message : 'Xác nhận chuyển tiền thất bại');
     } finally {
       setIsVerifying(false);
     }
@@ -210,7 +211,7 @@ export function VietQrRealPaymentCard({
 
           <div className="p-3 bg-teal-50 dark:bg-teal-950/50 rounded-xl border border-teal-200 dark:border-teal-800 flex items-start gap-2 text-[11px] text-teal-900 dark:text-teal-200">
             <ShieldCheck className="w-4 h-4 flex-shrink-0 text-teal-600 mt-0.5" />
-            <span>Tiền cọc được giữ an toàn tại tài khoản trung gian của Tổ Ấm và chỉ giải ngân cho chủ trọ sau khi hai bên ký nhận bàn giao phòng.</span>
+            <span>Mã VietQR này thuộc tài khoản ký quỹ trung gian của Sàn Tổ Ấm. Sau khi chuyển tiền và nhấn xác nhận, tiền cọc sẽ được cộng vào Escrow của cả bạn và chủ trọ, đồng thời mở nút Bàn giao &amp; Nhận phòng.</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -222,17 +223,13 @@ export function VietQrRealPaymentCard({
               <Button variant="outline" size="sm" onClick={onCancel} disabled={currentStatus === 'PAID'}>
                 Hủy giao dịch
               </Button>
-              {currentStatus === 'SUBMITTED' ? (
-                <Button variant="secondary" size="sm" disabled leftIcon={<Clock className="w-3.5 h-3.5" />}>
-                  Chờ chủ trọ xác nhận
-                </Button>
-              ) : currentStatus === 'PAID' ? (
+              {currentStatus === 'PAID' ? (
                 <Button variant="primary" size="sm" disabled leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}>
-                  Đã thanh toán
+                  Đã thanh toán vào Escrow
                 </Button>
               ) : (
                 <Button variant="primary" size="sm" isLoading={isVerifying} disabled={timeLeftSec <= 0} leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={handleTenantSubmit}>
-                  Tôi đã chuyển tiền
+                  Tôi đã chuyển tiền (Xác nhận đã chuyển)
                 </Button>
               )}
             </div>
