@@ -1,58 +1,135 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const EMAILJS_CONFIG = {
-  ACC1: {
-    SERVICE_ID: 'service_cozynest',
-    PUBLIC_KEY: 'Re_5YClSOUJvPTVQF',
-    PRIVATE_KEY: 'qNyRWL93ZyFJgqNcgbMQ9',
-    TEMPLATES: {
-      REGISTER: 'template_91vlzrx',
-      VERIFY_EMAIL: 'template_59nc5mf',
-    },
-  },
-  ACC2: {
-    SERVICE_ID: 'service_pp9ykfq',
-    PUBLIC_KEY: 'mhVhUeI-C6HkEfVNy',
-    PRIVATE_KEY: 'lhAfrXJWJpwyWGhFxSHnY',
-    TEMPLATES: {
-      CHANGE_PASSWORD: 'template_30c269c',
-    },
-  },
-};
+const ALLOWED_ACTIONS = new Set(['REGISTER', 'VERIFY_EMAIL', 'CHANGE_PASSWORD']);
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const OTP_RE = /^\d{6}$/;
+
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_PER_IP = 10;
+const MAX_PER_RECIPIENT = 3;
+
+const ipHits = new Map<string, number[]>();
+const recipientHits = new Map<string, number[]>();
+
+export function __resetEmailRateLimitForTests() {
+  ipHits.clear();
+  recipientHits.clear();
+}
+
+function checkRateLimit(store: Map<string, number[]>, key: string, max: number): boolean {
+  const now = Date.now();
+  const recent = (store.get(key) || []).filter((ts) => now - ts < WINDOW_MS);
+  if (recent.length >= max) {
+    store.set(key, recent);
+    return false;
+  }
+  recent.push(now);
+  store.set(key, recent);
+  return true;
+}
+
+function isOriginAllowed(req: NextRequest): boolean {
+  const origin = req.headers.get('origin');
+  if (!origin) return true;
+  const host = req.headers.get('host') || 'localhost:3000';
+  const configured = process.env.NEXT_PUBLIC_APP_URL || '';
+  const allowed = new Set([
+    `http://${host}`,
+    `https://${host}`,
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+  ]);
+  if (configured) {
+    try {
+      allowed.add(new URL(configured).origin);
+    } catch {
+      // ignore invalid URL
+    }
+  }
+  return allowed.has(origin);
+}
+
+function resolveAccountConfig(action: string) {
+  if (action === 'CHANGE_PASSWORD') {
+    return {
+      serviceId: process.env.EMAILJS_ACC2_SERVICE_ID || '',
+      templateId: process.env.EMAILJS_TEMPLATE_CHANGE_PASSWORD || '',
+      publicKey: process.env.EMAILJS_ACC2_PUBLIC_KEY || '',
+      privateKey: process.env.EMAILJS_ACC2_PRIVATE_KEY || '',
+    };
+  }
+  return {
+    serviceId: process.env.EMAILJS_ACC1_SERVICE_ID || '',
+    templateId:
+      action === 'VERIFY_EMAIL'
+        ? process.env.EMAILJS_TEMPLATE_VERIFY_EMAIL || ''
+        : process.env.EMAILJS_TEMPLATE_REGISTER || '',
+    publicKey: process.env.EMAILJS_ACC1_PUBLIC_KEY || '',
+    privateKey: process.env.EMAILJS_ACC1_PRIVATE_KEY || '',
+  };
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { action, toName, toEmail, otpCode, expiryMinutes } = body;
-
-    if (!toEmail || !otpCode) {
-      return NextResponse.json({ success: false, error: 'Thiếu email hoặc mã OTP' }, { status: 400 });
+    if (!isOriginAllowed(req)) {
+      return NextResponse.json({ success: false, error: 'Nguồn yêu cầu không được phép' }, { status: 403 });
     }
 
-    let serviceId = EMAILJS_CONFIG.ACC1.SERVICE_ID;
-    let templateId = EMAILJS_CONFIG.ACC1.TEMPLATES.REGISTER;
-    let publicKey = EMAILJS_CONFIG.ACC1.PUBLIC_KEY;
-    let privateKey = EMAILJS_CONFIG.ACC1.PRIVATE_KEY;
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ success: false, error: 'Dữ liệu yêu cầu không hợp lệ' }, { status: 400 });
+    }
 
-    if (action === 'VERIFY_EMAIL') {
-      templateId = EMAILJS_CONFIG.ACC1.TEMPLATES.VERIFY_EMAIL;
-    } else if (action === 'CHANGE_PASSWORD') {
-      serviceId = EMAILJS_CONFIG.ACC2.SERVICE_ID;
-      templateId = EMAILJS_CONFIG.ACC2.TEMPLATES.CHANGE_PASSWORD;
-      publicKey = EMAILJS_CONFIG.ACC2.PUBLIC_KEY;
-      privateKey = EMAILJS_CONFIG.ACC2.PRIVATE_KEY;
+    const { action, toName, toEmail, otpCode, expiryMinutes } = body as Record<string, unknown>;
+    const actionStr = typeof action === 'string' ? action.trim().toUpperCase() : '';
+    const emailStr = typeof toEmail === 'string' ? toEmail.trim().toLowerCase() : '';
+    const otpStr = typeof otpCode === 'string' ? otpCode.trim() : '';
+
+    if (!ALLOWED_ACTIONS.has(actionStr)) {
+      return NextResponse.json({ success: false, error: 'Loại thao tác email không hợp lệ' }, { status: 400 });
+    }
+    if (!EMAIL_RE.test(emailStr) || !OTP_RE.test(otpStr)) {
+      return NextResponse.json({ success: false, error: 'Email hoặc mã OTP 6 chữ số không hợp lệ' }, { status: 400 });
+    }
+
+    // Authenticated-only actions must carry HttpOnly session cookie
+    if (actionStr === 'VERIFY_EMAIL' || actionStr === 'CHANGE_PASSWORD') {
+      const token = req.cookies.get('cozynest_token')?.value;
+      if (!token) {
+        return NextResponse.json({ success: false, error: 'Yêu cầu đăng nhập để gửi mã xác thực' }, { status: 401 });
+      }
+    }
+
+    const clientIp =
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      req.headers.get('x-real-ip') ||
+      'local';
+
+    if (!checkRateLimit(ipHits, clientIp, MAX_PER_IP)) {
+      return NextResponse.json({ success: false, error: 'Quá nhiều yêu cầu gửi email từ thiết bị này' }, { status: 429 });
+    }
+    if (!checkRateLimit(recipientHits, `${actionStr}:${emailStr}`, MAX_PER_RECIPIENT)) {
+      return NextResponse.json({ success: false, error: 'Vui lòng chờ trước khi yêu cầu gửi lại mã' }, { status: 429 });
+    }
+
+    const cfg = resolveAccountConfig(actionStr);
+    if (!cfg.serviceId || !cfg.templateId || !cfg.publicKey || !cfg.privateKey) {
+      return NextResponse.json(
+        { success: false, error: 'Dịch vụ gửi email chưa được cấu hình đầy đủ trên máy chủ' },
+        { status: 503 },
+      );
     }
 
     const emailJsPayload = {
-      service_id: serviceId,
-      template_id: templateId,
-      user_id: publicKey,
-      accessToken: privateKey,
+      service_id: cfg.serviceId,
+      template_id: cfg.templateId,
+      user_id: cfg.publicKey,
+      accessToken: cfg.privateKey,
       template_params: {
-        to_name: toName || 'Quý khách',
-        to_email: toEmail,
-        otp_code: otpCode,
-        expiry_minutes: String(expiryMinutes || 10),
+        to_name: typeof toName === 'string' && toName.trim() ? toName.trim().slice(0, 120) : 'Quý khách',
+        to_email: emailStr,
+        otp_code: otpStr,
+        expiry_minutes: String(typeof expiryMinutes === 'number' && expiryMinutes > 0 ? expiryMinutes : 10),
       },
     };
 
@@ -60,19 +137,17 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Origin': 'http://localhost:3000',
+        Origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
       },
       body: JSON.stringify(emailJsPayload),
     });
 
     if (!res.ok) {
-      const errText = await res.text().catch(() => 'Lỗi kết nối EmailJS');
-      return NextResponse.json({ success: false, error: errText }, { status: res.status });
+      return NextResponse.json({ success: false, error: 'Không thể gửi email qua nhà cung cấp' }, { status: 502 });
     }
 
     return NextResponse.json({ success: true });
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : 'Lỗi hệ thống gửi email';
-    return NextResponse.json({ success: false, error: msg }, { status: 500 });
+  } catch {
+    return NextResponse.json({ success: false, error: 'Lỗi hệ thống gửi email' }, { status: 500 });
   }
 }
