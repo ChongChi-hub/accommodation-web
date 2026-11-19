@@ -18,8 +18,9 @@ import {
   User,
   CreditCard,
   FileText,
-  AlertCircle,
+  Lock,
 } from 'lucide-react';
+import { TransferReceiptVerificationBox, isValidBankTxCode } from './TransferReceiptVerificationBox';
 
 interface VietQrRealPaymentCardProps {
   intent: PaymentIntent;
@@ -43,11 +44,13 @@ export function VietQrRealPaymentCard({
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [currentStatus, setCurrentStatus] = useState<string>(intent.status);
-  const [timeLeftSec, setTimeLeftSec] = useState<number>(() => {
-    if (!intent.expiresAt) return 900;
-    return Math.max(0, Math.floor((new Date(intent.expiresAt).getTime() - Date.now()) / 1000));
-  });
+  const [bankTxCode, setBankTxCode] = useState<string>('');
+  const [receiptProof, setReceiptProof] = useState<string>('');
+  const [timeLeftSec, setTimeLeftSec] = useState<number>(() =>
+    !intent.expiresAt ? 900 : Math.max(0, Math.floor((new Date(intent.expiresAt).getTime() - Date.now()) / 1000))
+  );
 
+  const canConfirmTransfer = isValidBankTxCode(bankTxCode) && Boolean(receiptProof && receiptProof.trim().length > 10);
   const fallbackQrUrl = `https://img.vietqr.io/image/970436-1042701900-compact2.png?amount=${intent.amount}&addInfo=${encodeURIComponent(intent.paymentCode)}&accountName=${encodeURIComponent(accountHolder)}`;
   const qrImageSrc = intent.qrUrl || fallbackQrUrl;
 
@@ -72,9 +75,7 @@ export function VietQrRealPaymentCard({
       } else if (refreshed.status !== currentStatus) {
         setCurrentStatus(refreshed.status);
       }
-    } catch {
-      // background polling error ignored
-    }
+    } catch { /* background polling error ignored */ }
   }, [intent.paymentCode, currentStatus, onPaid]);
 
   useEffect(() => {
@@ -84,16 +85,10 @@ export function VietQrRealPaymentCard({
   }, [currentStatus, checkPaymentStatus]);
 
   useEffect(() => {
-    if (timeLeftSec <= 0) {
-      if (currentStatus === 'PENDING') setCurrentStatus('EXPIRED');
-      return;
-    }
+    if (timeLeftSec <= 0) { if (currentStatus === 'PENDING') setCurrentStatus('EXPIRED'); return; }
     const timer = setInterval(() => {
       setTimeLeftSec((prev) => {
-        if (prev <= 1) {
-          if (currentStatus === 'PENDING') setCurrentStatus('EXPIRED');
-          return 0;
-        }
+        if (prev <= 1) { if (currentStatus === 'PENDING') setCurrentStatus('EXPIRED'); return 0; }
         return prev - 1;
       });
     }, 1000);
@@ -101,13 +96,18 @@ export function VietQrRealPaymentCard({
   }, [timeLeftSec, currentStatus]);
 
   const handleTenantSubmit = async () => {
+    if (!canConfirmTransfer) {
+      toast.error('Chưa thể xác nhận: Bạn cần hoàn tất chuyển khoản, nhập Mã giao dịch ngân hàng (FT...) và tải Ảnh biên lai chuyển khoản lên để mở khóa!');
+      return;
+    }
     setIsVerifying(true);
     try {
       const updated = await container.billing.billingRepository.submitPaymentIntent(intent.paymentCode, {
-        note: 'Người thuê xác nhận đã chuyển khoản VietQR vào tài khoản Sàn',
+        note: `BANK_TX:${bankTxCode.trim().toUpperCase()}`,
+        receiptUrl: receiptProof.trim(),
       });
       setCurrentStatus(updated.status || 'PAID');
-      toast.success('Đã ghi nhận tiền cọc vào Quỹ Bảo Vệ Escrow của Sàn và thông báo cho chủ trọ để bàn giao phòng!');
+      toast.success('Đã xác thực biên lai chuyển khoản, cộng tiền cọc vào Escrow của 2 bên và thông báo cho chủ trọ!');
       onPaid();
       onSubmitted?.();
     } catch (err: unknown) {
@@ -147,15 +147,6 @@ export function VietQrRealPaymentCard({
           )}
         </div>
       </div>
-
-      {currentStatus === 'SUBMITTED' && (
-        <div className="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-300 dark:border-amber-800 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200">
-          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5 text-amber-600" />
-          <span>
-            Hệ thống đã ghi nhận thông báo chuyển tiền của bạn. Chủ trọ sẽ kiểm tra sao kê ngân hàng và xác nhận trong ít phút. Quỹ Escrow sẽ được kích hoạt bảo đảm ngay khi chủ trọ xác nhận.
-          </span>
-        </div>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
         <div className="md:col-span-5 flex flex-col items-center justify-center p-4 bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm space-y-3">
@@ -209,9 +200,19 @@ export function VietQrRealPaymentCard({
             </div>
           </div>
 
+          {currentStatus !== 'PAID' && (
+            <TransferReceiptVerificationBox
+              bankTxCode={bankTxCode}
+              setBankTxCode={setBankTxCode}
+              receiptProof={receiptProof}
+              setReceiptProof={setReceiptProof}
+              disabled={timeLeftSec <= 0 || isVerifying}
+            />
+          )}
+
           <div className="p-3 bg-teal-50 dark:bg-teal-950/50 rounded-xl border border-teal-200 dark:border-teal-800 flex items-start gap-2 text-[11px] text-teal-900 dark:text-teal-200">
             <ShieldCheck className="w-4 h-4 flex-shrink-0 text-teal-600 mt-0.5" />
-            <span>Mã VietQR này thuộc tài khoản ký quỹ trung gian của Sàn Tổ Ấm. Sau khi chuyển tiền và nhấn xác nhận, tiền cọc sẽ được cộng vào Escrow của cả bạn và chủ trọ, đồng thời mở nút Bàn giao &amp; Nhận phòng.</span>
+            <span>Nút &quot;Tôi đã chuyển tiền&quot; chỉ mở khóa sau khi bạn hoàn tất chuyển khoản vào mã QR của Sàn, nhập Mã giao dịch ngân hàng (FT...) và tải Ảnh biên lai chuyển khoản lên.</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -228,8 +229,15 @@ export function VietQrRealPaymentCard({
                   Đã thanh toán vào Escrow
                 </Button>
               ) : (
-                <Button variant="primary" size="sm" isLoading={isVerifying} disabled={timeLeftSec <= 0} leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={handleTenantSubmit}>
-                  Tôi đã chuyển tiền (Xác nhận đã chuyển)
+                <Button
+                  variant="primary"
+                  size="sm"
+                  isLoading={isVerifying}
+                  disabled={timeLeftSec <= 0 || !canConfirmTransfer}
+                  leftIcon={canConfirmTransfer ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                  onClick={handleTenantSubmit}
+                >
+                  {canConfirmTransfer ? 'Tôi đã chuyển tiền (Xác nhận đã chuyển)' : 'Tôi đã chuyển tiền (Chờ biên lai & Mã GD)'}
                 </Button>
               )}
             </div>

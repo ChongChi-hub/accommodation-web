@@ -184,3 +184,4 @@ export function BankSearchCombobox({ value, onChange }: Props) {
     </div>
   );
 }
+
