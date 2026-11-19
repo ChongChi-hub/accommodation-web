@@ -531,3 +531,6 @@ Trước đây, hệ thống cấp vai trò `LANDLORD` ngay lập tức khi đă
 * **BUG-02 (`proxy.ts` + `/403`):** Khach thue (`TENANT`) chua co vai tro `LANDLORD` truy cap `/dashboard/landlord/**` (ngoai tru `/dashboard/landlord/kyc`) duoc chuyen ve `/${locale}/403` kem nut "Dang ky lam chu tro".
 * **BUG-09 (`tenant/payments`) & Step 05 (`landlord/rooms/new`):** Go `max-w-5xl` khoi `tenant/payments`; bo sung truong ROOM-03 `availableDate` va `minLeaseMonths` vao wizard tao phong.
 * **`[MAIL-EMAILJS]` (`/api/email/send`):** Go bo toan bo khoa EmailJS hardcode trong ma nguon; chi doc tu `process.env` phia server; chong open-relay bang kiem tra `Origin`, allowlist `action`, cookie `cozynest_token`, rate-limit theo IP & nguoi nhan, va validate OTP 6 so.
+* **`[AUTH-KYC]` (`/become-landlord` + `/api/email/send`):**
+  * Bo sung khoa EmailJS server-only vao `.env.local` (gitignored), gui `User-Agent` hop le toi EmailJS REST API de khong bi 403 tu moi truong node/server, sua loi rate-limit ghi nhan timestamp truoc khi goi nha cung cap.
+  * Tinh chinh trang `/become-landlord`: uu tien hien thi muc "Tai khoan du dieu kien nang cap!" va nut "Nang cap len Chu tro ngay" khi ca Email va CCCD da xac minh; tu dong goi `refreshToken()` lam moi token JWT phia client truoc khi chuyen huong toi `/dashboard/landlord` de dam bao khong bi chan 403 boi middleware `proxy.ts`.

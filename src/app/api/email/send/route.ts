@@ -16,16 +16,17 @@ export function __resetEmailRateLimitForTests() {
   recipientHits.clear();
 }
 
-function checkRateLimit(store: Map<string, number[]>, key: string, max: number): boolean {
+function isRateLimited(store: Map<string, number[]>, key: string, max: number): boolean {
   const now = Date.now();
   const recent = (store.get(key) || []).filter((ts) => now - ts < WINDOW_MS);
-  if (recent.length >= max) {
-    store.set(key, recent);
-    return false;
-  }
+  return recent.length >= max;
+}
+
+function recordHit(store: Map<string, number[]>, key: string): void {
+  const now = Date.now();
+  const recent = (store.get(key) || []).filter((ts) => now - ts < WINDOW_MS);
   recent.push(now);
   store.set(key, recent);
-  return true;
 }
 
 function isOriginAllowed(req: NextRequest): boolean {
@@ -105,10 +106,10 @@ export async function POST(req: NextRequest) {
       req.headers.get('x-real-ip') ||
       'local';
 
-    if (!checkRateLimit(ipHits, clientIp, MAX_PER_IP)) {
+    if (isRateLimited(ipHits, clientIp, MAX_PER_IP)) {
       return NextResponse.json({ success: false, error: 'Quá nhiều yêu cầu gửi email từ thiết bị này' }, { status: 429 });
     }
-    if (!checkRateLimit(recipientHits, `${actionStr}:${emailStr}`, MAX_PER_RECIPIENT)) {
+    if (isRateLimited(recipientHits, `${actionStr}:${emailStr}`, MAX_PER_RECIPIENT)) {
       return NextResponse.json({ success: false, error: 'Vui lòng chờ trước khi yêu cầu gửi lại mã' }, { status: 429 });
     }
 
@@ -138,6 +139,7 @@ export async function POST(req: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
         Origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Cozynest/1.0',
       },
       body: JSON.stringify(emailJsPayload),
     });
@@ -145,6 +147,9 @@ export async function POST(req: NextRequest) {
     if (!res.ok) {
       return NextResponse.json({ success: false, error: 'Không thể gửi email qua nhà cung cấp' }, { status: 502 });
     }
+
+    recordHit(ipHits, clientIp);
+    recordHit(recipientHits, `${actionStr}:${emailStr}`);
 
     return NextResponse.json({ success: true });
   } catch {

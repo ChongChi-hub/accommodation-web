@@ -40,6 +40,13 @@ export default function BecomeLandlordPage() {
       if (container.auth.authRepository.upgradeToLandlord) {
         await container.auth.authRepository.upgradeToLandlord();
       }
+      try {
+        if (container.auth.authRepository.refreshToken) {
+          await container.auth.authRepository.refreshToken();
+        }
+      } catch {
+        // Refresh token failure is non-blocking, refreshMe will still sync
+      }
       await refreshMe();
       toast.success('Chúc mừng! Bạn đã nâng cấp thành công lên Chủ trọ.');
       router.push(APP_ROUTES.landlordHome);
@@ -130,16 +137,27 @@ export default function BecomeLandlordPage() {
               <ArrowRight className="w-4 h-4" />
             </Link>
           </>
-        ) : hasPendingApplication ? (
+        ) : user?.emailVerified && user?.kycVerified ? (
           <>
-            <p className="text-xs sm:text-sm text-foreground-muted">{t('step2Desc')}</p>
-            <Link
-              href={APP_ROUTES.landlordKyc}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-800 shrink-0"
+            <div className="space-y-1">
+              <p className="text-xs sm:text-sm font-semibold text-success flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>Tài khoản đủ điều kiện nâng cấp!</span>
+              </p>
+              <p className="text-xs text-foreground-muted">
+                Bạn đã xác minh cả Email và CCCD thành công. Bấm xác nhận bên dưới để chuyển sang tài khoản Chủ trọ.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="primary"
+              size="md"
+              disabled={isSubmitting}
+              onClick={handleUpgrade}
+              rightIcon={<ArrowRight className="w-4 h-4" />}
             >
-              <span>{t('actionContinueKyc')}</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+              {isSubmitting ? 'Đang nâng cấp...' : 'Nâng cấp lên Chủ trọ ngay'}
+            </Button>
           </>
         ) : !user?.emailVerified ? (
           <>
@@ -181,28 +199,28 @@ export default function BecomeLandlordPage() {
               <ArrowRight className="w-4 h-4" />
             </Link>
           </>
-        ) : (
+        ) : hasPendingApplication ? (
           <>
-            <div className="space-y-1">
-              <p className="text-xs sm:text-sm font-semibold text-success flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span>Tài khoản đủ điều kiện nâng cấp!</span>
-              </p>
-              <p className="text-xs text-foreground-muted">
-                Bạn đã xác minh cả Email và CCCD thành công. Bấm xác nhận bên dưới để chuyển sang tài khoản Chủ trọ.
-              </p>
-            </div>
-            <Button
-              type="button"
-              variant="primary"
-              size="md"
-              disabled={isSubmitting}
-              onClick={handleUpgrade}
-              rightIcon={<ArrowRight className="w-4 h-4" />}
+            <p className="text-xs sm:text-sm text-foreground-muted">{t('step2Desc')}</p>
+            <Link
+              href={APP_ROUTES.landlordKyc}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary-800 shrink-0"
             >
-              {isSubmitting ? 'Đang nâng cấp...' : 'Nâng cấp lên Chủ trọ ngay'}
-            </Button>
+              <span>{t('actionContinueKyc')}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </>
+        ) : (
+          <Button
+            type="button"
+            variant="primary"
+            size="md"
+            disabled={isSubmitting}
+            onClick={handleApply}
+            rightIcon={<ArrowRight className="w-4 h-4" />}
+          >
+            {isSubmitting ? t('loading') : t('actionApply')}
+          </Button>
         )}
       </Card>
     </div>
