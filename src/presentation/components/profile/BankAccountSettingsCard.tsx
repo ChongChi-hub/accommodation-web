@@ -6,6 +6,7 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { container } from '@/infrastructure/di/container';
 import { POPULAR_VIETNAM_BANKS, UserBankAccount } from '@/domain/entities/BankAccount';
+import { BankSearchCombobox } from './BankSearchCombobox';
 import { toast } from '@/presentation/stores/toast.store';
 import { CreditCard, QrCode, Save, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
@@ -117,19 +118,9 @@ export function BankAccountSettingsCard({ userRole = 'TENANT' }: Props) {
         <div className="lg:col-span-7 space-y-4">
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300">
-              Ngân hàng thụ hưởng
+              Ngân hàng thụ hưởng ({POPULAR_VIETNAM_BANKS.length} ngân hàng hỗ trợ Napas 24/7)
             </label>
-            <select
-              value={bankCode}
-              onChange={(e) => setBankCode(e.target.value)}
-              className="w-full rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 px-3.5 py-2.5 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            >
-              {POPULAR_VIETNAM_BANKS.map((b) => (
-                <option key={b.code} value={b.code}>
-                  {b.shortName} - {b.name} ({b.code})
-                </option>
-              ))}
-            </select>
+            <BankSearchCombobox value={bankCode} onChange={setBankCode} />
           </div>
 
           <div className="space-y-1.5">

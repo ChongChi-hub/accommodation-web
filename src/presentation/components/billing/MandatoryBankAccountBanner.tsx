@@ -53,3 +53,4 @@ export function MandatoryBankAccountBanner({ bankAccount, role }: Props) {
     </Card>
   );
 }
+
