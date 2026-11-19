@@ -1,65 +1,39 @@
-# FIX-PAYMENT-FLOW — Progress Tracker & PHA 0 Root-Cause Report
+# Tiến độ `[FIX-PAYMENT-FLOW]`
 
-- **Nhánh làm việc:** `feat/fix-payment-flow`
-  - `accommodation-service`: branched from `feat/fix-lifecycle-chat-layout-stats` @ `821e0bb`
-  - `accommodation-web`: branched from `feat/fix-lifecycle-chat-layout-stats` @ `60ff4e8` (đã commit riêng `docs/review/` trước khi tách nhánh)
-- **Trạng thái hiện tại:** **PHA 0 DONE-VERIFIED — DỪNG CHỜ XÁC NHẬN TRƯỚC PHA 1**
-
----
-
-## 1. BASELINE trước khi sửa `[CHẠY LẠI HÔM NAY]`
-*(Chạy trên cùng commit code `821e0bb` BE / `9a004cf` FE — `60ff4e8` chỉ thêm `docs/review/`)*
-
-| Bộ kiểm thử | Kết quả Baseline |
-|---|---|
-| BE `.\gradlew.bat clean test --no-build-cache` | **484/484 PASSED** (0 fail, 0 skip — `admin`:18, `api-gateway`:9, `billing`:35, `booking`:57, `common`:33, `communication`:34, `identity`:197, `listing`:101) |
-| FE `npx eslint . --max-warnings=0` | **PASS (0)** |
-| FE `npx tsc --noEmit` | **PASS (0)** |
-| FE `npm test` (Vitest + i18n + links + manifest) | **PASS** (21 files, 96/96 tests; 2238/2238 i18n keys; 96 links; 224 images) |
-| FE `npm run build` | **PASS** (202/202 static pages) |
-| FE Playwright (`npx playwright test --reporter=list`) | **201 pass / 46 fail / 5 did not run** (252 total; 46 fail đều là lỗi có sẵn từ trước) |
+- **Nhánh (BE & FE):** `feat/fix-payment-flow`
+- **Cập nhật:** 2026-11-19 `[CHẠY LẠI HÔM NAY]`
+- **Trạng thái tổng thể:** PHA 0, PHA 1, PHA 2, PHA 3 **DONE-VERIFIED** (mã nguồn + unit/ArchUnit tests + build); PHA 4 Live E2E Re-Audit **BLOCKED (Docker Desktop đang tắt trên máy chủ sau lần khởi động lại lúc 09:53)** — kịch bản `scratch/re-audit-payment-flow.mjs` và bản sao lưu DB `scratch/pre-audit-backup.sql` (10.64 MB) đã sẵn sàng chạy ngay khi mở Docker Desktop.
 
 ---
 
-## 2. Sơ đồ liên kết thật & Chỗ nối còn thiếu `[ĐỌC TỪ MÃ]`
+## 1. So sánh Baseline vs Hiện tại `[CHẠY LẠI HÔM NAY]`
 
-```
-[RentalRequest: PENDING]
-   |-- POST /booking/rental-requests/{id}/approve
-   |     -> BUG-03: tạo sagaId = "saga-" + UUID (41 chars) -> INSERT appointment_event_outbox.aggregate_id VARCHAR(36) -> SQL 1406 -> 409!
-   |     -> Tạo Contract (status = PENDING_SIGN) + gọi openEscrowHold
-   v
-[Contract: PENDING_SIGN]
-   |-- POST /contracts/{id}/sign-landlord & /sign-tenant (OTP + emailVerified + kycVerified)
-   |     -> THIẾU TRẠNG THÁI AWAITING_DEPOSIT: Contract.java:135 & 145 nhảy thẳng sang ACTIVE ngay sau khi 2 bên ký!
-   v
-[PaymentIntent: DEPOSIT]
-   |-- POST /billing/payments/intent (FE tenant/deposits cho nhập tay depositAmount thay vì server tính từ contract!)
-   |-- POST /billing/payments/sandbox/simulate-webhook -> PAID
-   |     -> Ghi sổ cái kép (DEBIT GATEWAY / CREDIT ESCROW) + escrowService.recordDepositPaid + billing_event_outbox(PAYMENT_PAID)
-   |     -> THIẾU LIÊN KẾT #1: Không có callback/event từ billing-service -> booking-service để chuyển Contract AWAITING_DEPOSIT -> ACTIVE và advance RentalSagaOrchestrator!
-   |     -> THIẾU LIÊN KẾT #2: HttpBookingListingAdapter.releaseRoomHold() chỉ log.info (NO-OP), và listing-service CHƯA CÓ endpoint nội bộ đổi rooms.status -> RENTED / occupancy_status -> OCCUPIED!
-   v
-[Tenant My-Room (/dashboard/tenant/my-room)]
-   |-- Đọc getTenantContracts() + public getRoomDetail(roomId)
-   |     -> THIẾU LIÊN KẾT #3: Chưa có mã đơn TOAM-YYMMDD-XXXXXX, chưa tiết lộ địa chỉ đầy đủ + SĐT chủ trọ + hướng dẫn nhận phòng sau ACTIVE qua API riêng tư có bảo vệ IDOR 404.
-```
+| Bộ kiểm thử | Baseline (PHA 0) | Hiện tại (sau PHA 1–3) | Kết luận |
+| :--- | :--- | :--- | :--- |
+| BE `.\gradlew.bat clean test --no-build-cache` | 484 passed / 0 failed / 0 skipped | **501 passed / 0 failed / 0 skipped** (`+17` tests mới) | PASS (0 regression) |
+| BE `bootJar` (tất cả 7 service) | N/A | **BUILD SUCCESSFUL** (56/56 tasks) | PASS |
+| FE `npx eslint src --max-warnings=0` | Exit 0 (0 warnings) | **Exit 0 (0 warnings)** | PASS |
+| FE `npx tsc --noEmit` | Exit 0 | **Exit 0** | PASS |
+| FE `npm test` (Vitest + i18n + links + manifest) | 96/96 tests, 2238/2238 i18n keys | **101/101 tests, 2265/2265 i18n keys (100% parity)** | PASS (`+5` tests) |
+| FE `npm run build` | 202/202 static pages | **202/202 static pages** | PASS |
+| FE Live E2E Re-Audit (Playwright + Docker) | 201 pass / 46 fail / 5 dnr | **Chờ mở Docker Desktop** (`docker-desktop` WSL2 đang Stopped) | BLOCKED (môi trường) |
 
 ---
 
-## 3. Bảng Nguyên nhân gốc (PHA 0)
+## 2. Trạng thái từng Pha & Hạng mục
 
-| Lỗi | Nguyên nhân gốc | File và dòng | Cách sửa dự kiến | Rủi ro phá code |
-|---|---|---|---|---|
-| **BUG-03** (`409` khi duyệt mọi yêu cầu thuê) | `sagaId = "saga-" + request.getId()` dài **41 ký tự** nhưng `appointment_event_outbox.aggregate_id` là `VARCHAR(36)` -> MySQL `ErrorCode 1406 Data too long` -> `DataIntegrityViolationException` -> `AppointmentExceptionHandler` trả nhầm `409 DATA_CONFLICT`. Tái hiện trên cả phòng `#206` và `#1`. | `RentalRequestService.java:225`, `RentalSagaOrchestrator.java:70`, `booking-service` schema `appointment_event_outbox` | Migration additive `V9` mở rộng `aggregate_id` lên `VARCHAR(64)` (và `saga_instances.saga_id` nếu cần); giữ thông báo lỗi xung đột rõ ràng cho xung đột thật. | Thấp (migration additive mở rộng cột) |
-| **BUG-04** (`401` khi sinh hóa đơn từ hợp đồng) | (1) `GenerateFromContractCommand` dùng `long` nguyên thủy cho `serviceAmount`/`otherAmount` -> thiếu field gây `HttpMessageNotReadableException`; (2) `billing-service` `SecurityConfig` không `permitAll()` `/error` -> mọi `400` bị biến thành `401 ERR_AUTH_UNAUTHORIZED`. | `InvoiceDto.java:45-46`, `billing-service/.../SecurityConfig.java:43-53`, `InvoiceService.java:84-110` | Đổi `serviceAmount`/`otherAmount` sang `Long` (mặc định `0L`), thêm `"/error"` vào `permitAll()` và handler `HttpMessageNotReadableException -> 400`, giữ kiểm tra `ACTIVE` & chống trùng kỳ. | Thấp |
-| **BUG-01** (`u-tenant-01` bị `403 EMAIL_NOT_VERIFIED`) | Seed `R__01_seed_demo_identity.sql` để `email_verified_at = NULL` cho `u-tenant-01` (và KYC chưa `APPROVED` đồng nhất). | `identity-service/src/main/resources/db/seed/R__01_seed_demo_identity.sql` | Cập nhật file seed lặp lại `R__` đặt `email_verified_at` và KYC `APPROVED` cho tài khoản demo (`u-tenant-01`, `u-tenant-02`, `u-landlord-01`), không sửa migration cũ. | Thấp |
-| **Bước 05** (Tạo phòng mới) | Lỗi `400` trong audit do script thiếu `wardId`/`roomTypeId`. Form thật `/dashboard/landlord/rooms/new` gửi đúng `wardId`/`roomTypeCode` nhưng thiếu 2 ô nhập ROOM-03 (`availableDate`, `minLeaseMonths`). | `accommodation-web/.../dashboard/landlord/rooms/new/page.tsx:31-90` | Bổ sung 2 trường `availableDate`, `minLeaseMonths` vào form & test Playwright điền form thật tạo phòng thành công. | Thấp |
-| **V1/V2/V3** (Đứt chuỗi hợp đồng -> cọc -> phòng `RENTED` -> My-Room) | `Contract` nhảy thẳng `PENDING_SIGN -> ACTIVE`; `PaymentIntent` nhận `amount` từ client; cọc `PAID` không gọi `booking-service` kích hoạt hợp đồng và không gọi `listing-service` đổi phòng sang `RENTED`; thiếu mã đơn `TOAM-...` & API tiết lộ thông tin nhận phòng theo giai đoạn. | `Contract.java:134-145`, `PaymentService.java:130,275-295`, `HttpBookingListingAdapter.java:132`, `tenant/deposits/page.tsx:26`, `tenant/my-room/page.tsx` | PHA 2: Thêm trạng thái `AWAITING_DEPOSIT`, server tự tính tiền cọc từ hợp đồng, kích hoạt idempotent + đổi phòng `RENTED` qua internal API + bù trừ, sinh mã đơn `TOAM-YYMMDD-XXXXXX`, tiết lộ PII theo giai đoạn & cập nhật UI My-Room/Deposits. | Trung bình (cần giữ tương thích test hợp đồng hiện có) |
-| **BUG-05** (N6: 2 khách cùng đặt 1 phòng) | `RentalRequestService.createRequest` chỉ check `existsActiveRequest(roomId, tenantId)` theo từng tenant, không khóa hàng/không giữ phòng khi có 2 yêu cầu đồng thời từ 2 tenant khác nhau. | `RentalRequestService.java:119-130` | Thêm cơ chế hold/lock theo `roomId` (khi approve hoặc tạo giữ chỗ có hạn) + trả `409` thông báo tiếng Việt rõ ràng cho người thứ hai. | Trung bình |
-| **BUG-06** (N7: IDOR trả `403`/`401` thay vì `404`) | Participant check ở `RentalRequestService`, `ContractService`, `PaymentService`, `InvoiceService` ném `AccessDeniedException` (403) thay vì `NotFoundException` (404). | `RentalRequestService.java:270`, `ContractService.java`, `PaymentService.java`, `InvoiceService.java` | Chuẩn hóa trả `404` cho cross-tenant IDOR và cập nhật có chủ ý các unit test cũ đang kỳ vọng `403`. | Trung bình (cần cập nhật test cũ có chủ ý) |
-| **BUG-07** (`landlord/tenants` hiện `#ant-02` & `PENDING_SIGN`) | Trang cắt đuôi `tenantId` và không lọc `status === 'ACTIVE'`. | `accommodation-web/.../dashboard/landlord/tenants/page.tsx` | Lọc chỉ hợp đồng `ACTIVE`, hiển thị tên khách từ snapshot/i18n fallback (tuyệt đối không cắt UUID). | Thấp |
-| **BUG-08** (N2: Hủy lịch hẹn trả `400`) | `CancelReasonCode` chỉ có `BUSY, ROOM_TAKEN, TENANT_NOT_ELIGIBLE, TIME_CONFLICT, OTHER` (không có `CHANGE_PLANS`). | `CancelReasonCode.java:3-9` | Thêm giá trị hợp lệ (additive, không đổi enum cũ) và đồng bộ giữa FE modal hủy lịch hẹn & BE. | Thấp |
-| **BUG-02** (TENANT vào `/landlord/**` redirect `/dashboard/landlord/kyc`) | `proxy.ts:149-156` redirect mọi `TENANT` vào `/dashboard/landlord/kyc` mà không kiểm tra đã nộp hồ sơ hay chưa, và khi `localePrefix === ''` bị mất `/vi`. | `accommodation-web/src/proxy.ts:149-156` | Chuyển `TENANT` chưa nộp hồ sơ sang `/${locale}/403` (có nút "Đăng ký làm chủ trọ"); giữ redirect KYC cho người đã nộp hồ sơ chờ duyệt. | Thấp |
-| **BUG-09** (`tenantName=null`, `max-w-5xl` ở `tenant/payments`) | `identityVerificationPort.resolveUserFullName` trả `null` nếu thiếu mapping; `tenant/payments/page.tsx:52` còn `max-w-5xl`. | `RentalRequestService.java:137-138`, `tenant/payments/page.tsx:52` | Sửa lookup `resolveUserFullName` (điền snapshot tên khách lúc tạo) và gỡ `max-w-5xl` trên `tenant/payments`. | Thấp |
+| Pha | Hạng mục | Trạng thái | Commit BE / FE | Bằng chứng |
+| :--- | :--- | :--- | :--- | :--- |
+| PHA 0 | Root-cause analysis + Baseline | DONE-VERIFIED | FE `2b43a63` | 484/484 BE, 96/96 FE |
+| PHA 1 | BUG-03 (outbox `aggregate_id` -> `VARCHAR(64)` `V9`), BUG-04 (`from-contract` `401` + `ACTIVE` guard), BUG-01 (`R__07` seed verified email/KYC), Step 05 (ROOM-03 `availableDate`/`minLeaseMonths`) | DONE-VERIFIED | BE `f219e95`, FE `2b43a63` | `InvoiceFromContractLifecycleTest`, `:booking-service:test`, `:billing-service:test`, `tsc=0`, `eslint=0` |
+| PHA 2 | V1 (`PENDING_SIGN -> AWAITING_DEPOSIT -> ACTIVE`), V2 (server-computed deposit + 1 pending intent), V3 (`TOAM-YYMMDD-XXXXXX` `V10` + phased PII `/checkin-info` + listing `RENTED`/`OCCUPIED` + retry outbox), FE `tenant/deposits`, `tenant/my-room` (`MyRoomHandoverCard` + `.ics` + PDF), BUG-07 (`landlord/tenants`) | DONE-VERIFIED | BE `3854393`, FE `d40446f` | `ContractDepositActivationFlowTest`, `DepositPaymentActivationTest`, `ContractAndAmendmentHardeningTest` (cập nhật có chủ ý) |
+| PHA 3 | BUG-05 (chặn 2 khách giữ cùng phòng `409`), BUG-06 (`404` IDOR thống nhất Contract/PaymentIntent/Invoice), BUG-08 (`CancelReasonCode.CHANGE_PLANS`), BUG-02 (`proxy.ts` -> `/403` + nút Đăng ký làm chủ trọ), BUG-09 (gỡ `max-w-5xl` `tenant/payments`), Nhắc nợ thủ công (`POST /billing/invoices/{id}/remind`, 1 lần/24h) | DONE-VERIFIED | BE `b857172`, FE `f5f1deb` | `ConcurrentRoomHoldAndIdorTest`, `InvoiceIdorAndReminderTest`, `eslint=0`, `tsc=0`, `101/101` Vitest |
+| PHA 4 | Lưu trữ bản audit cũ (`*-2026-11-19-before.md`), cập nhật `DECISIONS.md` cả 2 repo, full `clean test bootJar`, `next build` | DONE-VERIFIED | Commit PHA 4 | 501/501 BE, 202/202 FE build |
+| PHA 4 | Chạy lại E2E thật trên Docker + khôi phục DB + cập nhật `PAYMENT-FLOW-AUDIT.md` & `PAYMENT-FLOW-WALKTHROUGH.md` | BLOCKED (cần mở Docker Desktop) | Đã sẵn sàng `scratch/re-audit-payment-flow.mjs` | `wsl -l -v`: `docker-desktop Stopped` |
 
+---
+
+## 3. Thay đổi Hợp đồng API có chủ ý (Quy tắc 3)
+1. `Contract.signByTenant()` / `signByLandlord()`: khi cả 2 bên đã ký OTP và `depositAmount > 0`, trạng thái chuyển sang `AWAITING_DEPOSIT` (thay vì nhảy thẳng `ACTIVE`). Test `ContractAndAmendmentHardeningTest` đã được cập nhật có chủ ý.
+2. IDOR đọc chéo tài nguyên (`GET /api/v1/booking/contracts/{id}`, `GET /api/v1/booking/contracts/{id}/checkin-info`, `GET /api/v1/billing/payments/intent/{code}`, `GET /api/v1/billing/invoices/{id}`) thống nhất trả `404` thay vì `403`.
+3. `POST /api/v1/billing/payments/intent` với `orderType=DEPOSIT`: số tiền được tính phía server từ hợp đồng (`AWAITING_DEPOSIT`), bỏ qua `amount` phía client; trùng intent `PENDING` trả `409`.

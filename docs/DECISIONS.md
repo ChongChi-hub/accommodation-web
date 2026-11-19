@@ -520,3 +520,14 @@ Trước đây, hệ thống cấp vai trò `LANDLORD` ngay lập tức khi đă
 * **H3 (Chat):** Tạm dừng polling khi widget đóng hoặc `document.hidden === true`; giữ nguyên bản nháp khi gửi lỗi; dùng `<textarea>` hỗ trợ `Enter`/`Shift+Enter`; hiển thị tin nhắn qua `SafeMessageContent` (escape HTML, chỉ linkify `http://`/`https://`); chuyển đổi 1 cột trên mobile; thêm nút "Nhắn tin" từ chi tiết lịch hẹn và yêu cầu thuê.
 * **H4 (Bố cục Dashboard):** Gỡ `mx-auto max-w-7xl` ở wrapper ngoài của `DashboardLayout` để `DashboardSidebar` dính sát lề trái (`x = 0px`), bổ sung nút thu gọn trên desktop và drawer `< 1024px` (đóng bằng `Escape`/backdrop), giới hạn vùng nội dung `max-w-[1600px]` cho màn hình 1920/2560 và `min-w-0` chống tràn ngang.
 * **H5 (Thống kê ADMIN):** Gỡ bỏ toàn bộ số giả lập (`+6.2%`, `-1.5`, `+24.8%`, fallback `74.5`/`128000`); nối trực tiếp `/api/v1/admin/stats/overview` và `/timeseries`, hỗ trợ bộ lọc 7/30/90 ngày/tùy chọn, xuất CSV (UTF-8 BOM), gắn nhãn `Thử nghiệm (SANDBOX_ONLY)` cho doanh thu hóa đơn và hiển thị cảnh báo khi có nguồn `degraded`.
+
+---
+
+## 17. Quyet dinh Thiet ke `[FIX-PAYMENT-FLOW]` & `[MAIL-EMAILJS]`
+
+* **Dat coc tinh phia server (`tenant/deposits`):** Go bo o nhap tay so tien coc; hien thi so tien coc doc tu hop dong `AWAITING_DEPOSIT` do server tinh, gan nhan `SANDBOX_ONLY`, tu dong tai lai intent `PENDING` dang hoat dong khi reload, va dan thang toi `/dashboard/tenant/my-room` sau khi `PAID`.
+* **Nhan phong & Tiet lo PII theo giai doan (`tenant/my-room` + `MyRoomHandoverCard`):** Goi `GET /api/v1/booking/contracts/{id}/checkin-info`; truoc `ACTIVE` chi hien khu vuc va nut thanh toan coc; sau `ACTIVE` hien ma don `TOAM-YYMMDD-XXXXXX` (co nut sao chep), ma nhan phong 6 so, dia chi day du, ten & SDT chu tro, huong dan nhan phong, nut tai lich `.ics` va tai PDF hop dong.
+* **BUG-07 (`landlord/tenants`):** Loc chi hien thi hop dong `ACTIVE`, tra cuu ten khach thue that tu `rentalRequests`/`occupants` voi fallback i18n, loai bo chuoi cat ID tho `#ant-02`.
+* **BUG-02 (`proxy.ts` + `/403`):** Khach thue (`TENANT`) chua co vai tro `LANDLORD` truy cap `/dashboard/landlord/**` (ngoai tru `/dashboard/landlord/kyc`) duoc chuyen ve `/${locale}/403` kem nut "Dang ky lam chu tro".
+* **BUG-09 (`tenant/payments`) & Step 05 (`landlord/rooms/new`):** Go `max-w-5xl` khoi `tenant/payments`; bo sung truong ROOM-03 `availableDate` va `minLeaseMonths` vao wizard tao phong.
+* **`[MAIL-EMAILJS]` (`/api/email/send`):** Go bo toan bo khoa EmailJS hardcode trong ma nguon; chi doc tu `process.env` phia server; chong open-relay bang kiem tra `Origin`, allowlist `action`, cookie `cozynest_token`, rate-limit theo IP & nguoi nhan, va validate OTP 6 so.
