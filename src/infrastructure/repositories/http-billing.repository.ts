@@ -79,6 +79,10 @@ export class HttpBillingRepository {
     await ApiClient.post(`/billing/invoices/${encodeURIComponent(id)}/cancel`);
   }
 
+  async remindInvoice(id: string): Promise<Invoice> {
+    return ApiClient.post<Invoice>(`/billing/invoices/${encodeURIComponent(id)}/remind`);
+  }
+
   async recordUtilityReading(payload: RecordUtilityReadingPayload): Promise<UtilityReading> {
     return ApiClient.post<UtilityReading>('/billing/utility-readings', payload);
   }

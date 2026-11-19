@@ -147,10 +147,8 @@ export default async function proxy(req: NextRequest) {
     }
 
     if (cleanPath.startsWith('/dashboard/landlord') && !hasRole('LANDLORD')) {
-      if (hasRole('TENANT') && !cleanPath.startsWith('/dashboard/landlord/kyc')) {
-        return NextResponse.redirect(new URL(`${localePrefix}${APP_ROUTES.landlordKyc}`, req.url));
-      }
-      if (!hasRole('TENANT')) {
+      const isKycApplicationRoute = hasRole('TENANT') && cleanPath.startsWith('/dashboard/landlord/kyc');
+      if (!isKycApplicationRoute) {
         return NextResponse.redirect(new URL(`${localePrefix}/403`, req.url));
       }
     }

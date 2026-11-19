@@ -174,6 +174,22 @@ export default function LandlordInvoicesPage() {
                           {t('cancelInvoice')}
                         </Button>
                       )}
+                      {inv.status !== 'PAID' && inv.status !== 'CANCELLED' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={async () => {
+                            try {
+                              await container.billing.billingRepository.remindInvoice(inv.id);
+                              toast.success(t('remindSuccess'));
+                            } catch (err: unknown) {
+                              toast.error(err instanceof Error ? err.message : tc('actionError'));
+                            }
+                          }}
+                        >
+                          {t('remindBtn')}
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

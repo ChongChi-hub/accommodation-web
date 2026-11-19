@@ -34,11 +34,16 @@ export default function ForbiddenPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 pt-2">
           <Link href="/" className="w-full sm:w-auto">
             <Button variant="primary" className="w-full flex items-center justify-center gap-2">
               <Home className="w-4 h-4" />
               <span>{t('backHome')}</span>
+            </Button>
+          </Link>
+          <Link href="/dashboard/landlord/kyc" className="w-full sm:w-auto">
+            <Button variant="secondary" className="w-full flex items-center justify-center gap-2">
+              <span>{t('becomeLandlord')}</span>
             </Button>
           </Link>
           <Link href="/support" className="w-full sm:w-auto">

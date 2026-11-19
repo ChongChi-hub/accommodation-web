@@ -510,7 +510,8 @@
       "subtitle": "You do not have permission to access this resource or administrative area.",
       "description": "This section requires elevated permissions (Administrator or Moderator). If you believe this is an error, please contact support.",
       "backHome": "Back to Home",
-      "contactSupport": "Submit Support Ticket"
+      "contactSupport": "Submit Support Ticket",
+      "becomeLandlord": "Become a Landlord"
     },
     "sessionExpired": {
       "title": "Session Expired",
@@ -2330,7 +2331,9 @@
       "creditAmount": "Adjustment Amount (VND)",
       "creditReason": "Reason for Adjustment",
       "cancelInvoice": "Cancel Invoice",
-      "empty": "No invoices found."
+      "empty": "No invoices found.",
+      "remindBtn": "Send reminder",
+      "remindSuccess": "Payment reminder sent to tenant"
     },
     "utilities": {
       "title": "Monthly Utility Meter Readings",

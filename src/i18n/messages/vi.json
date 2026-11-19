@@ -510,7 +510,8 @@
       "subtitle": "Bạn không có quyền truy cập vào tài nguyên hoặc khu vực quản trị này.",
       "description": "Khu vực này yêu cầu đặc quyền tài khoản cao hơn (Quản trị viên hoặc Kiểm duyệt viên). Nếu bạn cho rằng đây là một sự nhầm lẫn, vui lòng liên hệ ban quản trị để được hỗ trợ.",
       "backHome": "Về trang chủ",
-      "contactSupport": "Gửi yêu cầu hỗ trợ"
+      "contactSupport": "Gửi yêu cầu hỗ trợ",
+      "becomeLandlord": "Đăng ký làm chủ trọ"
     },
     "sessionExpired": {
       "title": "Phiên làm việc đã hết hạn",
@@ -2330,7 +2331,9 @@
       "creditAmount": "Số tiền giảm (VND)",
       "creditReason": "Lý do điều chỉnh giảm",
       "cancelInvoice": "Hủy hóa đơn",
-      "empty": "Chưa có hóa đơn nào."
+      "empty": "Chưa có hóa đơn nào.",
+      "remindBtn": "Gửi nhắc nợ",
+      "remindSuccess": "Đã gửi nhắc thanh toán tới khách thuê"
     },
     "utilities": {
       "title": "Ghi chỉ số điện nước hàng tháng",
