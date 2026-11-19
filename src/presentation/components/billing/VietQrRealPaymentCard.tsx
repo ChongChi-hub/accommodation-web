@@ -7,19 +7,7 @@ import { Badge } from '@/presentation/components/ui/Badge';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatVnd } from '@/shared/utils/format-vnd';
 import { container } from '@/infrastructure/di/container';
-import {
-  CheckCircle2,
-  Copy,
-  Check,
-  Clock,
-  QrCode,
-  ShieldCheck,
-  Building2,
-  User,
-  CreditCard,
-  FileText,
-  Lock,
-} from 'lucide-react';
+import { CheckCircle2, Copy, Check, Clock, QrCode, ShieldCheck, Building2, User, CreditCard, FileText, Lock } from 'lucide-react';
 import { TransferReceiptVerificationBox, isValidBankTxCode } from './TransferReceiptVerificationBox';
 
 interface VietQrRealPaymentCardProps {
@@ -45,12 +33,13 @@ export function VietQrRealPaymentCard({
   const [isVerifying, setIsVerifying] = useState(false);
   const [currentStatus, setCurrentStatus] = useState<string>(intent.status);
   const [bankTxCode, setBankTxCode] = useState<string>('');
-  const [receiptProof, setReceiptProof] = useState<string>('');
+  const [receiptHash, setReceiptHash] = useState<string>('');
+  const [receiptImageUrl, setReceiptImageUrl] = useState<string>('');
   const [timeLeftSec, setTimeLeftSec] = useState<number>(() =>
     !intent.expiresAt ? 900 : Math.max(0, Math.floor((new Date(intent.expiresAt).getTime() - Date.now()) / 1000))
   );
 
-  const canConfirmTransfer = isValidBankTxCode(bankTxCode) && Boolean(receiptProof && receiptProof.trim().length > 10);
+  const canConfirmTransfer = isValidBankTxCode(bankTxCode) && Boolean(receiptHash && receiptImageUrl && receiptImageUrl.length > 20);
   const fallbackQrUrl = `https://img.vietqr.io/image/970436-1042701900-compact2.png?amount=${intent.amount}&addInfo=${encodeURIComponent(intent.paymentCode)}&accountName=${encodeURIComponent(accountHolder)}`;
   const qrImageSrc = intent.qrUrl || fallbackQrUrl;
 
@@ -103,8 +92,8 @@ export function VietQrRealPaymentCard({
     setIsVerifying(true);
     try {
       const updated = await container.billing.billingRepository.submitPaymentIntent(intent.paymentCode, {
-        note: `BANK_TX:${bankTxCode.trim().toUpperCase()}`,
-        receiptUrl: receiptProof.trim(),
+        note: `BANK_TX:${bankTxCode.trim().toUpperCase()}|HASH:${receiptHash.trim()}`,
+        receiptUrl: receiptImageUrl.trim(),
       });
       setCurrentStatus(updated.status || 'PAID');
       toast.success('Đã xác thực biên lai chuyển khoản, cộng tiền cọc vào Escrow của 2 bên và thông báo cho chủ trọ!');
@@ -204,8 +193,10 @@ export function VietQrRealPaymentCard({
             <TransferReceiptVerificationBox
               bankTxCode={bankTxCode}
               setBankTxCode={setBankTxCode}
-              receiptProof={receiptProof}
-              setReceiptProof={setReceiptProof}
+              receiptHash={receiptHash}
+              setReceiptHash={setReceiptHash}
+              receiptImageUrl={receiptImageUrl}
+              setReceiptImageUrl={setReceiptImageUrl}
               disabled={timeLeftSec <= 0 || isVerifying}
             />
           )}

@@ -158,6 +158,10 @@ export interface EscrowHold {
   moveInConfirmedAt?: string | null;
   inspectionEndsAt: string;
   disputeReason?: string | null;
+  paymentCode?: string | null;
+  bankTxCode?: string | null;
+  receiptHash?: string | null;
+  receiptUrl?: string | null;
   releasedAt?: string | null;
   createdAt: string;
   updatedAt: string;

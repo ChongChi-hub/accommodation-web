@@ -215,6 +215,10 @@ export class HttpBillingRepository extends HttpUtilityRepository {
     return ApiClient.post<EscrowHold>(`/billing/escrow/${encodeURIComponent(contractId)}/freeze`, { reason });
   }
 
+  async rejectEscrowProof(contractId: string, reason: string): Promise<EscrowHold> {
+    return ApiClient.post<EscrowHold>(`/billing/escrow/${encodeURIComponent(contractId)}/reject-proof`, { reason });
+  }
+
   async getAdminEscrows(): Promise<EscrowHold[]> {
     const res = await ApiClient.get<EscrowHold[]>('/billing/escrow/admin').catch(() => []);
     return Array.isArray(res) ? res : [];

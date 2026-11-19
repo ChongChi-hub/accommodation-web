@@ -8,8 +8,10 @@ import { CheckCircle2, FileCheck2, Lock, UploadCloud, X } from 'lucide-react';
 interface Props {
   bankTxCode: string;
   setBankTxCode: (v: string) => void;
-  receiptProof: string;
-  setReceiptProof: (v: string) => void;
+  receiptHash: string;
+  setReceiptHash: (v: string) => void;
+  receiptImageUrl: string;
+  setReceiptImageUrl: (v: string) => void;
   disabled?: boolean;
 }
 
@@ -23,19 +25,56 @@ export function isValidBankTxCode(raw: string): boolean {
   return true;
 }
 
+function compressReceiptImage(dataUrl: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new window.Image();
+    img.onload = () => {
+      if (img.naturalWidth < 120 || img.naturalHeight < 120) {
+        reject(new Error('Kích thước ảnh biên lai quá nhỏ hoặc không phải ảnh chụp màn hình giao dịch'));
+        return;
+      }
+      const maxDim = 860;
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) {
+          h = Math.round((h * maxDim) / w);
+          w = maxDim;
+        } else {
+          w = Math.round((w * maxDim) / h);
+          h = maxDim;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(dataUrl);
+        return;
+      }
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.78));
+    };
+    img.onerror = () => reject(new Error('File ảnh biên lai bị lỗi hoặc không đọc được'));
+    img.src = dataUrl;
+  });
+}
+
 export function TransferReceiptVerificationBox({
   bankTxCode,
   setBankTxCode,
-  receiptProof,
-  setReceiptProof,
+  receiptHash,
+  setReceiptHash,
+  receiptImageUrl,
+  setReceiptImageUrl,
   disabled = false,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previewDataUrl, setPreviewDataUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>('');
 
   const txValid = isValidBankTxCode(bankTxCode);
-  const receiptValid = Boolean(receiptProof && receiptProof.trim().length > 10);
+  const receiptValid = Boolean(receiptHash && receiptImageUrl && receiptImageUrl.length > 20);
   const allVerified = txValid && receiptValid;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +84,7 @@ export function TransferReceiptVerificationBox({
       toast.error('Vui lòng chọn file hình ảnh biên lai chuyển khoản (.png, .jpg, .webp)');
       return;
     }
-    if (file.size < 1024) {
+    if (file.size < 2048) {
       toast.error('File ảnh biên lai không hợp lệ (dung lượng quá nhỏ)');
       return;
     }
@@ -55,15 +94,21 @@ export function TransferReceiptVerificationBox({
       const hashHex = Array.from(new Uint8Array(hashBuf))
         .map((b) => b.toString(16).padStart(2, '0'))
         .join('')
-        .substring(0, 24);
+        .substring(0, 32);
 
       const reader = new FileReader();
-      reader.onload = () => {
-        const result = typeof reader.result === 'string' ? reader.result : '';
-        setPreviewDataUrl(result);
-        setFileName(file.name);
-        setReceiptProof(`receipt://sha256-${hashHex}/${encodeURIComponent(file.name)}`);
-        toast.success('Đã tải và kiểm tra ảnh biên lai chuyển khoản hợp lệ!');
+      reader.onload = async () => {
+        try {
+          const rawDataUrl = typeof reader.result === 'string' ? reader.result : '';
+          const compressed = await compressReceiptImage(rawDataUrl);
+          setFileName(file.name);
+          setReceiptHash(`sha256-${hashHex}`);
+          setReceiptImageUrl(compressed);
+          toast.success('Đã tải và kiểm tra ảnh biên lai chuyển khoản hợp lệ!');
+        } catch (err: unknown) {
+          toast.error(err instanceof Error ? err.message : 'Ảnh biên lai không hợp lệ');
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        }
       };
       reader.readAsDataURL(file);
     } catch {
@@ -72,9 +117,9 @@ export function TransferReceiptVerificationBox({
   };
 
   const clearReceipt = () => {
-    setPreviewDataUrl(null);
     setFileName('');
-    setReceiptProof('');
+    setReceiptHash('');
+    setReceiptImageUrl('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -82,11 +127,7 @@ export function TransferReceiptVerificationBox({
     <div className="p-3.5 rounded-xl bg-white dark:bg-stone-900 border border-teal-200 dark:border-teal-800 space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-xs font-bold text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
-          {allVerified ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          ) : (
-            <Lock className="w-4 h-4 text-amber-600" />
-          )}
+          {allVerified ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <Lock className="w-4 h-4 text-amber-600" />}
           <span>Xác thực giao dịch đã chuyển khoản vào tài khoản Sàn</span>
         </p>
         <span
@@ -113,9 +154,7 @@ export function TransferReceiptVerificationBox({
             onChange={(e) => setBankTxCode(e.target.value.toUpperCase())}
           />
           {bankTxCode && !txValid && (
-            <p className="text-[10px] text-rose-600">
-              Mã GD cần ít nhất 6 ký tự chuẩn ngân hàng (VD: FT261119888)
-            </p>
+            <p className="text-[10px] text-rose-600">Mã GD cần ít nhất 6 ký tự chuẩn ngân hàng (không trùng lặp)</p>
           )}
         </div>
 
@@ -123,15 +162,8 @@ export function TransferReceiptVerificationBox({
           <label className="block text-[11px] font-semibold text-stone-700 dark:text-stone-300">
             2. Ảnh chụp biên lai chuyển khoản thành công *
           </label>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            disabled={disabled}
-            onChange={handleFileChange}
-            className="hidden"
-          />
-          {!previewDataUrl ? (
+          <input ref={fileInputRef} type="file" accept="image/*" disabled={disabled} onChange={handleFileChange} className="hidden" />
+          {!receiptImageUrl ? (
             <button
               type="button"
               disabled={disabled}
@@ -144,7 +176,7 @@ export function TransferReceiptVerificationBox({
           ) : (
             <div className="flex items-center justify-between p-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/30">
               <div className="flex items-center gap-2 min-w-0">
-                <img src={previewDataUrl} alt="Receipt preview" className="w-8 h-8 object-cover rounded border border-stone-200" />
+                <img src={receiptImageUrl} alt="Receipt preview" className="w-8 h-8 object-cover rounded border border-stone-200" />
                 <div className="truncate">
                   <p className="text-[11px] font-semibold text-emerald-900 dark:text-emerald-200 truncate flex items-center gap-1">
                     <FileCheck2 className="w-3 h-3 text-emerald-600 shrink-0" />
@@ -152,12 +184,7 @@ export function TransferReceiptVerificationBox({
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={clearReceipt}
-                className="p-1 text-stone-400 hover:text-rose-600"
-                title="Xóa ảnh"
-              >
+              <button type="button" onClick={clearReceipt} className="p-1 text-stone-400 hover:text-rose-600" title="Xóa ảnh">
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>

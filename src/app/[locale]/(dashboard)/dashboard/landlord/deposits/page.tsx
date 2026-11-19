@@ -26,14 +26,7 @@ export default function LandlordDepositsPage() {
   const [submissions, setSubmissions] = useState<PaymentIntent[]>([]);
   const [bankAccount, setBankAccount] = useState<UserBankAccount | null>(null);
   const [busy, setBusy] = useState(false);
-  const [form, setForm] = useState({
-    amount: '50000',
-    bankCode: 'VCB',
-    accountNumber: '',
-    accountHolder: '',
-    otp: '',
-  });
-
+  const [form, setForm] = useState({ amount: '50000', bankCode: 'VCB', accountNumber: '', accountHolder: '', otp: '' });
   const hasValidBank = Boolean(bankAccount && bankAccount.accountNumber && bankAccount.qrCodeUrl);
 
   const loadData = useCallback(async () => {
@@ -63,9 +56,7 @@ export default function LandlordDepositsPage() {
     }
   }, [tc]);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  useEffect(() => { loadData(); }, [loadData]);
 
   const handleConfirmMoveIn = async (contractId: string) => {
     if (!hasValidBank) {
@@ -84,10 +75,20 @@ export default function LandlordDepositsPage() {
     }
   };
 
-  const handleConfirmPayment = async (
-    paymentCode: string,
-    payload: { actualAmount: number; bankTxCode: string; note?: string }
-  ) => {
+  const handleRejectProof = async (contractId: string, reason: string) => {
+    setBusy(true);
+    try {
+      await container.billing.billingRepository.rejectEscrowProof(contractId, reason);
+      await loadData();
+      toast.success('Đã từ chối biên lai không hợp lệ và đưa hợp đồng về trạng thái chờ đặt cọc lại!');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Từ chối biên lai thất bại');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleConfirmPayment = async (paymentCode: string, payload: { actualAmount: number; bankTxCode: string; note?: string }) => {
     setBusy(true);
     try {
       await container.billing.billingRepository.confirmPaymentIntent(paymentCode, payload);
@@ -172,12 +173,7 @@ export default function LandlordDepositsPage() {
       </div>
 
       {submissions.length > 0 && (
-        <LandlordSubmittedDepositsTable
-          submissions={submissions}
-          busy={busy}
-          onConfirm={handleConfirmPayment}
-          onReject={handleRejectPayment}
-        />
+        <LandlordSubmittedDepositsTable submissions={submissions} busy={busy} onConfirm={handleConfirmPayment} onReject={handleRejectPayment} />
       )}
 
       <Card className="p-5 space-y-4">
@@ -199,11 +195,11 @@ export default function LandlordDepositsPage() {
         </form>
       </Card>
 
-      {/* Landlord Escrow Holds List */}
       <LandlordEscrowTable
         escrows={escrows}
         busy={busy}
         onConfirmMoveIn={handleConfirmMoveIn}
+        onRejectProof={handleRejectProof}
         contractLabel={t('contractId')}
         amountLabel={t('amount')}
         actionColLabel={tc('actionCol')}
