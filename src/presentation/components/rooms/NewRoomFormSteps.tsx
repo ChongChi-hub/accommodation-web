@@ -5,6 +5,7 @@ import React from 'react';
 import { Input } from '@/presentation/components/ui/Input';
 import { Select } from '@/presentation/components/ui/Select';
 import { ProvinceDto, WardDto } from '@/application/dto/listing.dto';
+import { OsmLocationPicker } from './OsmLocationPicker';
 
 interface NewRoomFormStepsProps {
   currentStep: number;
@@ -72,6 +73,16 @@ export function NewRoomFormSteps({
           placeholder="VD: Số 15 ngõ 92 Trần Thái Tông, Phường Dịch Vọng Hậu, Hà Nội"
           value={formData.address}
           onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+        />
+        <OsmLocationPicker
+          latitude={formData.latitude}
+          longitude={formData.longitude}
+          address={formData.address}
+          wardName={wards.find((w) => w.code === formData.ward)?.name}
+          provinceName={provinces.find((p) => p.code === formData.province)?.name}
+          onChange={(lat, lng) =>
+            setFormData((prev: any) => ({ ...prev, latitude: lat, longitude: lng }))
+          }
         />
       </div>
     );

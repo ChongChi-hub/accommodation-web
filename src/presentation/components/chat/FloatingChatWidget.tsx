@@ -104,7 +104,7 @@ export function FloatingChatWidget({
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end">
+    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end print:hidden">
       {/* Expanded Chat Box */}
       {isOpen && (
         <div className="mb-3 w-[360px] sm:w-[400px] h-[520px] bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">

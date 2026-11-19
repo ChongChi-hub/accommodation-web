@@ -122,6 +122,8 @@ export interface UpdateRoomPayload {
   districtCode?: string;
   wardCode?: string;
   wardId?: number;
+  latitude?: number;
+  longitude?: number;
   roomTypeId?: number;
   roomTypeCode?: string;
   area: number;

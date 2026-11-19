@@ -331,7 +331,7 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
   const waterRate = contract.waterRate ?? roomDetail?.waterCost ?? 25000;
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl print:space-y-0 print:max-w-none print:w-full">
       <div className="print:hidden">
         <Breadcrumb items={[{ label: t('tenantTitle'), href: backHref }, { label: contract.contractCode }]} />
       </div>
@@ -613,19 +613,19 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
       </Card>
 
       {/* Official Vietnamese Residential Lease Contract Document (Matching User's 4-Page Format) */}
-      <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-md rounded-2xl p-8 sm:p-12 max-w-4xl space-y-7 text-xs sm:text-sm text-stone-900 dark:text-stone-100 font-serif leading-relaxed print:p-0 print:border-none print:shadow-none print:bg-transparent print:text-black">
+      <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-md rounded-2xl p-8 sm:p-12 max-w-4xl space-y-7 text-xs sm:text-sm text-stone-900 dark:text-stone-100 font-serif leading-relaxed print:max-w-none print:w-full print:px-[16mm] print:py-[14mm] print:rounded-none print:border-none print:shadow-none print:bg-white print:text-black">
         {/* National Header */}
-        <div className="text-center space-y-1 border-b border-stone-200 dark:border-stone-800 pb-5">
-          <p className="font-bold uppercase tracking-wider text-sm sm:text-base">
-            CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM
+        <div className="text-center space-y-1 border-b border-stone-200 dark:border-stone-800 pb-5 print:border-stone-300">
+          <p className="font-bold uppercase tracking-wider text-sm sm:text-base print:text-black">
+            CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
           </p>
-          <p className="font-semibold text-xs sm:text-sm">Độc lập - Tự do - Hạnh phúc</p>
-          <p className="italic text-stone-400 text-xs">---------o0o---------</p>
-          <h2 className="text-lg sm:text-2xl font-bold uppercase pt-3 tracking-wide text-stone-950 dark:text-stone-50">
+          <p className="font-semibold text-xs sm:text-sm print:text-black">Độc lập - Tự do - Hạnh phúc</p>
+          <p className="italic text-stone-400 text-xs print:text-stone-600">---------o0o---------</p>
+          <h2 className="text-lg sm:text-2xl font-bold uppercase pt-3 tracking-wide text-stone-950 dark:text-stone-50 print:text-black">
             HỢP ĐỒNG THUÊ NHÀ
           </h2>
-          <p className="text-xs text-stone-500 font-mono">
-            Mã hợp đồng: <strong>{contract.contractCode}</strong> | Ngày lập: {day}/{month}/{year}
+          <p className="text-xs text-stone-500 font-sans print:text-stone-700">
+            Mã hợp đồng: <strong className="font-mono">{contract.contractCode}</strong> | Ngày lập: {day}/{month}/{year}
           </p>
         </div>
 

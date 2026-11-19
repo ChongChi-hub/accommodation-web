@@ -12,7 +12,8 @@ export function getGatewayApiBase(): string {
 export function verifyCsrfOrigin(req: NextRequest): NextResponse | null {
   const origin = req.headers.get('origin');
   if (!origin) return null;
-  const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+  const rawHost = req.headers.get('x-forwarded-host') || req.headers.get('host');
+  const host = rawHost ? rawHost.split(',')[0].trim() : null;
   if (!host) return null;
   try {
     const parsedOrigin = new URL(origin);

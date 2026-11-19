@@ -252,7 +252,7 @@ export function DashboardSidebar({ isMobile = false, onClose }: DashboardSidebar
   return (
     <aside
       className={cn(
-        'hidden lg:flex shrink-0 border-r border-border bg-surface flex-col justify-between h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto transition-all duration-200',
+        'hidden lg:flex print:hidden shrink-0 border-r border-border bg-surface flex-col justify-between h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto transition-all duration-200',
         collapsed ? 'w-16' : 'w-64'
       )}
     >

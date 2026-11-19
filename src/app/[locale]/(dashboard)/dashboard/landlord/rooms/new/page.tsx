@@ -28,9 +28,30 @@ export default function NewRoomPage() {
   const [wards, setWards] = useState<WardDto[]>([]);
   const [kycApproved, setKycApproved] = useState(true);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    roomType: string;
+    province: string;
+    ward: string;
+    address: string;
+    latitude?: number;
+    longitude?: number;
+    area: string;
+    price: string;
+    deposit: string;
+    maxOccupants: string;
+    availableDate: string;
+    minLeaseMonths: string;
+    electricityCost: string;
+    waterCost: string;
+    initialElectricityReading: string;
+    initialWaterReading: string;
+    allowPets: boolean;
+    allowCooking: boolean;
+  }>({
     title: '', roomType: 'MINI_APARTMENT', province: '01', ward: '',
-    address: '', area: '', price: '', deposit: '', maxOccupants: '2',
+    address: '', latitude: undefined, longitude: undefined,
+    area: '', price: '', deposit: '', maxOccupants: '2',
     availableDate: new Date().toISOString().slice(0, 10), minLeaseMonths: '6',
     electricityCost: '3500', waterCost: '25000',
     initialElectricityReading: '0', initialWaterReading: '0',
@@ -85,7 +106,10 @@ export default function NewRoomPage() {
       const newRoom = await container.landlord.landlordRoomRepository.createRoom({
         title: formData.title.trim(), address: formData.address.trim(),
         provinceCode: formData.province, wardCode: formData.ward,
-        wardId: selectedWard?.id, roomTypeCode: formData.roomType,
+        wardId: selectedWard?.id,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        roomTypeCode: formData.roomType,
         area: parseFloat(formData.area), maxOccupants: parseInt(formData.maxOccupants, 10) || 2,
         price: parseFloat(formData.price), deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
         availableDate: formData.availableDate || undefined,

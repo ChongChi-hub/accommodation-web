@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { JetBrains_Mono, Noto_Serif, Plus_Jakarta_Sans } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { ToastContainer } from '@/presentation/components/ui/Toast';
 import { CookieConsentBanner } from '@/presentation/components/legal/CookieConsentBanner';
@@ -12,8 +12,24 @@ import '@/styles/globals.css';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin', 'vietnamese'],
+  weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
-  variable: '--font-sans',
+  variable: '--font-jakarta',
+});
+
+const notoSerif = Noto_Serif({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+  variable: '--font-noto-serif',
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
 });
 
 export function generateStaticParams() {
@@ -45,7 +61,11 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={plusJakartaSans.variable} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${plusJakartaSans.variable} ${notoSerif.variable} ${jetBrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className="min-h-screen bg-background text-foreground antialiased transition-colors" suppressHydrationWarning>
         <ThemeInitializer />
         <NextIntlClientProvider messages={messages}>

@@ -40,7 +40,7 @@ export function DashboardHeader({ onToggleMobileSidebar }: DashboardHeaderProps)
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border header-frosted">
+      <header className="sticky top-0 z-40 w-full border-b border-border header-frosted print:hidden">
         <div className="mx-auto flex h-16 w-full items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <button

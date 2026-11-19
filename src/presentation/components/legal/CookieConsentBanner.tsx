@@ -51,7 +51,7 @@ export function CookieConsentBanner() {
     <div
       role="region"
       aria-label="Cookie consent banner"
-      className="fixed bottom-0 inset-x-0 z-50 p-4 sm:p-5 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 shadow-2xl transition-all animate-in slide-in-from-bottom-4 duration-300"
+      className="fixed bottom-0 inset-x-0 z-50 p-4 sm:p-5 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 shadow-2xl transition-all animate-in slide-in-from-bottom-4 duration-300 print:hidden"
     >
       <div className="mx-auto max-w-7xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-start gap-3.5 max-w-3xl">

@@ -111,10 +111,10 @@ export function DashboardLayout({ children, allowedRoles }: DashboardLayoutProps
         </Drawer>
 
         {/* Main Content Area: uses full remaining width, caps gracefully at 1600px on ultrawide */}
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto overflow-x-clip">
-          <div className="w-full max-w-[1600px] mx-auto space-y-6 min-w-0">
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto overflow-x-clip print:p-0 print:overflow-visible">
+          <div className="w-full max-w-[1600px] mx-auto space-y-6 min-w-0 print:max-w-none print:space-y-0">
             {user?.roles?.includes('LANDLORD') && !user?.faceVerified && !pathname.includes('/kyc/face') && (
-              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 print:hidden">
                 <div className="flex items-start gap-3 min-w-0">
                   <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5">
                     <ShieldAlert className="w-5 h-5" />

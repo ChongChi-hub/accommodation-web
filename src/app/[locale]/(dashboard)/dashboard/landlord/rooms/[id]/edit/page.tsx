@@ -8,6 +8,7 @@ import { Input } from '@/presentation/components/ui/Input';
 import { Breadcrumb } from '@/presentation/components/ui/Breadcrumb';
 import { ImageManager } from '@/presentation/components/rooms/ImageManager';
 import { ManagedImage } from '@/presentation/components/rooms/ImageCard';
+import { OsmLocationPicker } from '@/presentation/components/rooms/OsmLocationPicker';
 import { useLandlordRoomDetail } from '@/presentation/hooks/useLandlordRoomDetail';
 import { ErrorState } from '@/presentation/components/ui/ErrorState';
 import { useRouter } from '@/i18n/routing';
@@ -31,8 +32,16 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
     refresh,
   } = useLandlordRoomDetail(id);
 
-  const [formData, setFormData] = useState({
-    title: '', description: '', address: '', area: '', price: '', deposit: '',
+  const [formData, setFormData] = useState<{
+    title: string; description: string; address: string;
+    latitude?: number; longitude?: number;
+    area: string; price: string; deposit: string;
+    electricityCost: string; waterCost: string;
+    initialElectricityReading: string; initialWaterReading: string;
+    allowPets: boolean; allowCooking: boolean;
+  }>({
+    title: '', description: '', address: '', latitude: undefined, longitude: undefined,
+    area: '', price: '', deposit: '',
     electricityCost: '3500', waterCost: '25000',
     initialElectricityReading: '0', initialWaterReading: '0',
     allowPets: false, allowCooking: true,
@@ -42,6 +51,8 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
     if (room) {
       setFormData({
         title: room.title || '', description: room.description || '', address: room.address || '',
+        latitude: typeof room.latitude === 'number' ? room.latitude : undefined,
+        longitude: typeof room.longitude === 'number' ? room.longitude : undefined,
         area: room.area ? String(room.area) : '', price: room.price ? String(room.price) : '',
         deposit: room.deposit ? String(room.deposit) : '',
         electricityCost: room.electricityCost ? String(room.electricityCost) : '3500',
@@ -74,6 +85,8 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
       title: formData.title.trim(),
       description: formData.description.trim() || undefined,
       address: formData.address.trim(),
+      latitude: formData.latitude,
+      longitude: formData.longitude,
       area: parseFloat(formData.area),
       price: parseFloat(formData.price),
       deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
@@ -168,6 +181,12 @@ export default function EditRoomPage({ params }: { params: Promise<{ id: string 
             required
             value={formData.address}
             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+          />
+          <OsmLocationPicker
+            latitude={formData.latitude}
+            longitude={formData.longitude}
+            address={formData.address}
+            onChange={(lat, lng) => setFormData((prev) => ({ ...prev, latitude: lat, longitude: lng }))}
           />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Input
