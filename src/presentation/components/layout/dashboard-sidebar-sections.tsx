@@ -26,7 +26,6 @@ import {
   Star,
   User,
   Users,
-  Wrench,
   LifeBuoy,
 } from 'lucide-react';
 import { DashboardBadges } from '@/domain/repositories/BadgeRepository';
@@ -134,7 +133,6 @@ export function buildSidebarSections(
       {
         title: 'DỊCH VỤ & GIAO TIẾP',
         items: [
-          { label: 'Bảo trì & Sửa chữa', href: '/dashboard/landlord/maintenance', icon: <Wrench className="w-4 h-4" />, badge: badges?.landlordMaintenanceRequests, badgeVariant: 'danger' },
           { label: 'Tin nhắn khách thuê', href: '/dashboard/landlord/messages', icon: <MessageSquare className="w-4 h-4" />, badge: badges?.landlordUnreadMessages, badgeVariant: 'brand' },
           { label: 'Đánh giá nhận được', href: '/dashboard/landlord/reviews', icon: <Star className="w-4 h-4" /> },
           { label: 'Thông báo hệ thống', href: '/dashboard/landlord/notifications', icon: <Bell className="w-4 h-4" /> },
@@ -174,9 +172,8 @@ export function buildSidebarSections(
       ],
     },
     {
-      title: 'TRỢ GIÚP & BẢO TRÌ',
+      title: 'TRỢ GIÚP & HỖ TRỢ',
       items: [
-        { label: 'Báo hỏng & Sửa chữa', href: '/dashboard/tenant/maintenance', icon: <Wrench className="w-4 h-4" /> },
         { label: 'Trả phòng & Quyết toán', href: '/dashboard/tenant/move-out', icon: <MoveOutIcon className="w-4 h-4" /> },
         { label: 'Báo cáo vi phạm', href: '/dashboard/tenant/reports', icon: <AlertTriangle className="w-4 h-4" /> },
         { label: 'Tin nhắn trao đổi', href: '/dashboard/tenant/messages', icon: <MessageSquare className="w-4 h-4" />, badge: badges?.tenantUnreadMessages, badgeVariant: 'brand' },

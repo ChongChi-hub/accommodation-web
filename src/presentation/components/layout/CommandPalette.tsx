@@ -20,7 +20,6 @@ import {
   History,
   Sliders,
   CreditCard,
-  Wrench,
   FileText,
   LifeBuoy,
   LogOut,
@@ -78,7 +77,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     { id: 'll-rooms', title: 'Quản lý danh sách phòng cho thuê', category: 'Chủ trọ', href: '/dashboard/landlord/rooms', icon: <Building className="w-4 h-4" />, roles: ['LANDLORD'] },
     { id: 'll-new-room', title: 'Đăng tin phòng trọ mới', category: 'Chủ trọ', href: '/dashboard/landlord/rooms/new', icon: <Building className="w-4 h-4" />, roles: ['LANDLORD'] },
     { id: 'll-invoices', title: 'Lập & quản lý hóa đơn tiền phòng', category: 'Chủ trọ', href: '/dashboard/landlord/invoices', icon: <CreditCard className="w-4 h-4" />, roles: ['LANDLORD'] },
-    { id: 'll-maint', title: 'Xử lý báo hỏng & sửa chữa phòng trọ', category: 'Chủ trọ', href: '/dashboard/landlord/maintenance', icon: <Wrench className="w-4 h-4" />, roles: ['LANDLORD'] },
     { id: 'll-contracts', title: 'Quản lý hợp đồng cho thuê', category: 'Chủ trọ', href: '/dashboard/landlord/contracts', icon: <FileText className="w-4 h-4" />, roles: ['LANDLORD'] },
     { id: 'll-bank', title: 'Tài khoản ngân hàng & QR nhận tiền giải ngân', category: 'Chủ trọ', href: '/dashboard/landlord/bank-account', icon: <CreditCard className="w-4 h-4" />, roles: ['LANDLORD'] },
 
@@ -87,7 +85,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     { id: 'tn-my-room', title: 'Phòng đang thuê & nội quy', category: 'Người thuê', href: '/dashboard/tenant/my-room', icon: <Building className="w-4 h-4" />, roles: ['TENANT'] },
     { id: 'tn-invoices', title: 'Hóa đơn tiền nhà hàng tháng', category: 'Người thuê', href: '/dashboard/tenant/invoices', icon: <CreditCard className="w-4 h-4" />, roles: ['TENANT'] },
     { id: 'tn-bank', title: 'Tài khoản ngân hàng & QR hoàn cọc', category: 'Người thuê', href: '/dashboard/tenant/bank-account', icon: <CreditCard className="w-4 h-4" />, roles: ['TENANT'] },
-    { id: 'tn-maint', title: 'Báo sự cố thiết bị cần sửa chữa', category: 'Người thuê', href: '/dashboard/tenant/maintenance', icon: <Wrench className="w-4 h-4" />, roles: ['TENANT'] },
     { id: 'tn-contracts', title: 'Hợp đồng thuê phòng của tôi', category: 'Người thuê', href: '/dashboard/tenant/contracts', icon: <FileText className="w-4 h-4" />, roles: ['TENANT'] },
   ];
 

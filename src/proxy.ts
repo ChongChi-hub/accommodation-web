@@ -165,7 +165,6 @@ export default async function proxy(req: NextRequest) {
       '/dashboard/kyc',
       '/dashboard/deposits',
       '/dashboard/messages',
-      '/dashboard/maintenance',
       '/dashboard/reviews',
       '/dashboard/settings',
       '/dashboard/profile',

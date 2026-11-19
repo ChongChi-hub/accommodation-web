@@ -88,6 +88,24 @@ export interface CreateContractPayload {
   waterRate?: number;
 }
 
+export interface LandlordTenantRosterItem {
+  contractId: string;
+  contractCode: string;
+  orderCode?: string | null;
+  roomId: string;
+  roomTitle?: string | null;
+  tenantId: string;
+  tenantName?: string | null;
+  tenantEmail?: string | null;
+  tenantPhone?: string | null;
+  status: ContractStatus;
+  startDate: string;
+  endDate: string;
+  monthlyRent: number;
+  depositAmount: number;
+  depositPaidAt?: string | null;
+}
+
 export interface ContractOccupant {
   id: string;
   contractId: string;

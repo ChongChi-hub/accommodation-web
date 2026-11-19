@@ -28,7 +28,6 @@ import {
   Sparkles,
   ArrowRight,
   ExternalLink,
-  Wrench,
   CheckCircle2,
   AlertTriangle,
 } from 'lucide-react';
@@ -494,24 +493,6 @@ export default function TenantMyRoomPage() {
                       Hợp đồng pháp lý
                     </span>
                     <span className="text-[11px] text-stone-500">In A4, xem điều khoản 8 điều</span>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-stone-400" />
-              </Link>
-
-              <Link
-                href="/dashboard/tenant/maintenance"
-                className="flex items-center justify-between p-3 rounded-xl border border-stone-200/60 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors text-xs font-medium"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-600">
-                    <Wrench className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="font-bold text-stone-900 dark:text-stone-100 block">
-                      Báo hỏng & Sửa chữa
-                    </span>
-                    <span className="text-[11px] text-stone-500">Gửi sự cố thiết bị cho chủ nhà</span>
                   </div>
                 </div>
                 <ArrowRight className="w-4 h-4 text-stone-400" />

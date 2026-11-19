@@ -6,6 +6,7 @@ import {
   ContractOccupant,
   CreateAmendmentPayload,
   CreateContractPayload,
+  LandlordTenantRosterItem,
 } from '@/domain/entities/Contract';
 import { ApiClient } from '../http/api-client';
 
@@ -29,6 +30,11 @@ export class HttpContractRepository {
 
   async getLandlordContracts(): Promise<Contract[]> {
     const res = await ApiClient.get<Contract[]>('/booking/contracts/landlord');
+    return Array.isArray(res) ? res : [];
+  }
+
+  async getLandlordActiveTenants(): Promise<LandlordTenantRosterItem[]> {
+    const res = await ApiClient.get<LandlordTenantRosterItem[]>('/booking/contracts/landlord/tenants');
     return Array.isArray(res) ? res : [];
   }
 

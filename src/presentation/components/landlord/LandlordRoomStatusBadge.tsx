@@ -15,7 +15,7 @@ interface Props {
 export function LandlordRoomStatusBadge({ status, hiddenBy, hiddenReason, rejectedReason }: Props) {
   const t = useTranslations('landlord.rooms.statusLabels');
 
-  if (status === 'PUBLISHED') {
+  if (status === 'PUBLISHED' || status === 'AVAILABLE') {
     return (
       <Badge variant="success" size="sm">
         {t('published')}
