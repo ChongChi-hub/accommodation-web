@@ -8,7 +8,7 @@ import { toast } from '@/presentation/stores/toast.store';
 import { useAuthStore } from '@/presentation/stores/auth.store';
 import { ApiClient } from '@/infrastructure/http/api-client';
 import { container } from '@/infrastructure/di/container';
-import { AdminFinancialStats, PayoutItem, RefundItem, RiskProfile } from '@/domain/entities/Billing';
+import { AdminFinancialStats, EscrowHold, PayoutItem, RefundItem, RiskProfile } from '@/domain/entities/Billing';
 import {
   AccountItem,
   AdjustmentRequest,
@@ -19,6 +19,7 @@ import {
 import { ReconTab } from '@/presentation/components/admin/transactions/ReconTab';
 import { TransactionsHistoryTab } from '@/presentation/components/admin/transactions/TransactionsHistoryTab';
 import { MakerCheckerAndRefundsTab } from '@/presentation/components/admin/transactions/MakerCheckerAndRefundsTab';
+import { AdminEscrowManagementTab } from '@/presentation/components/admin/transactions/AdminEscrowManagementTab';
 import { RiskTab } from '@/presentation/components/admin/transactions/RiskTab';
 import { ExportTab } from '@/presentation/components/admin/transactions/ExportTab';
 import { Scale } from 'lucide-react';
@@ -26,7 +27,7 @@ import { Scale } from 'lucide-react';
 export default function AdminTransactionsAndLedgerPage() {
   const tl = useTranslations('sprint3.ledger');
   const currentUser = useAuthStore((state) => state.user);
-  const [activeTab, setActiveTab] = useState<'RECON' | 'TRANSACTIONS' | 'MAKER_CHECKER' | 'RISK' | 'EXPORT'>('RECON');
+  const [activeTab, setActiveTab] = useState<'RECON' | 'TRANSACTIONS' | 'ESCROW' | 'MAKER_CHECKER' | 'RISK' | 'EXPORT'>('RECON');
   const [isLoading, setIsLoading] = useState(true);
   const [isReconciling, setIsReconciling] = useState(false);
 
@@ -35,6 +36,7 @@ export default function AdminTransactionsAndLedgerPage() {
   const [accounts, setAccounts] = useState<AccountItem[]>([]);
   const [entries, setEntries] = useState<JournalEntryDetailItem[]>([]);
   const [intents, setIntents] = useState<AdminPaymentIntentItem[]>([]);
+  const [escrows, setEscrows] = useState<EscrowHold[]>([]);
   const [requests, setRequests] = useState<AdjustmentRequest[]>([]);
   const [refunds, setRefunds] = useState<RefundItem[]>([]);
   const [payouts, setPayouts] = useState<PayoutItem[]>([]);
@@ -43,13 +45,14 @@ export default function AdminTransactionsAndLedgerPage() {
   const loadInitialData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [reconRes, statsRes, accsRes, entriesRes, intentsRes, reqsRes, refundsRes, payoutsRes, profilesRes] =
+      const [reconRes, statsRes, accsRes, entriesRes, intentsRes, escrowsRes, reqsRes, refundsRes, payoutsRes, profilesRes] =
         await Promise.all([
           ApiClient.request<ReconciliationSummary>('/billing/ledger/reconcile-now', { method: 'POST' }),
           container.billing.billingRepository.getAdminDashboardStats().catch(() => null),
           ApiClient.request<AccountItem[]>('/billing/ledger/accounts'),
           ApiClient.request<JournalEntryDetailItem[]>('/billing/ledger/entries?limit=100').catch(() => []),
           ApiClient.request<AdminPaymentIntentItem[]>('/billing/payments/admin?limit=100').catch(() => []),
+          container.billing.billingRepository.getAdminEscrows().catch(() => []),
           ApiClient.request<AdjustmentRequest[]>('/billing/maker-checker/requests'),
           container.billing.billingRepository.getAdminRefunds().catch(() => []),
           container.billing.billingRepository.getAdminPayouts().catch(() => []),
@@ -60,6 +63,7 @@ export default function AdminTransactionsAndLedgerPage() {
       setAccounts(accsRes || []);
       setEntries(entriesRes || []);
       setIntents(intentsRes || []);
+      setEscrows(escrowsRes);
       setRequests(reqsRes || []);
       setRefunds(refundsRes);
       setPayouts(payoutsRes);
@@ -109,6 +113,13 @@ export default function AdminTransactionsAndLedgerPage() {
           Lịch sử Giao dịch &amp; Sổ cái ({entries.length})
         </Button>
         <Button
+          variant={activeTab === 'ESCROW' ? 'primary' : 'outline'}
+          size="sm"
+          onClick={() => setActiveTab('ESCROW')}
+        >
+          Ký quỹ Escrow ({escrows.length})
+        </Button>
+        <Button
           variant={activeTab === 'MAKER_CHECKER' ? 'primary' : 'outline'}
           size="sm"
           onClick={() => setActiveTab('MAKER_CHECKER')}
@@ -134,6 +145,8 @@ export default function AdminTransactionsAndLedgerPage() {
         />
       ) : activeTab === 'TRANSACTIONS' ? (
         <TransactionsHistoryTab entries={entries} intents={intents} />
+      ) : activeTab === 'ESCROW' ? (
+        <AdminEscrowManagementTab escrows={escrows} onRefresh={loadInitialData} />
       ) : activeTab === 'MAKER_CHECKER' ? (
         <MakerCheckerAndRefundsTab
           accounts={accounts}

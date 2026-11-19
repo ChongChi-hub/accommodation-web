@@ -144,6 +144,7 @@ export function buildSidebarSections(
         title: 'TÀI KHOẢN',
         items: [
           { label: 'Hồ sơ chủ trọ', href: '/dashboard/landlord/profile', icon: <User className="w-4 h-4" /> },
+          { label: 'Tài khoản ngân hàng & QR', href: '/dashboard/landlord/bank-account', icon: <CreditCard className="w-4 h-4" /> },
           { label: 'Xác thực chủ nhà (KYC)', href: '/dashboard/landlord/kyc', icon: <ShieldCheck className="w-4 h-4" /> },
           { label: 'Cài đặt tài khoản', href: '/dashboard/landlord/settings', icon: <Settings className="w-4 h-4" /> },
         ],
@@ -187,6 +188,7 @@ export function buildSidebarSections(
       title: 'CÀI ĐẶT & HỒ SƠ',
       items: [
         { label: 'Hồ sơ cá nhân', href: '/dashboard/tenant/profile', icon: <User className="w-4 h-4" /> },
+        { label: 'Tài khoản ngân hàng & QR', href: '/dashboard/tenant/bank-account', icon: <CreditCard className="w-4 h-4" /> },
         { label: 'Xác minh danh tính (KYC)', href: '/dashboard/tenant/kyc', icon: <ShieldCheck className="w-4 h-4" /> },
         { label: 'Cài đặt tài khoản', href: '/dashboard/tenant/settings', icon: <Settings className="w-4 h-4" /> },
       ],

@@ -22,6 +22,7 @@ import { HttpOwnershipKycRepository } from '../repositories/http-ownership-kyc.r
 import { HttpNotificationRepository } from '../repositories/http-notification.repository';
 import { HttpTwoFactorRepository } from '../repositories/http-two-factor.repository';
 import { HttpChatRepository } from '../repositories/http-chat.repository';
+import { HttpBankAccountRepository } from '../repositories/http-bank-account.repository';
 import { StaticBadgeRepository } from '../static/StaticBadgeRepository';
 import { LoginUseCase } from '@/application/use-cases/auth/login.use-case';
 import { RegisterUseCase } from '@/application/use-cases/auth/register.use-case';
@@ -52,6 +53,7 @@ const ownershipKycRepository = new HttpOwnershipKycRepository();
 const notificationRepository = new HttpNotificationRepository();
 const twoFactorRepository = new HttpTwoFactorRepository();
 const chatRepository = new HttpChatRepository();
+const bankAccountRepository = new HttpBankAccountRepository();
 const badgeRepository = new StaticBadgeRepository(
   notificationRepository,
   kycRepository,
@@ -136,5 +138,8 @@ export const container = {
   },
   chat: {
     chatRepository,
+  },
+  bankAccount: {
+    bankAccountRepository,
   },
 };

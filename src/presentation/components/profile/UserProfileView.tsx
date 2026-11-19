@@ -13,6 +13,7 @@ import { UserChangePasswordView } from './UserChangePasswordView';
 import { LinkedAccountsSection } from './LinkedAccountsSection';
 import { UserProfile, UpdateUserProfileDto } from '@/domain/entities/UserProfile';
 import { ProvinceDto, WardDto } from '@/application/dto/listing.dto';
+import { BankAccountSettingsCard } from './BankAccountSettingsCard';
 import { RefreshCw, AlertCircle } from 'lucide-react';
 
 export interface UserProfileViewProps {
@@ -22,7 +23,7 @@ export interface UserProfileViewProps {
 export function UserProfileView({ role }: UserProfileViewProps) {
   const t = useTranslations('profile');
   const { user, updateUser } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<'info' | 'security'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'security' | 'bank'>('info');
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [provinces, setProvinces] = useState<ProvinceDto[]>([]);
@@ -123,9 +124,20 @@ export function UserProfileView({ role }: UserProfileViewProps) {
         >
           {t('securityTab')}
         </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('bank')}
+          className={`pb-2.5 transition-colors border-b-2 -mb-px ${
+            activeTab === 'bank' ? 'border-primary text-primary' : 'border-transparent text-foreground-muted'
+          }`}
+        >
+          Tài khoản ngân hàng &amp; QR
+        </button>
       </div>
 
-      {activeTab === 'security' ? (
+      {activeTab === 'bank' ? (
+        <BankAccountSettingsCard userRole={role === 'ADMIN' ? 'ADMIN' : role === 'LANDLORD' ? 'LANDLORD' : 'TENANT'} />
+      ) : activeTab === 'security' ? (
         <div className="space-y-6">
           <UserChangePasswordView />
           <LinkedAccountsSection />
