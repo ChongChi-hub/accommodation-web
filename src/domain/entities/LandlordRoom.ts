@@ -142,6 +142,8 @@ export interface UpdateRoomPayload {
 export interface CreateRoomPayload extends UpdateRoomPayload {
   landlordName?: string;
   landlordPhone?: string;
+  availableDate?: string;
+  minLeaseMonths?: number;
   submitForReview?: boolean;
 }
 

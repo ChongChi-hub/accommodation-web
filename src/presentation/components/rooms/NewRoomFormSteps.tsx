@@ -116,6 +116,22 @@ export function NewRoomFormSteps({
           />
         </div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input
+            label="Ngày sẵn sàng dọn vào"
+            type="date"
+            value={formData.availableDate || ''}
+            onChange={(e) => setFormData({ ...formData, availableDate: e.target.value })}
+          />
+          <Input
+            label="Thời hạn thuê tối thiểu (tháng)"
+            type="number"
+            min={1}
+            value={formData.minLeaseMonths || '6'}
+            onChange={(e) => setFormData({ ...formData, minLeaseMonths: e.target.value })}
+          />
+        </div>
+
         <div className="pt-2 border-t border-border space-y-3">
           <div className="flex flex-col">
             <span className="text-xs font-bold text-foreground">Đơn giá điện nước & Chỉ số bàn giao ban đầu (Bắt buộc)</span>

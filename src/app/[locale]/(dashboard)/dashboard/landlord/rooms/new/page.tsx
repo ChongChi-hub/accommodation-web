@@ -31,6 +31,7 @@ export default function NewRoomPage() {
   const [formData, setFormData] = useState({
     title: '', roomType: 'MINI_APARTMENT', province: '01', ward: '',
     address: '', area: '', price: '', deposit: '', maxOccupants: '2',
+    availableDate: new Date().toISOString().slice(0, 10), minLeaseMonths: '6',
     electricityCost: '3500', waterCost: '25000',
     initialElectricityReading: '0', initialWaterReading: '0',
     allowPets: false, allowCooking: true,
@@ -87,6 +88,8 @@ export default function NewRoomPage() {
         wardId: selectedWard?.id, roomTypeCode: formData.roomType,
         area: parseFloat(formData.area), maxOccupants: parseInt(formData.maxOccupants, 10) || 2,
         price: parseFloat(formData.price), deposit: formData.deposit ? parseFloat(formData.deposit) : 0,
+        availableDate: formData.availableDate || undefined,
+        minLeaseMonths: formData.minLeaseMonths ? parseInt(formData.minLeaseMonths, 10) : 6,
         electricityCost: formData.electricityCost ? parseFloat(formData.electricityCost) : 3500,
         waterCost: formData.waterCost ? parseFloat(formData.waterCost) : 25000,
         initialElectricityReading: formData.initialElectricityReading ? parseFloat(formData.initialElectricityReading) : 0,
