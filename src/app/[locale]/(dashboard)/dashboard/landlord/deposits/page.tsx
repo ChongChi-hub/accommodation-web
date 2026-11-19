@@ -8,10 +8,12 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
 import { container } from '@/infrastructure/di/container';
-import { EscrowHold, LandlordFinancialStats, PayoutItem } from '@/domain/entities/Billing';
+import { EscrowHold, LandlordFinancialStats, PaymentIntent, PayoutItem } from '@/domain/entities/Billing';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDateTime, formatVnd } from '@/shared/utils/format-vnd';
-import { AlertTriangle, CheckCircle2, KeyRound, Landmark, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, Landmark, ShieldCheck } from 'lucide-react';
+import { LandlordSubmittedDepositsTable } from '@/presentation/components/billing/LandlordSubmittedDepositsTable';
+import { LandlordEscrowTable } from '@/presentation/components/billing/LandlordEscrowTable';
 
 export default function LandlordDepositsPage() {
   const t = useTranslations('sprint3.deposit');
@@ -19,6 +21,7 @@ export default function LandlordDepositsPage() {
   const [stats, setStats] = useState<LandlordFinancialStats | null>(null);
   const [payouts, setPayouts] = useState<PayoutItem[]>([]);
   const [escrows, setEscrows] = useState<EscrowHold[]>([]);
+  const [submissions, setSubmissions] = useState<PaymentIntent[]>([]);
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({
     amount: '50000',
@@ -30,14 +33,16 @@ export default function LandlordDepositsPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const [s, pList, escList] = await Promise.all([
+      const [s, pList, escList, subList] = await Promise.all([
         container.billing.billingRepository.getLandlordDashboardStats(),
         container.billing.billingRepository.getPayouts(),
         container.billing.billingRepository.getLandlordEscrows(),
+        container.billing.billingRepository.getLandlordSubmittedPayments(),
       ]);
       setStats(s);
       setPayouts(pList);
       setEscrows(escList);
+      setSubmissions(subList);
     } catch {
       toast.error(tc('loadError'));
     }
@@ -55,6 +60,35 @@ export default function LandlordDepositsPage() {
       toast.success('Bàn giao phòng thành công!');
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : tc('actionError'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleConfirmPayment = async (
+    paymentCode: string,
+    payload: { actualAmount: number; bankTxCode: string; note?: string }
+  ) => {
+    setBusy(true);
+    try {
+      await container.billing.billingRepository.confirmPaymentIntent(paymentCode, payload);
+      await loadData();
+      toast.success('Xác nhận đã nhận tiền thành công!');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Xác nhận thanh toán thất bại');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleRejectPayment = async (paymentCode: string) => {
+    setBusy(true);
+    try {
+      await container.billing.billingRepository.cancelPaymentIntent(paymentCode);
+      await loadData();
+      toast.success('Đã hủy giao dịch chuyển khoản.');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Hủy giao dịch thất bại');
     } finally {
       setBusy(false);
     }
@@ -112,6 +146,14 @@ export default function LandlordDepositsPage() {
         </Card>
       </div>
 
+      {/* Submitted deposits awaiting landlord bank reconciliation */}
+      <LandlordSubmittedDepositsTable
+        submissions={submissions}
+        busy={busy}
+        onConfirm={handleConfirmPayment}
+        onReject={handleRejectPayment}
+      />
+
       <Card className="p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold">{t('requestPayoutBtn')}</h2>
@@ -132,77 +174,14 @@ export default function LandlordDepositsPage() {
       </Card>
 
       {/* Landlord Escrow Holds List */}
-      <Card className="p-0 overflow-hidden">
-        <div className="px-5 py-3 border-b border-stone-100 dark:border-stone-800 text-xs font-bold text-stone-900 dark:text-stone-100 flex items-center justify-between">
-          <span>Tiền cọc phòng đang ký quỹ Escrow ({escrows.length})</span>
-          <span className="text-[11px] text-stone-500 font-normal">Quản lý bàn giao phòng & giải ngân cọc</span>
-        </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('contractId')}</TableHead>
-              <TableHead>{t('amount')}</TableHead>
-              <TableHead>Trạng thái Ký quỹ</TableHead>
-              <TableHead>Tiến độ bàn giao</TableHead>
-              <TableHead className="text-right">{tc('actionCol')}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {escrows.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-xs py-5 text-stone-500">
-                  Chưa có khoản tiền cọc nào thuộc phòng của bạn trong quỹ Escrow
-                </TableCell>
-              </TableRow>
-            ) : (
-              escrows.map((e) => (
-                <TableRow key={e.id}>
-                  <TableCell className="font-mono text-xs font-semibold">{e.contractId}</TableCell>
-                  <TableCell className="font-bold text-teal-700">{formatVnd(e.amount)}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        e.status === 'RELEASED'
-                          ? 'success'
-                          : e.status === 'DISPUTE_FROZEN'
-                          ? 'danger'
-                          : e.status === 'HELD'
-                          ? 'info'
-                          : 'warning'
-                      }
-                      size="sm"
-                    >
-                      {e.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-xs">
-                    <span className={e.landlordConfirmedMoveIn ? 'text-emerald-600 font-semibold' : 'text-stone-400'}>
-                      {e.landlordConfirmedMoveIn ? '✓ Đã bàn giao chìa khóa' : '⏳ Chờ bạn bàn giao'}
-                    </span>
-                    <span className="mx-1.5 text-stone-300">|</span>
-                    <span className={e.tenantConfirmedMoveIn ? 'text-emerald-600 font-semibold' : 'text-stone-400'}>
-                      {e.tenantConfirmedMoveIn ? '✓ Khách đã nhận phòng' : '⏳ Khách chưa dọn vào'}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {e.status === 'HELD' && !e.landlordConfirmedMoveIn && (
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        isLoading={busy}
-                        leftIcon={<KeyRound className="w-3.5 h-3.5" />}
-                        onClick={() => handleConfirmMoveIn(e.contractId)}
-                      >
-                        Bàn giao phòng
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+      <LandlordEscrowTable
+        escrows={escrows}
+        busy={busy}
+        onConfirmMoveIn={handleConfirmMoveIn}
+        contractLabel={t('contractId')}
+        amountLabel={t('amount')}
+        actionColLabel={tc('actionCol')}
+      />
 
       <Card className="p-0 overflow-hidden">
         <div className="px-4 py-3 border-b border-stone-100 dark:border-stone-800 text-xs font-bold">

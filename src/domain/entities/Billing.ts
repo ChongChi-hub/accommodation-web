@@ -6,8 +6,20 @@ export interface PaymentIntent {
   amount: number;
   paidAmount: number;
   qrUrl: string;
-  status: 'PENDING' | 'PAID' | 'CANCELLED' | 'EXPIRED' | string;
+  status: 'PENDING' | 'SUBMITTED' | 'PAID' | 'PARTIAL_PAID' | 'OVERPAID' | 'MISMATCH' | 'EXPIRED' | 'CANCELLED' | string;
   expiresAt: string;
+  createdAt?: string;
+}
+
+export interface SubmitPaymentIntentPayload {
+  note?: string;
+  receiptUrl?: string;
+}
+
+export interface ConfirmPaymentIntentPayload {
+  actualAmount: number;
+  bankTxCode: string;
+  note?: string;
 }
 
 export interface CreatePaymentIntentPayload {
