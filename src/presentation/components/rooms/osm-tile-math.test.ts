@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildAddressQueries,
   getProvinceDefaultCenter,
   latLngToWorldPixel,
   worldPixelToLatLng,
@@ -22,6 +23,20 @@ describe('osm-tile-math', () => {
 
     const dn = getProvinceDefaultCenter('Đà Nẵng');
     expect(dn.lat).toBeCloseTo(16.054407, 3);
+  });
+
+  it('builds deduplicated cascading queries for 2-level Vietnamese addresses', () => {
+    const queries = buildAddressQueries('47/11, Trương Văn Hải, Tăng Nhơn Phú B, Thủ Đức', 'Thủ Đức', 'Hồ Chí Minh');
+    expect(queries[0]).toEqual({
+      query: '47/11, Trương Văn Hải, Tăng Nhơn Phú B, Thủ Đức, Hồ Chí Minh, Việt Nam',
+      zoom: 17,
+    });
+    expect(queries[1]).toEqual({
+      query: 'Trương Văn Hải, Tăng Nhơn Phú B, Thủ Đức, Hồ Chí Minh, Việt Nam',
+      zoom: 16,
+    });
+    expect(queries.some((q) => q.query === 'Thủ Đức, Hồ Chí Minh, Việt Nam' && q.zoom === 15)).toBe(true);
+    expect(queries.some((q) => q.query === 'Hồ Chí Minh, Việt Nam' && q.zoom === 13)).toBe(true);
   });
 });
 

@@ -101,24 +101,79 @@ export function computeVisibleTiles(
   return { originX, originY, tiles };
 }
 
-export async function geocodeVietnamAddress(
+export interface GeocodeResult {
+  lat: number;
+  lng: number;
+  zoom: number;
+  displayName?: string;
+}
+
+function joinUniqueParts(parts: Array<string | undefined>): string {
+  const seen: string[] = [];
+  const kept: string[] = [];
+  for (const raw of parts) {
+    const trimmed = raw?.trim();
+    if (!trimmed) continue;
+    const norm = normalizeText(trimmed);
+    if (!norm) continue;
+    if (seen.some((prev) => prev.includes(norm))) continue;
+    seen.push(norm);
+    kept.push(trimmed);
+  }
+  return kept.join(', ');
+}
+
+export function buildAddressQueries(
   address?: string,
   wardName?: string,
   provinceName?: string
-): Promise<{ lat: number; lng: number; displayName?: string } | null> {
-  const queries = [
-    [address, wardName, provinceName, 'Việt Nam'].filter((s) => s && s.trim()).join(', '),
-    [wardName, provinceName, 'Việt Nam'].filter((s) => s && s.trim()).join(', '),
-  ].filter((q) => q.length > 0);
+): Array<{ query: string; zoom: number }> {
+  const items: Array<{ query: string; zoom: number }> = [];
+  const pushUnique = (query: string, zoom: number) => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+    if (!items.some((i) => normalizeText(i.query) === normalizeText(trimmed))) {
+      items.push({ query: trimmed, zoom });
+    }
+  };
 
-  for (const q of queries) {
-    const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
+  const cleanAddr = address?.trim() || '';
+  if (cleanAddr) {
+    pushUnique(joinUniqueParts([cleanAddr, wardName, provinceName, 'Việt Nam']), 17);
+    const streetOnly = cleanAddr
+      .replace(/^(số|so)\s+[\w/-]+[,\s]+/i, '')
+      .replace(/^[\d]+[a-zA-Z]?(\/[\w-]+)*[,\s]+/, '')
+      .trim();
+    if (streetOnly && streetOnly.length >= 4 && normalizeText(streetOnly) !== normalizeText(cleanAddr)) {
+      pushUnique(joinUniqueParts([streetOnly, wardName, provinceName, 'Việt Nam']), 16);
+    }
+  }
+  if (wardName?.trim()) {
+    pushUnique(joinUniqueParts([wardName, provinceName, 'Việt Nam']), 15);
+  }
+  if (provinceName?.trim()) {
+    pushUnique(joinUniqueParts([provinceName, 'Việt Nam']), 13);
+  }
+  return items;
+}
+
+export async function geocodeVietnamAddress(
+  address?: string,
+  wardName?: string,
+  provinceName?: string,
+  signal?: AbortSignal
+): Promise<GeocodeResult | null> {
+  const candidates = buildAddressQueries(address, wardName, provinceName);
+
+  for (const item of candidates) {
+    const res = await fetch(`/api/geocode?q=${encodeURIComponent(item.query)}`, {
       headers: { Accept: 'application/json' },
+      signal,
     });
     if (!res.ok) continue;
     const data = (await res.json()) as { found?: boolean; lat?: number; lng?: number; displayName?: string };
     if (data.found && typeof data.lat === 'number' && typeof data.lng === 'number') {
-      return { lat: data.lat, lng: data.lng, displayName: data.displayName };
+      return { lat: data.lat, lng: data.lng, zoom: item.zoom, displayName: data.displayName };
     }
   }
   return null;
