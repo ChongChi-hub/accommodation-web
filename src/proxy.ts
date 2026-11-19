@@ -157,6 +157,28 @@ export default async function proxy(req: NextRequest) {
       return NextResponse.redirect(new URL(`${localePrefix}/403`, req.url));
     }
 
+    const nonPrefixedRoutes = [
+      '/dashboard/rental-requests',
+      '/dashboard/appointments',
+      '/dashboard/contracts',
+      '/dashboard/invoices',
+      '/dashboard/kyc',
+      '/dashboard/deposits',
+      '/dashboard/messages',
+      '/dashboard/maintenance',
+      '/dashboard/reviews',
+      '/dashboard/settings',
+      '/dashboard/profile',
+    ];
+    const matchingNonPrefixed = nonPrefixedRoutes.find(
+      (r) => cleanPath === r || cleanPath.startsWith(`${r}/`)
+    );
+    if (matchingNonPrefixed) {
+      const sub = cleanPath.slice('/dashboard'.length);
+      const targetRole = roles.includes('LANDLORD') ? 'landlord' : 'tenant';
+      return NextResponse.redirect(new URL(`${localePrefix}/dashboard/${targetRole}${sub}`, req.url));
+    }
+
     if (cleanPath === '/dashboard' || cleanPath === '/dashboard/') {
       const home = resolveMiddlewareHome(roles, preferredRole);
       return NextResponse.redirect(new URL(`${localePrefix}${home}`, req.url));

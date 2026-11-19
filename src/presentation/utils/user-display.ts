@@ -166,3 +166,78 @@ export function getHeaderCtaState(user: User | null | undefined): HeaderCtaState
   };
 }
 
+export function resolveNotificationLink(
+  link: string | null | undefined,
+  role: UserRole | null
+): string {
+  if (!link || link === '/dashboard') {
+    return role === 'LANDLORD' ? APP_ROUTES.landlordHome : APP_ROUTES.tenantHome;
+  }
+  if (
+    link.startsWith('/dashboard/landlord') ||
+    link.startsWith('/dashboard/tenant') ||
+    link.startsWith('/dashboard/admin') ||
+    link.startsWith('/dashboard/moderator')
+  ) {
+    return link;
+  }
+  const prefix = role === 'LANDLORD' ? '/dashboard/landlord' : '/dashboard/tenant';
+  if (link.startsWith('/dashboard/')) {
+    const sub = link.slice('/dashboard'.length);
+    return `${prefix}${sub}`;
+  }
+  return link;
+}
+
+export function formatNotificationTime(dateStr: string | null | undefined): string {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  if (diffMs < 0 || isNaN(diffMs)) return '';
+  const diffSec = Math.floor(diffMs / 1000);
+  if (diffSec < 60) return 'Vừa xong';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin} phút trước`;
+  const diffHour = Math.floor(diffMin / 60);
+  if (diffHour < 24) return `${diffHour} giờ trước`;
+  const diffDay = Math.floor(diffHour / 24);
+  if (diffDay < 7) return `${diffDay} ngày trước`;
+  return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+export function cleanNotificationText(
+  rawTitle: string | null | undefined,
+  rawMessage: string | null | undefined
+): { title: string; message: string } {
+  let title = rawTitle || 'Thông báo';
+  let message = rawMessage || '';
+
+  if (title.includes('Cập nhật nghiệp vụ:')) {
+    if (title.includes('TenantKycApproved') || title.includes('LandlordApproved')) {
+      title = 'Hồ sơ định danh eKYC đã được duyệt';
+    } else if (title.includes('FaceVerificationPassed')) {
+      title = 'Xác thực khuôn mặt thành công';
+    } else if (title.includes('FaceVerificationFailed')) {
+      title = 'Xác thực khuôn mặt không thành công';
+    } else if (title.includes('PAYMENT_PAID')) {
+      title = 'Thanh toán thành công';
+    } else {
+      title = 'Thông báo hệ thống';
+    }
+  }
+
+  if (message.startsWith('Cập nhật RENTAL_REQUEST #')) {
+    message = 'Yêu cầu thuê phòng của bạn đã có cập nhật trạng thái mới.';
+  } else if (message.startsWith('Cập nhật APPOINTMENT #')) {
+    message = 'Lịch hẹn xem phòng của bạn đã có cập nhật mới.';
+  } else if (message.startsWith('Cập nhật CONTRACT #')) {
+    message = 'Hợp đồng thuê phòng của bạn có thông tin cập nhật mới.';
+  } else if (message.startsWith('Cập nhật INVOICE #')) {
+    message = 'Hóa đơn thanh toán của bạn có cập nhật mới.';
+  }
+
+  return { title, message };
+}
+
+

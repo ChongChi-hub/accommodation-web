@@ -4,8 +4,8 @@ const ALLOWED_ACTIONS = new Set(['REGISTER', 'VERIFY_EMAIL', 'CHANGE_PASSWORD'])
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const OTP_RE = /^\d{6}$/;
 
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_PER_IP = 10;
+const WINDOW_MS = 60 * 1000;
+const MAX_PER_IP = 20;
 const MAX_PER_RECIPIENT = 3;
 
 const ipHits = new Map<string, number[]>();
@@ -20,6 +20,17 @@ function isRateLimited(store: Map<string, number[]>, key: string, max: number): 
   const now = Date.now();
   const recent = (store.get(key) || []).filter((ts) => now - ts < WINDOW_MS);
   return recent.length >= max;
+}
+
+function checkRecipientLimit(key: string, max: number): { limited: boolean; retryAfter: number } {
+  const now = Date.now();
+  const recent = (recipientHits.get(key) || []).filter((ts) => now - ts < WINDOW_MS);
+  if (recent.length >= max) {
+    const oldest = recent[0];
+    const retryAfter = Math.max(1, Math.ceil((oldest + WINDOW_MS - now) / 1000));
+    return { limited: true, retryAfter };
+  }
+  return { limited: false, retryAfter: 0 };
 }
 
 function recordHit(store: Map<string, number[]>, key: string): void {
@@ -109,8 +120,12 @@ export async function POST(req: NextRequest) {
     if (isRateLimited(ipHits, clientIp, MAX_PER_IP)) {
       return NextResponse.json({ success: false, error: 'Quá nhiều yêu cầu gửi email từ thiết bị này' }, { status: 429 });
     }
-    if (isRateLimited(recipientHits, `${actionStr}:${emailStr}`, MAX_PER_RECIPIENT)) {
-      return NextResponse.json({ success: false, error: 'Vui lòng chờ trước khi yêu cầu gửi lại mã' }, { status: 429 });
+    const recipientCheck = checkRecipientLimit(`${actionStr}:${emailStr}`, MAX_PER_RECIPIENT);
+    if (recipientCheck.limited) {
+      return NextResponse.json(
+        { success: false, error: `Vui lòng chờ ${recipientCheck.retryAfter} giây trước khi yêu cầu gửi lại mã` },
+        { status: 429 },
+      );
     }
 
     const cfg = resolveAccountConfig(actionStr);

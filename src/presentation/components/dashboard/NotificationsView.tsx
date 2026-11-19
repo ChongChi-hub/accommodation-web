@@ -7,6 +7,7 @@ import { Bell, Calendar, CheckCheck, CreditCard, FileCheck, Trash2 } from 'lucid
 import { Notification } from '@/domain/entities/Notification';
 import { container } from '@/infrastructure/di/container';
 import { useAuthStore } from '@/presentation/stores/auth.store';
+import { cleanNotificationText, getEffectiveRole, resolveNotificationLink } from '@/presentation/utils/user-display';
 import { Card } from '@/presentation/components/ui/Card';
 import { Button } from '@/presentation/components/ui/Button';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
@@ -88,6 +89,8 @@ export function NotificationsView() {
     }
   };
 
+  const effectiveRole = getEffectiveRole(user);
+
   const handleOpen = async (item: Notification) => {
     if (!item.isRead) {
       setNotifications((prev) => prev.map((n) => (n.id === item.id ? { ...n, isRead: true } : n)));
@@ -100,8 +103,9 @@ export function NotificationsView() {
         // Non-blocking
       }
     }
-    if (item.link) {
-      router.push(item.link as any);
+    const targetLink = resolveNotificationLink(item.link, effectiveRole);
+    if (targetLink) {
+      router.push(targetLink as any);
     }
   };
 
@@ -160,41 +164,44 @@ export function NotificationsView() {
         <EmptyState title={tNotif('emptyTitle')} description={tNotif('emptyDesc')} />
       ) : (
         <div className="space-y-3">
-          {notifications.map((n) => (
-            <Card
-              key={n.id}
-              interactive={Boolean(n.link)}
-              onClick={() => void handleOpen(n)}
-              className={cn(
-                'p-4 flex items-start gap-3.5 transition-colors cursor-pointer',
-                !n.isRead ? 'bg-primary-50/40 dark:bg-primary-950/25 border-primary/30' : 'bg-surface'
-              )}
-            >
-              <div className="w-9 h-9 rounded-xl bg-surface-muted flex items-center justify-center shrink-0 mt-0.5">
-                {getIcon(n.type)}
-              </div>
-              <div className="flex-1 min-w-0 space-y-1">
-                <div className="flex items-center justify-between gap-2">
-                  <h3 className="text-xs font-bold text-foreground">{n.title}</h3>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-[11px] text-foreground-muted">
-                      {new Date(n.createdAt).toLocaleDateString('vi-VN')}
-                    </span>
-                    <button
-                      type="button"
-                      title={tNotif('btnDelete')}
-                      aria-label={tNotif('btnDelete')}
-                      onClick={(e) => void handleDelete(n.id, e)}
-                      className="p-1 rounded-lg text-foreground-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+          {notifications.map((n) => {
+            const { title, message } = cleanNotificationText(n.title, n.message);
+            return (
+              <Card
+                key={n.id}
+                interactive={Boolean(n.link)}
+                onClick={() => void handleOpen(n)}
+                className={cn(
+                  'p-4 flex items-start gap-3.5 transition-colors cursor-pointer',
+                  !n.isRead ? 'bg-primary-50/40 dark:bg-primary-950/25 border-primary/30' : 'bg-surface'
+                )}
+              >
+                <div className="w-9 h-9 rounded-xl bg-surface-muted flex items-center justify-center shrink-0 mt-0.5">
+                  {getIcon(n.type)}
                 </div>
-                <p className="text-xs text-foreground-muted leading-relaxed">{n.message}</p>
-              </div>
-            </Card>
-          ))}
+                <div className="flex-1 min-w-0 space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-xs font-bold text-foreground">{title}</h3>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[11px] text-foreground-muted">
+                        {new Date(n.createdAt).toLocaleDateString('vi-VN')}
+                      </span>
+                      <button
+                        type="button"
+                        title={tNotif('btnDelete')}
+                        aria-label={tNotif('btnDelete')}
+                        onClick={(e) => void handleDelete(n.id, e)}
+                        className="p-1 rounded-lg text-foreground-muted hover:text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-foreground-muted leading-relaxed">{message}</p>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>

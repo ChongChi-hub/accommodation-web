@@ -532,5 +532,10 @@ Trước đây, hệ thống cấp vai trò `LANDLORD` ngay lập tức khi đă
 * **BUG-09 (`tenant/payments`) & Step 05 (`landlord/rooms/new`):** Go `max-w-5xl` khoi `tenant/payments`; bo sung truong ROOM-03 `availableDate` va `minLeaseMonths` vao wizard tao phong.
 * **`[MAIL-EMAILJS]` (`/api/email/send`):** Go bo toan bo khoa EmailJS hardcode trong ma nguon; chi doc tu `process.env` phia server; chong open-relay bang kiem tra `Origin`, allowlist `action`, cookie `cozynest_token`, rate-limit theo IP & nguoi nhan, va validate OTP 6 so.
 * **`[AUTH-KYC]` (`/become-landlord` + `/api/email/send`):**
-  * Bo sung khoa EmailJS server-only vao `.env.local` (gitignored), gui `User-Agent` hop le toi EmailJS REST API de khong bi 403 tu moi truong node/server, sua loi rate-limit ghi nhan timestamp truoc khi goi nha cung cap.
+  * Bo sung khoa EmailJS server-only vao `.env.local` (gitignored), gui `User-Agent` hop le toi EmailJS REST API de khong bi 403 tu moi truong node/server, sua loi rate-limit ghi nhan timestamp truoc khi goi nha cung cap. Tinh chinh rate-limit window 60 giay phu hop voi cooldown modal resend va tra ve thoi gian cho con lai.
   * Tinh chinh trang `/become-landlord`: uu tien hien thi muc "Tai khoan du dieu kien nang cap!" va nut "Nang cap len Chu tro ngay" khi ca Email va CCCD da xac minh; tu dong goi `refreshToken()` lam moi token JWT phia client truoc khi chuyen huong toi `/dashboard/landlord` de dam bao khong bi chan 403 boi middleware `proxy.ts`.
+* **`[NOTIF-HEADER]` (Dieu huong thong bao & Giao dien Header):**
+  * **Link Resolution:** Ham `resolveNotificationLink(link, role)` chuyen doi cac duong dan thieu tien to vai tro (`/dashboard/rental-requests`, `/dashboard/appointments`, `/dashboard/contracts`, `/dashboard/invoices`, `/dashboard/kyc`) thanh link chinh xac theo `effectiveRole`.
+  * **Middleware Rewrite:** `src/proxy.ts` tu dong redirect cac duong dan non-prefixed ve `/dashboard/{role}/...`, chong triet de loi 404 khi truy cap truc tiep hoac bam tu bookmark/link cu.
+  * **Display & Icons:** Clean tieu de va noi dung thong bao tho (`cleanNotificationText`), bo sung thoi gian tuong doi tieng Viet (`formatNotificationTime`), va hien thi icon theo nghiep vu (Home, Calendar, CreditCard, ShieldCheck).
+
