@@ -21,7 +21,6 @@ interface Props {
     bankCode: string;
     accountNumber: string;
     accountHolder: string;
-    otp: string;
   }) => Promise<void>;
 }
 
@@ -29,13 +28,11 @@ export function LandlordPayoutModal({
   isOpen, onClose, bankAccount, availableBalance, minAmount, busy, onConfirmSubmit,
 }: Props) {
   const [amount, setAmount] = useState(String(Math.max(minAmount, availableBalance || minAmount)));
-  const [otp, setOtp] = useState('');
   const [confirmedInfo, setConfirmedInfo] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setAmount(String(availableBalance >= minAmount ? availableBalance : minAmount));
-      setOtp('');
       setConfirmedInfo(false);
     }
   }, [isOpen, availableBalance, minAmount]);
@@ -47,8 +44,7 @@ export function LandlordPayoutModal({
     bankAccount.qrCodeUrl &&
     confirmedInfo &&
     numericAmount >= minAmount &&
-    numericAmount <= availableBalance &&
-    /^[0-9]{6}$/.test(otp.trim())
+    numericAmount <= availableBalance
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,7 +55,6 @@ export function LandlordPayoutModal({
       bankCode: bankAccount.bankCode,
       accountNumber: bankAccount.accountNumber,
       accountHolder: bankAccount.accountHolder,
-      otp: otp.trim(),
     });
   };
 
@@ -108,26 +103,15 @@ export function LandlordPayoutModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Input
-              label={`Số tiền muốn rút (tối thiểu ${formatVnd(minAmount)})`}
-              type="number"
-              min={minAmount}
-              max={availableBalance || undefined}
-              required
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
-            <Input
-              label="Mã OTP xác thực (6 chữ số)"
-              required
-              pattern="[0-9]{6}"
-              maxLength={6}
-              placeholder="Ví dụ: 123456"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-          </div>
+          <Input
+            label={`Số tiền muốn rút (tối thiểu ${formatVnd(minAmount)})`}
+            type="number"
+            min={minAmount}
+            max={availableBalance || undefined}
+            required
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
 
           <label className="flex items-start gap-2.5 p-3 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer bg-white dark:bg-stone-900">
             <input

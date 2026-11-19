@@ -42,3 +42,4 @@ export function PayoutReceiptPreviewModal({ payout, onClose }: Props) {
     </div>
   );
 }
+

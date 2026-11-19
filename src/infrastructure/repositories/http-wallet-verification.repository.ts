@@ -25,7 +25,7 @@ export class HttpWalletVerificationRepository {
       bankCode: string;
       accountNumber: string;
       accountHolder: string;
-      otp: string;
+      otp?: string;
     },
     idempotencyKey: string
   ): Promise<PayoutItem> {

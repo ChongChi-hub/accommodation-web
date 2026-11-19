@@ -98,7 +98,7 @@ export default function LandlordDepositsPage() {
     } finally { setBusy(false); }
   };
 
-  const handleCreatePayout = async (payload: { amount: number; bankCode: string; accountNumber: string; accountHolder: string; otp: string }) => {
+  const handleCreatePayout = async (payload: { amount: number; bankCode: string; accountNumber: string; accountHolder: string }) => {
     setBusy(true);
     try {
       const idemKey = `wd-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;

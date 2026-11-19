@@ -236,3 +236,4 @@ export function LandlordCreateInvoiceDialog({
     </Dialog>
   );
 }
+
