@@ -194,6 +194,7 @@ export function OsmLocationPicker({
             draggable={false}
             width={OSM_TILE_SIZE}
             height={OSM_TILE_SIZE}
+            onError={(e) => { if (!e.currentTarget.dataset.fb) { e.currentTarget.dataset.fb = '1'; e.currentTarget.src = tile.fallbackUrl; } }}
             className="absolute max-w-none pointer-events-none select-none"
             style={{ left: tile.left, top: tile.top, width: OSM_TILE_SIZE, height: OSM_TILE_SIZE }}
           />

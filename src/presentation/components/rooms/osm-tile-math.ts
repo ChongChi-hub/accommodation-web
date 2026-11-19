@@ -63,9 +63,12 @@ export function worldPixelToLatLng(px: number, py: number, zoom: number): { lat:
 export interface VisibleOsmTile {
   key: string;
   url: string;
+  fallbackUrl: string;
   left: number;
   top: number;
 }
+
+const CARTO_SUBDOMAINS = ['a', 'b', 'c', 'd'];
 
 export function computeVisibleTiles(
   center: { lat: number; lng: number },
@@ -85,9 +88,11 @@ export function computeVisibleTiles(
   for (let ty = minTileY; ty <= maxTileY; ty++) {
     for (let tx = minTileX; tx <= maxTileX; tx++) {
       const wrappedX = ((tx % tileCount) + tileCount) % tileCount;
+      const sub = CARTO_SUBDOMAINS[(wrappedX + ty) % CARTO_SUBDOMAINS.length];
       tiles.push({
         key: `${zoom}-${tx}-${ty}`,
         url: `https://tile.openstreetmap.org/${zoom}/${wrappedX}/${ty}.png`,
+        fallbackUrl: `https://${sub}.basemaps.cartocdn.com/rastertiles/voyager/${zoom}/${wrappedX}/${ty}.png`,
         left: Math.round(tx * OSM_TILE_SIZE - originX),
         top: Math.round(ty * OSM_TILE_SIZE - originY),
       });
@@ -100,23 +105,20 @@ export async function geocodeVietnamAddress(
   address?: string,
   wardName?: string,
   provinceName?: string
-): Promise<{ lat: number; lng: number } | null> {
+): Promise<{ lat: number; lng: number; displayName?: string } | null> {
   const queries = [
     [address, wardName, provinceName, 'Việt Nam'].filter((s) => s && s.trim()).join(', '),
     [wardName, provinceName, 'Việt Nam'].filter((s) => s && s.trim()).join(', '),
   ].filter((q) => q.length > 0);
 
   for (const q of queries) {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=vn&q=${encodeURIComponent(q)}`,
-      { headers: { Accept: 'application/json' } }
-    );
+    const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`, {
+      headers: { Accept: 'application/json' },
+    });
     if (!res.ok) continue;
-    const rows = (await res.json()) as Array<{ lat: string; lon: string }>;
-    if (rows.length > 0) {
-      const lat = roundCoord(parseFloat(rows[0].lat));
-      const lng = roundCoord(parseFloat(rows[0].lon));
-      if (!Number.isNaN(lat) && !Number.isNaN(lng)) return { lat, lng };
+    const data = (await res.json()) as { found?: boolean; lat?: number; lng?: number; displayName?: string };
+    if (data.found && typeof data.lat === 'number' && typeof data.lng === 'number') {
+      return { lat: data.lat, lng: data.lng, displayName: data.displayName };
     }
   }
   return null;
