@@ -4,12 +4,18 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   experimental: {
     cpus: 1,
   },
   reactStrictMode: true,
   images: {
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cozynestvvip.duckdns.org',
+        pathname: '/**',
+      },
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
@@ -55,8 +61,8 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://accounts.google.com https://*.google.com https://apis.google.com",
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "frame-src 'self' https://accounts.google.com https://*.google.com https://*.openstreetmap.org https://www.openstreetmap.org",
-              "connect-src 'self' http://localhost:8080 http://localhost:3000 ws://localhost:3000 https://accounts.google.com https://*.googleapis.com https://geocode.arcgis.com https://photon.komoot.io https://nominatim.openstreetmap.org",
-              "img-src 'self' data: blob: https://res.cloudinary.com https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co https://img.vietqr.io https://*.vietqr.io https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com",
+              "connect-src 'self' https://cozynestvvip.duckdns.org wss://cozynestvvip.duckdns.org http://localhost:8080 http://localhost:3000 ws://localhost:3000 https://accounts.google.com https://*.googleapis.com https://geocode.arcgis.com https://photon.komoot.io https://nominatim.openstreetmap.org",
+              "img-src 'self' data: blob: https://cozynestvvip.duckdns.org https://res.cloudinary.com https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co https://img.vietqr.io https://*.vietqr.io https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com",
               "font-src 'self' data:",
             ].join('; '),
           },
