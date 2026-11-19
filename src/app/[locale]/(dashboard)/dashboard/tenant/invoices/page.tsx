@@ -76,10 +76,13 @@ export default function TenantInvoicesPage() {
                 </div>
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex flex-wrap justify-end gap-2">
+                <Link href="/dashboard/tenant/utilities">
+                  <Button variant="outline" size="sm">Xem chỉ số &amp; ảnh điện nước</Button>
+                </Link>
                 <Link href={`/dashboard/tenant/invoices/${inv.id}`}>
-                  <Button variant={inv.status !== 'PAID' ? 'secondary' : 'outline'} size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                    {inv.status !== 'PAID' ? t('payOnline') : tc('viewDetail')}
+                  <Button variant={inv.status !== 'PAID' ? 'primary' : 'outline'} size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
+                    {inv.status !== 'PAID' ? 'Thanh toán qua QR sàn' : tc('viewDetail')}
                   </Button>
                 </Link>
               </div>

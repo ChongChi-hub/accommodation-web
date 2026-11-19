@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
@@ -43,6 +44,19 @@ export default function LandlordUtilitiesPage() {
 
   // Meter photo preview modal
   const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
+  const [lastRecorded, setLastRecorded] = useState<{ contractId: string; periodMonth: string } | null>(null);
+
+  const handlePhotoFile = (field: 'electricImageUrl' | 'waterImageUrl', file?: File) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setForm((p) => ({ ...p, [field]: reader.result as string }));
+        toast.success('Đã đính kèm ảnh chụp đồng hồ!');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const [form, setForm] = useState({
     periodMonth: '',
@@ -98,14 +112,22 @@ export default function LandlordUtilitiesPage() {
   );
 
   useEffect(() => {
+    const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const qCid = params?.get('contractId') || '';
+    const qPeriod = params?.get('periodMonth') || '';
+    if (qPeriod) {
+      setForm((p) => ({ ...p, periodMonth: qPeriod }));
+    }
     container.contract.contractRepository
       .getLandlordContracts()
       .then((list) => {
         setContracts(list);
         if (list.length > 0) {
-          setContractId(list[0].id);
-          setRoomId(list[0].roomId);
-          loadReadings(list[0].id, list[0]);
+          const matched = qCid ? list.find((c) => c.id === qCid) : undefined;
+          const initial = matched || list[0];
+          setContractId(initial.id);
+          setRoomId(initial.roomId);
+          loadReadings(initial.id, initial);
         }
       })
       .catch(() => undefined);
@@ -150,7 +172,8 @@ export default function LandlordUtilitiesPage() {
         electricImageUrl: '',
         waterImageUrl: '',
       }));
-      toast.success(tc('actionSuccess'));
+      setLastRecorded({ contractId, periodMonth: created.periodMonth });
+      toast.success('Đã ghi chỉ số điện nước thành công! Bạn có thể quay lại lập hóa đơn tháng ngay.');
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : tc('actionError'));
     } finally {
@@ -300,14 +323,20 @@ export default function LandlordUtilitiesPage() {
                   helperText="Đơn giá điện áp dụng cho kỳ này (VNĐ/kWh)"
                 />
               )}
-              <Input
-                label={t('electricPhoto')}
-                type="url"
-                value={form.electricImageUrl}
-                onChange={(e) => setForm((p) => ({ ...p, electricImageUrl: e.target.value }))}
-                placeholder="https://drive.google.com/... hoặc ảnh chụp công tơ"
-                helperText="URL ảnh chụp mặt công tơ điện để khách đối chiếu"
-              />
+              <div className="space-y-1.5">
+                <Input
+                  label={t('electricPhoto')}
+                  type="text"
+                  value={form.electricImageUrl}
+                  onChange={(e) => setForm((p) => ({ ...p, electricImageUrl: e.target.value }))}
+                  placeholder="Dán URL hoặc tải ảnh chụp công tơ điện bên dưới"
+                />
+                <label className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-stone-200 dark:border-stone-700 text-[11px] cursor-pointer hover:bg-stone-100 dark:hover:bg-stone-800">
+                  <Camera className="w-3.5 h-3.5 text-amber-500" />
+                  <span>{form.electricImageUrl ? 'Đã đính kèm ảnh công tơ điện (Đổi)' : 'Tải ảnh công tơ điện từ máy'}</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handlePhotoFile('electricImageUrl', e.target.files?.[0])} />
+                </label>
+              </div>
             </div>
 
             {/* Water block */}
@@ -350,18 +379,31 @@ export default function LandlordUtilitiesPage() {
                   helperText="Đơn giá nước áp dụng cho kỳ này (VNĐ/m³)"
                 />
               )}
-              <Input
-                label={t('waterPhoto')}
-                type="url"
-                value={form.waterImageUrl}
-                onChange={(e) => setForm((p) => ({ ...p, waterImageUrl: e.target.value }))}
-                placeholder="https://drive.google.com/... hoặc ảnh chụp đồng hồ"
-                helperText="URL ảnh chụp mặt đồng hồ nước để khách đối chiếu"
-              />
+              <div className="space-y-1.5">
+                <Input
+                  label={t('waterPhoto')}
+                  type="text"
+                  value={form.waterImageUrl}
+                  onChange={(e) => setForm((p) => ({ ...p, waterImageUrl: e.target.value }))}
+                  placeholder="Dán URL hoặc tải ảnh chụp đồng hồ nước bên dưới"
+                />
+                <label className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-stone-200 dark:border-stone-700 text-[11px] cursor-pointer hover:bg-stone-100 dark:hover:bg-stone-800">
+                  <Camera className="w-3.5 h-3.5 text-sky-500" />
+                  <span>{form.waterImageUrl ? 'Đã đính kèm ảnh đồng hồ nước (Đổi)' : 'Tải ảnh đồng hồ nước từ máy'}</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handlePhotoFile('waterImageUrl', e.target.files?.[0])} />
+                </label>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            {lastRecorded ? (
+              <Link href={`/dashboard/landlord/invoices?contractId=${encodeURIComponent(lastRecorded.contractId)}&periodMonth=${encodeURIComponent(lastRecorded.periodMonth)}`}>
+                <Button type="button" variant="secondary" size="sm">
+                  Quay lại Tạo hóa đơn tháng với chỉ số vừa ghi
+                </Button>
+              </Link>
+            ) : <span />}
             <Button
               type="submit"
               variant="primary"

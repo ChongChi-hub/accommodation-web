@@ -2,6 +2,7 @@
 
 import React, { use, useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
@@ -11,7 +12,8 @@ import { container } from '@/infrastructure/di/container';
 import { Invoice, PaymentIntent } from '@/domain/entities/Billing';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDate, formatVnd } from '@/shared/utils/format-vnd';
-import { AlertTriangle, CheckCircle2, CreditCard, Download } from 'lucide-react';
+import { CreditCard, Download, Gauge, ShieldCheck } from 'lucide-react';
+import { VietQrRealPaymentCard } from '@/presentation/components/billing/VietQrRealPaymentCard';
 
 export default function TenantInvoiceDetailPage({
   params,
@@ -27,8 +29,12 @@ export default function TenantInvoiceDetailPage({
 
   const loadData = useCallback(async () => {
     try {
-      const inv = await container.billing.billingRepository.getInvoice(id);
+      const [inv, activeIntent] = await Promise.all([
+        container.billing.billingRepository.getInvoice(id),
+        container.billing.billingRepository.getPendingPaymentIntent('INVOICE', id).catch(() => null),
+      ]);
       setInvoice(inv);
+      if (activeIntent) setIntent(activeIntent);
     } catch {
       toast.error(tc('loadError'));
     }
@@ -53,7 +59,7 @@ export default function TenantInvoiceDetailPage({
         amount: remaining || invoice.totalAmount,
       });
       setIntent(created);
-      toast.success(tc('actionSuccess'));
+      toast.success('Đã tạo mã VietQR thanh toán hóa đơn về tài khoản sàn Tổ Ấm!');
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : tc('actionError'));
     } finally {
@@ -61,27 +67,20 @@ export default function TenantInvoiceDetailPage({
     }
   };
 
-  const handleSimulatePay = async () => {
+  const handleCancelIntent = async () => {
     if (!intent) return;
-    setBusy(true);
     try {
-      await container.billing.billingRepository.simulateSandboxWebhook({
-        paymentCode: intent.paymentCode,
-        amount: intent.amount,
-        status: 'PAID',
-      });
-      setIntent((p) => (p ? { ...p, status: 'PAID' } : null));
-      await loadData();
-      toast.success(tc('actionSuccess'));
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : tc('actionError'));
-    } finally {
-      setBusy(false);
+      if (intent.status === 'PENDING') {
+        await container.billing.billingRepository.cancelPaymentIntent(intent.paymentCode);
+      }
+      setIntent(null);
+    } catch {
+      setIntent(null);
     }
   };
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-4xl">
       <Breadcrumb items={[{ label: t('tenantTitle'), href: '/dashboard/tenant/invoices' }, { label: invoice.invoiceCode }]} />
 
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -90,13 +89,20 @@ export default function TenantInvoiceDetailPage({
             <h1 className="text-xl font-bold">{invoice.invoiceCode}</h1>
             <Badge variant={invoice.status === 'PAID' ? 'success' : 'warning'} size="md">{invoice.status}</Badge>
           </div>
-          <p className="text-xs text-stone-500 mt-0.5">{t('periodMonth')}: {formatIsoDate(invoice.periodMonth)} • {t('dueDate')}: {formatIsoDate(invoice.dueDate)}</p>
+          <p className="text-xs text-stone-500 mt-0.5">
+            {t('periodMonth')}: {formatIsoDate(invoice.periodMonth)} | {t('dueDate')}: {formatIsoDate(invoice.dueDate)}
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link href="/dashboard/tenant/utilities">
+            <Button variant="outline" size="sm" leftIcon={<Gauge className="w-3.5 h-3.5" />}>
+              Xem chỉ số &amp; ảnh điện nước
+            </Button>
+          </Link>
           <Button
             variant="outline"
-            size="md"
-            leftIcon={<Download className="w-4 h-4" />}
+            size="sm"
+            leftIcon={<Download className="w-3.5 h-3.5" />}
             onClick={async () => {
               try {
                 const blob = await container.billing.billingRepository.downloadInvoiceReceiptPdfBlob(invoice.id);
@@ -113,22 +119,24 @@ export default function TenantInvoiceDetailPage({
               }
             }}
           >
-            PDF
+            Tải PDF
           </Button>
-          {invoice.status !== 'PAID' && invoice.status !== 'CANCELLED' && (
-            <Button variant="secondary" size="md" isLoading={busy} leftIcon={<CreditCard className="w-4 h-4" />} onClick={handleCreateIntent}>
-              {t('payOnline')}
+          {invoice.status !== 'PAID' && invoice.status !== 'CANCELLED' && !intent && (
+            <Button variant="primary" size="sm" isLoading={busy} leftIcon={<CreditCard className="w-3.5 h-3.5" />} onClick={handleCreateIntent}>
+              Tạo mã VietQR thanh toán
             </Button>
           )}
         </div>
       </div>
 
-      <Card className="p-4 border-amber-300 bg-amber-50/70 dark:bg-amber-950/30 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200">
-        <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-        <span>{tc('sandboxNotice')}</span>
+      <Card className="p-4 border-teal-200 bg-teal-50/50 dark:bg-teal-950/20 flex items-start gap-2.5 text-xs text-teal-900 dark:text-teal-200">
+        <ShieldCheck className="w-4 h-4 flex-shrink-0 mt-0.5 text-teal-600" />
+        <span>
+          Tiền phòng và điện nước hàng tháng được chuyển về tài khoản sàn Tổ Ấm (LE THANH CUONG). Sau khi bấm &quot;Tôi đã chuyển tiền&quot;, Admin sẽ kiểm tra và duyệt thanh toán để cộng doanh thu vào ví chủ trọ.
+        </span>
       </Card>
 
-      <Card className="p-6 space-y-2 text-xs">
+      <Card className="p-5 space-y-2 text-xs">
         <div className="flex justify-between py-2 border-b border-stone-100 dark:border-stone-800"><span>{t('baseRent')}</span><strong>{formatVnd(invoice.baseRent)}</strong></div>
         <div className="flex justify-between py-2 border-b border-stone-100 dark:border-stone-800"><span>{t('electricAmount')}</span><strong>{formatVnd(invoice.electricityAmount)}</strong></div>
         <div className="flex justify-between py-2 border-b border-stone-100 dark:border-stone-800"><span>{t('waterAmount')}</span><strong>{formatVnd(invoice.waterAmount)}</strong></div>
@@ -139,19 +147,13 @@ export default function TenantInvoiceDetailPage({
         <div className="flex justify-between py-1 font-bold text-amber-700"><span>{t('remainingAmount')}</span><span>{formatVnd(remaining)}</span></div>
       </Card>
 
-      {intent && (
-        <Card className="p-5 flex flex-wrap items-center justify-between gap-4 text-xs">
-          <div className="space-y-1">
-            <p className="font-mono font-bold">{intent.paymentCode} ({intent.status})</p>
-            <p>{t('totalAmount')}: <strong>{formatVnd(intent.amount)}</strong></p>
-            {intent.qrUrl && <img src={intent.qrUrl} alt={intent.paymentCode} className="w-28 h-28 rounded-lg border bg-white p-1" />}
-          </div>
-          {intent.status === 'PENDING' && (
-            <Button variant="primary" size="sm" isLoading={busy} leftIcon={<CheckCircle2 className="w-4 h-4" />} onClick={handleSimulatePay}>
-              {t('simulatePaid')}
-            </Button>
-          )}
-        </Card>
+      {intent && invoice.status !== 'PAID' && (
+        <VietQrRealPaymentCard
+          intent={intent}
+          onPaid={() => loadData()}
+          onCancel={handleCancelIntent}
+          onSubmitted={() => loadData()}
+        />
       )}
     </div>
   );

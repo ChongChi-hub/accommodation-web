@@ -40,7 +40,7 @@ test.describe('[WALLET-VERIFY-LEDGER] UI & Visual Verification', () => {
     }));
     await page.route('**/api/v1/booking/contracts**', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: [] }) }));
     await page.route('**/api/v1/billing/refunds**', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: [] }) }));
-    await page.route('**/api/v1/billing/bank-accounts/me', (r) => r.fulfill({
+    await page.route('**/api/v1/billing/bank-account/me', (r) => r.fulfill({
       status: 200, contentType: 'application/json',
       body: JSON.stringify({ data: { bankCode: 'VCB', bankName: 'Vietcombank', accountNumber: '1042701900', accountHolder: 'LE THANH CUONG', qrCodeUrl: 'https://img.vietqr.io/image/970436-1042701900-compact2.png' } }),
     }));
@@ -101,7 +101,7 @@ test.describe('[WALLET-VERIFY-LEDGER] UI & Visual Verification', () => {
         status: 'REQUESTED', createdAt: '2026-11-19T10:00:00Z',
       }] }),
     }));
-    await page.route('**/api/v1/billing/bank-accounts/me', (r) => r.fulfill({
+    await page.route('**/api/v1/billing/bank-account/me', (r) => r.fulfill({
       status: 200, contentType: 'application/json',
       body: JSON.stringify({ data: { bankCode: 'VCB', bankName: 'Vietcombank', accountNumber: '1042701900', accountHolder: 'LE THANH CUONG', qrCodeUrl: 'https://img.vietqr.io/image/970436-1042701900-compact2.png' } }),
     }));
@@ -110,9 +110,14 @@ test.describe('[WALLET-VERIFY-LEDGER] UI & Visual Verification', () => {
     await page.goto('/vi/dashboard/landlord/deposits', { waitUntil: 'networkidle' });
     await expect(page.getByText('1.145.000 đ')).toBeVisible();
     await expect(page.getByText(/60\.000 đ/)).toBeVisible();
+    await expect(page.getByText('Biên lai giải ngân')).toBeVisible();
     await expect(page.getByRole('button', { name: /Hủy yêu cầu/i })).toBeVisible();
     await setTheme(page, false);
     await page.screenshot({ path: `${SHOT_DIR}/landlord-wallet-1440-light.png`, fullPage: true });
+    await page.getByRole('button', { name: /Tạo lệnh rút tiền/i }).click();
+    await expect(page.getByText(/Thông tin tài khoản nhận tiền đã cung cấp/i)).toBeVisible();
+    await page.screenshot({ path: `${SHOT_DIR}/landlord-payout-modal-1440-light.png` });
+    await page.getByRole('button', { name: 'Hủy', exact: true }).click();
     await setTheme(page, true);
     await page.screenshot({ path: `${SHOT_DIR}/landlord-wallet-1440-dark.png`, fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
@@ -178,5 +183,28 @@ test.describe('[WALLET-VERIFY-LEDGER] UI & Visual Verification', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await setTheme(page, false);
     await page.screenshot({ path: `${SHOT_DIR}/admin-verify-queue-390-mobile.png`, fullPage: true });
+  });
+
+  test('Landlord monthly invoice creation guides to utilities when missing and auto-fills when recorded', async ({ context, page }) => {
+    await authenticateAs(context, page, 'landlord@cozynest.vn');
+    await page.route('**/api/v1/billing/invoices/landlord', (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: [] }) }));
+    await page.route('**/api/v1/booking/contracts/landlord**', (r) => r.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({ data: [{
+        id: 'c-inv-1', contractCode: 'HD-2026-MONTHLY', roomId: '101',
+        tenantId: 'u-tenant-01', landlordId: 'u-landlord-01',
+        monthlyRent: 3000000, depositAmount: 3000000, paymentDueDay: 5, status: 'ACTIVE',
+      }] }),
+    }));
+    await page.route('**/api/v1/billing/utilities/contract/c-inv-1', (r) => r.fulfill({
+      status: 200, contentType: 'application/json', body: JSON.stringify({ data: [] }),
+    }));
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/vi/dashboard/landlord/invoices', { waitUntil: 'networkidle' });
+    await page.getByRole('button', { name: /Phát hành hóa đơn mới/i }).click();
+    await expect(page.getByText(/Đi tới Ghi chỉ số điện nước/i)).toBeVisible();
+    await setTheme(page, false);
+    await page.screenshot({ path: `${SHOT_DIR}/landlord-invoice-utilities-guard-1440.png` });
   });
 });

@@ -18,7 +18,6 @@ import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDate, formatVnd } from '@/shared/utils/format-vnd';
 import {
   AlertTriangle,
-  Camera,
   CheckCircle2,
   Droplets,
   ExternalLink,
@@ -259,17 +258,19 @@ export default function TenantUtilitiesPage() {
                     {/* Proof Photos Thumbnail */}
                     <TableCell>
                       {images.length > 0 ? (
-                        <div className="flex items-center gap-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
                           {images.map((img, idx) => (
                             <button
                               key={idx}
                               type="button"
                               onClick={() => setPreviewPhoto(img)}
-                              className="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs inline-flex items-center gap-1 font-medium transition-colors"
-                              title="Bấm để xem ảnh đối chiếu"
+                              className="group relative rounded-lg overflow-hidden border border-teal-200 dark:border-teal-800 bg-teal-50 dark:bg-teal-950/40 hover:ring-2 hover:ring-teal-500 transition-all"
+                              title="Bấm để phóng to ảnh đồng hồ đối chiếu"
                             >
-                              <Camera className="w-3.5 h-3.5" />
-                              <span className="text-[10px]">Ảnh #{idx + 1}</span>
+                              <img src={img} alt={`Ảnh đồng hồ #${idx + 1}`} className="w-12 h-12 object-cover" />
+                              <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] text-center leading-tight py-0.5">
+                                {idx === 0 ? 'Điện' : idx === 1 ? 'Nước' : `#${idx + 1}`}
+                              </span>
                             </button>
                           ))}
                         </div>
