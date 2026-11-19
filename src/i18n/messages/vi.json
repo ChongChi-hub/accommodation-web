@@ -2162,7 +2162,9 @@
       "compensationLabel": "Bước bù trừ",
       "approve": "Chấp thuận",
       "reject": "Từ chối",
-      "create": "Tạo mới"
+      "create": "Tạo mới",
+      "viewMyRoom": "Xem phòng của tôi",
+      "tenantFallbackName": "Khách thuê"
     },
     "rental": {
       "tenantTitle": "Yêu cầu thuê phòng",
@@ -2498,5 +2500,29 @@
     "onlineStatus": "Đang hoạt động",
     "selectConversation": "Chọn một cuộc trò chuyện",
     "selectConversationHint": "Chọn từ danh sách bên trái để xem lịch sử trao đổi hoặc gửi tin nhắn mới."
+  },
+  "myRoomHandover": {
+    "lockedTitle": "Thông tin nhận phòng đang được bảo vệ",
+    "lockedDesc": "Địa chỉ chi tiết, số điện thoại chủ trọ, mã đơn và hướng dẫn nhận phòng sẽ được mở khóa ngay sau khi bạn hoàn tất thanh toán tiền cọc.",
+    "areaOnlyLabel": "Khu vực",
+    "statusAwaitingDeposit": "Chờ thanh toán cọc",
+    "statusActive": "Đã kích hoạt",
+    "payDepositNow": "Thanh toán cọc ngay",
+    "revealedTitle": "Thông tin nhận phòng & Mã đơn thuê",
+    "revealedSubtitle": "Hợp đồng đã kích hoạt thành công sau khi xác nhận tiền cọc",
+    "orderCodeLabel": "Mã đơn thuê phòng",
+    "checkinCodeLabel": "Mã nhận phòng",
+    "copyBtn": "Sao chép",
+    "copiedBtn": "Đã chép",
+    "copied": "Đã sao chép vào bộ nhớ tạm",
+    "copyFailed": "Không thể sao chép",
+    "fullAddressLabel": "Địa chỉ đầy đủ",
+    "contactLandlordFallback": "Liên hệ chủ trọ để nhận chỉ đường chi tiết",
+    "moveInDateLabel": "Ngày nhận phòng",
+    "landlordContactLabel": "Liên hệ chủ trọ",
+    "landlordDefaultName": "Chủ trọ CozyNest",
+    "instructionsTitle": "Hướng dẫn nhận phòng",
+    "addToCalendarBtn": "Thêm vào lịch (.ics)",
+    "downloadPdfBtn": "Tải hợp đồng PDF"
   }
 }

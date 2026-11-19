@@ -1,8 +1,10 @@
 export type ContractStatus =
   | 'DRAFT'
+  | 'PENDING_SIGN'
   | 'PENDING_SIGNATURES'
   | 'PENDING_TENANT'
   | 'PENDING_LANDLORD'
+  | 'AWAITING_DEPOSIT'
   | 'ACTIVE'
   | 'TERMINATED'
   | 'EXPIRED'
@@ -44,6 +46,30 @@ export interface Contract {
   tenantConfirmedAt?: string | null;
   tenantRejectReason?: string | null;
   createdAt: string;
+  orderCode?: string | null;
+  depositPaidAt?: string | null;
+  listingSyncStatus?: string | null;
+}
+
+export interface ContractCheckinInfo {
+  contractId: string;
+  contractCode: string;
+  orderCode?: string | null;
+  roomId: string;
+  status: ContractStatus;
+  revealed: boolean;
+  areaHint?: string | null;
+  fullAddress?: string | null;
+  landlordName?: string | null;
+  landlordPhone?: string | null;
+  checkinCode?: string | null;
+  checkinInstructions?: string | null;
+  startDate: string;
+  endDate: string;
+  monthlyRent: number;
+  depositAmount: number;
+  depositPaidAt?: string | null;
+  pdfUrl?: string | null;
 }
 
 export interface CreateContractPayload {

@@ -8,9 +8,10 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Skeleton } from '@/presentation/components/ui/Skeleton';
 import { Link } from '@/i18n/routing';
 import { container } from '@/infrastructure/di/container';
-import { Contract } from '@/domain/entities/Contract';
+import { Contract, ContractCheckinInfo } from '@/domain/entities/Contract';
 import { Invoice, UtilityReading } from '@/domain/entities/Billing';
 import { RoomDetailDto } from '@/application/dto/listing.dto';
+import { MyRoomHandoverCard } from '@/presentation/components/my-room/MyRoomHandoverCard';
 import { toast } from '@/presentation/stores/toast.store';
 import { formatIsoDate, formatVnd } from '@/shared/utils/format-vnd';
 import {
@@ -38,6 +39,8 @@ export default function TenantMyRoomPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [activeContract, setActiveContract] = useState<Contract | null>(null);
+  const [checkinInfo, setCheckinInfo] = useState<ContractCheckinInfo | null>(null);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [room, setRoom] = useState<RoomDetailDto | null>(null);
   const [latestReading, setLatestReading] = useState<UtilityReading | null>(null);
   const [unpaidInvoicesCount, setUnpaidInvoicesCount] = useState(0);
@@ -47,9 +50,10 @@ export default function TenantMyRoomPage() {
     try {
       // 1. Load tenant contracts
       const contracts: Contract[] = await container.contract.contractRepository.getTenantContracts();
-      // Prioritize ACTIVE contract, then PENDING_SIGNATURES/PENDING_TENANT, or the most recent
+      // Prioritize ACTIVE contract, then AWAITING_DEPOSIT, then PENDING_SIGN, or the most recent
       const contract =
         contracts.find((c: Contract) => c.status === 'ACTIVE') ||
+        contracts.find((c: Contract) => c.status === 'AWAITING_DEPOSIT') ||
         contracts.find((c: Contract) => c.status.startsWith('PENDING')) ||
         contracts[0] ||
         null;
@@ -57,6 +61,13 @@ export default function TenantMyRoomPage() {
       setActiveContract(contract);
 
       if (contract) {
+        // 1b. Load phased PII check-in & order code info
+        try {
+          const checkin = await container.contract.contractRepository.getCheckinInfo(contract.id);
+          setCheckinInfo(checkin);
+        } catch {
+          setCheckinInfo(null);
+        }
         // 2. Load room details
         try {
           const roomData = await container.listing.listingRepository.getRoomDetail(contract.roomId);
@@ -195,6 +206,31 @@ export default function TenantMyRoomPage() {
           </Link>
         </div>
       </div>
+
+      {/* Phased PII Check-in & Order Code Handover Card */}
+      {checkinInfo && (
+        <MyRoomHandoverCard
+          checkin={checkinInfo}
+          roomTitle={room?.title}
+          downloadingPdf={downloadingPdf}
+          onDownloadPdf={async () => {
+            setDownloadingPdf(true);
+            try {
+              const blob = await container.contract.contractRepository.downloadDirectPdfBlob(activeContract.id);
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `hop-dong-${activeContract.contractCode}.pdf`;
+              a.click();
+              URL.revokeObjectURL(url);
+            } catch {
+              toast.error(tc('actionError'));
+            } finally {
+              setDownloadingPdf(false);
+            }
+          }}
+        />
+      )}
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

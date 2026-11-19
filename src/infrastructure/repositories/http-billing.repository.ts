@@ -21,6 +21,17 @@ export class HttpBillingRepository {
     return ApiClient.post<PaymentIntent>('/billing/payments/intent', payload);
   }
 
+  async getPendingPaymentIntent(orderType: string, orderId: string): Promise<PaymentIntent | null> {
+    try {
+      const res = await ApiClient.get<PaymentIntent | null>(
+        `/billing/payments/pending?orderType=${encodeURIComponent(orderType)}&orderId=${encodeURIComponent(orderId)}`
+      );
+      return res || null;
+    } catch {
+      return null;
+    }
+  }
+
   async cancelPaymentIntent(paymentCode: string): Promise<PaymentIntent> {
     return ApiClient.post<PaymentIntent>(
       `/billing/payments/intent/${encodeURIComponent(paymentCode)}/cancel`

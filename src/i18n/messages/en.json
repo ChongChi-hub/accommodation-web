@@ -2162,7 +2162,9 @@
       "compensationLabel": "Compensation",
       "approve": "Approve",
       "reject": "Reject",
-      "create": "Create"
+      "create": "Create",
+      "viewMyRoom": "View my room",
+      "tenantFallbackName": "Tenant"
     },
     "rental": {
       "tenantTitle": "Rental Requests",
@@ -2498,5 +2500,29 @@
     "onlineStatus": "Online",
     "selectConversation": "Select a conversation",
     "selectConversationHint": "Select from the list on the left to view chat history or send a new message."
+  },
+  "myRoomHandover": {
+    "lockedTitle": "Check-in details are protected",
+    "lockedDesc": "Full street address, landlord phone number, order code, and check-in instructions unlock automatically after deposit payment is confirmed.",
+    "areaOnlyLabel": "Area",
+    "statusAwaitingDeposit": "Awaiting deposit",
+    "statusActive": "Active",
+    "payDepositNow": "Pay deposit now",
+    "revealedTitle": "Check-in & Rental Order Details",
+    "revealedSubtitle": "Your contract is active after deposit confirmation",
+    "orderCodeLabel": "Rental order code",
+    "checkinCodeLabel": "Check-in code",
+    "copyBtn": "Copy",
+    "copiedBtn": "Copied",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Failed to copy",
+    "fullAddressLabel": "Full address",
+    "contactLandlordFallback": "Contact landlord for detailed directions",
+    "moveInDateLabel": "Move-in date",
+    "landlordContactLabel": "Landlord contact",
+    "landlordDefaultName": "CozyNest Landlord",
+    "instructionsTitle": "Check-in instructions",
+    "addToCalendarBtn": "Add to calendar (.ics)",
+    "downloadPdfBtn": "Download contract PDF"
   }
 }

@@ -2,6 +2,7 @@ import {
   AddOccupantPayload,
   Contract,
   ContractAmendment,
+  ContractCheckinInfo,
   ContractOccupant,
   CreateAmendmentPayload,
   CreateContractPayload,
@@ -15,6 +16,10 @@ export class HttpContractRepository {
 
   async getContract(id: string): Promise<Contract> {
     return ApiClient.get<Contract>(`/booking/contracts/${encodeURIComponent(id)}`);
+  }
+
+  async getCheckinInfo(id: string): Promise<ContractCheckinInfo> {
+    return ApiClient.get<ContractCheckinInfo>(`/booking/contracts/${encodeURIComponent(id)}/checkin-info`);
   }
 
   async getTenantContracts(): Promise<Contract[]> {

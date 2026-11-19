@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
@@ -17,14 +19,18 @@ import { AlertTriangle, CheckCircle2, Lock, QrCode, RefreshCw, ShieldCheck } fro
 export default function TenantDepositsPage() {
   const t = useTranslations('sprint3.deposit');
   const tc = useTranslations('sprint3.common');
+  const searchParams = useSearchParams();
   const [stats, setStats] = useState<TenantFinancialStats | null>(null);
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [escrows, setEscrows] = useState<EscrowHold[]>([]);
   const [refunds, setRefunds] = useState<RefundItem[]>([]);
   const [intent, setIntent] = useState<PaymentIntent | null>(null);
   const [selectedContractId, setSelectedContractId] = useState('');
-  const [depositAmount, setDepositAmount] = useState('2000000');
   const [busy, setBusy] = useState(false);
+
+  const selectedContract = contracts.find((c) => c.id === selectedContractId) || null;
+  const awaitingContracts = contracts.filter((c) => c.status === 'AWAITING_DEPOSIT');
+  const computedDepositAmount = selectedContract ? Number(selectedContract.depositAmount || selectedContract.monthlyRent || 0) : 0;
 
   const [refundForm, setRefundForm] = useState({
     contractId: '',
@@ -50,19 +56,37 @@ export default function TenantDepositsPage() {
       setRefunds(rList);
       setEscrows(escList);
       if (cList.length > 0) {
-        const first = cList[0];
-        setSelectedContractId((prev) => prev || first.id);
-        setDepositAmount((prev) => prev || String(first.depositAmount || 2000000));
+        const queryContractId = searchParams.get('contractId');
+        const preferred =
+          (queryContractId ? cList.find((c) => c.id === queryContractId) : null) ||
+          cList.find((c) => c.status === 'AWAITING_DEPOSIT') ||
+          cList[0];
+        setSelectedContractId((prev) => prev || preferred.id);
         setRefundForm((prev) => ({
           ...prev,
-          contractId: prev.contractId || first.id,
-          landlordId: prev.landlordId || first.landlordId,
+          contractId: prev.contractId || preferred.id,
+          landlordId: prev.landlordId || preferred.landlordId,
+          amount: prev.amount || String(preferred.depositAmount || 2000000),
         }));
       }
     } catch {
       toast.error(tc('loadError'));
     }
-  }, [tc]);
+  }, [tc, searchParams]);
+
+  useEffect(() => {
+    if (!selectedContractId) return;
+    let active = true;
+    container.billing.billingRepository
+      .getPendingPaymentIntent('DEPOSIT', selectedContractId)
+      .then((pending) => {
+        if (active && pending) setIntent(pending);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [selectedContractId]);
 
   const handleConfirmMoveIn = async (contractId: string) => {
     setBusy(true);
@@ -89,7 +113,7 @@ export default function TenantDepositsPage() {
       const created = await container.billing.billingRepository.createPaymentIntent({
         orderType: 'DEPOSIT',
         orderId: selectedContractId,
-        amount: Number(depositAmount),
+        amount: computedDepositAmount,
       });
       setIntent(created);
       toast.success(tc('actionSuccess'));
@@ -168,32 +192,70 @@ export default function TenantDepositsPage() {
       </div>
 
       <Card className="p-5 space-y-4">
-        <h2 className="text-sm font-bold">{t('payDepositBtn')}</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-bold">{t('payDepositBtn')}</h2>
+          <Badge variant="warning" size="sm">SANDBOX_ONLY</Badge>
+        </div>
         <form onSubmit={handlePayDeposit} className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
-          <Input
-            label={t('contractId')}
-            required
-            list="tenant-contracts-list"
-            value={selectedContractId}
-            onChange={(e) => setSelectedContractId(e.target.value)}
-          />
-          <datalist id="tenant-contracts-list">
-            {contracts.map((c) => <option key={c.id} value={c.id}>{c.contractCode}</option>)}
-          </datalist>
-          <Input label={t('amount')} type="number" min={1000} required value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
-          <Button type="submit" variant="primary" size="md" isLoading={busy} leftIcon={<QrCode className="w-4 h-4" />}>
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-stone-700 dark:text-stone-300">
+              {t('contractId')}
+            </label>
+            <select
+              className="w-full rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-xs text-stone-900 dark:text-stone-100"
+              value={selectedContractId}
+              onChange={(e) => {
+                setSelectedContractId(e.target.value);
+                setIntent(null);
+              }}
+              required
+            >
+              {contracts.length === 0 && <option value="">--</option>}
+              {contracts.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.contractCode} ({c.status}) - {formatVnd(c.depositAmount || c.monthlyRent)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/70 border border-stone-200 dark:border-stone-700">
+            <p className="text-[11px] text-stone-500">{t('amount')}</p>
+            <p className="text-sm font-black text-teal-700 dark:text-teal-400" data-testid="server-deposit-amount">
+              {computedDepositAmount > 0 ? formatVnd(computedDepositAmount) : '--'}
+            </p>
+          </div>
+          <Button
+            type="submit"
+            variant="primary"
+            size="md"
+            isLoading={busy}
+            disabled={!selectedContract || selectedContract.status !== 'AWAITING_DEPOSIT'}
+            leftIcon={<QrCode className="w-4 h-4" />}
+          >
             {t('payDepositBtn')}
           </Button>
         </form>
+        {selectedContract && selectedContract.status !== 'AWAITING_DEPOSIT' && awaitingContracts.length === 0 && (
+          <p className="text-xs text-stone-500">
+            {selectedContract.status === 'ACTIVE'
+              ? tc('actionSuccess')
+              : `${selectedContract.contractCode}: ${selectedContract.status}`}
+          </p>
+        )}
 
         {intent && (
           <div className="p-4 rounded-xl border border-teal-200 dark:border-teal-800 bg-teal-50/40 dark:bg-teal-950/20 flex flex-wrap items-center justify-between gap-4 text-xs">
             <div className="space-y-1">
               <p className="font-mono font-bold">{intent.paymentCode} ({intent.status})</p>
               <p>{t('amount')}: <strong>{formatVnd(intent.amount)}</strong></p>
+              {intent.expiresAt && (
+                <p className="text-[11px] text-stone-500">
+                  {formatIsoDateTime(intent.expiresAt)}
+                </p>
+              )}
               {intent.qrUrl && <img src={intent.qrUrl} alt={intent.paymentCode} className="w-28 h-28 rounded-lg border bg-white p-1" />}
             </div>
-            {intent.status === 'PENDING' && (
+            {intent.status === 'PENDING' ? (
               <div className="flex gap-2">
                 <Button variant="primary" size="sm" isLoading={busy} leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={handleSimulateWebhook}>
                   {t('simulateSuccess')}
@@ -205,7 +267,13 @@ export default function TenantDepositsPage() {
                   {t('cancelIntent')}
                 </Button>
               </div>
-            )}
+            ) : intent.status === 'PAID' ? (
+              <Link href="/dashboard/tenant/my-room">
+                <Button variant="primary" size="sm" leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}>
+                  {tc('viewMyRoom')}
+                </Button>
+              </Link>
+            ) : null}
           </div>
         )}
       </Card>

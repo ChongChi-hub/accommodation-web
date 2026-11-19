@@ -19,13 +19,43 @@ export default function LandlordTenantsPage() {
   const tAuto = useTranslations('autoI18n');
   const tc = useTranslations('sprint3.common');
   const [contracts, setContracts] = useState<Contract[]>([]);
+  const [tenantNames, setTenantNames] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const list = await container.contract.contractRepository.getLandlordContracts();
-      setContracts(list);
+      const [list, requests] = await Promise.all([
+        container.contract.contractRepository.getLandlordContracts(),
+        container.rentalRequest.rentalRequestRepository.getLandlordRequests().catch(() => []),
+      ]);
+      // BUG-07 fix: Only show ACTIVE tenants in the active-tenants roster
+      const activeContracts = list.filter((c) => c.status === 'ACTIVE');
+      setContracts(activeContracts);
+
+      const nameMap: Record<string, string> = {};
+      for (const req of requests) {
+        if (req.tenantId && req.tenantName && req.tenantName.trim()) {
+          nameMap[req.tenantId] = req.tenantName.trim();
+        }
+      }
+      // Fallback: check primary occupant fullName for any contract whose tenantName is missing
+      await Promise.all(
+        activeContracts
+          .filter((c) => !nameMap[c.tenantId])
+          .map(async (c) => {
+            try {
+              const occs = await container.contract.contractRepository.getOccupants(c.id);
+              const primary = occs.find((o) => o.primaryTenant) || occs[0];
+              if (primary?.fullName) {
+                nameMap[c.tenantId] = primary.fullName;
+              }
+            } catch {
+              // ignore
+            }
+          })
+      );
+      setTenantNames(nameMap);
     } catch {
       toast.error(tc('loadError'));
     } finally {
@@ -120,16 +150,16 @@ export default function LandlordTenantsPage() {
           {contracts.map((c) => (
             <Card key={c.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <Avatar name={c.tenantId || 'Tenant'} size="lg" />
+                <Avatar name={tenantNames[c.tenantId] || tc('tenantFallbackName')} size="lg" />
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <h3 className="text-sm font-bold text-foreground">
-                      Khách thuê #{c.tenantId?.slice(-6) || c.tenantId}
+                      {tenantNames[c.tenantId] || tc('tenantFallbackName')}
                     </h3>
                     {getStatusBadge(c.status)}
                   </div>
                   <p className="text-xs font-semibold text-teal-700 dark:text-teal-400">
-                    Hợp đồng #{c.contractCode} (Phòng ID: {c.roomId})
+                    {c.orderCode ? `${c.orderCode} · ` : ''}Hợp đồng #{c.contractCode} (Phòng ID: {c.roomId})
                   </p>
                   <div className="flex flex-wrap items-center gap-3 text-xs text-foreground-muted">
                     <span className="flex items-center gap-1">
