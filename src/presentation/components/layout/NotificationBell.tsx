@@ -134,7 +134,11 @@ export function NotificationBell({ userId, effectiveRole, hasHydrated, isAuthent
       } catch { /* Non-blocking */ }
     }
     setIsOpen(false);
-    const targetLink = resolveNotificationLink(notif.link, effectiveRole);
+    const targetLink = resolveNotificationLink(notif.link, effectiveRole, {
+      title: notif.title,
+      message: notif.message,
+      type: notif.type,
+    });
     if (targetLink) router.push(targetLink as any);
   };
 

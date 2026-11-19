@@ -38,6 +38,12 @@ export class HttpBillingRepository {
     );
   }
 
+  async getPaymentIntent(paymentCode: string): Promise<PaymentIntent> {
+    return ApiClient.get<PaymentIntent>(
+      `/billing/payments/intent/${encodeURIComponent(paymentCode)}`
+    );
+  }
+
   async simulateSandboxWebhook(payload: {
     paymentCode: string;
     amount: number;

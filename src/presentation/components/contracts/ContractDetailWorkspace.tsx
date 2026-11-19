@@ -516,7 +516,7 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {!escrowHold && role === 'TENANT' && (
+            {(!escrowHold || escrowHold.status === 'AWAITING_DEPOSIT' || escrowHold.status === 'CANCELLED') && role === 'TENANT' && (
               <Button
                 variant="primary"
                 size="sm"
@@ -1203,7 +1203,7 @@ export function ContractDetailWorkspace({ contractId, role, backHref }: Contract
                     leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}
                     onClick={handleSimulateDepositPaid}
                   >
-                    Giả lập thanh toán Sandbox (PAID)
+                    Tôi đã chuyển khoản xong
                   </Button>
                 </div>
               </div>

@@ -103,7 +103,11 @@ export function NotificationsView() {
         // Non-blocking
       }
     }
-    const targetLink = resolveNotificationLink(item.link, effectiveRole);
+    const targetLink = resolveNotificationLink(item.link, effectiveRole, {
+      title: item.title,
+      message: item.message,
+      type: item.type,
+    });
     if (targetLink) {
       router.push(targetLink as any);
     }

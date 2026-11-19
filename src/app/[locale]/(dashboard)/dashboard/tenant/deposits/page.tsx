@@ -10,6 +10,7 @@ import { Button } from '@/presentation/components/ui/Button';
 import { Input } from '@/presentation/components/ui/Input';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/presentation/components/ui/Table';
 import { container } from '@/infrastructure/di/container';
+import { VietQrRealPaymentCard } from '@/presentation/components/billing/VietQrRealPaymentCard';
 import { EscrowHold, PaymentIntent, RefundItem, TenantFinancialStats } from '@/domain/entities/Billing';
 import { Contract } from '@/domain/entities/Contract';
 import { toast } from '@/presentation/stores/toast.store';
@@ -171,9 +172,9 @@ export default function TenantDepositsPage() {
         <p className="text-xs text-stone-500 mt-0.5">{t('tenantSubtitle')}</p>
       </div>
 
-      <Card className="p-4 border-amber-300 bg-amber-50/70 dark:bg-amber-950/30 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200">
-        <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-        <span>{tc('sandboxNotice')}</span>
+      <Card className="p-4 border-teal-300 bg-teal-50/70 dark:bg-teal-950/30 flex items-start gap-2.5 text-xs text-teal-900 dark:text-teal-200">
+        <ShieldCheck className="w-4 h-4 flex-shrink-0 mt-0.5 text-teal-600" />
+        <span>Quỹ ký quỹ Escrow bảo đảm hai chiều: Tiền cọc được giữ an toàn tại tài khoản trung gian của Tổ Ấm và chỉ giải ngân sau khi hai bên ký nhận bàn giao phòng.</span>
       </Card>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -193,8 +194,8 @@ export default function TenantDepositsPage() {
 
       <Card className="p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-bold">{t('payDepositBtn')}</h2>
-          <Badge variant="warning" size="sm">SANDBOX_ONLY</Badge>
+          <h2 className="text-sm font-bold">Thanh toán tiền cọc giữ chỗ (VietQR)</h2>
+          <Badge variant="info" size="sm">BẢO ĐẢM ESCROW</Badge>
         </div>
         <form onSubmit={handlePayDeposit} className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
           <div className="space-y-1">
@@ -229,52 +230,28 @@ export default function TenantDepositsPage() {
             variant="primary"
             size="md"
             isLoading={busy}
-            disabled={!selectedContract || selectedContract.status !== 'AWAITING_DEPOSIT'}
+            disabled={!selectedContract || busy}
             leftIcon={<QrCode className="w-4 h-4" />}
           >
-            {t('payDepositBtn')}
+            Tạo mã thanh toán VietQR
           </Button>
         </form>
-        {selectedContract && selectedContract.status !== 'AWAITING_DEPOSIT' && awaitingContracts.length === 0 && (
-          <p className="text-xs text-stone-500">
-            {selectedContract.status === 'ACTIVE'
-              ? tc('actionSuccess')
-              : `${selectedContract.contractCode}: ${selectedContract.status}`}
-          </p>
-        )}
 
         {intent && (
-          <div className="p-4 rounded-xl border border-teal-200 dark:border-teal-800 bg-teal-50/40 dark:bg-teal-950/20 flex flex-wrap items-center justify-between gap-4 text-xs">
-            <div className="space-y-1">
-              <p className="font-mono font-bold">{intent.paymentCode} ({intent.status})</p>
-              <p>{t('amount')}: <strong>{formatVnd(intent.amount)}</strong></p>
-              {intent.expiresAt && (
-                <p className="text-[11px] text-stone-500">
-                  {formatIsoDateTime(intent.expiresAt)}
-                </p>
-              )}
-              {intent.qrUrl && <img src={intent.qrUrl} alt={intent.paymentCode} className="w-28 h-28 rounded-lg border bg-white p-1" />}
-            </div>
-            {intent.status === 'PENDING' ? (
-              <div className="flex gap-2">
-                <Button variant="primary" size="sm" isLoading={busy} leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />} onClick={handleSimulateWebhook}>
-                  {t('simulateSuccess')}
-                </Button>
-                <Button variant="outline" size="sm" isLoading={busy} onClick={async () => {
-                  await container.billing.billingRepository.cancelPaymentIntent(intent.paymentCode);
-                  setIntent((p) => (p ? { ...p, status: 'CANCELLED' } : null));
-                }}>
-                  {t('cancelIntent')}
-                </Button>
-              </div>
-            ) : intent.status === 'PAID' ? (
-              <Link href="/dashboard/tenant/my-room">
-                <Button variant="primary" size="sm" leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}>
-                  {tc('viewMyRoom')}
-                </Button>
-              </Link>
-            ) : null}
-          </div>
+          <VietQrRealPaymentCard
+            intent={intent}
+            onPaid={async () => {
+              await loadData();
+            }}
+            onCancel={async () => {
+              try {
+                await container.billing.billingRepository.cancelPaymentIntent(intent.paymentCode);
+              } catch {
+                // ignore
+              }
+              setIntent((p) => (p ? { ...p, status: 'CANCELLED' } : null));
+            }}
+          />
         )}
       </Card>
 
@@ -324,11 +301,11 @@ export default function TenantDepositsPage() {
                   </TableCell>
                   <TableCell className="text-xs">
                     <span className={e.tenantConfirmedMoveIn ? 'text-emerald-600 font-semibold' : 'text-stone-400'}>
-                      {e.tenantConfirmedMoveIn ? '✓ Bạn đã dọn vào' : '⏳ Chờ bạn xác nhận'}
+                      {e.tenantConfirmedMoveIn ? '[Đã dọn vào]' : '[Chờ bạn xác nhận]'}
                     </span>
                     <span className="mx-1.5 text-stone-300">|</span>
                     <span className={e.landlordConfirmedMoveIn ? 'text-emerald-600 font-semibold' : 'text-stone-400'}>
-                      {e.landlordConfirmedMoveIn ? '✓ Chủ trọ đã giao phòng' : '⏳ Chờ bàn giao'}
+                      {e.landlordConfirmedMoveIn ? '[Đã giao phòng]' : '[Chờ bàn giao]'}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
