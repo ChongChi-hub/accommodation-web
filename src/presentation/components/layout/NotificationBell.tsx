@@ -3,11 +3,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/i18n/routing';
-import { AlertCircle, Bell, Building2, Calendar, CheckCheck, CheckCircle2, CreditCard, FileText, ShieldCheck, Trash2 } from 'lucide-react';
+import { AlertCircle, Bell, Building2, Calendar, CheckCheck, CreditCard, FileText, ShieldCheck, Trash2 } from 'lucide-react';
 import { Notification } from '@/domain/entities/Notification';
 import { UserRole } from '@/domain/entities/User';
 import { container } from '@/infrastructure/di/container';
-import { cleanNotificationText, formatNotificationTime, getNotificationsRoute, resolveNotificationLink } from '@/presentation/utils/user-display';
+import {
+  cleanNotificationText,
+  formatNotificationTime,
+  getNotificationCategory,
+  getNotificationsRoute,
+  resolveNotificationLink,
+  type NotificationCategory,
+} from '@/presentation/utils/user-display';
 import { toast } from '@/presentation/stores/toast.store';
 import { cn } from '@/lib/cn';
 
@@ -19,14 +26,16 @@ export interface NotificationBellProps {
   onHeroTop?: boolean;
 }
 
-function getNotifIcon(type: string | undefined, isRead: boolean) {
+function getNotifIcon(category: NotificationCategory, isRead: boolean) {
   const cls = cn('w-4 h-4 shrink-0 mt-0.5', isRead ? 'text-foreground-muted' : 'text-primary dark:text-primary-300');
-  if (type === 'APPOINTMENT') return <Calendar className={cls} />;
-  if (type === 'RENTAL_REQUEST') return <Building2 className={cls} />;
-  if (type === 'CONTRACT') return <FileText className={cls} />;
-  if (type === 'INVOICE' || type === 'PAYMENT') return <CreditCard className={cls} />;
-  if (type === 'KYC') return <ShieldCheck className={cls} />;
-  return <CheckCircle2 className={cls} />;
+  switch (category) {
+    case 'APPOINTMENT': return <Calendar className={cls} />;
+    case 'RENTAL_REQUEST': return <Building2 className={cls} />;
+    case 'CONTRACT': return <FileText className={cls} />;
+    case 'INVOICE': return <CreditCard className={cls} />;
+    case 'KYC': return <ShieldCheck className={cls} />;
+    default: return <Bell className={cls} />;
+  }
 }
 
 export function NotificationBell({ userId, effectiveRole, hasHydrated, isAuthenticated, onHeroTop = false }: NotificationBellProps) {
@@ -46,10 +55,10 @@ export function NotificationBell({ userId, effectiveRole, hasHydrated, isAuthent
     setHasError(false);
     try {
       const [list, count] = await Promise.all([
-        container.notification.notificationRepository.getNotifications(userId, 5),
+        container.notification.notificationRepository.getNotifications(userId, 6),
         container.notification.notificationRepository.getUnreadCount(userId),
       ]);
-      setItems(list.slice(0, 5));
+      setItems(list.slice(0, 6));
       setUnreadCount(count);
     } catch {
       setHasError(true);
@@ -173,7 +182,7 @@ export function NotificationBell({ userId, effectiveRole, hasHydrated, isAuthent
             )}
           </div>
 
-          <div className="py-2 max-h-72 overflow-y-auto divide-y divide-border/60">
+          <div className="py-2 max-h-80 overflow-y-auto divide-y divide-border/60">
             {hasError ? (
               <div className="flex items-center gap-2 py-6 px-2 text-xs text-danger"><AlertCircle className="w-4 h-4 shrink-0" /><span>{tNotif('errorTitle')}</span></div>
             ) : items.length === 0 ? (
@@ -182,6 +191,7 @@ export function NotificationBell({ userId, effectiveRole, hasHydrated, isAuthent
               items.map((n) => {
                 const { title, message } = cleanNotificationText(n.title, n.message);
                 const timeAgo = formatNotificationTime(n.createdAt);
+                const category = getNotificationCategory({ title, message, link: n.link, type: n.type });
                 return (
                   <div
                     key={n.id}
@@ -189,22 +199,24 @@ export function NotificationBell({ userId, effectiveRole, hasHydrated, isAuthent
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); void handleItemClick(n); } }}
-                    className={cn('group w-full text-left py-2.5 px-2 flex items-start gap-2.5 rounded-xl transition-colors cursor-pointer', n.isRead ? 'hover:bg-surface-muted/60 opacity-85' : 'bg-primary-50/60 dark:bg-primary-950/30 hover:bg-primary-50 dark:hover:bg-primary-950/50')}
+                    className={cn('group w-full text-left py-2.5 px-2.5 flex items-start gap-3 rounded-xl transition-colors cursor-pointer', n.isRead ? 'hover:bg-surface-muted/60 opacity-85' : 'bg-primary-50/60 dark:bg-primary-950/30 hover:bg-primary-50 dark:hover:bg-primary-950/50')}
                   >
-                    {getNotifIcon(n.type, n.isRead)}
+                    <div className="w-7 h-7 rounded-lg bg-surface flex items-center justify-center shrink-0 mt-0.5 border border-border/70 shadow-2xs">
+                      {getNotifIcon(category, n.isRead)}
+                    </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-baseline justify-between gap-1">
-                        <p className="text-xs font-semibold text-foreground truncate">{title}</p>
-                        {timeAgo && <span className="text-[10px] text-foreground-muted shrink-0">{timeAgo}</span>}
+                      <div className="flex items-start justify-between gap-1.5">
+                        <h4 className="text-xs font-bold text-foreground line-clamp-2 leading-snug flex-1">{title}</h4>
+                        {timeAgo && <span className="text-[10px] text-foreground-muted shrink-0 whitespace-nowrap pt-0.5">{timeAgo}</span>}
                       </div>
-                      <p className="text-[11px] text-foreground-muted line-clamp-2 mt-0.5">{message}</p>
+                      <p className="text-[11px] text-foreground-muted line-clamp-2 mt-1 leading-relaxed">{message}</p>
                     </div>
                     <button
                       type="button"
                       title={tNotif('btnDelete')}
                       aria-label={tNotif('btnDelete')}
                       onClick={(e) => void handleDeleteItem(n, e)}
-                      className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-foreground-muted hover:text-danger hover:bg-danger/10 transition-all cursor-pointer shrink-0"
+                      className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-foreground-muted hover:text-danger hover:bg-danger/10 transition-all cursor-pointer shrink-0 mt-0.5"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

@@ -3,11 +3,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
-import { Bell, Calendar, CheckCheck, CreditCard, FileCheck, Trash2 } from 'lucide-react';
+import { Bell, Building2, Calendar, CheckCheck, CreditCard, FileCheck, ShieldCheck, Trash2 } from 'lucide-react';
 import { Notification } from '@/domain/entities/Notification';
 import { container } from '@/infrastructure/di/container';
 import { useAuthStore } from '@/presentation/stores/auth.store';
-import { cleanNotificationText, getEffectiveRole, resolveNotificationLink } from '@/presentation/utils/user-display';
+import { cleanNotificationText, getEffectiveRole, getNotificationCategory, resolveNotificationLink, type NotificationCategory } from '@/presentation/utils/user-display';
 import { Card } from '@/presentation/components/ui/Card';
 import { Button } from '@/presentation/components/ui/Button';
 import { EmptyState } from '@/presentation/components/ui/EmptyState';
@@ -111,11 +111,15 @@ export function NotificationsView() {
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  const getIcon = (type: Notification['type']) => {
-    if (type === 'WARNING') return <CreditCard className="w-4 h-4 text-accent-600" />;
-    if (type === 'ALERT') return <Bell className="w-4 h-4 text-danger" />;
-    if (type === 'SUCCESS') return <FileCheck className="w-4 h-4 text-success" />;
-    return <Calendar className="w-4 h-4 text-primary" />;
+  const getIcon = (category: NotificationCategory) => {
+    switch (category) {
+      case 'APPOINTMENT': return <Calendar className="w-4 h-4 text-primary" />;
+      case 'RENTAL_REQUEST': return <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />;
+      case 'CONTRACT': return <FileCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />;
+      case 'INVOICE': return <CreditCard className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
+      case 'KYC': return <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400" />;
+      default: return <Bell className="w-4 h-4 text-primary" />;
+    }
   };
 
   return (
@@ -166,6 +170,7 @@ export function NotificationsView() {
         <div className="space-y-3">
           {notifications.map((n) => {
             const { title, message } = cleanNotificationText(n.title, n.message);
+            const category = getNotificationCategory({ title, message, link: n.link, type: n.type });
             return (
               <Card
                 key={n.id}
@@ -176,12 +181,12 @@ export function NotificationsView() {
                   !n.isRead ? 'bg-primary-50/40 dark:bg-primary-950/25 border-primary/30' : 'bg-surface'
                 )}
               >
-                <div className="w-9 h-9 rounded-xl bg-surface-muted flex items-center justify-center shrink-0 mt-0.5">
-                  {getIcon(n.type)}
+                <div className="w-9 h-9 rounded-xl bg-surface-muted flex items-center justify-center shrink-0 mt-0.5 border border-border/70">
+                  {getIcon(category)}
                 </div>
                 <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-xs font-bold text-foreground">{title}</h3>
+                    <h3 className="text-xs font-bold text-foreground leading-snug">{title}</h3>
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="text-[11px] text-foreground-muted">
                         {new Date(n.createdAt).toLocaleDateString('vi-VN')}
