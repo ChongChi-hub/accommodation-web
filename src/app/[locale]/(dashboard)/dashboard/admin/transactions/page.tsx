@@ -8,18 +8,15 @@ import { toast } from '@/presentation/stores/toast.store';
 import { useAuthStore } from '@/presentation/stores/auth.store';
 import { ApiClient } from '@/infrastructure/http/api-client';
 import { container } from '@/infrastructure/di/container';
-import { AdminFinancialStats, EscrowHold, PayoutItem, RefundItem, RiskProfile } from '@/domain/entities/Billing';
-import {
-  AccountItem,
-  AdjustmentRequest,
-  AdminPaymentIntentItem,
-  JournalEntryDetailItem,
-  ReconciliationSummary,
-} from '@/presentation/components/admin/transactions/types';
+import { walletVerificationRepository } from '@/infrastructure/repositories/http-wallet-verification.repository';
+import { AdminFinancialStats, EscrowHold, PaymentIntent, PayoutItem, RefundItem, RiskProfile } from '@/domain/entities/Billing';
+import { UnmatchedBankInflowItem } from '@/domain/entities/WalletVerification';
+import { AccountItem, AdjustmentRequest, AdminPaymentIntentItem, JournalEntryDetailItem, ReconciliationSummary } from '@/presentation/components/admin/transactions/types';
 import { ReconTab } from '@/presentation/components/admin/transactions/ReconTab';
 import { TransactionsHistoryTab } from '@/presentation/components/admin/transactions/TransactionsHistoryTab';
 import { MakerCheckerAndRefundsTab } from '@/presentation/components/admin/transactions/MakerCheckerAndRefundsTab';
 import { AdminEscrowManagementTab } from '@/presentation/components/admin/transactions/AdminEscrowManagementTab';
+import { AdminInflowAndWithdrawalTab } from '@/presentation/components/admin/transactions/AdminInflowAndWithdrawalTab';
 import { RiskTab } from '@/presentation/components/admin/transactions/RiskTab';
 import { ExportTab } from '@/presentation/components/admin/transactions/ExportTab';
 import { Scale } from 'lucide-react';
@@ -27,7 +24,7 @@ import { Scale } from 'lucide-react';
 export default function AdminTransactionsAndLedgerPage() {
   const tl = useTranslations('sprint3.ledger');
   const currentUser = useAuthStore((state) => state.user);
-  const [activeTab, setActiveTab] = useState<'RECON' | 'TRANSACTIONS' | 'ESCROW' | 'MAKER_CHECKER' | 'RISK' | 'EXPORT'>('RECON');
+  const [activeTab, setActiveTab] = useState<'RECON' | 'VERIFY_QUEUE' | 'TRANSACTIONS' | 'ESCROW' | 'MAKER_CHECKER' | 'RISK' | 'EXPORT'>('VERIFY_QUEUE');
   const [isLoading, setIsLoading] = useState(true);
   const [isReconciling, setIsReconciling] = useState(false);
 
@@ -41,11 +38,13 @@ export default function AdminTransactionsAndLedgerPage() {
   const [refunds, setRefunds] = useState<RefundItem[]>([]);
   const [payouts, setPayouts] = useState<PayoutItem[]>([]);
   const [riskProfiles, setRiskProfiles] = useState<RiskProfile[]>([]);
+  const [unmatchedInflows, setUnmatchedInflows] = useState<UnmatchedBankInflowItem[]>([]);
+  const [manualIntents, setManualIntents] = useState<PaymentIntent[]>([]);
 
   const loadInitialData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [reconRes, statsRes, accsRes, entriesRes, intentsRes, escrowsRes, reqsRes, refundsRes, payoutsRes, profilesRes] =
+      const [reconRes, statsRes, accsRes, entriesRes, intentsRes, escrowsRes, reqsRes, refundsRes, payoutsRes, profilesRes, unmatchedRes, manualRes] =
         await Promise.all([
           ApiClient.request<ReconciliationSummary>('/billing/ledger/reconcile-now', { method: 'POST' }),
           container.billing.billingRepository.getAdminDashboardStats().catch(() => null),
@@ -57,6 +56,8 @@ export default function AdminTransactionsAndLedgerPage() {
           container.billing.billingRepository.getAdminRefunds().catch(() => []),
           container.billing.billingRepository.getAdminPayouts().catch(() => []),
           container.billing.billingRepository.getRiskProfiles().catch(() => []),
+          walletVerificationRepository.getUnmatchedInflows().catch(() => []),
+          walletVerificationRepository.getManualPaymentQueue().catch(() => []),
         ]);
       setReconData(reconRes);
       setAdminStats(statsRes);
@@ -68,6 +69,8 @@ export default function AdminTransactionsAndLedgerPage() {
       setRefunds(refundsRes);
       setPayouts(payoutsRes);
       setRiskProfiles(profilesRes);
+      setUnmatchedInflows(unmatchedRes);
+      setManualIntents(manualRes);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Unable to load ledger data');
     } finally {
@@ -102,28 +105,19 @@ export default function AdminTransactionsAndLedgerPage() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <Button variant={activeTab === 'VERIFY_QUEUE' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('VERIFY_QUEUE')}>
+          Xác minh &amp; Rút tiền ({unmatchedInflows.length + manualIntents.length + payouts.length})
+        </Button>
         <Button variant={activeTab === 'RECON' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('RECON')}>
           {tl('reconTab')}
         </Button>
-        <Button
-          variant={activeTab === 'TRANSACTIONS' ? 'primary' : 'outline'}
-          size="sm"
-          onClick={() => setActiveTab('TRANSACTIONS')}
-        >
+        <Button variant={activeTab === 'TRANSACTIONS' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('TRANSACTIONS')}>
           Lịch sử Giao dịch &amp; Sổ cái ({entries.length})
         </Button>
-        <Button
-          variant={activeTab === 'ESCROW' ? 'primary' : 'outline'}
-          size="sm"
-          onClick={() => setActiveTab('ESCROW')}
-        >
+        <Button variant={activeTab === 'ESCROW' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('ESCROW')}>
           Ký quỹ Escrow ({escrows.length})
         </Button>
-        <Button
-          variant={activeTab === 'MAKER_CHECKER' ? 'primary' : 'outline'}
-          size="sm"
-          onClick={() => setActiveTab('MAKER_CHECKER')}
-        >
+        <Button variant={activeTab === 'MAKER_CHECKER' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('MAKER_CHECKER')}>
           {tl('makerTab')}
         </Button>
         <Button variant={activeTab === 'RISK' ? 'primary' : 'outline'} size="sm" onClick={() => setActiveTab('RISK')}>
@@ -136,13 +130,26 @@ export default function AdminTransactionsAndLedgerPage() {
 
       {isLoading ? (
         <Skeleton className="h-72 w-full rounded-xl" />
-      ) : activeTab === 'RECON' ? (
-        <ReconTab
-          reconData={reconData}
-          adminStats={adminStats}
-          isReconciling={isReconciling}
-          onRunReconcile={handleRunReconcile}
+      ) : activeTab === 'VERIFY_QUEUE' ? (
+        <AdminInflowAndWithdrawalTab
+          unmatchedInflows={unmatchedInflows}
+          manualIntents={manualIntents}
+          payouts={payouts}
+          platformFeeRevenue={adminStats?.platformFeeRevenue ?? 0}
+          onApprovePayout={async (id) => {
+            await container.billing.billingRepository.approvePayout(id);
+            await loadInitialData();
+            toast.success('Đã duyệt yêu cầu rút tiền');
+          }}
+          onRejectPayout={async (id, reason) => {
+            await container.billing.billingRepository.rejectPayout(id, reason);
+            await loadInitialData();
+            toast.success('Đã từ chối yêu cầu rút tiền');
+          }}
+          onRefresh={loadInitialData}
         />
+      ) : activeTab === 'RECON' ? (
+        <ReconTab reconData={reconData} adminStats={adminStats} isReconciling={isReconciling} onRunReconcile={handleRunReconcile} />
       ) : activeTab === 'TRANSACTIONS' ? (
         <TransactionsHistoryTab entries={entries} intents={intents} />
       ) : activeTab === 'ESCROW' ? (

@@ -25,9 +25,9 @@ export function VietQrRealPaymentCard({
   onPaid,
   onCancel,
   onSubmitted,
-  bankName = 'Vietcombank (VCB)',
-  accountNumber = '1042701900',
-  accountHolder = 'LE THANH CUONG',
+  bankName = process.env.NEXT_PUBLIC_PLATFORM_BANK_NAME || 'Vietcombank (VCB)',
+  accountNumber = process.env.NEXT_PUBLIC_PLATFORM_BANK_ACCOUNT || '1042701900',
+  accountHolder = process.env.NEXT_PUBLIC_PLATFORM_ACCOUNT_HOLDER || 'LE THANH CUONG',
 }: VietQrRealPaymentCardProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -40,8 +40,7 @@ export function VietQrRealPaymentCard({
   );
 
   const canConfirmTransfer = isValidBankTxCode(bankTxCode) && Boolean(receiptHash && receiptImageUrl && receiptImageUrl.length > 20);
-  const fallbackQrUrl = `https://img.vietqr.io/image/970436-1042701900-compact2.png?amount=${intent.amount}&addInfo=${encodeURIComponent(intent.paymentCode)}&accountName=${encodeURIComponent(accountHolder)}`;
-  const qrImageSrc = intent.qrUrl || fallbackQrUrl;
+  const qrImageSrc = intent.qrUrl || `https://img.vietqr.io/image/${process.env.NEXT_PUBLIC_PLATFORM_BANK_BIN || '970436'}-${accountNumber}-compact2.png?amount=${intent.amount}&addInfo=${encodeURIComponent(intent.paymentCode)}&accountName=${encodeURIComponent(accountHolder)}`;
 
   const copyToClipboard = async (text: string, fieldName: string) => {
     try {
@@ -69,7 +68,7 @@ export function VietQrRealPaymentCard({
 
   useEffect(() => {
     if (currentStatus === 'PAID' || currentStatus === 'CANCELLED' || currentStatus === 'EXPIRED') return;
-    const timer = setInterval(() => checkPaymentStatus(), 4000);
+    const timer = setInterval(() => checkPaymentStatus(), 5000);
     return () => clearInterval(timer);
   }, [currentStatus, checkPaymentStatus]);
 
@@ -86,7 +85,7 @@ export function VietQrRealPaymentCard({
 
   const handleTenantSubmit = async () => {
     if (!canConfirmTransfer) {
-      toast.error('Chưa thể xác nhận: Bạn cần hoàn tất chuyển khoản, nhập Mã giao dịch ngân hàng (FT...) và tải Ảnh biên lai chuyển khoản lên để mở khóa!');
+      toast.error('Bạn cần hoàn tất chuyển khoản, nhập Mã giao dịch ngân hàng (FT...) và tải Ảnh biên lai hỗ trợ lên trước khi báo đã chuyển.');
       return;
     }
     setIsVerifying(true);
@@ -95,12 +94,11 @@ export function VietQrRealPaymentCard({
         note: `BANK_TX:${bankTxCode.trim().toUpperCase()}|HASH:${receiptHash.trim()}`,
         receiptUrl: receiptImageUrl.trim(),
       });
-      setCurrentStatus(updated.status || 'PAID');
-      toast.success('Đã xác thực biên lai chuyển khoản, cộng tiền cọc vào Escrow của 2 bên và thông báo cho chủ trọ!');
-      onPaid();
+      setCurrentStatus(updated.status || 'SUBMITTED');
+      toast.success('Đã ghi nhận báo chuyển tiền. Hệ thống đang chờ xác minh tiền về tài khoản Sàn.');
       onSubmitted?.();
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Xác nhận chuyển tiền thất bại');
+      toast.error(err instanceof Error ? err.message : 'Gửi thông báo chuyển tiền thất bại');
     } finally {
       setIsVerifying(false);
     }
@@ -121,11 +119,11 @@ export function VietQrRealPaymentCard({
             Quét mã VietQR để thanh toán tiền cọc
           </h3>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" aria-live="polite">
           {currentStatus === 'PAID' ? (
-            <Badge variant="success" size="sm">ĐÃ THANH TOÁN (ESCROW BẢO VỆ)</Badge>
+            <Badge variant="success" size="sm">ĐÃ XÁC MINH TIỀN VỀ (ESCROW BẢO VỆ)</Badge>
           ) : currentStatus === 'SUBMITTED' ? (
-            <Badge variant="warning" size="sm">ĐÃ BÁO CHUYỂN TIỀN (CHỜ CHỦ TRỌ XÁC NHẬN)</Badge>
+            <Badge variant="warning" size="sm">ĐANG CHỜ XÁC MINH TIỀN VỀ ({formatTimer(timeLeftSec)})</Badge>
           ) : currentStatus === 'EXPIRED' ? (
             <Badge variant="danger" size="sm">MÃ ĐÃ HẾT HẠN</Badge>
           ) : (
@@ -201,15 +199,22 @@ export function VietQrRealPaymentCard({
             />
           )}
 
-          <div className="p-3 bg-teal-50 dark:bg-teal-950/50 rounded-xl border border-teal-200 dark:border-teal-800 flex items-start gap-2 text-[11px] text-teal-900 dark:text-teal-200">
-            <ShieldCheck className="w-4 h-4 flex-shrink-0 text-teal-600 mt-0.5" />
-            <span>Nút &quot;Tôi đã chuyển tiền&quot; chỉ mở khóa sau khi bạn hoàn tất chuyển khoản vào mã QR của Sàn, nhập Mã giao dịch ngân hàng (FT...) và tải Ảnh biên lai chuyển khoản lên.</span>
-          </div>
+          {currentStatus === 'SUBMITTED' ? (
+            <div role="status" aria-live="polite" className="p-3 bg-amber-50 dark:bg-amber-950/50 rounded-xl border border-amber-300 dark:border-amber-800 flex items-start gap-2 text-[11px] text-amber-950 dark:text-amber-200">
+              <Clock className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
+              <span>Đang chờ xác minh tiền về tài khoản Sàn (tự động kiểm tra mỗi 5 giây). Bằng chứng bạn tải lên chỉ là thông tin hỗ trợ; cọc và nút nhận phòng chỉ mở sau khi hệ thống nhận được biến động số dư thật từ ngân hàng.</span>
+            </div>
+          ) : (
+            <div className="p-3 bg-teal-50 dark:bg-teal-950/50 rounded-xl border border-teal-200 dark:border-teal-800 flex items-start gap-2 text-[11px] text-teal-900 dark:text-teal-200">
+              <ShieldCheck className="w-4 h-4 flex-shrink-0 text-teal-600 mt-0.5" />
+              <span>Bằng chứng tải lên chỉ là thông tin hỗ trợ đối soát. Sau khi bấm &quot;Tôi đã chuyển&quot;, khoản thanh toán chuyển sang trạng thái chờ xác minh tiền về thật từ webhook ngân hàng.</span>
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
             <div className="text-[11px] text-stone-500 flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" />
-              <span>Thời gian còn lại: <strong className="text-teal-700">{formatTimer(timeLeftSec)}</strong></span>
+              <span>Hết hạn theo máy chủ sau: <strong className="text-teal-700">{formatTimer(timeLeftSec)}</strong></span>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={onCancel} disabled={currentStatus === 'PAID'}>
@@ -217,7 +222,11 @@ export function VietQrRealPaymentCard({
               </Button>
               {currentStatus === 'PAID' ? (
                 <Button variant="primary" size="sm" disabled leftIcon={<CheckCircle2 className="w-3.5 h-3.5" />}>
-                  Đã thanh toán vào Escrow
+                  Đã xác minh vào Escrow
+                </Button>
+              ) : currentStatus === 'SUBMITTED' ? (
+                <Button variant="secondary" size="sm" disabled leftIcon={<Clock className="w-3.5 h-3.5" />}>
+                  Đang chờ xác minh tiền về
                 </Button>
               ) : (
                 <Button
@@ -228,7 +237,7 @@ export function VietQrRealPaymentCard({
                   leftIcon={canConfirmTransfer ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
                   onClick={handleTenantSubmit}
                 >
-                  {canConfirmTransfer ? 'Tôi đã chuyển tiền (Xác nhận đã chuyển)' : 'Tôi đã chuyển tiền (Chờ biên lai & Mã GD)'}
+                  {canConfirmTransfer ? 'Tôi đã chuyển tiền' : 'Tôi đã chuyển (Cần mã GD & biên lai hỗ trợ)'}
                 </Button>
               )}
             </div>

@@ -11,22 +11,9 @@ export interface PaymentIntent {
   createdAt?: string;
 }
 
-export interface SubmitPaymentIntentPayload {
-  note?: string;
-  receiptUrl?: string;
-}
-
-export interface ConfirmPaymentIntentPayload {
-  actualAmount: number;
-  bankTxCode: string;
-  note?: string;
-}
-
-export interface CreatePaymentIntentPayload {
-  orderType: 'DEPOSIT' | 'INVOICE' | string;
-  orderId: string;
-  amount: number;
-}
+export interface SubmitPaymentIntentPayload { note?: string; receiptUrl?: string; }
+export interface ConfirmPaymentIntentPayload { actualAmount: number; bankTxCode: string; note?: string; }
+export interface CreatePaymentIntentPayload { orderType: 'DEPOSIT' | 'INVOICE' | string; orderId: string; amount: number; }
 
 export interface Invoice {
   id: string;
@@ -129,6 +116,12 @@ export interface PayoutItem {
   createdAt: string;
   landlordId?: string;
   failureReason?: string;
+  bankTxCode?: string | null;
+  proofUrl?: string | null;
+  systemVietQrUrl?: string | null;
+  approvedBy?: string | null;
+  paidBy?: string | null;
+  paidAt?: string | null;
 }
 
 export interface RiskProfile {
@@ -151,17 +144,22 @@ export interface EscrowHold {
   tenantId: string;
   landlordId: string;
   amount: number;
-  status: 'HELD' | 'DISPUTE_FROZEN' | 'RELEASED' | 'REFUNDED' | string;
+  releasedAmount?: number;
+  retainedAmount?: number;
+  status: 'AWAITING_DEPOSIT' | 'HELD' | 'PARTIALLY_RELEASED' | 'DISPUTE_FROZEN' | 'RELEASED' | 'REFUNDED' | string;
   sandboxMode: boolean;
   tenantConfirmedMoveIn: boolean;
   landlordConfirmedMoveIn: boolean;
   moveInConfirmedAt?: string | null;
+  pendingReleaseUntil?: string | null;
+  pendingSettled?: boolean;
   inspectionEndsAt: string;
   disputeReason?: string | null;
   paymentCode?: string | null;
   bankTxCode?: string | null;
   receiptHash?: string | null;
   receiptUrl?: string | null;
+  deductionClaimStatus?: string | null;
   releasedAt?: string | null;
   createdAt: string;
   updatedAt: string;

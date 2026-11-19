@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { EscrowHold } from '@/domain/entities/Billing';
+import { formatShortRef } from '@/domain/entities/WalletVerification';
 import { Card } from '@/presentation/components/ui/Card';
 import { Badge } from '@/presentation/components/ui/Badge';
 import { Button } from '@/presentation/components/ui/Button';
@@ -34,12 +35,13 @@ export function LandlordEscrowTable({
   return (
     <>
       <Card className="p-0 overflow-hidden">
-        <div className="px-5 py-3 border-b border-stone-100 dark:border-stone-800 text-xs font-bold text-stone-900 dark:text-stone-100 flex items-center justify-between">
+        <div className="px-5 py-3 border-b border-stone-100 dark:border-stone-800 text-xs font-bold text-stone-900 dark:text-stone-100 flex flex-wrap items-center justify-between gap-1">
           <span>Tiền cọc phòng đang ký quỹ Escrow ({escrows.length})</span>
           <span className="text-[11px] text-stone-500 font-normal">
             Kiểm tra ảnh biên lai & mã giao dịch ngân hàng trước khi bàn giao phòng
           </span>
         </div>
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -61,8 +63,15 @@ export function LandlordEscrowTable({
             ) : (
               escrows.map((e) => (
                 <TableRow key={e.id}>
-                  <TableCell className="font-mono text-xs font-semibold">{e.contractId}</TableCell>
-                  <TableCell className="font-bold text-teal-700">{formatVnd(e.amount)}</TableCell>
+                  <TableCell className="font-mono text-xs font-semibold whitespace-nowrap">{formatShortRef(e.contractId, 'HD')}</TableCell>
+                  <TableCell className="space-y-0.5">
+                    <div className="font-bold text-teal-700 dark:text-teal-400">{formatVnd(e.amount)}</div>
+                    {e.status === 'PARTIALLY_RELEASED' && (
+                      <div className="text-[11px] text-amber-700 dark:text-amber-400">
+                        Vào ví: {formatVnd(e.releasedAmount ?? 0)} | Giữ đến hết HĐ: {formatVnd(e.retainedAmount ?? 0)}
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell>
                     {e.bankTxCode || e.receiptUrl ? (
                       <div className="flex flex-col items-start gap-1">
@@ -140,6 +149,7 @@ export function LandlordEscrowTable({
             )}
           </TableBody>
         </Table>
+        </div>
       </Card>
 
       {selectedProofHold && (
