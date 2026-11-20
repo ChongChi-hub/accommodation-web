@@ -237,3 +237,10 @@ export interface PropertyOwnershipDoc {
   createdAt: string;
 }
 
+export interface AdminOwnershipDocItem extends PropertyOwnershipDoc {
+  roomTitle: string;
+  landlordName: string;
+  roomAddress?: string;
+  verifiedOwnership?: boolean;
+}
+
