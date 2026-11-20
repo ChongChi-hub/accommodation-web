@@ -196,7 +196,7 @@ export function OsmLocationPicker({ latitude, longitude, address, wardName, prov
 
       <div ref={containerRef} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} role="application" aria-label="Bản đồ chọn vị trí phòng trọ OpenStreetMap" className="relative w-full h-72 sm:h-80 rounded-xl overflow-hidden border border-border bg-stone-200 dark:bg-stone-800 select-none cursor-crosshair touch-none">
         {tiles.map((tile) => (
-          <img key={tile.key} src={tile.url} alt="" draggable={false} width={OSM_TILE_SIZE} height={OSM_TILE_SIZE} onError={(e) => { if (!e.currentTarget.dataset.fb) { e.currentTarget.dataset.fb = '1'; e.currentTarget.src = tile.fallbackUrl; } }} className="absolute max-w-none pointer-events-none select-none" style={{ left: tile.left, top: tile.top, width: OSM_TILE_SIZE, height: OSM_TILE_SIZE }} />
+          <img key={tile.key} src={tile.url} alt="" draggable={false} referrerPolicy="no-referrer" width={OSM_TILE_SIZE} height={OSM_TILE_SIZE} onError={(e) => { if (!e.currentTarget.dataset.fb) { e.currentTarget.dataset.fb = '1'; e.currentTarget.src = tile.fallbackUrl; } }} className="absolute max-w-none pointer-events-none select-none" style={{ left: tile.left, top: tile.top, width: OSM_TILE_SIZE, height: OSM_TILE_SIZE }} />
         ))}
         {isSearching && (
           <div className="absolute top-3 left-3 z-20 inline-flex items-center gap-1.5 rounded-lg bg-stone-900/85 text-white px-2.5 py-1 text-[11px] shadow">

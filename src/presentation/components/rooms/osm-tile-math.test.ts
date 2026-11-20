@@ -44,8 +44,8 @@ describe('osm-tile-math', () => {
     const { tiles } = computeVisibleTiles({ lat: 21.028511, lng: 105.854167 }, 16, { width: 512, height: 320 });
     expect(tiles.length).toBeGreaterThan(0);
     for (const tile of tiles) {
-      expect(tile.url).toMatch(/^https:\/\/tile\.openstreetmap\.org\/16\/\d+\/\d+\.png$/);
-      expect(tile.fallbackUrl).toMatch(/^https:\/\/tile\.openstreetmap\.de\/16\/\d+\/\d+\.png$/);
+      expect(tile.url).toMatch(/^https:\/\/tile\.openstreetmap\.de\/16\/\d+\/\d+\.png$/);
+      expect(tile.fallbackUrl).toMatch(/^https:\/\/tile\.openstreetmap\.org\/16\/\d+\/\d+\.png$/);
       expect(tile.url).not.toContain('cartocdn');
       expect(tile.fallbackUrl).not.toContain('cartocdn');
     }

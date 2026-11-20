@@ -126,6 +126,7 @@ export function RoomMap({ latitude, longitude, address }: RoomMapProps) {
                 src={tile.url}
                 alt=""
                 draggable={false}
+                referrerPolicy="no-referrer"
                 width={OSM_TILE_SIZE}
                 height={OSM_TILE_SIZE}
                 onError={(e) => {

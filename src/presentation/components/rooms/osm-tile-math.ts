@@ -88,8 +88,8 @@ export function computeVisibleTiles(
       const wrappedX = ((tx % tileCount) + tileCount) % tileCount;
       tiles.push({
         key: `${zoom}-${tx}-${ty}`,
-        url: `https://tile.openstreetmap.org/${zoom}/${wrappedX}/${ty}.png`,
-        fallbackUrl: `https://tile.openstreetmap.de/${zoom}/${wrappedX}/${ty}.png`,
+        url: `https://tile.openstreetmap.de/${zoom}/${wrappedX}/${ty}.png`,
+        fallbackUrl: `https://tile.openstreetmap.org/${zoom}/${wrappedX}/${ty}.png`,
         left: Math.round(tx * OSM_TILE_SIZE - originX),
         top: Math.round(ty * OSM_TILE_SIZE - originY),
       });
