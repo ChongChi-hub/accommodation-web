@@ -68,8 +68,6 @@ export interface VisibleOsmTile {
   top: number;
 }
 
-const CARTO_SUBDOMAINS = ['a', 'b', 'c', 'd'];
-
 export function computeVisibleTiles(
   center: { lat: number; lng: number },
   zoom: number,
@@ -88,11 +86,10 @@ export function computeVisibleTiles(
   for (let ty = minTileY; ty <= maxTileY; ty++) {
     for (let tx = minTileX; tx <= maxTileX; tx++) {
       const wrappedX = ((tx % tileCount) + tileCount) % tileCount;
-      const sub = CARTO_SUBDOMAINS[(wrappedX + ty) % CARTO_SUBDOMAINS.length];
       tiles.push({
         key: `${zoom}-${tx}-${ty}`,
         url: `https://tile.openstreetmap.org/${zoom}/${wrappedX}/${ty}.png`,
-        fallbackUrl: `https://${sub}.basemaps.cartocdn.com/rastertiles/voyager/${zoom}/${wrappedX}/${ty}.png`,
+        fallbackUrl: `https://tile.openstreetmap.de/${zoom}/${wrappedX}/${ty}.png`,
         left: Math.round(tx * OSM_TILE_SIZE - originX),
         top: Math.round(ty * OSM_TILE_SIZE - originY),
       });

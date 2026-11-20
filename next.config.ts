@@ -62,7 +62,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://accounts.google.com",
               "frame-src 'self' https://accounts.google.com https://*.google.com https://*.openstreetmap.org https://www.openstreetmap.org",
               "connect-src 'self' https://cozynestvvip.duckdns.org wss://cozynestvvip.duckdns.org http://localhost:8080 http://localhost:3000 ws://localhost:3000 https://accounts.google.com https://*.googleapis.com https://geocode.arcgis.com https://photon.komoot.io https://nominatim.openstreetmap.org",
-              "img-src 'self' data: blob: https://cozynestvvip.duckdns.org https://res.cloudinary.com https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co https://img.vietqr.io https://*.vietqr.io https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com",
+              "img-src 'self' data: blob: https://cozynestvvip.duckdns.org https://res.cloudinary.com https://accounts.google.com https://*.googleusercontent.com https://images.unsplash.com https://placehold.co https://img.vietqr.io https://*.vietqr.io https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://tile.openstreetmap.de https://*.tile.openstreetmap.fr",
               "font-src 'self' data:",
             ].join('; '),
           },

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildAddressQueries,
+  computeVisibleTiles,
   getProvinceDefaultCenter,
   latLngToWorldPixel,
   worldPixelToLatLng,
@@ -37,6 +38,17 @@ describe('osm-tile-math', () => {
     });
     expect(queries.some((q) => q.query === 'Thủ Đức, Hồ Chí Minh, Việt Nam' && q.zoom === 15)).toBe(true);
     expect(queries.some((q) => q.query === 'Hồ Chí Minh, Việt Nam' && q.zoom === 13)).toBe(true);
+  });
+
+  it('uses keyless OpenStreetMap tiles without cartocdn API-key endpoints', () => {
+    const { tiles } = computeVisibleTiles({ lat: 21.028511, lng: 105.854167 }, 16, { width: 512, height: 320 });
+    expect(tiles.length).toBeGreaterThan(0);
+    for (const tile of tiles) {
+      expect(tile.url).toMatch(/^https:\/\/tile\.openstreetmap\.org\/16\/\d+\/\d+\.png$/);
+      expect(tile.fallbackUrl).toMatch(/^https:\/\/tile\.openstreetmap\.de\/16\/\d+\/\d+\.png$/);
+      expect(tile.url).not.toContain('cartocdn');
+      expect(tile.fallbackUrl).not.toContain('cartocdn');
+    }
   });
 });
 
